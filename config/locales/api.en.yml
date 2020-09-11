@@ -1,0 +1,9 @@
+en:
+  api:
+    message:
+      status:
+        ok: 'OK: reachable and running'
+        maintenance: 'Maintenance mode is ON'
+        generic_failure: 'ERROR: unexpected failure'
+      jwt:
+        invalid: 'Invalid JWT token'

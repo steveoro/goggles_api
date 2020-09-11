@@ -30,6 +30,8 @@ gem 'rack-cors'
 gem 'devise'
 gem 'goggles_db', git: 'git@github.com:steveoro/goggles_db' # (currently available only as a private repo)
 gem 'grape'
+gem 'grape-route-helpers'
+gem 'rest-client'
 gem 'simple_command'
 
 group :development do

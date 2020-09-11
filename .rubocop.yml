@@ -43,6 +43,10 @@ Metrics/PerceivedComplexity:
   Exclude:
     - 'bin/bundle'
 
+Style/ClassAndModuleChildren:
+  Exclude:
+  - 'api/**/*'
+
 Style/Documentation:
   Exclude:
     - 'spec/**/*'

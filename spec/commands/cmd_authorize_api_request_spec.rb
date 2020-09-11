@@ -15,7 +15,7 @@ RSpec.describe CmdAuthorizeAPIRequest, type: :command do
       expect(result).to be_a(String).and be_present
       result
     end
-    let(:fixture_headers) { { 'Authorization' => fixture_jwt } }
+    let(:fixture_headers) { { 'Authorization' => "Bearer #{fixture_jwt}" } }
 
     describe '#call' do
       subject { CmdAuthorizeAPIRequest.new(fixture_headers).call }
@@ -44,9 +44,9 @@ RSpec.describe CmdAuthorizeAPIRequest, type: :command do
       describe '#call' do
         subject do
           headers = if wrong_param == :header
-                      { 'Auth' => 'Not a valid header!' }
+                      { 'Auth' => 'Not_a_valid_header!' }
                     else # wrong JWT / credentials
-                      { 'Authorization' => 'Not a valid JWT!' }
+                      { 'Authorization' => 'Bearer Not_a_valid_JWT!' }
                     end
           CmdAuthorizeAPIRequest.new(headers).call
         end
