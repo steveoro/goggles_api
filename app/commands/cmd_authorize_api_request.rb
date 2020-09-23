@@ -8,9 +8,9 @@ require 'simple_command'
 # Retrieves the User authorized for a generic API request, given the JWT specified in
 # its headers Hash, using the internal API key for decoding it.
 #
-#   - file vers.: 1.00
+#   - file vers.: 1.02
 #   - author....: Steve A.
-#   - build.....: 20200910
+#   - build.....: 20200923
 #
 class CmdAuthorizeAPIRequest
   prepend SimpleCommand
@@ -37,7 +37,7 @@ class CmdAuthorizeAPIRequest
   # Returns a valid, authenticated +User+ instance or +nil+ otherwise.
   def authenticated_user
     @api_user ||= GogglesDb::User.find(decoded_jwt_data[:user_id]) if decoded_jwt_data
-    @api_user || errors.add(:token, 'Invalid token') && nil
+    @api_user || errors.add(:msg, I18n.t('api.message.jwt.invalid')) && nil
   end
 
   def decoded_jwt_data
@@ -50,7 +50,7 @@ class CmdAuthorizeAPIRequest
     return headers['Authorization'].split(' ').last if headers['Authorization'].present?
 
     # Add any errors to SimpleCommand internal list:
-    errors.add(:token, 'Missing token')
+    errors.add(:msg, I18n.t('api.message.jwt.missing'))
     nil
   end
 end

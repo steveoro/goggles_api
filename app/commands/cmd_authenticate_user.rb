@@ -7,9 +7,9 @@ require 'simple_command'
 #
 # Creates a valid JWT if the User exists and has a matching password; +nil+ otherwise.
 #
-#   - file vers.: 1.01
+#   - file vers.: 1.02
 #   - author....: Steve A.
-#   - build.....: 20200908
+#   - build.....: 20200923
 #
 class CmdAuthenticateUser
   prepend SimpleCommand
@@ -50,9 +50,9 @@ class CmdAuthenticateUser
 
     # Add any errors to SimpleCommand internal list:
     if user && !user.confirmed?
-      errors.add(:user_authentication, 'Unconfirmed user')
+      errors.add(:msg, I18n.t('api.message.unconfirmed_email'))
     else
-      errors.add(:user_authentication, 'Invalid credentials')
+      errors.add(:msg, I18n.t('api.message.invalid_credentials'))
     end
     nil
   end

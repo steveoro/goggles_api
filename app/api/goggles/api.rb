@@ -7,9 +7,9 @@ module Goggles
   #
   # Mounts all required API modules
   #
-  #   - version:  1.00
+  #   - version:  1.01
   #   - author:   Steve A.
-  #   - build:    20200910
+  #   - build:    20200923
   #
   class API < Grape::API
     version      'v3', using: :path, vendor: 'goggles'
@@ -27,10 +27,17 @@ module Goggles
       #
       desc "Returns the API 'msg' status and the current application versioning code"
       get do
-        { msg: I18n.t('api.message.status.ok'), version: Version::FULL }
+        {
+          msg: I18n.t("api.message.status.#{GogglesDb::AppParameter.maintenance? ? 'maintenance' : 'ok'}"),
+          version: Version::FULL
+        }
       end
     end
 
+    mount SessionAPI
     mount UsersAPI
+    mount SwimmersAPI
+    mount TeamsAPI
+    mount BadgesAPI
   end
 end

@@ -5,28 +5,28 @@ module Goggles
   #
   #   - version:  1.00
   #   - author:   Steve A.
-  #   - build:    20200911
+  #   - build:    20200923
   #
-  class UsersAPI < Grape::API
+  class BadgesAPI < Grape::API
     format        :json
     content_type  :json, 'application/json'
 
-    resource :user do
-      # GET /api/:version/user/:id
+    resource :badge do
+      # GET /api/:version/badge/:id
       #
       # == Returns:
-      # The User instance matching the specified +id+ as JSON.
+      # The Badge instance matching the specified +id+ as JSON.
       #
-      desc 'User details'
+      desc 'Badge details'
       params do
-        requires :id, type: Integer, desc: 'User ID'
+        requires :id, type: Integer, desc: 'Badge ID'
       end
       route_param :id do
         get do
           !CmdAuthorizeAPIRequest.new(headers).call.success? &&
             error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.jwt.invalid'))
 
-          GogglesDb::User.find_by_id(params['id'])
+          GogglesDb::Badge.find_by_id(params['id'])
         end
       end
     end
