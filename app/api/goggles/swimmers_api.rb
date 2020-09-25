@@ -5,7 +5,7 @@ module Goggles
   #
   #   - version:  1.00
   #   - author:   Steve A.
-  #   - build:    20200923
+  #   - build:    20200925
   #
   class SwimmersAPI < Grape::API
     format        :json
@@ -16,6 +16,7 @@ module Goggles
       #
       # == Returns:
       # The Swimmer instance matching the specified +id+ as JSON.
+      # See GogglesDb::Swimmer#to_json for structure details.
       #
       desc 'Swimmer details'
       params do

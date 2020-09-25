@@ -5,7 +5,7 @@ module Goggles
   #
   #   - version:  1.00
   #   - author:   Steve A.
-  #   - build:    20200923
+  #   - build:    20200925
   #
   class BadgesAPI < Grape::API
     format        :json
@@ -16,6 +16,7 @@ module Goggles
       #
       # == Returns:
       # The Badge instance matching the specified +id+ as JSON.
+      # See GogglesDb::Badge#to_json for structure details.
       #
       desc 'Badge details'
       params do
