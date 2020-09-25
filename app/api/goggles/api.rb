@@ -9,7 +9,7 @@ module Goggles
   #
   #   - version:  1.01
   #   - author:   Steve A.
-  #   - build:    20200923
+  #   - build:    20200925
   #
   class API < Grape::API
     version      'v3', using: :path, vendor: 'goggles'
@@ -38,6 +38,7 @@ module Goggles
     mount UsersAPI
     mount SwimmersAPI
     mount TeamsAPI
+    mount TeamAffiliationsAPI
     mount BadgesAPI
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Goggles
-  # = Goggles API v3: Users API Grape controller
+  # = Goggles API v3: Badge API Grape controller
   #
   #   - version:  1.00
   #   - author:   Steve A.
