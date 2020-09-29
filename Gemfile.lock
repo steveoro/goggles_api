@@ -1,8 +1,8 @@
 GIT
   remote: git@github.com:steveoro/goggles_db
-  revision: d424b59e29801465a736c05a1c5b1610997ed70d
+  revision: 3072ffdc6d15d7656868902514be3c54b5932454
   specs:
-    goggles_db (0.1.6)
+    goggles_db (0.1.7)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -15,7 +15,7 @@ GIT
       haml
       jwt
       mini_magick
-      rails (~> 6, >= 6.0.3.2)
+      rails (~> 6, >= 6.0.3.3)
       rails-settings-cached
       tzinfo (~> 1.2, >= 1.2.2)
 
@@ -207,7 +207,7 @@ GEM
       guard (~> 2.0)
       guard-compat (~> 1.1)
       spring
-    haml (5.1.2)
+    haml (5.2.0)
       temple (>= 0.8.0)
       tilt
     http-accept (1.7.0)
