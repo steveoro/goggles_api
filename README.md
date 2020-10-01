@@ -32,6 +32,18 @@ The endpoints allow an authorized account to manage:
 
 TODO
 
+### Suggested dependancies:
+
+*For editing & browsing API Blueprints:*
+
+- VisualStudio Code, with API Blueprint parser & preview: the extensions should also pre-install Aglio, the HTML renderer for the blueprints; add also a JSON prettyfier, plus any other relevant & VSCode-suggested extension while you're at it. (Ruby, Rails, MariaDB/MySQL & Docker)
+
+- Hercule, for managing the API document split among multiple files. Install it globally with:
+
+```bash
+$> sudo npm install -g hercule
+```
+
 
 ## Database creation
 

@@ -1,0 +1,85 @@
+## Session [/api/v1/session]
+
+### create Session [POST]
+Returns a new JWT for an API session if the given credentials are valid.
+
+#### Body Attributes:
+
+- `e` (string): User email
+- `p` (string): User password
+- `t` (string): static authorization token for this API endpoint
+
++ Attributes
+    + e (string) - User email
+    + p (string) - User password
+    + t (string) - Static authorization token for the API endpoint
+
++ Request ok (application/json)
+
+        {
+            "e": "steve.alloro@whatever.example",
+            "p": "a-valid-password",
+            "t": "valid-static-key-for-handshake"
+        }
+
++ Response 200 (application/json)
+
+        {
+         "msg": "OK",
+         "jwt": "New-VALID-SESSION-JWT"
+        }
+
++ Request unconfirmed user (application/json)
+
+        {
+            "e": "unconfirmed.user@whatever.example",
+            "p": "a-valid-password",
+            "t": "valid-static-key-for-handshake"
+        }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Unconfirmed User email"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request bad credentials (application/json)
+
+        {
+            "e": "steve.alloro@whatever.example",
+            "p": "NOT-a-valid-password",
+            "t": "valid-static-key-for-handshake"
+        }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User credentials"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request bad token (application/json)
+
+        {
+            "e": "steve.alloro@whatever.example",
+            "p": "a-valid-password",
+            "t": "INVALID-static-key"
+        }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid API static token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
