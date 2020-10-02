@@ -1,0 +1,123 @@
+# Group Swimmers
+
+## Swimmer [/api/v3/swimmer/{id}]
+
+### retrieve details [GET]
+The Swimmer instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities:
+- `User`, the `associated_user` for this Swimmer
+- `GenderType`
+
+A valid JWT value is required for the `Authorization` request header.
+
+
+* * *
+
+
+#### Bash:
+
+```
+$> curl -i -X GET -H "Content-Type: application/json" \
+        -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+        "<API_HOST:PORT>/api/v3/swimmer/142"
+```
+
+
+#### Ruby/`RestClient`:
+
+```
+> res = RestClient::Request.execute(method: :get, url: 'localhost:3000/api/v3/swimmer/142',
+           headers: { "Authorization" => "Bearer VALID-SESSION-JWT"} )
+ => <RestClient::Response 200 "{\"id\":142, ...">
+```
+
+
+* * *
+
+
++ Parameters
+    + id (number) - Swimmer ID
+
++ Request ok (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        {
+            "id": 142,
+            "last_name": "ALLORO",
+            "first_name": "STEFANO",
+            "year_of_birth": 1969,
+            // [...]
+            "e_mail": null,
+            "nickname": "",
+            "associated_user_id": 1,
+            "gender_type_id": 1,
+            // [...]
+            "created_at": "2014-10-19T00:00:00.000Z",
+            "updated_at": "2014-10-19T16:04:16.000Z",
+            "complete_name": "ALLORO STEFANO",
+            "is_year_guessed": false,
+
+            // Embedded associated User:
+            "associated_user": {
+                "id": 1,
+                "name": "steve",
+                "description": "Stefano Alloro",
+                "swimmer_id": 142,
+                "last_name": "Alloro",
+                "first_name": "Stefano",
+                "year_of_birth": 1969,
+                // [...]
+            },
+
+            // Embedded associated GenderType:
+            "gender_type": {
+                "id": 1,
+                "code": "M",
+                // [...]
+            }
+        }
+
++ Request ID not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request JWT missing (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }

@@ -1,0 +1,190 @@
+# Group Teams
+
+## Team [/api/v3/team/{id}]
+
+### retrieve details [GET]
+The Team instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities:
+- `City`
+- `TeamAffiliation`, list of rows found for the last 2 most recent Seasons
+- `Badge`, as above, list of rows found for the selected TeamAffiliations
+
+A valid JWT value is required for the `Authorization` request header.
+
+
+* * *
+
+
+#### Bash:
+
+```
+$> curl -i -X GET -H "Content-Type: application/json" \
+        -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+        "<API_HOST:PORT>/api/v3/team/1"
+```
+
+
+#### Ruby/`RestClient`:
+
+```
+> res = RestClient::Request.execute(method: :get, url: 'localhost:3000/api/v3/team/1',
+           headers: { "Authorization" => "Bearer VALID-SESSION-JWT"} )
+ => <RestClient::Response 200 "{\"id\":1, ...">
+```
+
+
+* * *
+
+
+
++ Parameters
+    + id (number) - Team ID
+
++ Request ok (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            // [...]
+            "created_at": "2014-10-19T00:00:00.000Z",
+            "updated_at": "2014-10-19T16:04:16.000Z",
+            "name": "CSI NUOTO OBER FERRARI ASD",
+            "editable_name": "CSI NUOTO OBER FERRARI ASD",
+            "address": "Team HQ address",
+            "zip": "",
+            "phone_mobile": "",
+            "phone_number": "",
+            "fax_number": null,
+            "e_mail": "contact.email@this.is.just.a.fake.domain.com",
+            "contact_name": "Marco Ligabue",
+            "notes": "whatever the team manager needs to write here",
+            "name_variations": null,
+            "city_id": 37,
+            // [...]
+            "home_page_url": "",
+
+            // Embedded associated City:
+            "city": {
+                "id": 37,
+                // [...]
+                "name": "REGGIO NELL'EMILIA",
+                "zip": "?",
+                "area": "REGGIO EMILIA",
+                "country": "Italy",
+                "country_code": "ITA",
+                // [...]
+            },
+
+            // "Recent Badges" found from last 2 most recent Seasons:
+            // (as of this writing, season 191 & season 192)
+            "badges": [
+                {
+                    "id": 124914,
+                    // [...]
+                    "number": "43446",
+                    "season_id": 192,
+                    "swimmer_id": 142,
+                    "team_id": 1,
+                    "category_type_id": 1293,
+                    // [...]
+                    "entry_time_type_id": 5,
+                    "team_affiliation_id": 5726,
+                    "final_rank": null,
+                    "is_out_of_goggle_cup": false,
+                    "has_to_pay_fees": true,
+                    "has_to_pay_badge": false,
+                    "has_to_pay_relays": true
+                },
+                // [...season 192 badges...]
+                {
+                    "id": 124947,
+                    // [...]
+                    "number": "04204788",
+                    "season_id": 191,
+                    "swimmer_id": 142,
+                    "team_id": 1,
+                    "category_type_id": 1320,
+                    // [...]
+                    "entry_time_type_id": 5,
+                    "team_affiliation_id": 5727,
+                    "final_rank": null,
+                    "is_out_of_goggle_cup": false,
+                    "has_to_pay_fees": false,
+                    "has_to_pay_badge": false,
+                    "has_to_pay_relays": false
+                },
+                // [...season 191 badges...]
+            ],
+
+            // Last 2 most recent affiliations (season 191 & season 192):
+            "team_affiliations": [
+                {
+                    "id": 5727,
+                    // [...]
+                    "number": "04200002",
+                    "name": "CSInuoto OberFerrari",
+                    "must_calculate_goggle_cup": true,
+                    "team_id": 1,
+                    "season_id": 191,
+                    "user_id": 2,
+                    // [...]
+                    "is_autofilled": false
+                },
+                {
+                    "id": 5726,
+                    // [...]
+                    "number": "46103",
+                    "name": "CSI NUOTO OBER FERRARI",
+                    "must_calculate_goggle_cup": true,
+                    "team_id": 1,
+                    "season_id": 192,
+                    // [...]
+                    "is_autofilled": false
+                }
+            ]
+        }
+
++ Request ID not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request JWT missing (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }

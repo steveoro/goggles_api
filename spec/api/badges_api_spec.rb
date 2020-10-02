@@ -60,4 +60,70 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
       end
     end
   end
+
+  describe 'PUT /api/v3/badge/:id' do
+    context 'when using valid parameters,' do
+      let(:expected_changes) do
+        [
+          { number: 'TEST_CODE' },
+          { number: 'TEST_CODE', entry_time_type_id: GogglesDb::EntryTimeType.send(%w[manual personal gogglecup prec_year last_race].sample).id },
+          { number: 'TEST_CODE', has_to_pay_fees: true },
+          { number: 'TEST_CODE', has_to_pay_relays: true, has_to_pay_badge: [false, true].sample }
+        ].sample
+      end
+      before(:each) do
+        put(
+          api_v3_badge_path(id: fixture_badge.id),
+          params: expected_changes,
+          headers: fixture_headers
+        )
+      end
+      it 'is successful' do
+        expect(response).to be_successful
+      end
+      it 'updates the row and returns true' do
+        expect(response.body).to eq('true')
+        updated_row = fixture_badge.reload
+        expected_changes.each do |key, _value|
+          expect(updated_row.send(key)).to eq(expected_changes[key])
+        end
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before(:each) do
+        put(
+          api_v3_badge_path(id: fixture_badge.id),
+          params: { number: 'TEST_CODE' },
+          headers: { 'Authorization' => 'you wish!' }
+        )
+      end
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+      it 'responds with a generic error message and its details in the header' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('error')
+        expect(result['error']).to eq(I18n.t('api.message.unauthorized'))
+        expect(response.headers).to have_key('X-Error-Detail')
+        expect(response.headers['X-Error-Detail']).to eq(I18n.t('api.message.jwt.invalid'))
+      end
+    end
+
+    context 'when requesting a non-existing ID,' do
+      before(:each) do
+        put(
+          api_v3_badge_path(id: -1),
+          params: { number: 'TEST_CODE' },
+          headers: fixture_headers
+        )
+      end
+      it 'is successful anyway' do
+        expect(response).to be_successful
+      end
+      it 'returns a nil JSON body' do
+        expect(JSON.parse(response.body)).to be nil
+      end
+    end
+  end
 end

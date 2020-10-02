@@ -1,0 +1,168 @@
+# Group TeamAffiliations
+
+## TeamAffiliation [/api/v3/team_affiliation/{id}]
+
+### retrieve details [GET]
+The TeamAffiliation instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities:
+- `Team`
+- `Season`
+- `Badge`, _full list_ from the linked Season
+
+A valid JWT value is required for the `Authorization` request header.
+
+
+* * *
+
+
+#### Bash:
+
+```
+$> curl -i -X GET -H "Content-Type: application/json" \
+        -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+        "<API_HOST:PORT>/api/v3/team_affiliation/5727"
+```
+
+
+#### Ruby/`RestClient`:
+
+```
+> res = RestClient::Request.execute(method: :get, url: 'localhost:3000/api/v3/team_affiliation/5727',
+           headers: { "Authorization" => "Bearer VALID-SESSION-JWT"} )
+ => <RestClient::Response 200 "{\"id\":5727, ...">
+```
+
+
+* * *
+
+
+
++ Parameters
+    + id (number) - TeamAffiliation ID
+
++ Request ok (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        {
+            "id": 5727,
+            // [...]
+            "number": "04200002",
+            "name": "CSInuoto OberFerrari",
+            "must_calculate_goggle_cup": true,
+            "team_id": 1,
+            "season_id": 191,
+            // [...]
+            "created_at": "2019-10-16T00:00:00.000Z",
+            "updated_at": "2019-10-16T00:00:00.000Z",
+            "is_autofilled": false,
+
+            // Embedded associated Team:
+            "team": {
+                "id": 1,
+                // [...]
+                "name": "CSI NUOTO OBER FERRARI ASD",
+                "editable_name": "CSI NUOTO OBER FERRARI ASD",
+                "address": "Team HQ address",
+                "zip": "",
+                "phone_mobile": "",
+                "phone_number": "",
+                "fax_number": null,
+                "e_mail": "contact.email@this.is.just.a.fake.domain.com",
+                "contact_name": "Marco Ligabue",
+                "notes": "whatever the team manager needs to write here",
+                "name_variations": null,
+                "city_id": 37,
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2019-02-17T10:26:36.000Z",
+                // [...]
+                "home_page_url": ""
+            },
+
+            // Embedded associated Season:
+            "season": {
+                "id": 191,
+                "lock_version": 0,
+                "description": "Circuito regionale Emilia master CSI 2019/2020",
+                "begin_date": "2019-10-01",
+                "end_date": "2020-09-30",
+                "season_type_id": 2,
+                "created_at": "2019-10-16T07:20:51.000Z",
+                "updated_at": "2019-10-16T07:20:51.000Z",
+                "header_year": "2019/2020",
+                "edition": 20,
+                "edition_type_id": 5,
+                "timing_type_id": 2,
+                "rules": null,
+                "has_individual_rank": true,
+                "badge_fee": "10.0"
+            },
+
+            // Embedded Badges (all) from the associated Season:
+            "badges": [
+                {
+                    "id": 124947,
+                    "lock_version": 0,
+                    "number": "04204788",
+                    "season_id": 191,
+                    "swimmer_id": 142,
+                    "team_id": 1,
+                    "category_type_id": 1320,
+                    "user_id": 1,
+                    "created_at": "2019-10-16T00:00:00.000Z",
+                    "updated_at": "2019-10-16T00:00:00.000Z",
+                    "entry_time_type_id": 5,
+                    "team_affiliation_id": 5727,
+                    "final_rank": null,
+                    "is_out_of_goggle_cup": false,
+                    "has_to_pay_fees": false,
+                    "has_to_pay_badge": false,
+                    "has_to_pay_relays": false
+                },
+                // [...season 191 badges...]
+            ]
+        }
+
++ Request ID not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request JWT missing (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
