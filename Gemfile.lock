@@ -182,6 +182,9 @@ GEM
       activesupport
       grape (>= 0.16.0)
       rake
+    grape_logging (1.8.4)
+      grape
+      rack
     guard (2.16.2)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -418,6 +421,7 @@ DEPENDENCIES
   goggles_db!
   grape
   grape-route-helpers
+  grape_logging
   guard
   guard-bundler
   guard-rspec

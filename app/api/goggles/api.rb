@@ -1,21 +1,38 @@
 # frozen_string_literal: true
 
 require 'version'
+require 'audit_formatter'
+require 'grape_logging'
 
 module Goggles
   # = Goggles main API v3 Grape controller
   #
   # Mounts all required API modules
   #
-  #   - version:  1.01
+  #   - version:  1.07
   #   - author:   Steve A.
-  #   - build:    20200925
+  #   - build:    20201002
   #
   class API < Grape::API
+    helpers APIHelpers
+
     version      'v3', using: :path, vendor: 'goggles'
     prefix       :api
     format       :json
     content_type :json, 'application/json'
+
+    # Audit log setup:
+    logger = Logger.new('log/api_audit.log', 10, 1_024_000)
+    logger.formatter = AuditFormatter.new
+    use GrapeLogging::Middleware::RequestLogger, {
+      logger: logger,
+      include: [
+        GrapeLogging::Loggers::Response.new,
+        GrapeLogging::Loggers::FilterParameters.new,
+        GrapeLogging::Loggers::ClientEnv.new,
+        GrapeLogging::Loggers::RequestHeaders.new
+      ]
+    }
 
     resource :status do
       # GET /api/:version/status

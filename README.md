@@ -32,6 +32,13 @@ The endpoints allow an authorized account to manage:
 
 TODO
 
+
+## Audit log
+
+The Audit log is store inside `log/api_audit.log`.
+The Logger instance will split it and keep the latest 10 files of 1 MB each.
+
+
 ### Suggested dependancies:
 
 *For editing & browsing API Blueprints:*
@@ -57,7 +64,7 @@ TODO
 
 ## How to run the test suite
 
-TODO
+Use `guard` and just hit Enter.
 
 
 ## Services (job queues, cache servers, search engines, etc.)
