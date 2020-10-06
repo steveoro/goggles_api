@@ -1,8 +1,9 @@
 # Group Badges
 
-## Badge [/api/v3/badge/{id}]
+# Badge details [/api/v3/badge/{id}]
 
-### retrieve details [GET]
+## find [GET]
+
 The Badge instance matching the specified `id` returned as JSON.
 
 The returned result includes these other 1st-level linked entities:
@@ -19,7 +20,7 @@ A valid JWT value is required for the `Authorization` request header.
 * * *
 
 
-#### Bash:
+### Bash:
 
 ```
 $> curl -i -X GET -H "Content-Type: application/json" \
@@ -28,7 +29,7 @@ $> curl -i -X GET -H "Content-Type: application/json" \
 ```
 
 
-#### Ruby/`RestClient`:
+### Ruby/`RestClient`:
 
 ```
 > res = RestClient::Request.execute(method: :get, url: 'localhost:3000/api/v3/badge/124947',
@@ -201,7 +202,8 @@ $> curl -i -X GET -H "Content-Type: application/json" \
 
 
 
-### update details [PUT]
+## edit [PUT]
+
 Allow direct update for the Badge number and other limited fields given the `id` of the row.
 
 Returns 'true' on success, an empty result when not found.
@@ -266,6 +268,407 @@ $> curl -i -X PUT -H "Content-Type: application/json" \
 + Response 200 (application/json)
 
         null
+
+
++ Request bad JWT (application/json)
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request JWT missing (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+# Badge list [/api/v3/badges/]
+
+## for_team [GET /api/v3/badges/for_team/{team_id}?sw={swimmer_id}&ta={team_affiliation_id}&se={season_id}]
+
+
+The list of Badges associated to the specified `team_id`, returned as JSON and optionally filtered by:
+
+- `swimmer_id`
+- `team_affiliation_id`
+- `season_id`
+
+A valid JWT value is required for the `Authorization` request header.
+
+
+* * *
+
+
+### Bash:
+
+```
+$> curl -i -X GET -H "Content-Type: application/json" \
+        -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+        "<API_HOST:PORT>/api/v3/badges/for_team/1"
+```
+
+
+### Ruby/`RestClient`:
+
+```
+> res = RestClient::Request.execute(method: :get, url: 'localhost:3000/api/v3/badges/for_team/1',
+           headers: { "Authorization" => "Bearer VALID-SESSION-JWT"} )
+ => <RestClient::Response 200 "{\"id\":12494...">
+```
+
+
+* * *
+
+
++ Parameters
+    + team_id (number, required) - Badge ID
+    + swimmer_id (number, optional) - Swimmer ID
+    + team_affiliation_id (number, optional) - TeamAffiliation ID
+    + season_id (number, optional) - Season ID
+
++ Request ok (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        [{
+            "id": 124947,
+            "number": "04204788",
+            "season_id": 191,
+            "swimmer_id": 142,
+            "team_id": 1,
+            "category_type_id": 1320,
+            // [...]
+            "created_at": "2019-10-16T00:00:00.000Z",
+            "updated_at": "2019-10-16T00:00:00.000Z",
+            "entry_time_type_id": 5,
+            "team_affiliation_id": 5727,
+            "final_rank": null,
+            "is_out_of_goggle_cup": false,
+            "has_to_pay_fees": false,
+            "has_to_pay_badge": false,
+            "has_to_pay_relays": false,
+
+            // Embedded associated Swimmer:
+            "swimmer": {
+                "id": 142,
+                "lock_version": 1,
+                "last_name": "ALLORO",
+                "first_name": "STEFANO",
+                "year_of_birth": 1969,
+                "phone_mobile": null,
+                "phone_number": null,
+                "e_mail": null,
+                "nickname": "",
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                // [...]
+                "complete_name": "ALLORO STEFANO",
+                "is_year_guessed": false
+            },
+
+            // Embedded associated TeamAffiliation:
+            "team_affiliation": {
+                "id": 5727,
+                "number": "04200002",
+                "name": "CSInuoto OberFerrari",
+                "must_calculate_goggle_cup": true,
+                "team_id": 1,
+                "season_id": 191,
+                // [...]
+                "is_autofilled": false
+            },
+
+            // Embedded associated Season:
+            "season": {
+                "id": 191,
+                // [...]
+                "description": "Circuito regionale Emilia master CSI 2019/2020",
+                "begin_date": "2019-10-01",
+                "end_date": "2020-09-30",
+                "season_type_id": 2,
+                "created_at": "2019-10-16T07:20:51.000Z",
+                "updated_at": "2019-10-16T07:20:51.000Z",
+                "header_year": "2019/2020",
+                "edition": 20,
+                "edition_type_id": 5,
+                "timing_type_id": 2,
+                "rules": null,
+                "has_individual_rank": true,
+                "badge_fee": "10.0"
+            },
+            "team": {
+                "id": 1,
+                // [...]
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T16:04:16.000Z",
+                "name": "CSI NUOTO OBER FERRARI ASD",
+                "editable_name": "CSI NUOTO OBER FERRARI ASD",
+                "address": "Team HQ address",
+                "zip": "",
+                "phone_mobile": "",
+                "phone_number": "",
+                "fax_number": null,
+                "e_mail": "contact.email@this.is.just.a.fake.domain.com",
+                "contact_name": "Marco Ligabue",
+                "notes": "whatever the team manager needs to write here",
+                "name_variations": null,
+                "city_id": 37,
+                // [...]
+                "home_page_url": "",
+            },
+            "category_type": {
+                "id": 1320,
+                // [...]
+                "code": "M50",
+                "federation_code": "8",
+                "description": "MASTER 50",
+                "short_name": "M50",
+                "group_name": "MASTER",
+                "age_begin": 50,
+                "age_end": 54,
+                "is_a_relay": false,
+                // [...]
+                "season_id": 191,
+                "is_out_of_race": false,
+                "is_undivided": false
+            },
+            "entry_time_type": {
+                "id": 5,
+                "code": "U",
+                // [...]
+            }
+        }]
+
++ Request ID not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request JWT missing (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## for_swimmer [GET /api/v3/badges/for_swimmer/{swimmer_id}?tm={team_id}&ta={team_affiliation_id}&se={season_id}]
+
+The list of Badges associated to the specified `swimmer_id`, returned as JSON and optionally filtered by:
+
+- `team_id`
+- `team_affiliation_id`
+- `season_id`
+
+A valid JWT value is required for the `Authorization` request header.
+
+A valid JWT value is required for the `Authorization` request header.
+
+
+* * *
+
+
+### Bash:
+
+```
+$> curl -i -X GET -H "Content-Type: application/json" \
+        -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+        "<API_HOST:PORT>/api/v3/badges/for_swimmer/142"
+```
+
+
+### Ruby/`RestClient`:
+
+```
+> res = RestClient::Request.execute(method: :get, url: 'localhost:3000/api/v3/badges/for_swimmer/142',
+           headers: { "Authorization" => "Bearer VALID-SESSION-JWT"} )
+ => <RestClient::Response 200 "{\"id\":12494...">
+```
+
+
+* * *
+
+
++ Parameters
+    + swimmer_id (number, required) - Swimmer ID
+    + team_id (number, optional) - Badge ID
+    + team_affiliation_id (number, optional) - TeamAffiliation ID
+    + season_id (number, optional) - Season ID
+
++ Request ok (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        [{
+            "id": 124947,
+            "number": "04204788",
+            "season_id": 191,
+            "swimmer_id": 142,
+            "team_id": 1,
+            "category_type_id": 1320,
+            // [...]
+            "created_at": "2019-10-16T00:00:00.000Z",
+            "updated_at": "2019-10-16T00:00:00.000Z",
+            "entry_time_type_id": 5,
+            "team_affiliation_id": 5727,
+            "final_rank": null,
+            "is_out_of_goggle_cup": false,
+            "has_to_pay_fees": false,
+            "has_to_pay_badge": false,
+            "has_to_pay_relays": false,
+
+            // Embedded associated Swimmer:
+            "swimmer": {
+                "id": 142,
+                "lock_version": 1,
+                "last_name": "ALLORO",
+                "first_name": "STEFANO",
+                "year_of_birth": 1969,
+                "phone_mobile": null,
+                "phone_number": null,
+                "e_mail": null,
+                "nickname": "",
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                // [...]
+                "complete_name": "ALLORO STEFANO",
+                "is_year_guessed": false
+            },
+
+            // Embedded associated TeamAffiliation:
+            "team_affiliation": {
+                "id": 5727,
+                "number": "04200002",
+                "name": "CSInuoto OberFerrari",
+                "must_calculate_goggle_cup": true,
+                "team_id": 1,
+                "season_id": 191,
+                // [...]
+                "is_autofilled": false
+            },
+
+            // Embedded associated Season:
+            "season": {
+                "id": 191,
+                // [...]
+                "description": "Circuito regionale Emilia master CSI 2019/2020",
+                "begin_date": "2019-10-01",
+                "end_date": "2020-09-30",
+                "season_type_id": 2,
+                "created_at": "2019-10-16T07:20:51.000Z",
+                "updated_at": "2019-10-16T07:20:51.000Z",
+                "header_year": "2019/2020",
+                "edition": 20,
+                "edition_type_id": 5,
+                "timing_type_id": 2,
+                "rules": null,
+                "has_individual_rank": true,
+                "badge_fee": "10.0"
+            },
+            "team": {
+                "id": 1,
+                // [...]
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T16:04:16.000Z",
+                "name": "CSI NUOTO OBER FERRARI ASD",
+                "editable_name": "CSI NUOTO OBER FERRARI ASD",
+                "address": "Team HQ address",
+                "zip": "",
+                "phone_mobile": "",
+                "phone_number": "",
+                "fax_number": null,
+                "e_mail": "contact.email@this.is.just.a.fake.domain.com",
+                "contact_name": "Marco Ligabue",
+                "notes": "whatever the team manager needs to write here",
+                "name_variations": null,
+                "city_id": 37,
+                // [...]
+                "home_page_url": "",
+            },
+            "category_type": {
+                "id": 1320,
+                // [...]
+                "code": "M50",
+                "federation_code": "8",
+                "description": "MASTER 50",
+                "short_name": "M50",
+                "group_name": "MASTER",
+                "age_begin": 50,
+                "age_end": 54,
+                "is_a_relay": false,
+                // [...]
+                "season_id": 191,
+                "is_out_of_race": false,
+                "is_undivided": false
+            },
+            "entry_time_type": {
+                "id": 5,
+                "code": "U",
+                // [...]
+            }
+        }]
+
++ Request ID not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
 
 
 + Request bad JWT (application/json)

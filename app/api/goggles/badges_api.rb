@@ -3,11 +3,13 @@
 module Goggles
   # = Goggles API v3: Badge API Grape controller
   #
-  #   - version:  1.00
+  #   - version:  1.07
   #   - author:   Steve A.
-  #   - build:    20200925
+  #   - build:    20201006
   #
   class BadgesAPI < Grape::API
+    helpers APIHelpers
+
     format        :json
     content_type  :json, 'application/json'
 
@@ -24,8 +26,7 @@ module Goggles
       end
       route_param :id do
         get do
-          !CmdAuthorizeAPIRequest.new(headers).call.success? &&
-            error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.jwt.invalid'))
+          check_jwt_session
 
           GogglesDb::Badge.find_by_id(params['id'])
         end
@@ -49,12 +50,42 @@ module Goggles
       end
       route_param :id do
         put do
-          !CmdAuthorizeAPIRequest.new(headers).call.success? &&
-            error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.jwt.invalid'))
+          check_jwt_session
 
           badge = GogglesDb::Badge.find_by_id(params['id'])
           badge&.update!(declared(params, include_missing: false))
         end
+      end
+    end
+
+    resource :badges do
+      # GET /api/:version/badges
+      #
+      # Given some optional filtering parameters, returns the paginated list of associated badges.
+      #
+      # == Returns:
+      # The list of Badges for the specified filtering parameters as an array of JSON objects.
+      # Pagination links are stored in the response headers.
+      # See GogglesDb::Badge#to_json for structure details.
+      #
+      desc 'List Badges'
+      params do
+        optional :team_id, type: Integer, desc: 'optional: associated Team ID'
+        optional :team_affiliation_id, type: Integer, desc: 'optional: associated TeamAffiliation ID'
+        optional :season_id, type: Integer, desc: 'optional: associated Season ID'
+        optional :swimmer_id, type: Integer, desc: 'optional: associated Swimmer ID'
+        use :pagination
+      end
+      paginate
+      get do
+        check_jwt_session
+
+        paginate GogglesDb::Badge.where(
+          filtering_hash_for(
+            params,
+            %w[team_id team_affiliation_id season_id swimmer_id]
+          )
+        )
       end
     end
   end

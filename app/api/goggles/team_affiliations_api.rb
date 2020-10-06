@@ -3,11 +3,13 @@
 module Goggles
   # = Goggles API v3: TeamAffiliation API Grape controller
   #
-  #   - version:  1.00
+  #   - version:  1.07
   #   - author:   Steve A.
-  #   - build:    20200925
+  #   - build:    20201006
   #
   class TeamAffiliationsAPI < Grape::API
+    helpers APIHelpers
+
     format        :json
     content_type  :json, 'application/json'
 
@@ -24,8 +26,7 @@ module Goggles
       end
       route_param :id do
         get do
-          !CmdAuthorizeAPIRequest.new(headers).call.success? &&
-            error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.jwt.invalid'))
+          check_jwt_session
 
           GogglesDb::TeamAffiliation.find_by_id(params['id'])
         end

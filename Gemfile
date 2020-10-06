@@ -27,12 +27,13 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
+gem 'api-pagination'
 gem 'devise'
 gem 'goggles_db', git: 'git@github.com:steveoro/goggles_db' # (currently available only as a private repo)
 gem 'grape'
 gem 'grape_logging'
-# gem 'grape-middleware-logger'
 gem 'grape-route-helpers'
+gem 'kaminari'
 gem 'rest-client'
 gem 'simple_command'
 

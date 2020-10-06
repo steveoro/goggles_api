@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'support/api_session_helpers'
+require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::TeamsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
@@ -36,28 +37,14 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
       before(:each) do
         get api_v3_team_path(id: fixture_team.id), headers: { 'Authorization' => 'you wish!' }
       end
-      it 'is NOT successful' do
-        expect(response).not_to be_successful
-      end
-      it 'responds with a generic error message and its details in the header' do
-        result = JSON.parse(response.body)
-        expect(result).to have_key('error')
-        expect(result['error']).to eq(I18n.t('api.message.unauthorized'))
-        expect(response.headers).to have_key('X-Error-Detail')
-        expect(response.headers['X-Error-Detail']).to eq(I18n.t('api.message.jwt.invalid'))
-      end
+      it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) do
         get api_v3_team_path(id: -1), headers: fixture_headers
       end
-      it 'is successful anyway' do
-        expect(response).to be_successful
-      end
-      it 'returns a nil JSON body' do
-        expect(JSON.parse(response.body)).to be nil
-      end
+      it_behaves_like 'an empty but successful JSON response'
     end
   end
 end

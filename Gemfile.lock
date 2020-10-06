@@ -86,6 +86,7 @@ GEM
     acts_as_votable (0.12.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
+    api-pagination (4.8.2)
     ast (2.4.1)
     bcrypt (3.1.16)
     better_errors (2.7.1)
@@ -223,6 +224,18 @@ GEM
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
     jwt (2.2.2)
+    kaminari (1.2.1)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.2.1)
+      kaminari-activerecord (= 1.2.1)
+      kaminari-core (= 1.2.1)
+    kaminari-actionview (1.2.1)
+      actionview
+      kaminari-core (= 1.2.1)
+    kaminari-activerecord (1.2.1)
+      activerecord
+      kaminari-core (= 1.2.1)
+    kaminari-core (1.2.1)
     launchy (2.5.0)
       addressable (~> 2.7)
     letter_opener (1.7.0)
@@ -410,6 +423,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  api-pagination
   better_errors
   binding_of_caller
   bootsnap (>= 1.4.2)
@@ -427,6 +441,7 @@ DEPENDENCIES
   guard-rspec
   guard-rubocop
   guard-spring
+  kaminari
   letter_opener
   listen (~> 3.2)
   mysql2 (>= 0.4.4)

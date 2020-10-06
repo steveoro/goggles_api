@@ -11,7 +11,7 @@ module Goggles
   #
   #   - version:  1.07
   #   - author:   Steve A.
-  #   - build:    20201002
+  #   - build:    20201006
   #
   class API < Grape::API
     helpers APIHelpers
@@ -33,6 +33,8 @@ module Goggles
         GrapeLogging::Loggers::RequestHeaders.new
       ]
     }
+    #-- -----------------------------------------------------------------------
+    #++
 
     resource :status do
       # GET /api/:version/status
