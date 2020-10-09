@@ -170,8 +170,8 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
         end
       end
 
+      # Uses random fixtures, to have a quick 1-row result (no pagination, always):
       context 'filtering by a specific team_affiliation_id for a random single fixture,' do
-        # Uses random fixtures, to have a quick 1-row result (no pagination, always):
         before(:each) do
           get(api_v3_badges_path, params: { team_affiliation_id: fixture_badge.team_affiliation_id }, headers: fixture_headers)
         end
@@ -193,7 +193,7 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
-    context 'when filtering by a non-existing ID,' do
+    context 'when filtering by a non-existing value,' do
       before(:each) do
         get(api_v3_badges_path, params: { team_id: -1 }, headers: fixture_headers)
       end

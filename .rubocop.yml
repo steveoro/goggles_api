@@ -24,6 +24,7 @@ Layout/LineLength:
     - 'bin/bundle'
 
 Metrics/AbcSize:
+  Max: 21
   Exclude:
     - 'bin/bundle'
 

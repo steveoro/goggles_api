@@ -33,7 +33,9 @@ module Goggles
         error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.jwt.invalid'))
     end
 
-    # Returns a where-condition Hash given a field list and the current params Hash
+    # Returns a where-condition Hash given a field list and the current params Hash.
+    # Assumes a 1:1 mapping and same-named columns for both field_list (which are the column names)
+    # and the params.keys names.
     def filtering_hash_for(params, field_list)
       filtering = {}
       field_list.each do |field_name|

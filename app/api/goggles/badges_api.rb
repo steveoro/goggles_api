@@ -61,11 +61,19 @@ module Goggles
     resource :badges do
       # GET /api/:version/badges
       #
-      # Given some optional filtering parameters, returns the paginated list of associated badges.
+      # Given some optional filtering parameters, returns the paginated list of badges found.
       #
       # == Returns:
       # The list of Badges for the specified filtering parameters as an array of JSON objects.
-      # Pagination links are stored in the response headers.
+      # Returns only *exact* matches, no fuzzy or partial searches are done.
+      #
+      # *Pagination* links are stored and returned in the response headers.
+      # - 'Link': list of request links for last & next data pages, separated by ", "
+      # - 'Total': total data rows found
+      # - 'Per-Page': total rows per page
+      # - 'Page': current page
+      #
+      # See official API blueprint docs for more info.
       # See GogglesDb::Badge#to_json for structure details.
       #
       desc 'List Badges'

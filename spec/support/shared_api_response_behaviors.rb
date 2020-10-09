@@ -35,11 +35,13 @@ end
 #-- ---------------------------------------------------------------------------
 #++
 
+# REQUIRES/ASSUMES:
+# - 'default_per_page' to be already set
 shared_examples_for 'response with pagination links & values in headers' do
   it 'contains the pagination values for the first data page in the response headers' do
     expect(response.headers['Page']).to eq('1')
     expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
-    expect(response.headers['Total'].to_i).to be > default_per_page
+    expect(response.headers['Total'].to_i).to be_positive
   end
   it 'contains the next & last pagination links in the response headers' do
     expect(response.headers['Link']).to include('next').and include('last')
@@ -55,10 +57,12 @@ shared_examples_for 'response with pagination links & values in headers' do
   end
 end
 
+# REQUIRES/ASSUMES:
+# - 'default_per_page' to be already set
 shared_examples_for 'single response without pagination links in headers' do
   it 'doesn not contain the pagination values or links in the response headers' do
     expect(response.headers['Page']).to eq('1')
-    expect(response.headers['Per-Page']).to eq('25') # Default 'per_page'
+    expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
     expect(response.headers['Total']).to eq('1')
     expect(response.headers['Link']).to be nil
   end
