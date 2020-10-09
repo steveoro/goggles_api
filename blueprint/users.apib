@@ -1,48 +1,8 @@
 # Group Users
 
-## User [/api/v3/user/{id}]
+## User details [/api/v3/user/{id}]
 
-### retrieve details [GET]
-The User instance matching the specified `id` returned as JSON.
-
-A valid JWT value is required for the `Authorization` request header.
-
-
-* * *
-
-
-#### Bash:
-
-```
-$> curl -i -X GET -H "Content-Type: application/json" \
-        -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-        "<API_HOST:PORT>/api/v3/user/1"
-```
-
-
-#### Ruby/`RestClient`:
-
-```
-> res = RestClient::Request.execute(method: :get, url: 'localhost:3000/api/v3/user/1',
-           headers: { "Authorization" => "Bearer VALID-SESSION-JWT"} )
- => <RestClient::Response 200 "{\"id\":1, ...">
-```
-
-
-* * *
-
-
-
-+ Parameters
-    + id (number) - User ID
-
-+ Request ok (application/json)
-
-    + Header
-
-            Authorization: "Bearer VALID-SESSION-JWT"
-
-+ Response 200 (application/json)
++ Model (application/json)
 
         {
             "id": 1,
@@ -60,7 +20,53 @@ $> curl -i -X GET -H "Content-Type: application/json" \
             // [...]
         }
 
-+ Request ID not found (application/json)
+
+### find [GET]
+The User instance matching the specified `id` returned as JSON.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id (number, required) - User ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/user/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(method: :get, url: 'localhost:3000/api/v3/user/1',
+            headers: { "Authorization" => "Bearer VALID-SESSION-JWT"} )
+    => <RestClient::Response 200 "{\"id\":1, ...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [User details][]
+
+
+
++ Request not found (application/json)
 
     + Header
 
@@ -72,6 +78,8 @@ $> curl -i -X GET -H "Content-Type: application/json" \
 
 
 + Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
 
     + Header
 
@@ -87,7 +95,7 @@ $> curl -i -X GET -H "Content-Type: application/json" \
 
             { "msg": "Unauthorized" }
 
-+ Request JWT missing (application/json)
++ Request no JWT (application/json)
 
 + Response 401 (application/json)
 

@@ -5,38 +5,17 @@
 ### new JWT [POST]
 Returns a new JSON Web Token for an API session if the given credentials are valid.
 
+_The JWT shall expire after 2 hours._
+`GogglesDb::JwtManager::TOKEN_LIFE` stores the current value.
+
+:key: static API key token **required**
+
 #### Body Attributes:
 
-- `e` (string): User email
-- `p` (string): User password
-- `t` (string): static authorization token for this API endpoint
-
-
-* * *
-
-
-#### Bash:
-
-```
-$> curl -i -X POST -H "Content-Type: application/json" \
-        -d '{"e": "steve.alloro@whatever.example", "p": "a-valid-password", \
-             "t": "valid-static-key-for-handshake"}' \
-        "<API_HOST:PORT>/api/v3/session"
-```
-
-
-#### Ruby/`RestClient`:
-
-```
-> res = RestClient.post('localhost:3000/api/v3/session',
-            {'e': 'steve.alloro@whatever.example',
-             'p': 'a-valid-password',
-             't': Rails.application.credentials.api_static_key})
- => <RestClient::Response 201 "{\"msg\":\"OK\"...">
-
-> puts res.body
-{"msg":"OK","jwt":<RETURNED_JWT_TEXT>}
-```
+- `e` (string, **required**): User email
+- `p` (string, **required**): User password
+- `t` (string, **required**): static authorization token for this API endpoint,
+  stored in the app credentials
 
 
 * * *
@@ -47,20 +26,56 @@ $> curl -i -X POST -H "Content-Type: application/json" \
     + p (string) - User password
     + t (string) - Static authorization token for the API endpoint
 
+
 + Request ok (application/json)
 
-        {
-            "e": "steve.alloro@whatever.example",
-            "p": "a-valid-password",
-            "t": "valid-static-key-for-handshake"
-        }
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"e": "steve.alloro@whatever.example", "p": "a-valid-password", \
+                "t": "valid-static-key-for-handshake"}' \
+            "<API_HOST:PORT>/api/v3/session"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/session',
+            {
+                'e': 'steve.alloro@whatever.example',
+                'p': 'a-valid-password',
+                't': Rails.application.credentials.api_static_key
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\"...">
+
+    > puts res.body
+    {"msg":"OK","jwt":<RETURNED_JWT_TEXT>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "e": "steve.alloro@whatever.example",
+                "p": "a-valid-password",
+                "t": "valid-static-key-for-handshake"
+            }
 
 + Response 200 (application/json)
 
         {
-         "msg": "OK",
-         "jwt": "New-VALID-SESSION-JWT"
+            "msg": "OK",
+            "jwt": "New-VALID-SESSION-JWT"
         }
+
 
 + Request unconfirmed user (application/json)
 
@@ -79,6 +94,7 @@ $> curl -i -X POST -H "Content-Type: application/json" \
     + Body
 
             { "msg": "Unauthorized" }
+
 
 + Request bad credentials (application/json)
 

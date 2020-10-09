@@ -38,6 +38,7 @@ gem 'rest-client'
 gem 'simple_command'
 
 group :development do
+  gem 'awesome_print' # color output formatter for Ruby objects
   gem 'better_errors'
   gem 'binding_of_caller'
 
