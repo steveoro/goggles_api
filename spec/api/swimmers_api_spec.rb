@@ -128,7 +128,7 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
         it 'is successful' do
           expect(response).to be_successful
         end
-        it 'returns a paginated array of JSON rows' do
+        it 'returns a paginated JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           expect(result_array.count).to eq(default_per_page)
@@ -144,7 +144,7 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
         it 'is successful' do
           expect(response).to be_successful
         end
-        it 'returns a paginated array of JSON rows' do
+        it 'returns a paginated JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = GogglesDb::Swimmer.where(first_name: fixture_first_name).count
@@ -161,7 +161,7 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
         it 'is successful' do
           expect(response).to be_successful
         end
-        it 'returns an array of JSON rows (when the result list has more than per_page rows)' do
+        it 'returns a paginated JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = GogglesDb::Swimmer.where(gender_type_id: fixture_gender_type_id).count

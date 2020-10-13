@@ -231,9 +231,9 @@ Returns 'true' on success, an empty result when not found.
     | --- | --- | --- |
     | 1 | `M` | manual |
     | 2 | `P` | personal |
-    | 2 | `G` | GoggleCup |
-    | 2 | `A` | preceding year |
-    | 3 | `U` | last race |
+    | 3 | `G` | GoggleCup |
+    | 4 | `A` | preceding year |
+    | 5 | `U` | last race |
 - `has_to_pay_fees` (boolean): 'true', the Swimmer has to pay additional meeting fees for the Championship; 'false', the Team provides
 - `has_to_pay_badge` (boolean): 'true', the Swimmer has to pay the badge registration; 'false', the Team provides
 - `has_to_pay_relays` (boolean): 'true', the Swimmer has to pay any relay event in the Championship; 'false', the Team provides
@@ -431,14 +431,14 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 
 + Parameters
-    + team_id: `1` (number, optional) - associated Badge ID
-    + swimmer_id: `142` (number, optional) - associated Swimmer ID
-    + team_affiliation_id: `5727` (number, optional) - associated TeamAffiliation ID
-    + season_id: `1` (number, optional) - associated Season ID
-    + page: `1` (number, optional) - pagination: selected page
-        + Default: `1`
-    + per_page: `25` (number, optional) - pagination: desired total rows per page
-        + Default: `25`
+    + team_id: 1 (number, optional) - associated Badge ID
+    + swimmer_id: 142 (number, optional) - associated Swimmer ID
+    + team_affiliation_id: 5727 (number, optional) - associated TeamAffiliation ID
+    + season_id: 1 (number, optional) - associated Season ID
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
 
 
 + Request ok (application/json)

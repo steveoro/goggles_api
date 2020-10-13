@@ -53,11 +53,12 @@ module Goggles
       end
     end
 
-    mount SessionAPI
-    mount UsersAPI
-    mount SwimmersAPI
-    mount TeamsAPI
-    mount TeamAffiliationsAPI
     mount BadgesAPI
+    mount SeasonsAPI
+    mount SessionAPI
+    mount SwimmersAPI
+    mount TeamAffiliationsAPI
+    mount TeamsAPI
+    mount UsersAPI
   end
 end

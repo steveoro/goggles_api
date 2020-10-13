@@ -44,7 +44,7 @@ module Goggles
         requires :id, type: Integer, desc: 'TeamAffiliation ID'
         optional :team_id, type: Integer, desc: 'associated Team ID'
         optional :season_id, type: Integer, desc: 'associated Season ID'
-        optional :name, type: String, desc: 'name as it appears in the enrollment of the Championship Season'
+        optional :name, type: String, desc: 'name as it appears in the registration rooster for the Championship Season'
         optional :number, type: String, desc: 'enrollment or registration badge number'
         optional :must_calculate_goggle_cup, type: Boolean, desc: 'true when the customized GoggleCup has to be computed'
       end
@@ -65,7 +65,8 @@ module Goggles
       #
       # == Returns:
       # The list of TeamAffiliations for the specified filtering parameters as an array of JSON objects.
-      # Returns only *exact* matches, no fuzzy or partial searches are done.
+      # Returns exact matches for most of the parameters, supports partial matches just for the text name,
+      # but no fuzzy searches are performed here. (Use dedicated /search endpoints for that.)
       #
       # *Pagination* links are stored and returned in the response headers.
       # - 'Link': list of request links for last & next data pages, separated by ", "
@@ -90,10 +91,9 @@ module Goggles
         check_jwt_session
 
         paginate GogglesDb::TeamAffiliation.where(
-          filtering_hash_for(
-            params,
-            %w[team_id season_id complete_name name number must_calculate_goggle_cup]
-          )
+          filtering_hash_for(params, %w[team_id season_id number must_calculate_goggle_cup])
+        ).where(
+          filtering_like_for(params, %w[name])
         )
       end
     end

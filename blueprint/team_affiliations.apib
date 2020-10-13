@@ -65,7 +65,7 @@
                     "lock_version": 0,
                     "number": "04204788",
                     "season_id": 191,
-                    "swimmer_id": 142,
+                    "team_affiliation_id": 142,
                     "team_id": 1,
                     "category_type_id": 1320,
                     "user_id": 1,
@@ -90,7 +90,7 @@ The TeamAffiliation instance matching the specified `id` returned as JSON.
 The returned result includes these other 1st-level linked entities:
 - `Team`
 - `Season`
-- `Badge`, _full list_ from the linked Season
+- `Badge`, _full list_ from the associated Season
 
 :key: `Authorization` request header => valid JWT **required**
 
@@ -99,7 +99,7 @@ The returned result includes these other 1st-level linked entities:
 
 
 + Parameters
-    + id (number, required) - TeamAffiliation ID
+    + id: 5727 (number, required) - TeamAffiliation ID
 
 
 + Request ok (application/json)
@@ -170,6 +170,7 @@ The returned result includes these other 1st-level linked entities:
 
 + Response 401 (application/json)
 
+
     + Header
 
             X-Error-Detail: "Missing JWT token"
@@ -177,3 +178,304 @@ The returned result includes these other 1st-level linked entities:
     + Body
 
             { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for some of the TeamAffiliation fields given the `id` of the row.
+
+Returns 'true' on success, an empty result when not found.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+#### Body Attributes:
+
+- `team_id` (number): associated Team ID
+- `season_id` (number): associated Season ID
+- `name` (string): name as it appears in the registration rooster for the Championship Season
+- `number` (string): enrollment or registration badge number
+- `must_calculate_goggle_cup` (boolean): 'true' when the customized GoggleCup has to be computed
+
+
+* * *
+
+
++ Parameters
+    + id: 5727 (number) - TeamAffiliation ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"name": "C.S.I. Ober Ferrari", \
+                 "number": "EMI 123456"}' \
+            "<API_HOST:PORT>/api/v3/team_affiliation/5727"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/team_affiliation/5727',
+                payload: {
+                    name: "C.S.I. Ober Ferrari",
+                    number: "EMI 123456"
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "team_id": 1,
+                "season_id": 191,
+                "name": "C.S.I. Ober Ferrari",
+                "number": "EMI 123456",
+                "must_calculate_goggle_cup": true
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "team_id": 1,
+                "season_id": 191,
+                "name": "C.S.I. Ober Ferrari",
+                "number": "EMI 123456",
+                "must_calculate_goggle_cup": true
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "team_id": 1,
+                "season_id": 191,
+                "name": "C.S.I. Ober Ferrari",
+                "number": "EMI 123456",
+                "must_calculate_goggle_cup": true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "team_id": 1,
+                "season_id": 191,
+                "name": "C.S.I. Ober Ferrari",
+                "number": "EMI 123456",
+                "must_calculate_goggle_cup": true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+# TeamAffiliation list [/api/v3/team_affiliations{?page,per_page,team_id,season_id,name,number,must_calculate_goggle_cup}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/team_affiliations?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/team_affiliations?page=2&team_id=1>; rel=\"next\""
+            Total: 46
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // TeamAffiliation details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // TeamAffiliation details 2
+                {
+                    "id": 15,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## team_affiliations [GET]
+
+The list of TeamAffiliations associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `team_id`
+- `season_id`
+- `name`
+- `number`
+- `must_calculate_goggle_cup`
+
+Returns exact matches for most of the parameters, supports partial matches just for the text name,
+but no fuzzy searches are performed: the matching rows for the name strings
+are selected using a simple "LIKE %?%" on the specified parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + team_id: 1 (number, optional) - associated Team ID
+    + season_id: 191 (number, optional) - associated Season ID
+    + name: `Ober Ferrari` (string, optional) - enrollment name (partial match supported)
+    + number: `04200002` (string, optional) - enrollment number or Team badge code
+    + must_calculate_goggle_cup: false (boolean, optional) - 'true' when year of birth has been deduced from other data
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/team_affiliations?team_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/team_affiliations',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { team_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [TeamAffiliation list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

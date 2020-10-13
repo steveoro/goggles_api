@@ -47,7 +47,6 @@ The Swimmer instance matching the specified `id` returned as JSON.
 The returned result includes these other 1st-level linked entities:
 - `User`, the `associated_user` for this Swimmer
 - `GenderType`
-
     | _id_ | _code_ | _description_ |
     | --- | --- | --- |
     | 1 | `M` | male |
@@ -61,7 +60,7 @@ The returned result includes these other 1st-level linked entities:
 
 
 + Parameters
-    + id (number, required) - Swimmer ID
+    + id: 142 (number, required) - Swimmer ID
 
 
 + Request ok (application/json)
@@ -139,3 +138,326 @@ The returned result includes these other 1st-level linked entities:
     + Body
 
             { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for some of the Swimmer fields given the `id` of the row.
+
+Returns 'true' on success, an empty result when not found.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+#### Body Attributes:
+
+- `first_name` (string): first name(s): when middle names are present, these will be concatenated and stored here too
+- `last_name` (string): the family name portion of the complete name, when it is known
+- `complete_name` (string): complete name, as it appears from the public rankings (italian ordering: last name first)
+- `nickname` (string): nickname
+- `year_of_birth` (number): year of birth
+- `associated_user_id` (number): associated User ID
+- `gender_type_id` (number): associated GenderType ID
+    | _id_ | _code_ | _description_ |
+    | --- | --- | --- |
+    | 1 | `M` | male |
+    | 2 | `F` | female |
+    | 3 | `X` | unknown |
+- `is_year_guessed` (boolean): 'true' when year of birth has been deduced from other data
+
+
+* * *
+
+
++ Parameters
+    + id: 142 (number) - Swimmer ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"nickname": "steve", "year_of_birth": 1969, \
+                 "is_year_guessed": "false"}' \
+            "<API_HOST:PORT>/api/v3/swimmer/142"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/swimmer/142',
+                payload: {
+                    nickname: "steve", year_of_birth: 1969,
+                    is_year_guessed: false
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "first_name": "Stefano",
+                "last_name": "Alloro",
+                "complete_name": "ALLORO STEFANO",
+                "nickname": "steve",
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                "is_year_guessed": false
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "first_name": "Stefano",
+                "last_name": "Alloro",
+                "complete_name": "ALLORO STEFANO",
+                "nickname": "steve",
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                "is_year_guessed": false
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "first_name": "Stefano",
+                "last_name": "Alloro",
+                "complete_name": "ALLORO STEFANO",
+                "nickname": "steve",
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                "is_year_guessed": false
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "first_name": "Stefano",
+                "last_name": "Alloro",
+                "complete_name": "ALLORO STEFANO",
+                "nickname": "steve",
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                "is_year_guessed": false
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+# Swimmer list [/api/v3/swimmers{?page,per_page,first_name,last_name,complete_name,gender_type_id,year_of_birth,is_year_guessed}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/swimmers?page=26&gender_type_id=1>; rel=\"last\", <http://localhost:3000/api/v3/swimmers?page=2&gender_type_id=1>; rel=\"next\""
+            Total: 652
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // Swimmer details 1
+                {
+                    "id": 4,
+                    // [...]
+                },
+
+                // Swimmer details 2
+                {
+                    "id": 5,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## swimmers [GET]
+
+The list of Swimmers associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `first_name`
+- `last_name`
+- `complete_name`
+- `gender_type_id`
+- `year_of_birth`
+- `is_year_guessed`
+
+Returns exact matches for `gender_type_id`, `year_of_birth` & `is_year_guessed`;
+supports partial matches for the string names, but no fuzzy searches are performed:
+the matching rows for the name strings are selected using a simple "LIKE %?%" on the specified parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + first_name: `Stefano` (string, optional) - first name(s): when middle names are present, these will be concatenated and stored here too (partial match supported)
+    + last_name: `Alloro` (string, optional) - the family name portion of the complete name, when it is known (partial match supported)
+    + complete_name: `ALLORO STEFANO` (string, optional) - complete name, as it appears from the public rankings (italian ordering: last name first; partial match supported)
+    + gender_type_id: 1 (number, optional) - associated GenderType ID
+    + year_of_birth: 1969 (number, optional) - year of birth
+    + is_year_guessed: false (boolean, optional) - 'true' when year of birth has been deduced from other data
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/swimmers?gender_type_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/swimmers',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { gender_type_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":4,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Swimmer list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

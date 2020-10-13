@@ -44,7 +44,7 @@
                     // [...]
                     "number": "43446",
                     "season_id": 192,
-                    "swimmer_id": 142,
+                    "team_id": 142,
                     "team_id": 1,
                     "category_type_id": 1293,
                     // [...]
@@ -62,7 +62,7 @@
                     // [...]
                     "number": "04204788",
                     "season_id": 191,
-                    "swimmer_id": 142,
+                    "team_id": 142,
                     "team_id": 1,
                     "category_type_id": 1320,
                     // [...]
@@ -121,7 +121,7 @@ The returned result includes these other 1st-level linked entities:
 
 
 + Parameters
-    + id (number, required) - Team ID
+    + id: 1 (number, required) - Team ID
 
 
 + Request ok (application/json)
@@ -197,3 +197,306 @@ The returned result includes these other 1st-level linked entities:
     + Body
 
             { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for some of the Team fields given the `id` of the row.
+
+Returns 'true' on success, an empty result when not found.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+#### Body Attributes:
+
+- `name` (string): first name(s): name of the Team (typically, read-only)
+- `editable_name` (string): name of the Team, as edited by the Team Manager
+- `city_id` (number): associated City ID
+- `address` (string): complete name, as it appears from the public rankings (italian ordering: last name first)
+- `zip` (string): Team HQ zip code, if available
+- `phone_mobile` (string): HQ mobile or secondary phone
+- `phone_number` (string): HQ official phone number
+- `contact_name` (string): official contact e-mail
+- `e_mail` (string): nickname
+- `notes` (string): additional notes by the Team Manager
+- `home_page_url` (string): Team Website URL
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number) - Team ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"editable_name": "C.S.I. NUOTO Ober Ferrari A.S.D.", \
+                 "city_id": 37}' \
+            "<API_HOST:PORT>/api/v3/team/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/team/142',
+                payload: {
+                    editable_name: "C.S.I. NUOTO Ober Ferrari A.S.D.",
+                    city_id: 37
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "name": "CSI NUOTO OBER FERRARI ASD",
+                "editable_name": "C.S.I. NUOTO Ober Ferrari A.S.D.",
+                "city_id": 37,
+                "address": "Via Agosti, 6",
+                "contact_name": "Marco Ligabue"
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "name": "CSI NUOTO OBER FERRARI ASD",
+                "editable_name": "C.S.I. NUOTO Ober Ferrari A.S.D.",
+                "city_id": 37,
+                "address": "Via Agosti, 6",
+                "contact_name": "Marco Ligabue"
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "name": "CSI NUOTO OBER FERRARI ASD",
+                "editable_name": "C.S.I. NUOTO Ober Ferrari A.S.D.",
+                "city_id": 37,
+                "address": "Via Agosti, 6",
+                "contact_name": "Marco Ligabue"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "name": "CSI NUOTO OBER FERRARI ASD",
+                "editable_name": "C.S.I. NUOTO Ober Ferrari A.S.D.",
+                "city_id": 37,
+                "address": "Via Agosti, 6",
+                "contact_name": "Marco Ligabue"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+# Team list [/api/v3/teams{?page,per_page,city_id,name,editable_name}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/teams?page=1&city_id=1>; rel=\"last\", <http://localhost:3000/api/v3/teams?page=1&city_id=1>; rel=\"next\""
+            Total: 5
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // Team details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // Team details 2
+                {
+                    "id": 14,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## teams [GET]
+
+The list of Teams associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `city_id`
+- `name`
+- `editable_name`
+
+Returns exact matches for `city_id`, supports partial matches for the string names,
+but no fuzzy searches are performed: the matching rows for the name strings
+are selected using a simple "LIKE %?%" on the specified parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + city_id: 1 (number, optional) - associated City ID
+    + name: `CSI OBER FERRARI` (string, optional) - name of the Team (partial match supported)
+    + editable_name: `C.S.I. Ober Ferrari` (string, optional) - name of the Team, as edited by the Team Manager (partial match supported)
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/teams?city_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/teams',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { city_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Team list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

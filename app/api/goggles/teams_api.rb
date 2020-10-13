@@ -71,7 +71,8 @@ module Goggles
       #
       # == Returns:
       # The list of Teams for the specified filtering parameters as an array of JSON objects.
-      # Returns only *exact* matches, no fuzzy or partial searches are done.
+      # Returns exact matches for city_id, supports partial matches for the text names,
+      # but no fuzzy searches are performed here. (Use dedicated /search endpoints for that.)
       #
       # *Pagination* links are stored and returned in the response headers.
       # - 'Link': list of request links for last & next data pages, separated by ", "
@@ -85,6 +86,8 @@ module Goggles
       desc 'List Teams'
       params do
         optional :city_id, type: Integer, desc: 'optional: associated City ID'
+        optional :name, type: String, desc: 'optional: name of the Team (partial match supported)'
+        optional :editable_name, type: String, desc: 'optional: name of the Team, as edited by the Team Manager (partial match supported)'
         use :pagination
       end
       paginate
@@ -92,10 +95,9 @@ module Goggles
         check_jwt_session
 
         paginate GogglesDb::Team.where(
-          filtering_hash_for(
-            params,
-            %w[city_id]
-          )
+          filtering_hash_for(params, %w[city_id])
+        ).where(
+          filtering_like_for(params, %w[name editable_name])
         )
       end
     end

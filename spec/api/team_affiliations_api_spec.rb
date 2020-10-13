@@ -135,7 +135,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
         it 'is successful' do
           expect(response).to be_successful
         end
-        it 'returns a paginated array of JSON rows' do
+        it 'returns a paginated JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           expect(result_array.count).to eq(default_per_page)
@@ -151,7 +151,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
         it 'is successful' do
           expect(response).to be_successful
         end
-        it 'returns a paginated array of JSON rows' do
+        it 'returns a JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = GogglesDb::TeamAffiliation.where(season_id: fixture_season_id).count
@@ -168,11 +168,31 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
         it 'is successful' do
           expect(response).to be_successful
         end
-        it 'returns an array of JSON rows (when the result list has more than per_page rows)' do
+        it 'returns a paginated JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = GogglesDb::TeamAffiliation.where(team_id: fixture_team.id).count
           expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+        end
+        it_behaves_like 'response with pagination links & values in headers'
+      end
+
+      context 'filtering by a partial name,' do
+        let(:fixture_name) { 'Ferrari' } # (This will surely have more than 'default_per_page' results)
+        let(:expected_results) { GogglesDb::TeamAffiliation.where('name LIKE ?', "%#{fixture_name}%") }
+
+        before(:each) { get(api_v3_team_affiliations_path, params: { name: fixture_name }, headers: fixture_headers) }
+
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'returns a paginated JSON array of associated, filtered rows' do
+          result_array = JSON.parse(response.body)
+          expect(result_array).to be_an(Array)
+          full_count = expected_results.count
+          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+          expected_team_id = expected_results.first.team_id
+          expect(result_array.map { |arr| arr['team_id'] }).to all eq(expected_team_id)
         end
         it_behaves_like 'response with pagination links & values in headers'
       end

@@ -68,7 +68,8 @@ module Goggles
       #
       # == Returns:
       # The list of Swimmers for the specified filtering parameters as an array of JSON objects.
-      # Returns only *exact* matches, no fuzzy or partial searches are done.
+      # Returns exact matches for gender_type_id, year_of_birth, & is_year_guessed; supports partial matches
+      # for the text name fields, but no fuzzy searches are performed here. (Use dedicated /search endpoints for that.)
       #
       # *Pagination* links are stored and returned in the response headers.
       # - 'Link': list of request links for last & next data pages, separated by ", "
@@ -81,9 +82,9 @@ module Goggles
       #
       desc 'List Swimmers'
       params do
-        optional :first_name, type: String, desc: 'optional: first name'
-        optional :last_name, type: String, desc: 'optional: last name'
-        optional :complete_name, type: String, desc: 'optional: complete name'
+        optional :first_name, type: String, desc: 'optional: first name (partial match supported)'
+        optional :last_name, type: String, desc: 'optional: last name (partial match supported)'
+        optional :complete_name, type: String, desc: 'optional: complete name (partial match supported)'
         optional :gender_type_id, type: Integer, desc: 'optional: associated GenderType ID'
         optional :year_of_birth, type: Integer, desc: 'optional: year of birth'
         optional :is_year_guessed, type: Integer, desc: 'optional: true when year of birth has been deduced from other data'
@@ -94,10 +95,9 @@ module Goggles
         check_jwt_session
 
         paginate GogglesDb::Swimmer.where(
-          filtering_hash_for(
-            params,
-            %w[first_name last_name complete_name gender_type_id year_of_birth is_year_guessed]
-          )
+          filtering_hash_for(params, %w[gender_type_id year_of_birth is_year_guessed])
+        ).where(
+          filtering_like_for(params, %w[first_name last_name complete_name])
         )
       end
     end

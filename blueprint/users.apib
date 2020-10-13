@@ -8,7 +8,7 @@
             "id": 1,
             "name": "steve",
             "description": "Stefano Alloro",
-            "swimmer_id": 142,
+            "user_id": 142,
             "created_at": "2013-10-23T17:10:00.000Z",
             "updated_at": "2020-02-09T18:17:29.000Z",
             // [...]
@@ -31,7 +31,7 @@ The User instance matching the specified `id` returned as JSON.
 
 
 + Parameters
-    + id (number, required) - User ID
+    + id: 1 (number, required) - User ID
 
 
 + Request ok (application/json)
@@ -106,3 +106,297 @@ The User instance matching the specified `id` returned as JSON.
     + Body
 
             { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for some of the User fields given the `id` of the row.
+
+Returns 'true' on success, an empty result when not found.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+#### Body Attributes:
+
+- `name` (string): User name
+- `first_name` (string): first name
+- `last_name` (string): last name or family name
+- `description` (string): user description or complete name
+- `year_of_birth` (number): year of birth
+- `swimmer_id` (number): associated Swimmer ID
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number) - User ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"first_name": "Stefano", "last_name": "Alloro", \
+                 "swimmer_id": 142}' \
+            "<API_HOST:PORT>/api/v3/user/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/user/1',
+                payload: {
+                    first_name: "Stefano", last_name: "Alloro",
+                    swimmer_id: 142
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "first_name": "Stefano",
+                "last_name": "Alloro",
+                "description": "Stefano Alloro",
+                "year_of_birth": 1969,
+                "swimmer_id": 142
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "first_name": "Stefano",
+                "last_name": "Alloro",
+                "description": "Stefano Alloro",
+                "year_of_birth": 1969,
+                "swimmer_id": 142
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "first_name": "Stefano",
+                "last_name": "Alloro",
+                "description": "Stefano Alloro",
+                "year_of_birth": 1969,
+                "swimmer_id": 142
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "first_name": "Stefano",
+                "last_name": "Alloro",
+                "description": "Stefano Alloro",
+                "year_of_birth": 1969,
+                "swimmer_id": 142
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+# User list [/api/v3/users{?page,per_page,name,first_name,last_name,description,email}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/users?page=1&email=steve.alloro>; rel=\"last\", <http://localhost:3000/api/v3/users?page=1&email=steve.alloro>; rel=\"next\""
+            Total: 1
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // User details 1
+                {
+                    "id": 1,
+                    // [...]
+                }
+
+                // (Any additional User details, if the filtering finds out more matches)
+            ]
+
+
+## users [GET]
+
+The list of Users associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `name`
+- `first_name`
+- `last_name`
+- `description`
+- `email`
+
+Finds the matching rows using a simple "LIKE %?%" on the specified parameter(s).
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + name: `steve` (string, optional) - User name (partial match supported)
+    + first_name: `Stefano` (string, optional) - first name (partial match supported)
+    + last_name: `Alloro` (string, optional) - family name (partial match supported)
+    + description: `Stefano Alloro` (string, optional) - User description or complete name ('first name' first; partial match supported)
+    + email: `steve.alloro@fake.domain.com` (string, optional) - User login email (partial match supported)
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/users?email=steve.alloro"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/users',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { email: steve.alloro }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [User list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

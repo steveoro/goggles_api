@@ -1,0 +1,512 @@
+# Group Seasons
+
+## Season details [/api/v3/season/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 192,
+            "description": "Circuito italiano supermaster FIN 2019/2020",
+            "begin_date": "2019-10-01",
+            "end_date": "2020-09-30",
+            "season_type_id": 1,
+            "created_at": "2019-10-14T05:52:03.000Z",
+            "updated_at": "2019-10-14T05:52:03.000Z",
+            "header_year": "2019/2020",
+            "edition": 19,
+            "edition_type_id": 5,
+            "timing_type_id": 3,
+            "rules": null,
+            "has_individual_rank": true,
+            "badge_fee": "24.0",
+
+            // Embedded associated SeasonType:
+            "season_type": {
+                "id": 1,
+                "code": "MASFIN",
+                "description": "CIRCUITO ITALIANO MASTER FIN",
+                "short_name": "MASTER FIN",
+                "federation_type_id": 1,
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z"
+            },
+
+            // Embedded associated EditionType:
+            "edition_type": {
+                "id": 5,
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z",
+                "code": "S"
+            },
+
+            // Embedded associated TimingType:
+            "timing_type": {
+                "id": 3,
+                "code": "A",
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z"
+            },
+
+            // *All* associated CategoryTypes (usually, more than 20):
+            "category_types": [
+                [0] {
+                "id": 1288,
+                "code": "M25",
+                "federation_code": "B",
+                "description": "MASTER 25",
+                "short_name": "M25",
+                "group_name": "MASTER",
+                "age_begin": 25,
+                "age_end": 29,
+                "is_a_relay": false,
+                "created_at": "2019-10-14T05:52:03.000Z",
+                "updated_at": "2019-10-14T05:52:03.000Z",
+                "season_id": 192,
+                "is_out_of_race": false,
+                "is_undivided": false
+                },
+
+                [1] {
+                    // [...]
+                }
+
+                // [...]
+            ]
+        }
+
+
+### find [GET]
+The Season instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities:
+- `SeasonType`
+    | _id_ | _code_ | _description_ |
+    | --- | --- | --- |
+    | 1 | `MASFIN` | FIN Masters |
+    | 2 | `MASCSI` | CSI Masters |
+    | 3 | `MASUISP` | UISP Masters |
+    | 4 | `AGOFIN` | FIN Pro |
+    | 5 | `AGOCSI` | CSI Pro |
+    | 5 | `AGOUISP` | UISP Pro |
+    | 5 | `MASLEN` | FINA Masters |
+    | 5 | `MASFINA` | FINA Masters |
+- `EditionType`
+    | _id_ | _code_ | _description_ |
+    | --- | --- | --- |
+    | 1 | `O` | ordinal |
+    | 2 | `R` | roman numeral |
+    | 3 | `N` | none |
+    | 4 | `A` | yearly |
+    | 5 | `S` | seasonal |
+- `TimingType`
+    | _id_ | _code_ | _description_ |
+    | --- | --- | --- |
+    | 1 | `M` | manual |
+    | 2 | `S` | semi-auto |
+    | 3 | `A` | automatic |
+- `CategoryType`, _full list_ of associated rows
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 192 (number, required) - Season ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/season/192"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/season/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":191, ...">
+    ```
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Season details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for some of the Season fields given the `id` of the row.
+
+Returns 'true' on success, an empty result when not found.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+#### Body Attributes:
+
+- `description` (string): verbose name or description for the Season
+- `begin_date` (date): starting date or Season first day
+- `end_date` (date): ending date or Season last day
+- `season_type_id` (number): associated SeasonType ID
+    | _id_ | _code_ | _description_ |
+    | --- | --- | --- |
+    | 1 | `MASFIN` | FIN Masters |
+    | 2 | `MASCSI` | CSI Masters |
+    | 3 | `MASUISP` | UISP Masters |
+    | 4 | `AGOFIN` | FIN Pro |
+    | 5 | `AGOCSI` | CSI Pro |
+    | 5 | `AGOUISP` | UISP Pro |
+    | 5 | `MASLEN` | FINA Masters |
+    | 5 | `MASFINA` | FINA Masters |
+- `header_year` (string): descriptive label for Season year; typical format: `YYYY` (season year)
+   or `YYYY/YYYY+1`(season first year/season closing year)
+- `edition` (number): edition ordinal number
+- `edition_type_id` (number): associated EditionType ID
+    | _id_ | _code_ | _description_ |
+    | --- | --- | --- |
+    | 1 | `O` | ordinal |
+    | 2 | `R` | roman numeral |
+    | 3 | `N` | none |
+    | 4 | `A` | yearly |
+    | 5 | `S` | seasonal |
+- `timing_type_id` (number): associated TimingType ID
+    | _id_ | _code_ | _description_ |
+    | --- | --- | --- |
+    | 1 | `M` | manual |
+    | 2 | `S` | semi-auto |
+    | 3 | `A` | automatic |
+- `has_individual_rank` (boolean): true when individual rankings are supported
+- `badge_fee` (string/float): 'base registration/badge fee (in local currency)
+
+
+* * *
+
+
++ Parameters
+    + id: 192 (number) - Season ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"description": "Circuito italiano supermaster FIN 2019/2020", \
+                 "header_year": "2019/2020", edition: 19}' \
+            "<API_HOST:PORT>/api/v3/season/192"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/season/142',
+                payload: {
+                    description: "Circuito italiano supermaster FIN 2019/2020",
+                    header_year: "2019/2020", edition: 19
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "description": "Circuito italiano supermaster FIN 2019/2020",
+                "header_year": "2019/2020",
+                "edition": 19,
+                "has_individual_rank": true
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "description": "Circuito italiano supermaster FIN 2019/2020",
+                "header_year": "2019/2020",
+                "edition": 19,
+                "has_individual_rank": true
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "description": "Circuito italiano supermaster FIN 2019/2020",
+                "header_year": "2019/2020",
+                "edition": 19,
+                "has_individual_rank": true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "description": "Circuito italiano supermaster FIN 2019/2020",
+                "header_year": "2019/2020",
+                "edition": 19,
+                "has_individual_rank": true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+# Season list [/api/v3/seasons{?page,per_page,begin_date,end_date,season_type_id,header_year}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/seasons?page=1&edition=19>; rel=\"last\", <http://localhost:3000/api/v3/seasons?page=1&edition=19>; rel=\"next\""
+            Total: 3
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // Season details 1
+                {
+                    "id": 191,
+                    // [...]
+                },
+
+                // Season details 2
+                {
+                    "id": 192,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## seasons [GET]
+
+The list of Seasons associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `begin_date`
+- `end_date`
+- `season_type_id`
+- `header_year`
+
+Returns only *exact* matches; no fuzzy searches are performed.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + begin_date: `2019-10-01` (string, optional) - first day of the Season (use ISO format)
+    + end_date: `2020-09-30` (string, optional) - last day of the Season (use ISO format)
+    + season_type_id: 1 (number, optional) - associated SeasonType ID
+    + header_year: `2019/2020` (string, optional) - referenced year(s) (format: YYYY or YYYY/YYYY+1)
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/seasons?edition=19"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/seasons',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { edition: 19 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":191,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Season list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

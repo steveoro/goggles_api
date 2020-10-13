@@ -114,7 +114,7 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
         it 'is successful' do
           expect(response).to be_successful
         end
-        it 'returns a paginated array of JSON rows' do
+        it 'returns a paginated JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           expect(result_array.count).to eq(default_per_page)
@@ -128,13 +128,33 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
         it 'is successful' do
           expect(response).to be_successful
         end
-        it 'returns a paginated array of JSON rows' do
+        it 'returns a JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = GogglesDb::Team.where(city_id: fixture_city_id).count
           expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
         end
         # (We can't really assert pagination links here, it's enough to test these in the context below)
+      end
+
+      %w[name editable_name].each do |field_name|
+        context "filtering by a partial #{field_name}," do
+          let(:fixture_name) { %w[Ferrari Tricolore].sample }
+          let(:expected_team) { GogglesDb::Team.where("#{field_name} LIKE ?", "%#{fixture_name}%").first }
+
+          before(:each) { get(api_v3_teams_path, params: { field_name => fixture_name }, headers: fixture_headers) }
+
+          it 'is successful' do
+            expect(response).to be_successful
+          end
+          it 'returns a JSON array containing the single expected row' do
+            result_array = JSON.parse(response.body)
+            expect(result_array).to be_an(Array)
+            expect(result_array.count).to be >= 1
+            expect(result_array.first['id']).to eq(expected_team.id)
+          end
+          it_behaves_like 'single response without pagination links in headers'
+        end
       end
 
       # Uses random fixtures, to have a quick 1-row result (no pagination, always):
