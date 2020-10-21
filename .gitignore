@@ -30,6 +30,8 @@
 config/database.yml
 /config/deploy.rb
 /config/deploy/*
+# Other sensible files:
+.env
 
 # Ignore node_modules
 /node_modules

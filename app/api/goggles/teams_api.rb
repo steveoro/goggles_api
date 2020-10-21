@@ -90,6 +90,10 @@ module Goggles
         optional :editable_name, type: String, desc: 'optional: name of the Team, as edited by the Team Manager (partial match supported)'
         use :pagination
       end
+      # Enforcing 'max_per_page' will add the allowed range to the swagger docs and
+      # cause Grape to return an error when an out-of-range value is specified.
+      # Defaults:
+      # paginate per_page: 25, max_per_page: nil, enforce_max_per_page: false
       paginate
       get do
         check_jwt_session

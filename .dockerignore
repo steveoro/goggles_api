@@ -1,0 +1,27 @@
+# Misc dotfiles & editor files
+.bin
+.bundleignore
+.bundle
+.byebug_history
+.DS_Store
+.git
+.gitignore
+.dockerignore
+.env
+.rspec
+.settings/*
+*.lock
+*.swp
+*.tmp
+
+# Logs
+log
+*.log
+
+# Docs, tmp, test suite & Blueprint files
+blueprint/*
+coverage/*
+doc
+tmp
+test
+*.apib

@@ -29,7 +29,7 @@ gem 'rack-cors'
 
 gem 'api-pagination'
 gem 'devise'
-gem 'goggles_db', git: 'git@github.com:steveoro/goggles_db' # (currently available only as a private repo)
+gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
 gem 'grape'
 gem 'grape_logging'
 gem 'grape-route-helpers'

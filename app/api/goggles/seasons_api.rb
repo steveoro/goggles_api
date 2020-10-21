@@ -90,6 +90,10 @@ module Goggles
         optional :header_year, type: String, desc: 'optional: referenced year(s) (format: YYYY or YYYY/YYYY+1)'
         use :pagination
       end
+      # Enforcing 'max_per_page' will add the allowed range to the swagger docs and
+      # cause Grape to return an error when an out-of-range value is specified.
+      # Defaults:
+      # paginate per_page: 25, max_per_page: nil, enforce_max_per_page: false
       paginate
       get do
         check_jwt_session

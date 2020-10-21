@@ -39,7 +39,7 @@ The Audit log is store inside `log/api_audit.log`.
 The Logger instance will split it and keep the latest 10 files of 1 MB each.
 
 
-### Suggested dependancies:
+## Suggested dependencies:
 
 *For editing & browsing API Blueprints:*
 
@@ -72,9 +72,360 @@ Use `guard` and just hit Enter.
 TODO
 
 
+* * *
+
+
+## Setup as individual Docker containers
+
+Beside its "normal" installation as a Rails application, the repository contains a `Dockerfile` for configuring app deployment and usage as a Docker container. This relies on another separated container for the database which can be created with the steps that follow.
+
+Instead of a full-blown MySQL/MariaDB installation on localhost, it's also possible to use the DB container for the cloned repository like the containerized version of the app.
+
+See also ["Setup as a composed Docker service"](#Setup_as_a_composed_Docker_service) below for a more automated approach of both containers.
+
+
+
+## Docker CLI login:
+
+In order to push & pull _unlimited_ image tags from the Docker Registry you'll need to be logged-in, because the Docker Registry currently limits the number of anonymous image pulls that can be done during a certain time span.
+
+Logging into Docker from the command line is not required for basic usage & setup but it may be necessary during periods of frequent updates to the base source repo.
+
+The Docker Engine can keep user credentials in an external credentials store, such as the native keychain of the operating system. Using an external store is more secure than storing credentials in the plain-JSON Docker configuration file. (You'll get a warning if you log-in with plain-text credentials.)
+
+In case you don't have a CLI password-manager, you can try [`pass`](https://github.com/docker/docker-credential-helpers/release) or use any D-Bus-based alternative (usually under KDE) or the Apple MacOS keychain or the MS Windows Credential Manager.
+
+Under Ubuntu:
+
+1. Install `pass` as password manager:
+
+```bash
+$> sudo apt-get install pass
+```
+
+2. You'll need the Docker helper that interfaces with the `pass` commands. For that, download, extract, make executable, and move `docker-credential-pass` (which is currently at v. 0.6.3):
+
+```bash
+$> wget https://github.com/docker/docker-credential-helpers/releases/download/v0.6.3/docker-credential-pass-v0.6.3-amd64.tar.gz && tar -xf docker-credential-pass-v0.6.3-amd64.tar.gz && chmod +x docker-credential-pass && sudo mv docker-credential-pass /usr/local/bin/
+```
+
+3. Create a new `gpg2` key:
+
+```bash
+$> gpg2 --gen-key
+```
+
+4. Follow prompts from the gpg2 utility. (Enter actual name, email & passphrase)
+
+5. Initialize pass using the newly created key:
+
+```bash
+$> pass init "<Your Name>"
+```
+
+6. You'll need to add the credentials store (`"credStore": "pass"`) in `$HOME/.docker/config.json` to tell the docker engine to use it. The value of the config property should be the suffix of the program to use (i.e. everything after the downloaded helper name `docker-credential-`).
+
+In our example (using `pass` as storage & `docker-credential-pass` as helper) you can create the `$HOME/.docker/config.json` file manually:
+
+```json
+{
+  "credsStore": "pass"
+}
+```
+
+Alternatively, you can also add the `"credStore": "pass"` to the docker config using a single `sed` command:
+
+```bash
+$> sed -i '0,/{/s/{/{\n\t"credsStore": "pass",/' ~/.docker/config.json
+```
+
+7. Log out with `docker logout` if you are currently logged in (this will also remove any previously plain-text credentials from the configuration file).
+
+Login to docker to store the credentials. Use the correct username & omit the password from the command line. When you’re prompted for a password, enter the secret Docker authorization token instead.
+
+_(The secret Docker token is currently available only inside our :key: config channel on Slack)_
+
+```bash
+$> docker login --username steveoro
+```
+
+On the first image pull the passphrase for the PGP key will be asked. If you are using a system-wide password manager and store the passphrase, you shouldn't be bothered anymore on any subsequent pull or push.
+
+Ref.:
+- [Docker engine credentials store](https://docs.docker.com/engine/reference/commandline/login/#credentials-store)
+- [Passwordstore](https://www.passwordstore.org/)
+- [issue on GitHub](https://github.com/docker/docker-credential-helpers/issues/102).
+
+
+* * *
+
+## DB container usage (MySql/MariaDB):
+
+Check the already existing local Docker images with `docker images`.
+
+Download & pull the latest MySql/MariaDb container if it's missing. For MySQL:
+
+```bash
+$> docker pull mysql:latest
+```
+
+Or, for MariaDB:
+
+```bash
+$> docker pull mariadb:10.3.25
+```
+
+Run or create the container in foreground by specifying:
+
+- your own `My-Super-Secret-Pwd` for the MySql/MariaDb `root` user;
+- use `goggles` or `goggles_development` as the actual database name, depending on the environment or purpose;
+- use something like `~/Projects/goggles_db.vol` as local volume folder to be mounted for the DB data, with the full path to the local data volume where the database container is supposed to store the DB files (don't forget to `mkdir ~/Projects/goggles_db.vol` first if it's a new folder);
+- the published port mapping `127.0.0.1:33060:3306` will bind port 3306 of the container to localhost's 33060. **(*)**
+
+For consistency & stability we'll stick with the current MariaDb version, tagged 10.3.25.
+
+Create a new container from the base image with:
+
+```bash
+$> docker run --name goggles-db -e MYSQL_DATABASE=goggles_development \
+     -e MYSQL_ROOT_PASSWORD="My-Super-Secret-Pwd" \
+     -v ~/Projects/goggles_db.vol:/var/lib/mysql \
+     -p 127.0.0.1:33060:3306 mariadb:10.3.25 \
+     --character-set-server=utf8mb4 \
+     --collation-server=utf8mb4_unicode_ci
+```
+
+Eventually (as soon as you'll feel confident with the container setup) you'll want to add a `-d` parameter to the run statement before the image name for background/detached mode execution. (`docker run -d ...`)
+
+_Note that this **(*)** published entry port will be reachable by TCP with an IP:PORT mapping, while any other existing MySQL service already running on localhost will remain accessible though the usual socket PID file_. (So you can have both.)
+
+More precisely, the DB container can be reached **_from another container_** using its Docker network name (usually defined inside `docker-compose.yml`) and its _internal_ port (not the one published on localhost).
+
+Whereas, the same DB container service can be accessed **_from localhost_** using the localhost IP (0.0.0.0) with its _published port_, forcing a TCP/IP connection (not using sockets) with the `host` parameter.
+
+
+Check the running containers with:
+
+```bash
+$> docker ps -a
+```
+
+
+When in detached mode, you can check the console logs with a:
+
+```bash
+$> docker logs --follow goggles-db
+```
+
+Stop the container with CTRL-C if running in foreground; or from another console (when in detached mode) with:
+
+```bash
+$> docker stop goggles-db
+```
+
+
+In case of need, remove old stopped containers with `docker rm CONTAINER_NAME_OR_ID` and their images with `docker rmi IMAGE_ID`.
+
+Existing stopped containers can be restarted easily:
+
+```bash
+$> docker start goggles-db
+```
+
+
+
+### Connecting to the DB container with the MySQL client:
+
+Two possibilities:
+
+- Run the `mysql` client from within the **container** with an interactive shell:
+
+  ```bash
+  $> docker exec -it goggles-db sh -c 'mysql --password="My-Super-Secret-Pwd" --database=goggles_development'
+  ```
+
+- Run the `mysql` client from **localhost** (if the client is available) and then connect to the service container using the _IP protocol_ and the correct published port:
+
+  ```bash
+  $> mysql --host=0.0.0.0 --port=33060 --user=root --password="My-Super-Secret-Pwd" --database=goggles_development
+  ```
+
+
+
+### Restoring the whole DB from existing backups:
+
+Four basic steps:
+
+1. get the DB dump in SQL format
+2. drop the existing DB when not empty
+3. recreate the DB
+4. execute the script
+
+Assuming we have a compressed dump located at `~/Projects/goggles.docs/backup.db/goggles-backup.20201005.sql.bz2`, unzip the DB backup in the current folder:
+
+```bash
+$ bunzip2 -ck ~/Projects/goggles.docs/backup.db/goggles-backup.20201005.sql.bz2 > goggles-backup.sql
+```
+
+Drop & recreate from scratch the existing database (either way is fine):
+
+- from within the **container**:
+
+  ```bash
+  $> docker exec -it goggles-db sh -c 'mysql --user=root --password="My-Super-Secret-Pwd" --execute="drop database if exists goggles_development; create database goggles_development;"'
+  ```
+
+- from **localhost** (if mysql client is available), connect to the service container using the _IP protocol_ and the correct published port:
+
+  ```bash
+  $> mysql --host=0.0.0.0 --port=33060 --user=root --password="My-Super-Secret-Pwd" \
+           --execute="drop database if exists goggles_development; create database goggles_development;"
+  ```
+
+Execute the script (again, choose your flavour):
+
+If your SQL backup involves a single DB and contains a `USE DATABASE <db_name>` somewhere at the beginning, you'll need to remove that to have a truly DB-independent script (otherwise, the specified `--database=` parameter won't have any effect).
+
+- from within the **container**:
+
+  ```bash
+  $> docker exec -it goggles-db sh -c 'mysql --user=root --password="My-Super-Secret-Pwd" --database=goggles_development' < ./goggles-backup.sql
+  ```
+
+- from **localhost**:
+
+  ```bash
+  $> mysql --host=0.0.0.0 --port=33060 --database=goggles_development --user=root \
+           --password="My-Super-Secret-Pwd" < ./goggles-backup.sql
+  ```
+
+Reconnect to the MySQL client & check that it all went well:
+
+```sql
+MariaDB [goggles_development]> show tables;
+
+--- snip ---
+
+MariaDB [goggles_development]> desc users;
+
+--- snip ---
+
+```
+
+Delete the uncompressed dump in the current folder when done.
+
+
+
+#### Creating new DB backup dumps:
+
+Two possibilities:
+
+- from within the **container**:
+
+  ```bash
+  $> docker exec -it goggles-db sh -c 'mysqldump --user=root --password="My-Super-Secret-Pwd" -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction goggles_development' | bzip2 -c > goggles_development-backup.sql.bz2
+  ```
+
+- from **localhost** (if available):
+
+  ```bash
+  $> mysqldump --host=0.0.0.0 --port=33060 --user=root --password="My-Super-Secret-Pwd" \
+               -l --triggers --routines -i --skip-extended-insert \
+               --no-autocommit --single-transaction \
+               goggles_development | bzip2 -c > goggles_development-backup.sql.bz2
+  ```
+
+If the first method fails (or it halts at the beginning of the dump, as if the DB was empty), usually a dump of all the databases shall do:
+
+```bash
+$ docker exec -it goggles-db sh -c 'mysqldump --user=root --password="My-Super-Secret-Pwd" -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction goggles_development --all-databases' | bzip2 -c > all_dbs-backup.sql.bz2
+```
+
+
+* * *
+
+
+### API container:
+
+The easiest way to run the API container (automatically building the image if still locally missing) is a simple:
+
+```bash
+$> docker-compose up
+```
+
+In case you'll need to recreate the container from an updated base image definition, just add the build parameter: `docker-compose up --build` will overwrite the same image and version tag (unless otherwise specified by the compose file).
+
+
+
+### Connecting to the API container:
+
+- Execute an interactive shell inside the container with:
+
+  ```bash
+  $> docker exec -it goggles-api sh
+  ```
+
+- Enter directly the Rails console with:
+
+  ```bash
+  $> docker exec -it goggles-api sh -c 'rails c'
+  ```
+
+
+
+### Updating the API container image:
+
+You can build a new image for the API container giving it a base "0.1" versioning, with multiple tagging, as in the following (from the project folder):
+
+```bash
+$> docker build -t steveoro/goggles-api:latest -t steveoro/goggles-api:0.1 .
+```
+
+Tag format: "[repo_name]:[tag_name]".
+
+To _push an updated image onto the Docker registry_, tag it first and then push it, in 2 steps:
+
+```bash
+$> docker tag local-image:tag_name_1 steveoro/goggles-api:tag_name_2
+$> docker push steveoro/goggles-api:tagname
+```
+
+
+
+* * *
+
+
+
+## Setup as a composed Docker service
+
+The composed service definitions inside `docker-compose.yml` will take care of everything. For most targets, a simple `docker-compose up` will suffice.
+
+While the `docker` command can be used basically from any folder for generic management purposes, `docker-compose` requires a valid `docker-compose.yml` inside the current folder to be able to prepare the resulting service.
+
+Most of the `docker-compose` sub-commands are a mirror copy of their Docker counter part, such as `build`, `logs`, `stop`, `exec`, `ps`, `images` and many more.
+
+At a glance:
+
+- `docker-compose up` to start (and automatically build, if not existing) the composed service
+- `docker-compose up --build` to force rebuilding the service
+- `docker-compose stop` to just stop the containers
+- `docker-compose ps` to display the running (composed) containers
+- `docker-compose down` to stop and also _remove_ the containers
+
+
+
+* * *
+
+
+
 ## Deployment instructions
 
 TODO
+
+
+
+* * *
+
 
 
 ## Contributing
