@@ -347,13 +347,40 @@ $ docker exec -it goggles-db sh -c 'mysqldump --user=root --password="My-Super-S
 
 ### API container:
 
-The easiest way to run the API container (automatically building the image if still locally missing) is a simple:
+While the DB container is a pretty standard MySQL/MariaDB container using a mounted external data volume, the main app container is custom built and supports different environments.
+
+Dedicated _development_ & _production_ images are available [here](https://hub.docker.com/r/steveoro/goggles-api/tags), each one tagged by environment and version. The `latest` tag is used just for _production_.
+
+Naming/Tag format: "[REPO_NAME]:[TAG_NAME]".
+
+Existing images will be pulled automatically from the DockerHub registry with a `docker-compose up` if missing. The local container image(s) can be recreated from scratch each time you update the source code.
+
+To build a new tagged image giving it - for example - a "0.1.1" tag, run:
+
+- For _**development:**_
+  ```bash
+  $> docker build -t steveoro/goggles-api:dev-0.1.1 \
+                  -f Dockerfile.dev .
+  ```
+
+- For _**production:**_
+  ```bash
+  $> docker build -t steveoro/goggles-api:prod-0.1.1 \
+                  -t steveoro/goggles-api:latest \
+                  -f Dockerfile.prod .
+  ```
+
+Make sure you have a valid `.env` file that includes the DB password (customize `.env.example` before).
+
+
+
+The easiest way to run the API container (automatically building or downloading missing images) is:
 
 ```bash
 $> docker-compose up
 ```
 
-In case you'll need to recreate the container from an updated base image definition, just add the build parameter: `docker-compose up --build` will overwrite the same image and version tag (unless otherwise specified by the compose file).
+Use `docker-compose up --build` to force rebuilding the composed service.
 
 
 
@@ -375,19 +402,18 @@ In case you'll need to recreate the container from an updated base image definit
 
 ### Updating the API container image:
 
-You can build a new image for the API container giving it a base "0.1" versioning, with multiple tagging, as in the following (from the project folder):
+To update an image, simply create a new image for it (with `build`) and `tag` it with an existing name tag, or a new one (if you know what you're doing).
+
+Re-tag an existing image with:
 
 ```bash
-$> docker build -t steveoro/goggles-api:latest -t steveoro/goggles-api:0.1 .
+$> docker tag local-image:tag_name steveoro/goggles-api:tag_name
 ```
 
-Tag format: "[repo_name]:[tag_name]".
-
-To _push an updated image onto the Docker registry_, tag it first and then push it, in 2 steps:
+Push an updated, tagged image onto the Docker registry with:
 
 ```bash
-$> docker tag local-image:tag_name_1 steveoro/goggles-api:tag_name_2
-$> docker push steveoro/goggles-api:tagname
+$> docker push steveoro/goggles-api:tag_name
 ```
 
 
@@ -398,9 +424,9 @@ $> docker push steveoro/goggles-api:tagname
 
 ## Setup as a composed Docker service
 
-The composed service definitions inside `docker-compose.yml` will take care of everything. For most targets, a simple `docker-compose up` will suffice.
+The composed service definitions inside `docker-compose.yml` will take care of binding together the containers.
 
-While the `docker` command can be used basically from any folder for generic management purposes, `docker-compose` requires a valid `docker-compose.yml` inside the current folder to be able to prepare the resulting service.
+A simple `docker-compose up` will run the default _**development**_ image with its counterpart DB.
 
 Most of the `docker-compose` sub-commands are a mirror copy of their Docker counter part, such as `build`, `logs`, `stop`, `exec`, `ps`, `images` and many more.
 
