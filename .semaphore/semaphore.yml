@@ -6,7 +6,7 @@ agent:
     os_image: ubuntu1804
   containers:
     - name: main
-      image: 'steveoro/goggles-api:dev-0.1.1'
+      image: 'semaphoreci/ubuntu:18.04'
     - name: goggles-db
       image: 'mariadb:10.3.25'
 fail_fast:
@@ -16,21 +16,50 @@ auto_cancel:
   running:
     when: 'true'
 blocks:
-  - name: Setup
-    dependencies: []
+  - name: App setup
     task:
+      env_vars:
+        - name: RAILS_ENV
+          value: test
+        - name: DATABASE_NAME
+          value: goggles_test
+        - name: DATABASE_HOST
+          value: goggles-db
+        - name: DATABASE_PORT
+          value: '3606'
+        - name: DATABASE_USER
+          value: root
+        - name: MYSQL_ROOT_PASSWORD
+          value: semaphoredb
       jobs:
         - name: Setup
           commands:
+            - checkout
             - 'curl -L -o seed.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
             - bunzip2 -ck seed.sql.bz2 > seed.sql
+            - mkdir ~/test_data.vol
+            - docker run -d --name goggles-db -e MYSQL_DATABASE=goggles_test -e MYSQL_ROOT_PASSWORD="semaphoredb" -v ~/test_data.vol:/var/lib/mysql -p 127.0.0.1:3306:3306 mariadb:10.3.25 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
             - mysql --user=root --password=semaphoredb --execute="drop database if exists goggles_test;"
             - mysql --user=root --password=semaphoredb --execute="create database goggles_test;"
             - mysql --user=root --password=semaphoredb --database=goggles_test --execute="\. seed.sql"
             - rm seed.sql
-  - name: Rspec test
+            - cp spec/dummy/config/database.semaphore.yml spec/dummy/config/database.yml
+            - mkdir tmp
+            - gem update --system
+            - gem i bundler
+            - bundle install --path vendor/bundle
+            - cache store
+  - name: Rubocop lint
     dependencies:
       - Setup
+    task:
+      jobs:
+        - name: Rubocop
+          commands:
+            - rubocop
+  - name: RSpec tests
+    dependencies:
+      - Rubocop
     task:
       jobs:
         - name: RSpec

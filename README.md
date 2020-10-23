@@ -426,7 +426,7 @@ $> docker push steveoro/goggles-api:tag_name
 
 The composed service definitions inside `docker-compose.yml` will take care of binding together the containers.
 
-A simple `docker-compose up` will run the default _**development**_ image with its counterpart DB.
+A simple `docker-compose up` will run the default _**development**_ configuration with its counterpart DB.
 
 Most of the `docker-compose` sub-commands are a mirror copy of their Docker counter part, such as `build`, `logs`, `stop`, `exec`, `ps`, `images` and many more.
 
