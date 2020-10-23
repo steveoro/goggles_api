@@ -38,7 +38,7 @@ blocks:
             - 'curl -L -o seed.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
             - bunzip2 -ck seed.sql.bz2 > seed.sql
             - mkdir ~/test_data.vol
-            - docker run -d --name goggles-db -e MYSQL_DATABASE=goggles_test -e MYSQL_ROOT_PASSWORD="semaphoredb" -v ~/test_data.vol:/var/lib/mysql -p 127.0.0.1:3306:3306 mariadb:10.3.25 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+            - 'docker run -d --name goggles-db -e MYSQL_DATABASE=goggles_test -e MYSQL_ROOT_PASSWORD="semaphoredb" -v ~/test_data.vol:/var/lib/mysql -p 127.0.0.1:3306:3306 mariadb:10.3.25 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci'
             - mysql --user=root --password=semaphoredb --execute="drop database if exists goggles_test;"
             - mysql --user=root --password=semaphoredb --execute="create database goggles_test;"
             - mysql --user=root --password=semaphoredb --database=goggles_test --execute="\. seed.sql"
@@ -49,9 +49,10 @@ blocks:
             - gem i bundler
             - bundle install --path vendor/bundle
             - cache store
+    dependencies: []
   - name: Rubocop lint
     dependencies:
-      - Setup
+      - App setup
     task:
       jobs:
         - name: Rubocop
@@ -59,7 +60,7 @@ blocks:
             - rubocop
   - name: RSpec tests
     dependencies:
-      - Rubocop
+      - Rubocop lint
     task:
       jobs:
         - name: RSpec
