@@ -1,0 +1,38 @@
+version: v1.0
+name: Run in Docker
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+  containers:
+    - name: main
+      image: 'steveoro/goggles-api:dev-0.1.1'
+    - name: goggles-db
+      image: 'mariadb:10.3.25'
+fail_fast:
+  stop:
+    when: 'true'
+auto_cancel:
+  running:
+    when: 'true'
+blocks:
+  - name: Setup
+    dependencies: []
+    task:
+      jobs:
+        - name: Setup
+          commands:
+            - 'curl -L -o seed.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
+            - bunzip2 -ck seed.sql.bz2 > seed.sql
+            - mysql --user=root --password=semaphoredb --execute="drop database if exists goggles_test;"
+            - mysql --user=root --password=semaphoredb --execute="create database goggles_test;"
+            - mysql --user=root --password=semaphoredb --database=goggles_test --execute="\. seed.sql"
+            - rm seed.sql
+  - name: Rspec test
+    dependencies:
+      - Setup
+    task:
+      jobs:
+        - name: RSpec
+          commands:
+            - bundle exec rspec
