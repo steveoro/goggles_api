@@ -33,27 +33,29 @@ blocks:
       - Code scanning
     task:
       jobs:
-        - name: RSpec - models
-          commands:
-            - 'bundle exec rspec -t type:model'
-        - name: RSpec - strategies
-          commands:
-            - 'bundle exec rspec -t type:strategy'
-        - name: RSpec - validators
-          commands:
-            - 'bundle exec rspec -t type:validator'
-        - name: RSpec - decorators
-          commands:
-            - 'bundle exec rspec -t type:decorator'
+        # Typically taken care by GogglesDb core tests:
+        # - name: RSpec - models
+        #   commands:
+        #     - 'bundle exec rspec -t type:model'
+        # - name: RSpec - strategies
+        #   commands:
+        #     - 'bundle exec rspec -t type:strategy'
+        # - name: RSpec - validators
+        #   commands:
+        #     - 'bundle exec rspec -t type:validator'
+        # - name: RSpec - decorators
+        #   commands:
+        #     - 'bundle exec rspec -t type:decorator'
         - name: RSpec - commands
           commands:
             - 'bundle exec rspec -t type:command'
         - name: RSpec - API/requests
           commands:
             - 'bundle exec rspec -t type:request'
-        - name: RSpec - controllers
-          commands:
-            - 'bundle exec rspec -t type:controller'
-        - name: RSpec - views
-          commands:
-            - 'bundle exec rspec -t type:view'
+        # Not currently used here:
+        # - name: RSpec - controllers
+        #   commands:
+        #     - 'bundle exec rspec -t type:controller'
+        # - name: RSpec - views
+        #   commands:
+        #     - 'bundle exec rspec -t type:view'
