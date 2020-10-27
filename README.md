@@ -1,5 +1,8 @@
 # Goggles API README
 
+[![Build Status](https://steveoro.semaphoreci.com/badges/goggles_api/branches/master.svg)](https://steveoro.semaphoreci.com/projects/goggles_api)
+
+
 Wraps all main Goggles' API endpoints in a stand-alone application.
 
 The endpoints allow an authorized account to manage:
@@ -14,7 +17,6 @@ The endpoints allow an authorized account to manage:
 - lap times
 - trainings & workout routines
 
-
 ## Requires
 
 - Ruby 2.6+
@@ -24,7 +26,7 @@ The endpoints allow an authorized account to manage:
 
 ## System dependencies
 
-- GogglesDb base engine (repo currently private)
+- GogglesDb base engine, core 7+
 - JWT for session handling
 
 
@@ -35,7 +37,7 @@ TODO
 
 ## Audit log
 
-The Audit log is store inside `log/api_audit.log`.
+The Audit log is stored inside `log/api_audit.log`.
 The Logger instance will split it and keep the latest 10 files of 1 MB each.
 
 
@@ -52,19 +54,47 @@ $> sudo npm install -g hercule
 ```
 
 
-## Database creation
+## Database setup
 
-TODO
+You'll need a proper DB for both the test suite and the local development.
 
+GogglesDb, among others, adds these tasks:
 
-## Database initialization
+- `db:dump`: dumps current Rails environment DB;
+- `db:rebuild`: restores any *.sql.bz2 dump file stored in `db/dump`, provided it is a DB dump without any DB namespaces in it. (No `USE` or `CREATE` database statements)
 
-TODO
+If you don't have a proper test seed dump, either ask Steve A. nicely for one, or build one yourself by force-loading the SQL structure file after resetting the current DB:
+
+```bash
+$> rails db:reset
+$> rails structure:load
+```
+
+Then, you'll need to use the Factories in spec/factories to create fixtures.
+
+A fully randomized `seed.rb` script is still a work-in-progress. Contributions are welcome.
+
 
 
 ## How to run the test suite
 
-Use `guard` and just hit Enter.
+Although builds are automatically launched remotely on any `push`, for any branch or pull-request, make sure the test suite is locally green before pushing changes, in order to save build machine time and not clutter the build queue with tiny commits.
+
+For local testing, just keep your Guard friend running in the background, in a dedicated console:
+
+```bash
+$> guard
+```
+
+As of Rails 6.0.3, most probably there are issues with the combined usage of Guard, Spring together with the new Zeitwerk mode for constant autoloading & reloading during the Brakeman checks: the `brakeman` plugin for Guard doesn't seem to notice actual changes in the source code, even when you fix or create issues (or maybe it's just a combined mis-configuration).
+
+In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run the `brakeman` checks before pushing the changes to the repository with:
+
+```bash
+$> bundle exec brakeman -Aq
+```
+
+_Please, commit & push any changes only when the test suite is :green:._
 
 
 ## Services (job queues, cache servers, search engines, etc.)
