@@ -43,7 +43,7 @@ end
 
 # == Brakeman ==
 brakeman_options = {
-  cmd: 'bin/brakeman',
+  cmd: 'bundle exec brakeman',
   cli: '-A',
   run_on_start: true,
   quiet: true,
