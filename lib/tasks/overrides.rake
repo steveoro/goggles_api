@@ -23,7 +23,7 @@ Rake.application.remove_task 'db:test:prepare'
 namespace :db do
   namespace :test do
     desc 'NO-OP task: not needed for this project (always safe to run, shouldn\'t affect the DB dump)'
-    task :prepare do |t|
+    task :prepare do |_t|
       # (Rewrite the task to *not* do anything you don't want)
       puts "This task shouldn't do anything for this Project: we are using DB dumps as base seed and the test DB uses transactional fixtures."
     end
