@@ -27,8 +27,8 @@ blocks:
         - name: check style + security
           commands:
             - bundle exec rubocop
-            - bundle exec brakeman -Aq
-  - name: Unit tests
+            - bundle exec brakeman -A6q
+  - name: RSpec tests
     dependencies:
       - Code scanning
     task:
