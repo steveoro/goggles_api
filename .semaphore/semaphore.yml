@@ -5,6 +5,11 @@ agent:
     type: e1-standard-2
     os_image: ubuntu1804
 global_job_config:
+  # Connect secrets to all jobs in the pipeline:
+  # (actual values can be edited on Semaphore 2.0 org dashboard)
+  secrets:
+    - name: DockerHub-steveoro-login
+  # Execute at the start of every job in the pipeline:
   prologue:
     commands:
       - checkout
@@ -12,6 +17,8 @@ global_job_config:
       - sem-version ruby 2.6.3
       - sem-service start mysql
       - cp config/database.semaphore_2.yml config/database.yml
+      - echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+      - echo $RAILS_MASTER_KEY > config/master.key
       - 'curl -L -o db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
       - gem i bundler
       - bundle install
