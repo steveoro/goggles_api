@@ -41,8 +41,10 @@ group :development do
   gem 'awesome_print' # color output formatter for Ruby objects
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'brakeman'
 
   gem 'guard'
+  gem 'guard-brakeman'
   gem 'guard-bundler', require: false
   gem 'guard-rspec'
   gem 'guard-rubocop'

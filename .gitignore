@@ -23,6 +23,9 @@
 /storage/*
 !/storage/.keep
 .byebug_history
+/db/dump/*.sql
+/db/dump/*.bz2
+!/db/dump/.keep
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
