@@ -1,68 +1,59 @@
 version: v1.0
-name: Run in Docker
+name: Goggles API
 agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
-  containers:
-    - name: main
-      image: 'semaphoreci/ubuntu:18.04'
-    - name: goggles-db
-      image: 'mariadb:10.3.25'
-fail_fast:
-  stop:
-    when: 'true'
-auto_cancel:
-  running:
-    when: 'true'
+global_job_config:
+  prologue:
+    commands:
+      - checkout
+      # - cache restore
+      - sem-version ruby 2.6.3
+      - sem-service start mysql
+      - cp config/database.semaphore_2.yml config/database.yml
+      - 'curl -L -o db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
+      - gem i bundler
+      - bundle install
+      - mkdir tmp
+      # - cache store
+      - 'RAILS_ENV=test bin/rails db:rebuild from=test to=test'
+      - 'RAILS_ENV=test bin/rails db:migrate'
 blocks:
-  - name: App setup
-    task:
-      env_vars:
-        - name: RAILS_ENV
-          value: test
-        - name: DATABASE_NAME
-          value: goggles_test
-        - name: DATABASE_HOST
-          value: goggles-db
-        - name: DATABASE_PORT
-          value: '3606'
-        - name: DATABASE_USER
-          value: root
-        - name: MYSQL_ROOT_PASSWORD
-          value: semaphoredb
-      jobs:
-        - name: Setup
-          commands:
-            - 'curl -L -o seed.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
-            - bunzip2 -ck seed.sql.bz2 > seed.sql
-            - mkdir ~/test_data.vol
-            - 'docker run -d --name goggles-db -e MYSQL_DATABASE=goggles_test -e MYSQL_ROOT_PASSWORD="semaphoredb" -v ~/test_data.vol:/var/lib/mysql -p 127.0.0.1:3306:3306 mariadb:10.3.25 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci'
-            - docker exec -it goggles-db sh -c 'mysql --user=root --password="semaphoredb" --execute="drop database if exists goggles_test; create database goggles_test;"'
-            - docker exec -it goggles-db sh -c 'mysql --user=root --password="semaphoredb" --database=goggles_test' < ./seed.sql
-            - rm seed.sql
-            - checkout
-            - cache restore
-            - cp spec/dummy/config/database.semaphore.yml spec/dummy/config/database.yml
-            - mkdir tmp
-            - gem update --system
-            - gem i bundler
-            - bundle install --path vendor/bundle
-            - cache store
+  - name: Code scanning
     dependencies: []
-  - name: Rubocop lint
-    dependencies:
-      - App setup
     task:
       jobs:
-        - name: Rubocop
+        - name: check style + security
           commands:
-            - rubocop
-  - name: RSpec tests
+            - bundle exec rubocop
+            - bundle exec brakeman -Aq
+  - name: Unit tests
     dependencies:
-      - Rubocop lint
+      - Code scanning
     task:
       jobs:
-        - name: RSpec
+        - name: RSpec - models
           commands:
-            - bundle exec rspec
+            - 'bundle exec rspec -t type:model'
+        - name: RSpec - strategies
+          commands:
+            - 'bundle exec rspec -t type:strategy'
+        - name: RSpec - validators
+          commands:
+            - 'bundle exec rspec -t type:validator'
+        - name: RSpec - decorators
+          commands:
+            - 'bundle exec rspec -t type:decorator'
+        - name: RSpec - commands
+          commands:
+            - 'bundle exec rspec -t type:command'
+        - name: RSpec - API/requests
+          commands:
+            - 'bundle exec rspec -t type:request'
+        - name: RSpec - controllers
+          commands:
+            - 'bundle exec rspec -t type:controller'
+        - name: RSpec - views
+          commands:
+            - 'bundle exec rspec -t type:view'
