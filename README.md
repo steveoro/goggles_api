@@ -32,7 +32,15 @@ The endpoints allow an authorized account to manage:
 
 ## Configuration
 
-TODO
+In order to start development, you'll need to:
+
+- obtain a valid `config/master.key` file
+- customize `config/database.yml.example` according to your local MySQL installation and save it as `config/database.yml`
+- customize `.env.example` (as above) and save it as `.env`
+
+The project allows usage or direct testing as an orchestrated Docker container service, so an actual installation of MySQL or MariaDB is not needed in this case.
+
+If you're using the orchestrated container, just choose a random password for the database.
 
 
 ## Audit log
@@ -41,7 +49,7 @@ The Audit log is stored inside `log/api_audit.log`.
 The Logger instance will split it and keep the latest 10 files of 1 MB each.
 
 
-## Suggested dependencies:
+## Suggested dependencies
 
 *For editing & browsing API Blueprints:*
 
@@ -52,6 +60,51 @@ The Logger instance will split it and keep the latest 10 files of 1 MB each.
 ```bash
 $> sudo npm install -g hercule
 ```
+
+*Container usage:*
+
+- Docker (duh) & docker-compose
+
+
+
+## How to run the test suite
+
+For local testing, just keep your Guard friend running in the background, in a dedicated console:
+
+```bash
+$> guard
+```
+
+If you want to run the full test suite, just hit enter on the Guard console.
+
+As of Rails 6.0.3, most probably there are some issues with the combined usage of Guard & Spring together with the new memory management modes in Rails during the Brakeman checks. These prevent the `brakeman` plugin for Guard to actually notice changes in the source code: the checks get re-run, but the result doesn't change. Or maybe it's just a combined mis-configuration.
+
+In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run the `brakeman` checks before pushing the changes to the repository with:
+
+```bash
+$> bundle exec brakeman -Aq
+```
+
+_Please, commit & push any changes only when the test suite is **green**._
+
+
+
+## Workflow: what happens when you push a commit _(for contributors)_
+
+The project uses a full CI pipeline setup with automated builds on DockerHub.
+
+Although builds are automatically launched remotely on any `push`, for any branch or pull-request, make sure the test suite is locally green before pushing changes, in order to save build machine time and not clutter the build queue with tiny commits.
+
+_Tagged_ Docker image releases are built automatically when a _release_ is created on GitHub (typically, when the promotion of a _green_ build is deemed "worthy"), but the `latest` tag is built for every push to the `master` branch (which is protected, BTW).
+
+So, avoid cluttering the build queue with tiny commits (unless these are hotfixes) and with something that hasn't been greenlit by a local run of the whole test suite: it's adamant that you don't push failing builds whenever possible.
+
+Basically:
+
+- always develop with a running `guard` in background;
+- when you're ready to push, do a full test suite run (just to be sure);
+- run also an additional Brakeman scan before as suggested above.
+
 
 
 ## Database setup
@@ -76,30 +129,9 @@ A fully randomized `seed.rb` script is still a work-in-progress. Contributions a
 
 
 
-## How to run the test suite
-
-Although builds are automatically launched remotely on any `push`, for any branch or pull-request, make sure the test suite is locally green before pushing changes, in order to save build machine time and not clutter the build queue with tiny commits.
-
-For local testing, just keep your Guard friend running in the background, in a dedicated console:
-
-```bash
-$> guard
-```
-
-As of Rails 6.0.3, most probably there are issues with the combined usage of Guard, Spring together with the new Zeitwerk mode for constant autoloading & reloading during the Brakeman checks: the `brakeman` plugin for Guard doesn't seem to notice actual changes in the source code, even when you fix or create issues (or maybe it's just a combined mis-configuration).
-
-In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run the `brakeman` checks before pushing the changes to the repository with:
-
-```bash
-$> bundle exec brakeman -Aq
-```
-
-_Please, commit & push any changes only when the test suite is :green:._
-
-
 ## Services (job queues, cache servers, search engines, etc.)
 
-TODO
+_(No internal services available in the current release)_
 
 
 * * *
