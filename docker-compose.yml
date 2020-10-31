@@ -17,6 +17,7 @@ services:
 
   goggles-db:
     image: mariadb:10.3.25
+    container_name: goggles-db
     ports:
       - '33060:3306'
     env_file:

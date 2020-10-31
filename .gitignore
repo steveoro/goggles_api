@@ -26,6 +26,7 @@
 /db/dump/*.sql
 /db/dump/*.bz2
 !/db/dump/.keep
+/coverage/*
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key

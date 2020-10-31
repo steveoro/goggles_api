@@ -2,7 +2,6 @@
 default: &default
   adapter: mysql2
   encoding: utf8mb4
-  database: <%= ENV.fetch("DATABASE_NAME") { 'goggles' } %>
   username: <%= ENV.fetch("DATABASE_USER") { 'root' } %>
   password: <%= ENV.fetch("MYSQL_ROOT_PASSWORD") { '' } %>
   host: <%= ENV.fetch("DATABASE_HOST") { 'localhost' } %>
@@ -11,9 +10,12 @@ default: &default
 
 development:
   <<: *default
+  database: goggles_development
 
 test:
   <<: *default
+  database: goggles_test
 
 production:
   <<: *default
+  database: goggles

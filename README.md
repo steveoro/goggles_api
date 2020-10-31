@@ -1,7 +1,10 @@
 # Goggles API README
 
 [![Build Status](https://steveoro.semaphoreci.com/badges/goggles_api/branches/master.svg)](https://steveoro.semaphoreci.com/projects/goggles_api)
-
+[![Maintainability](https://api.codeclimate.com/v1/badges/ffc7f57dfb4ce9d73056/maintainability)](https://codeclimate.com/github/steveoro/goggles_api/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ffc7f57dfb4ce9d73056/test_coverage)](https://codeclimate.com/github/steveoro/goggles_api/test_coverage)
+[![codecov](https://codecov.io/gh/steveoro/goggles_api/branch/master/graph/badge.svg?token=A5WG7PJ9HF)](undefined)
+[![Coverage Status](https://coveralls.io/repos/github/steveoro/goggles_api/badge.svg?branch=master)](https://coveralls.io/github/steveoro/goggles_api?branch=master)
 
 Wraps all main Goggles' API endpoints in a stand-alone application.
 
@@ -38,9 +41,9 @@ In order to start development, you'll need to:
 - customize `config/database.yml.example` according to your local MySQL installation and save it as `config/database.yml`
 - customize `.env.example` (as above) and save it as `.env`
 
-The project allows usage or direct testing as an orchestrated Docker container service, so an actual installation of MySQL or MariaDB is not needed in this case.
+The project allows usage or direct testing as an orchestrated Docker container service: you won't even need an actual installation of MySQL or MariaDB in this case.
 
-If you're using the orchestrated container, just choose a random password for the database.
+If you're using the orchestrated container, just choose a random password for the database in the `.env` file and read on below about [Docker usage](#Docker).
 
 
 ## Audit log
@@ -63,11 +66,18 @@ $> sudo npm install -g hercule
 
 *Container usage:*
 
-- Docker (duh) & docker-compose
+- [Docker & docker-compose](#docker)
+
+For step-by-step instructions, check out:
+
+- [Install Docker on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04)
+- [Install docker-compose on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04) by DigitalOcean
 
 
 
 ## How to run the test suite
+
+### A. Everything on _localhost_
 
 For local testing, just keep your Guard friend running in the background, in a dedicated console:
 
@@ -85,11 +95,28 @@ In any case, although the Guard plugin for Brakeman runs correctly at start, it'
 $> bundle exec brakeman -Aq
 ```
 
-_Please, commit & push any changes only when the test suite is **green**._
+If you don't have a local test DB setup, read on [below](#database-setup).
+If you do have a local test DB, you can execute the whole test suite is a single run (regardless of Guard running) by using the entrypoint for the Docker test configuration:
+
+```bash
+$> entrypoints/docker.test.sh
+```
+
+_Please, again, commit & push any changes only when the test suite is **green**._
 
 
+### B. Everything on _Docker containers_
 
-## Workflow: what happens when you push a commit _(for contributors)_
+For containerized testing, assuming you have proper test DB container (otherwise, read on [below](#database-setup)), you can get the same single run behaviour with:
+
+```bash
+$> docker-compose -f docker-compose.test.yml run app
+```
+
+
+* * *
+
+## Dev Workflow: what happens when you push a commit _(for contributors)_
 
 The project uses a full CI pipeline setup with automated builds on DockerHub.
 
@@ -101,10 +128,13 @@ So, avoid cluttering the build queue with tiny commits (unless these are hotfixe
 
 Basically:
 
+- login to docker from the console with `docker login` whenever you're using Docker for testing or development;
 - always develop with a running `guard` in background;
 - when you're ready to push, do a full test suite run (just to be sure);
-- run also an additional Brakeman scan before as suggested above.
+- run also an additional Brakeman scan before the push as suggested above.
 
+
+* * *
 
 
 ## Database setup
@@ -127,11 +157,67 @@ Then, you'll need to use the Factories in spec/factories to create fixtures.
 
 A fully randomized `seed.rb` script is still a work-in-progress. Contributions are welcome.
 
+Assuming we want the `test` environment DB up and running, you can either have (one or even both cases, with mixed possibilities in between):
 
 
-## Services (job queues, cache servers, search engines, etc.)
+### A. Everything on _localhost_
 
-_(No internal services available in the current release)_
+- Make sure you have a running MariaDB server & client installation.
+
+- Given you have a valid `db/dump/test.sql.bz2` (the dump must be un-namespaced to be copied or renamed from any other environment - as those created by `db:dump` typically are), use the dedicated rake tasks:
+
+```bash
+$> bin/rails db:rebuild from=test to=test
+$> RAILS_ENV=test bin/rails db:migrate
+```
+
+(It will take some time, depending of the dump size: sit back and relax.)
+
+
+### B. Everything on _Docker containers_
+
+If the DB container for the test environment still needs to be created or it's new, the `test` database will be either newly created and empty or even missing at all.
+
+Recreate the `goggles_test` db with:
+
+TODO
+
+
+Create & run a new container from the base image with:
+
+```bash
+$> docker run --name goggles-db -e MYSQL_DATABASE=goggles_temp \
+     -e MYSQL_ROOT_PASSWORD="My-Super-Secret-Pwd" \
+     -v ~/Projects/goggles_db.vol:/var/lib/mysql \
+     -p 127.0.0.1:33060:3306 mariadb:10.3.25 \
+     --character-set-server=utf8mb4 \
+     --collation-server=utf8mb4_unicode_ci
+```
+
+
+Connect to the container's DB with:
+
+```bash
+$> docker exec -it goggles-db sh -c 'mysql --password="My-Super-Secret-Pwd" --database=goggles_development'
+```
+
+
+Fill it with the seed dump with:
+
+TODO
+
+```bash
+$> ...
+$>
+```
+
+
+* * *
+
+
+## Docker usage
+
+TODO
 
 
 * * *
@@ -246,7 +332,7 @@ Run or create the container in foreground by specifying:
 
 For consistency & stability we'll stick with the current MariaDb version, tagged 10.3.25.
 
-Create a new container from the base image with:
+Create & run a new container from the base image with:
 
 ```bash
 $> docker run --name goggles-db -e MYSQL_DATABASE=goggles_development \

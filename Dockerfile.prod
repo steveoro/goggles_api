@@ -51,7 +51,7 @@ COPY . ./
 RUN bundle config build.nokogiri --use-system-libraries
 COPY ./config/database.docker.yml ./config/database.yml
 
-RUN bundle check || bundle install
+RUN bundle check || bundle install --without=development test
 RUN yarn install --check-files
 
-ENTRYPOINT ["./entrypoints/docker.sh"]
+ENTRYPOINT ["./entrypoints/docker.prod.sh"]
