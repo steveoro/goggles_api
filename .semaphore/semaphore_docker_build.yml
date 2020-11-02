@@ -31,6 +31,6 @@ blocks:
       jobs:
         - name: Docker prod
           commands:
-            - 'docker pull $DOCKER_USERNAME/goggles-api:latest || true'
-            - 'docker build -t $DOCKER_USERNAME/goggles-api:latest --cache-from=$DOCKER_USERNAME/goggles-api:latest -f Dockerfile.prod .'
-            - 'docker push $DOCKER_USERNAME/goggles-api:latest'
+            - 'docker pull $DOCKERHUB_USERNAME/goggles-api:latest || true'
+            - 'docker build -t $DOCKERHUB_USERNAME/goggles-api:latest --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .'
+            - 'docker push $DOCKERHUB_USERNAME/goggles-api:latest'
