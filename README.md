@@ -3,8 +3,9 @@
 [![Build Status](https://steveoro.semaphoreci.com/badges/goggles_api/branches/master.svg)](https://steveoro.semaphoreci.com/projects/goggles_api)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ffc7f57dfb4ce9d73056/maintainability)](https://codeclimate.com/github/steveoro/goggles_api/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ffc7f57dfb4ce9d73056/test_coverage)](https://codeclimate.com/github/steveoro/goggles_api/test_coverage)
-[![codecov](https://codecov.io/gh/steveoro/goggles_api/branch/master/graph/badge.svg?token=A5WG7PJ9HF)](undefined)
+[![codecov](https://codecov.io/gh/steveoro/goggles_api/branch/master/graph/badge.svg?token=A5WG7PJ9HF)](https://codecov.io/gh/steveoro/goggles_api)
 [![Coverage Status](https://coveralls.io/repos/github/steveoro/goggles_api/badge.svg?branch=master)](https://coveralls.io/github/steveoro/goggles_api?branch=master)
+
 
 Wraps all main Goggles' API endpoints in a stand-alone application.
 
@@ -19,6 +20,12 @@ The endpoints allow an authorized account to manage:
 - meeting reservations
 - lap times
 - trainings & workout routines
+
+
+## Wiki & HOW-TOs
+
+Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v. 7+)
+
 
 ## Requires
 
