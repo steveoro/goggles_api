@@ -123,17 +123,19 @@ $> docker-compose -f docker-compose.test.yml run app
 
 * * *
 
-## Dev Workflow: what happens when you push a commit _(for contributors)_
 
-The project uses a full CI pipeline setup with automated builds on DockerHub.
+## Dev Workflow _(for contributors)_
 
-Although builds are automatically launched remotely on any `push`, for any branch or pull-request, make sure the test suite is locally green before pushing changes, in order to save build machine time and not clutter the build queue with tiny commits.
+When you push a commit to the `master` branch the build system will re-test everything you allegedly have already checked locally using Guard as described above.
 
-_Tagged_ Docker image releases are built automatically when a _release_ is created on GitHub (typically, when the promotion of a _green_ build is deemed "worthy"), but the `latest` tag is built for every push to the `master` branch (which is protected, BTW).
+The project uses a full CI pipeline setup on Semaphore 2.0 (currently for the `master` branch only) that will promote a successful build into the Docker `latest` production image on DockerHub.
 
-So, avoid cluttering the build queue with tiny commits (unless these are hotfixes) and with something that hasn't been greenlit by a local run of the whole test suite: it's adamant that you don't push failing builds whenever possible.
+All other tagged Docker images will be autobuilt by DockerHub itself, as soon as a specific branch has been manually tagged as a _release_ from the GitHub UI.
+(Using GitHub release tags that respect semantic versioning, with format `MAJOR`.`MINOR`.`BUILD`)
 
-Basically:
+Given this, avoid cluttering the build queue with tiny commits (unless these are hotfixes) and with something that hasn't been greenlit by a local run of the whole test suite: it's adamant that you don't push failing builds whenever possible.
+
+Basically, remember to:
 
 - login to docker from the console with `docker login` whenever you're using Docker for testing or development;
 - always develop with a running `guard` in background;
@@ -187,7 +189,7 @@ If the DB container for the test environment still needs to be created or it's n
 
 Recreate the `goggles_test` db with:
 
-TODO
+WIP :construction:
 
 
 Create & run a new container from the base image with:
