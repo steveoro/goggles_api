@@ -25,3 +25,7 @@ doc
 tmp
 test
 *.apib
+
+# Ignore DB dumps uploaded in development
+/db/dump/*.sql
+/db/dump/*.bz2
