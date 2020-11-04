@@ -19,3 +19,22 @@ test:
 production:
   <<: *default
   database: goggles
+
+# [Steve A.]
+# Staging will use the production environment together with the database
+# running on the production Docker image of the composed service
+# (DockerHub: steveoro/goggles-api:latest) with the exception of enforcing SSL
+# to allow local testing.
+#
+# To recreate or restore a usable database with testing seeds, assuming:
+#
+# 1. you have a valid 'test.sql.bz2' dump file stored under 'db/dumps';
+# 2. the DB container 'goggles-db' is already running;
+#
+# Execute the dedicated task:
+#
+#   $> RAILS_ENV=staging rails db:rebuild from=test to=staging
+#
+staging:
+  <<: *default
+  database: goggles
