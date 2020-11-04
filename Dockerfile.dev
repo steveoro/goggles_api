@@ -1,13 +1,18 @@
 FROM ruby:2.6.3-alpine
-LABEL AUTHOR=steve.alloro@gmail.com version="0.1.1"
+LABEL AUTHOR=steve.alloro@gmail.com version="0.1.2"
 
-ENV BUNDLER_VERSION=2.0.2 \
+ENV BUNDLER_VERSION=2.1.4 \
     INSTALL_PATH=/app \
     RAILS_ENV=development \
     DATABASE_NAME=goggles_development \
     DATABASE_HOST=goggles-db \
     DATABASE_PORT=3306 \
     DATABASE_USER=root
+
+# Current export defaults:
+# BUNDLE_APP_CONFIG='/usr/local/bundle'
+# BUNDLE_PATH='/usr/local/bundle'
+# GEM_HOME='/usr/local/bundle'
 
 RUN mkdir -p $INSTALL_PATH
 RUN apk add --update --no-cache \
@@ -46,7 +51,7 @@ RUN apk add --update --no-cache \
 # USER $USER_ID
 
 # App image:
-RUN gem install bundler -v 2.0.2
+RUN gem install bundler -v $BUNDLER_VERSION
 WORKDIR $INSTALL_PATH
 COPY . ./
 RUN bundle config build.nokogiri --use-system-libraries

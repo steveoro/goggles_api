@@ -1,20 +1,6 @@
 version: '3.7'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    image: steveoro/goggles-api:dev-0.1.1
-    depends_on:
-      - goggles-db
-    container_name: goggles-api
-    restart: always
-    ports:
-      - '8080:8080'
-    env_file:
-      - .env
-
   goggles-db:
     image: mariadb:10.3.25
     container_name: goggles-db
@@ -29,6 +15,20 @@ services:
         target: /var/lib/mysql
         volume:
           nocopy: true
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: steveoro/goggles-api:dev-0.1.2
+    depends_on:
+      - goggles-db
+    container_name: goggles-api.dev
+    restart: always
+    ports:
+      - '8080:8080'
+    env_file:
+      - .env
 
 volumes:
   db_data:

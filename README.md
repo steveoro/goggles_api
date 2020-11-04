@@ -42,24 +42,59 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 
 ## Configuration
 
+All framework app projects (except for the mountable engines) handle multiple configurations for execution, development & deployment.
+
+You can use them either as single composed containers or as full-blown local installations, but also in other mixed ways, be it the application running on localhost while accessing the DB inside a container or vice-versa.
+
+
+### *Full Localhost* usage
+
+- a MariaDb 10.3.25 (tested & recommended) running server & client w/ `dev` libraries; alternatively an up-to-date MySQL installation.
+
+Clone the repository on localhost and use it as you would with a normal Rails application.
+
 In order to start development, you'll need to:
 
-- obtain a valid `config/master.key` file
-- customize `config/database.yml.example` according to your local MySQL installation and save it as `config/database.yml`
-- customize `.env.example` (as above) and save it as `.env`
+- obtain a valid `config/master.key` file;
+- customize `config/database.yml.example` according to your local MySQL installation and save it as `config/database.yml`;
+- customize `.env.example` (as above) and save it as `.env` in case you want to build the Docker containers;
+- obtain a a valid compressed development or test seed (`.sql.bz2`) stored under `db/dump`; check out [Database setup](#database-setup).
 
-The project allows usage or direct testing as an orchestrated Docker container service: you won't even need an actual installation of MySQL or MariaDB in this case.
 
-If you're using the orchestrated container, just choose a random password for the database in the `.env` file and read on below about [Docker usage](#Docker).
+### *Composed Container* usage
+
+For usage as a composed Docker container service you won't need an actual installation of MySQL or MariaDB, although a client `mysql` installation is recommended in case you want to run SQL commands into the DB container from the localhost shell.
+
+If you're using the orchestrated container, just choose a random password for the database in the `.env` file and follow the WiKi How-To:
+
+- [Docker & docker-compose setup & usage with GogglesAPI as reference example](#) :construction:
+
+
+### *Mixed cases* usage
+
+The `Dockerfile`s & `docker-compose` YML files work with some assumptions throughout the framework about published ports between containers and the host which is running Docker.
+
+For instance, by changing just the current Database port in your customized `database.yml` you could switch from a typical localhost MySQL install (port 3306 running on socket) to a containerized MySQL Database on the different port published on the service (port 33060 using IP protocol).
+
+
+| Service | Default internal port | Default published port |
+|---|---|---|
+|  | _"inside" containers_ / `localhost` | _"outside" service_ => _to_ localhost |
+Database (MariaDB/MySQL) | 3306 | 33060
+Web app | 3000 | 8080
+
+The current `staging` environment configuration is an example of the app running _locally_ while connecting to the `goggles-db` container service on localhost:33060. (See the dedicated paragraph below.)
+
 
 
 ## Audit log
 
-The Audit log is stored inside `log/api_audit.log`.
+The API Audit log is stored inside `log/api_audit.log`.
 The Logger instance will split it and keep the latest 10 files of 1 MB each.
 
 
-## Suggested dependencies
+
+## Suggested tools & dependencies
 
 *For editing & browsing API Blueprints:*
 
@@ -71,22 +106,14 @@ The Logger instance will split it and keep the latest 10 files of 1 MB each.
 $> sudo npm install -g hercule
 ```
 
-*Container usage:*
-
-- [Docker & docker-compose](#docker)
-
-For step-by-step instructions, check out:
-
-- [Install Docker on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04)
-- [Install docker-compose on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04) by DigitalOcean
-
 
 
 ## How to run the test suite
 
+
 ### A. Everything on _localhost_
 
-For local testing, just keep your Guard friend running in the background, in a dedicated console:
+For local testing, just keep your friend [Guard](https://github.com/guard/guard) running in the background, in a dedicated console:
 
 ```bash
 $> guard
@@ -102,23 +129,34 @@ In any case, although the Guard plugin for Brakeman runs correctly at start, it'
 $> bundle exec brakeman -Aq
 ```
 
-If you don't have a local test DB setup, read on [below](#database-setup).
-If you do have a local test DB, you can execute the whole test suite is a single run (regardless of Guard running) by using the entrypoint for the Docker test configuration:
+If you don't have a local test DB setup, check out [Database setup](#database-setup).
 
-```bash
-$> entrypoints/docker.test.sh
-```
-
-_Please, again, commit & push any changes only when the test suite is **green**._
+_Make sure you commit & push any changes only when the test suite is_ :green_heart:.
 
 
 ### B. Everything on _Docker containers_
 
-For containerized testing, assuming you have proper test DB container (otherwise, read on [below](#database-setup)), you can get the same single run behaviour with:
+Althought not optimized for testing, the `dev` composed service can be used to run RSpec, Rubocop or anything else, including Guard too.
+
+Run the composed container in detached mode, then connect to its internal shell and run the tests:
 
 ```bash
-$> docker-compose -f docker-compose.test.yml run app
+$> docker-compose -f docker-compose.dev.yml up -d
+$> docker-compose -f docker-compose.dev.yml exec app sh
+
+/app # RAILS_ENV=test bundle exec rspec
+
+/app # RAILS_ENV=test bundle exec rubocop
+
+/app # RAILS_ENV=test bundle exec brakeman -Aq
+
+/app # RAILS_ENV=test bundle exec guard
 ```
+
+Inside the container, remember to:
+
+- always prefix the usual commands with `bundle exec` (as in `bundle exec rails console`, ...) to reach the correct bundle (stored in `/usr/local/bundle`);
+- override the default RAILS_ENV `development` for anything test-related.
 
 
 * * *
@@ -126,18 +164,17 @@ $> docker-compose -f docker-compose.test.yml run app
 
 ## Dev Workflow _(for contributors)_
 
-When you push a commit to the `master` branch the build system will re-test everything you allegedly have already checked locally using Guard as described above.
+When you push a commit to the `master` branch, the build system will re-test everything you allegedly have already checked locally using Guard as described above.
 
-The project uses a full CI pipeline setup on Semaphore 2.0 (currently for the `master` branch only) that will promote a successful build into the Docker `latest` production image on DockerHub.
+The project uses a _full CI pipeline_ setup on Semaphore 2.0 (currently for the `master` branch only) that will promote a successful build into the Docker `latest` production-only image on DockerHub.
 
-All other tagged Docker images will be autobuilt by DockerHub itself, as soon as a specific branch has been manually tagged as a _release_ from the GitHub UI.
-(Using GitHub release tags that respect semantic versioning, with format `MAJOR`.`MINOR`.`BUILD`)
+All other tagged Docker images will be auto-built by DockerHub itself, as soon as any specific branch has been _manually tagged_ as a _release_ from the GitHub UI. (Using GitHub release tags that respect semantic versioning, with format `MAJOR`.`MINOR`.`BUILD`)
 
 Given this, avoid cluttering the build queue with tiny commits (unless these are hotfixes) and with something that hasn't been greenlit by a local run of the whole test suite: it's adamant that you don't push failing builds whenever possible.
 
 Basically, remember to:
 
-- login to docker from the console with `docker login` whenever you're using Docker for testing or development;
+- login to docker from the console with `docker login` whenever you're using Docker for testing or development (in order to avoid pull/push threshold caps);
 - always develop with a running `guard` in background;
 - when you're ready to push, do a full test suite run (just to be sure);
 - run also an additional Brakeman scan before the push as suggested above.
@@ -166,7 +203,7 @@ Then, you'll need to use the Factories in spec/factories to create fixtures.
 
 A fully randomized `seed.rb` script is still a work-in-progress. Contributions are welcome.
 
-Assuming we want the `test` environment DB up and running, you can either have (one or even both cases, with mixed possibilities in between):
+Assuming we want the `test` environment DB up and running, you can either have:
 
 
 ### A. Everything on _localhost_
@@ -187,10 +224,31 @@ $> RAILS_ENV=test bin/rails db:migrate
 
 If the DB container for the test environment still needs to be created or it's new, the `test` database will be either newly created and empty or even missing at all.
 
-Recreate the `goggles_test` db with:
+Start / build the DB container:
+
+```bash
+$> docker-compose -f docker-compose.dev.yml up goggles-db
+```
 
 WIP :construction:
 
+If a local `mysql` client is available, recreate `goggles_test` from localhost:
+
+ *** MISSING CREATE DATABASE from mysql ***
+
+```bash
+$> bunzip2 -ck ./db/dump/test.sql.bz2 > ./db/dump/test.sql
+
+$> mysql --host=0.0.0.0 --port=33060 --user=root \
+         --password="My-Super-Secret-Pwd" \
+         --database=goggles_test < ./db/dump/test.sql
+
+$> rm ./db/dump/test.sql
+```
+
+WIP :construction:
+
+------------------------------- TODO
 
 Create & run a new container from the base image with:
 
@@ -224,381 +282,35 @@ $>
 * * *
 
 
-## Docker usage
+## Staging
 
-TODO
+Staging will use a custom copy of the `production` environment together with the database running on the production Docker image (tag: `latest`) of the composed service (DockerHub: `steveoro/goggles-api:latest`), minus the SSL enforcing (so that we can test that easily on localhost).
 
+To recreate or restore a usable database with testing seeds, assuming:
 
-* * *
+1. you have a valid `test.sql.bz2` dump file stored under `db/dumps`;
+2. the DB container `goggles-db` has been already built and already running;
 
-
-## Setup as individual Docker containers
-
-Beside its "normal" installation as a Rails application, the repository contains a `Dockerfile` for configuring app deployment and usage as a Docker container. This relies on another separated container for the database which can be created with the steps that follow.
-
-Instead of a full-blown MySQL/MariaDB installation on localhost, it's also possible to use the DB container for the cloned repository like the containerized version of the app.
-
-See also ["Setup as a composed Docker service"](#Setup_as_a_composed_Docker_service) below for a more automated approach of both containers.
-
-
-
-## Docker CLI login:
-
-In order to push & pull _unlimited_ image tags from the Docker Registry you'll need to be logged-in, because the Docker Registry currently limits the number of anonymous image pulls that can be done during a certain time span.
-
-Logging into Docker from the command line is not required for basic usage & setup but it may be necessary during periods of frequent updates to the base source repo.
-
-The Docker Engine can keep user credentials in an external credentials store, such as the native keychain of the operating system. Using an external store is more secure than storing credentials in the plain-JSON Docker configuration file. (You'll get a warning if you log-in with plain-text credentials.)
-
-In case you don't have a CLI password-manager, you can try [`pass`](https://github.com/docker/docker-credential-helpers/release) or use any D-Bus-based alternative (usually under KDE) or the Apple MacOS keychain or the MS Windows Credential Manager.
-
-Under Ubuntu:
-
-1. Install `pass` as password manager:
+Execute the dedicated task:
 
 ```bash
-$> sudo apt-get install pass
+$> RAILS_ENV=staging rails db:rebuild from=test to=staging
 ```
 
-2. You'll need the Docker helper that interfaces with the `pass` commands. For that, download, extract, make executable, and move `docker-credential-pass` (which is currently at v. 0.6.3):
+Run the server on localhost with:
 
 ```bash
-$> wget https://github.com/docker/docker-credential-helpers/releases/download/v0.6.3/docker-credential-pass-v0.6.3-amd64.tar.gz && tar -xf docker-credential-pass-v0.6.3-amd64.tar.gz && chmod +x docker-credential-pass && sudo mv docker-credential-pass /usr/local/bin/
+$> rails s -p 8080 -e staging
 ```
 
-3. Create a new `gpg2` key:
+...Or the console with:
 
 ```bash
-$> gpg2 --gen-key
-```
-
-4. Follow prompts from the gpg2 utility. (Enter actual name, email & passphrase)
-
-5. Initialize pass using the newly created key:
-
-```bash
-$> pass init "<Your Name>"
-```
-
-6. You'll need to add the credentials store (`"credStore": "pass"`) in `$HOME/.docker/config.json` to tell the docker engine to use it. The value of the config property should be the suffix of the program to use (i.e. everything after the downloaded helper name `docker-credential-`).
-
-In our example (using `pass` as storage & `docker-credential-pass` as helper) you can create the `$HOME/.docker/config.json` file manually:
-
-```json
-{
-  "credsStore": "pass"
-}
-```
-
-Alternatively, you can also add the `"credStore": "pass"` to the docker config using a single `sed` command:
-
-```bash
-$> sed -i '0,/{/s/{/{\n\t"credsStore": "pass",/' ~/.docker/config.json
-```
-
-7. Log out with `docker logout` if you are currently logged in (this will also remove any previously plain-text credentials from the configuration file).
-
-Login to docker to store the credentials. Use the correct username & omit the password from the command line. When you’re prompted for a password, enter the secret Docker authorization token instead.
-
-_(The secret Docker token is currently available only inside our :key: config channel on Slack)_
-
-```bash
-$> docker login --username steveoro
-```
-
-On the first image pull the passphrase for the PGP key will be asked. If you are using a system-wide password manager and store the passphrase, you shouldn't be bothered anymore on any subsequent pull or push.
-
-Ref.:
-- [Docker engine credentials store](https://docs.docker.com/engine/reference/commandline/login/#credentials-store)
-- [Passwordstore](https://www.passwordstore.org/)
-- [issue on GitHub](https://github.com/docker/docker-credential-helpers/issues/102).
-
-
-* * *
-
-## DB container usage (MySql/MariaDB):
-
-Check the already existing local Docker images with `docker images`.
-
-Download & pull the latest MySql/MariaDb container if it's missing. For MySQL:
-
-```bash
-$> docker pull mysql:latest
-```
-
-Or, for MariaDB:
-
-```bash
-$> docker pull mariadb:10.3.25
-```
-
-Run or create the container in foreground by specifying:
-
-- your own `My-Super-Secret-Pwd` for the MySql/MariaDb `root` user;
-- use `goggles` or `goggles_development` as the actual database name, depending on the environment or purpose;
-- use something like `~/Projects/goggles_db.vol` as local volume folder to be mounted for the DB data, with the full path to the local data volume where the database container is supposed to store the DB files (don't forget to `mkdir ~/Projects/goggles_db.vol` first if it's a new folder);
-- the published port mapping `127.0.0.1:33060:3306` will bind port 3306 of the container to localhost's 33060. **(*)**
-
-For consistency & stability we'll stick with the current MariaDb version, tagged 10.3.25.
-
-Create & run a new container from the base image with:
-
-```bash
-$> docker run --name goggles-db -e MYSQL_DATABASE=goggles_development \
-     -e MYSQL_ROOT_PASSWORD="My-Super-Secret-Pwd" \
-     -v ~/Projects/goggles_db.vol:/var/lib/mysql \
-     -p 127.0.0.1:33060:3306 mariadb:10.3.25 \
-     --character-set-server=utf8mb4 \
-     --collation-server=utf8mb4_unicode_ci
-```
-
-Eventually (as soon as you'll feel confident with the container setup) you'll want to add a `-d` parameter to the run statement before the image name for background/detached mode execution. (`docker run -d ...`)
-
-_Note that this **(*)** published entry port will be reachable by TCP with an IP:PORT mapping, while any other existing MySQL service already running on localhost will remain accessible though the usual socket PID file_. (So you can have both.)
-
-More precisely, the DB container can be reached **_from another container_** using its Docker network name (usually defined inside `docker-compose.yml`) and its _internal_ port (not the one published on localhost).
-
-Whereas, the same DB container service can be accessed **_from localhost_** using the localhost IP (0.0.0.0) with its _published port_, forcing a TCP/IP connection (not using sockets) with the `host` parameter.
-
-
-Check the running containers with:
-
-```bash
-$> docker ps -a
-```
-
-
-When in detached mode, you can check the console logs with a:
-
-```bash
-$> docker logs --follow goggles-db
-```
-
-Stop the container with CTRL-C if running in foreground; or from another console (when in detached mode) with:
-
-```bash
-$> docker stop goggles-db
-```
-
-
-In case of need, remove old stopped containers with `docker rm CONTAINER_NAME_OR_ID` and their images with `docker rmi IMAGE_ID`.
-
-Existing stopped containers can be restarted easily:
-
-```bash
-$> docker start goggles-db
-```
-
-
-
-### Connecting to the DB container with the MySQL client:
-
-Two possibilities:
-
-- Run the `mysql` client from within the **container** with an interactive shell:
-
-  ```bash
-  $> docker exec -it goggles-db sh -c 'mysql --password="My-Super-Secret-Pwd" --database=goggles_development'
-  ```
-
-- Run the `mysql` client from **localhost** (if the client is available) and then connect to the service container using the _IP protocol_ and the correct published port:
-
-  ```bash
-  $> mysql --host=0.0.0.0 --port=33060 --user=root --password="My-Super-Secret-Pwd" --database=goggles_development
-  ```
-
-
-
-### Restoring the whole DB from existing backups:
-
-Four basic steps:
-
-1. get the DB dump in SQL format
-2. drop the existing DB when not empty
-3. recreate the DB
-4. execute the script
-
-Assuming we have a compressed dump located at `~/Projects/goggles.docs/backup.db/goggles-backup.20201005.sql.bz2`, unzip the DB backup in the current folder:
-
-```bash
-$ bunzip2 -ck ~/Projects/goggles.docs/backup.db/goggles-backup.20201005.sql.bz2 > goggles-backup.sql
-```
-
-Drop & recreate from scratch the existing database (either way is fine):
-
-- from within the **container**:
-
-  ```bash
-  $> docker exec -it goggles-db sh -c 'mysql --user=root --password="My-Super-Secret-Pwd" --execute="drop database if exists goggles_development; create database goggles_development;"'
-  ```
-
-- from **localhost** (if mysql client is available), connect to the service container using the _IP protocol_ and the correct published port:
-
-  ```bash
-  $> mysql --host=0.0.0.0 --port=33060 --user=root --password="My-Super-Secret-Pwd" \
-           --execute="drop database if exists goggles_development; create database goggles_development;"
-  ```
-
-Execute the script (again, choose your flavour):
-
-If your SQL backup involves a single DB and contains a `USE DATABASE <db_name>` somewhere at the beginning, you'll need to remove that to have a truly DB-independent script (otherwise, the specified `--database=` parameter won't have any effect).
-
-- from within the **container**:
-
-  ```bash
-  $> docker exec -it goggles-db sh -c 'mysql --user=root --password="My-Super-Secret-Pwd" --database=goggles_development' < ./goggles-backup.sql
-  ```
-
-- from **localhost**:
-
-  ```bash
-  $> mysql --host=0.0.0.0 --port=33060 --database=goggles_development --user=root \
-           --password="My-Super-Secret-Pwd" < ./goggles-backup.sql
-  ```
-
-Reconnect to the MySQL client & check that it all went well:
-
-```sql
-MariaDB [goggles_development]> show tables;
-
---- snip ---
-
-MariaDB [goggles_development]> desc users;
-
---- snip ---
-
-```
-
-Delete the uncompressed dump in the current folder when done.
-
-
-
-#### Creating new DB backup dumps:
-
-Two possibilities:
-
-- from within the **container**:
-
-  ```bash
-  $> docker exec -it goggles-db sh -c 'mysqldump --user=root --password="My-Super-Secret-Pwd" -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction goggles_development' | bzip2 -c > goggles_development-backup.sql.bz2
-  ```
-
-- from **localhost** (if available):
-
-  ```bash
-  $> mysqldump --host=0.0.0.0 --port=33060 --user=root --password="My-Super-Secret-Pwd" \
-               -l --triggers --routines -i --skip-extended-insert \
-               --no-autocommit --single-transaction \
-               goggles_development | bzip2 -c > goggles_development-backup.sql.bz2
-  ```
-
-If the first method fails (or it halts at the beginning of the dump, as if the DB was empty), usually a dump of all the databases shall do:
-
-```bash
-$ docker exec -it goggles-db sh -c 'mysqldump --user=root --password="My-Super-Secret-Pwd" -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction goggles_development --all-databases' | bzip2 -c > all_dbs-backup.sql.bz2
+$> rails c -e staging
 ```
 
 
 * * *
-
-
-### API container:
-
-While the DB container is a pretty standard MySQL/MariaDB container using a mounted external data volume, the main app container is custom built and supports different environments.
-
-Dedicated _development_ & _production_ images are available [here](https://hub.docker.com/r/steveoro/goggles-api/tags), each one tagged by environment and version. The `latest` tag is used just for _production_.
-
-Naming/Tag format: "[REPO_NAME]:[TAG_NAME]".
-
-Existing images will be pulled automatically from the DockerHub registry with a `docker-compose up` if missing. The local container image(s) can be recreated from scratch each time you update the source code.
-
-To build a new tagged image giving it - for example - a "0.1.1" tag, run:
-
-- For _**development:**_
-  ```bash
-  $> docker build -t steveoro/goggles-api:dev-0.1.1 \
-                  -f Dockerfile.dev .
-  ```
-
-- For _**production:**_
-  ```bash
-  $> docker build -t steveoro/goggles-api:prod-0.1.1 \
-                  -t steveoro/goggles-api:latest \
-                  -f Dockerfile.prod .
-  ```
-
-Make sure you have a valid `.env` file that includes the DB password (customize `.env.example` before).
-
-
-
-The easiest way to run the API container (automatically building or downloading missing images) is:
-
-```bash
-$> docker-compose up
-```
-
-Use `docker-compose up --build` to force rebuilding the composed service.
-
-
-
-### Connecting to the API container:
-
-- Execute an interactive shell inside the container with:
-
-  ```bash
-  $> docker exec -it goggles-api sh
-  ```
-
-- Enter directly the Rails console with:
-
-  ```bash
-  $> docker exec -it goggles-api sh -c 'rails c'
-  ```
-
-
-
-### Updating the API container image:
-
-To update an image, simply create a new image for it (with `build`) and `tag` it with an existing name tag, or a new one (if you know what you're doing).
-
-Re-tag an existing image with:
-
-```bash
-$> docker tag local-image:tag_name steveoro/goggles-api:tag_name
-```
-
-Push an updated, tagged image onto the Docker registry with:
-
-```bash
-$> docker push steveoro/goggles-api:tag_name
-```
-
-
-
-* * *
-
-
-
-## Setup as a composed Docker service
-
-The composed service definitions inside `docker-compose.yml` will take care of binding together the containers.
-
-A simple `docker-compose up` will run the default _**development**_ configuration with its counterpart DB.
-
-Most of the `docker-compose` sub-commands are a mirror copy of their Docker counter part, such as `build`, `logs`, `stop`, `exec`, `ps`, `images` and many more.
-
-At a glance:
-
-- `docker-compose up` to start (and automatically build, if not existing) the composed service
-- `docker-compose up --build` to force rebuilding the service
-- `docker-compose stop` to just stop the containers
-- `docker-compose ps` to display the running (composed) containers
-- `docker-compose down` to stop and also _remove_ the containers
-
-
-
-* * *
-
 
 
 ## Deployment instructions

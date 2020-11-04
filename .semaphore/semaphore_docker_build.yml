@@ -31,6 +31,7 @@ blocks:
       jobs:
         - name: Docker prod
           commands:
+            # The first pull will build the local cache for all the layers so that the build will act on the diff:
             - 'docker pull $DOCKERHUB_USERNAME/goggles-api:latest || true'
             - 'docker build -t $DOCKERHUB_USERNAME/goggles-api:latest --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .'
             - 'docker push $DOCKERHUB_USERNAME/goggles-api:latest'

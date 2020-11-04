@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: 28842ce51a86bbb81ea4f1223ac8fb12e64a2e9c
+  revision: 3dc29a154adfdd44ca7dd8dd38824512416b4063
   specs:
-    goggles_db (0.1.20)
+    goggles_db (0.1.21)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -12,6 +12,8 @@ GIT
       devise
       devise-i18n
       draper
+      factory_bot_rails
+      ffaker
       haml
       jwt
       mini_magick

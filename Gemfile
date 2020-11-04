@@ -37,11 +37,15 @@ gem 'kaminari'
 gem 'rest-client'
 gem 'simple_command'
 
+# Inherited data factories from DB engine, published also on production/staging
+# to allow fixture creation for testing purposes:
+gem 'factory_bot_rails'
+gem 'ffaker'
+
 group :development do
   gem 'awesome_print' # color output formatter for Ruby objects
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'brakeman'
 
   gem 'guard'
   gem 'guard-brakeman'
@@ -57,17 +61,15 @@ group :development do
 end
 
 group :development, :test do
+  gem 'brakeman'
   gem 'bullet'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
 
-  gem 'factory_bot_rails'
-  gem 'ffaker'
   gem 'letter_opener'
   gem 'pry'
   gem 'rspec'
   gem 'rspec-rails'
-
   gem 'rubocop', require: false # For style checking
   gem 'rubocop-rails'
   gem 'rubocop-rspec'
