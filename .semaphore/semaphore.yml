@@ -56,7 +56,7 @@ blocks:
             - bundle config set path 'vendor/bundle'
             - bundle install
             - bundle exec rubocop
-            - bundle exec brakeman -A6q
+            - bundle exec brakeman -c .brakeman.cfg
 
   - name: RSpec tests
     task:
