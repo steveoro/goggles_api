@@ -126,7 +126,7 @@ As of Rails 6.0.3, most probably there are some issues with the combined usage o
 In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run the `brakeman` checks before pushing the changes to the repository with:
 
 ```bash
-$> bundle exec brakeman -Aq
+$> brakeman -c .brakeman.cfg
 ```
 
 If you don't have a local test DB setup, check out [Database setup](#database-setup).
@@ -148,7 +148,7 @@ $> docker-compose -f docker-compose.dev.yml exec app sh
 
 /app # RAILS_ENV=test bundle exec rubocop
 
-/app # RAILS_ENV=test bundle exec brakeman -Aq
+/app # RAILS_ENV=test bundle exec brakeman -q
 
 /app # RAILS_ENV=test bundle exec guard
 ```

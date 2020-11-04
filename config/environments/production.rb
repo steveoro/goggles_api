@@ -34,7 +34,9 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  # [Steve A.] If the deploy server is behind a reverse proxy handling the TLS/SSL certificate,
+  #  this should be commented out or left to false:
+  # config.force_ssl = true
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
