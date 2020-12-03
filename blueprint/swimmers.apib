@@ -18,7 +18,7 @@
             "created_at": "2014-10-19T00:00:00.000Z",
             "updated_at": "2014-10-19T16:04:16.000Z",
             "complete_name": "ALLORO STEFANO",
-            "is_year_guessed": false,
+            "year_guessed": false,
 
             // Embedded associated User:
             "associated_user": {
@@ -164,7 +164,7 @@ Returns 'true' on success, an empty result when not found.
     | 1 | `M` | male |
     | 2 | `F` | female |
     | 3 | `X` | unknown |
-- `is_year_guessed` (boolean): 'true' when year of birth has been deduced from other data
+- `year_guessed` (boolean): 'true' when year of birth has been deduced from other data
 
 
 * * *
@@ -184,7 +184,7 @@ Returns 'true' on success, an empty result when not found.
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
             -d '{"nickname": "steve", "year_of_birth": 1969, \
-                 "is_year_guessed": "false"}' \
+                 "year_guessed": "false"}' \
             "<API_HOST:PORT>/api/v3/swimmer/142"
     ```
 
@@ -196,7 +196,7 @@ Returns 'true' on success, an empty result when not found.
                 url: '<API_HOST:PORT>/api/v3/swimmer/142',
                 payload: {
                     nickname: "steve", year_of_birth: 1969,
-                    is_year_guessed: false
+                    year_guessed: false
                 },
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
@@ -219,7 +219,7 @@ Returns 'true' on success, an empty result when not found.
                 "year_of_birth": 1969,
                 "associated_user_id": 1,
                 "gender_type_id": 1,
-                "is_year_guessed": false
+                "year_guessed": false
             }
 
 + Response 200 (application/json)
@@ -245,7 +245,7 @@ Returns 'true' on success, an empty result when not found.
                 "year_of_birth": 1969,
                 "associated_user_id": 1,
                 "gender_type_id": 1,
-                "is_year_guessed": false
+                "year_guessed": false
             }
 
 + Response 200 (application/json)
@@ -271,7 +271,7 @@ Returns 'true' on success, an empty result when not found.
                 "year_of_birth": 1969,
                 "associated_user_id": 1,
                 "gender_type_id": 1,
-                "is_year_guessed": false
+                "year_guessed": false
             }
 
 + Response 401 (application/json)
@@ -295,7 +295,7 @@ Returns 'true' on success, an empty result when not found.
                 "year_of_birth": 1969,
                 "associated_user_id": 1,
                 "gender_type_id": 1,
-                "is_year_guessed": false
+                "year_guessed": false
             }
 
 + Response 401 (application/json)
@@ -309,7 +309,7 @@ Returns 'true' on success, an empty result when not found.
             { "msg": "Unauthorized" }
 
 
-# Swimmer list [/api/v3/swimmers{?page,per_page,first_name,last_name,complete_name,gender_type_id,year_of_birth,is_year_guessed}]
+# Swimmer list [/api/v3/swimmers{?page,per_page,first_name,last_name,complete_name,gender_type_id,year_of_birth,year_guessed}]
 
 + Model (application/json)
 
@@ -349,9 +349,9 @@ returned as JSON and optionally filtered by any or all from:
 - `complete_name`
 - `gender_type_id`
 - `year_of_birth`
-- `is_year_guessed`
+- `year_guessed`
 
-Returns exact matches for `gender_type_id`, `year_of_birth` & `is_year_guessed`;
+Returns exact matches for `gender_type_id`, `year_of_birth` & `year_guessed`;
 supports partial matches for the string names, but no fuzzy searches are performed:
 the matching rows for the name strings are selected using a simple "LIKE %?%" on the specified parameters.
 
@@ -381,7 +381,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     + complete_name: `ALLORO STEFANO` (string, optional) - complete name, as it appears from the public rankings (italian ordering: last name first; partial match supported)
     + gender_type_id: 1 (number, optional) - associated GenderType ID
     + year_of_birth: 1969 (number, optional) - year of birth
-    + is_year_guessed: false (boolean, optional) - 'true' when year of birth has been deduced from other data
+    + year_guessed: false (boolean, optional) - 'true' when year of birth has been deduced from other data
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page

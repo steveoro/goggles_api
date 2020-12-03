@@ -56,8 +56,8 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
         [
           { number: 'TEST_CODE' },
           { number: 'TEST_CODE', entry_time_type_id: GogglesDb::EntryTimeType.send(%w[manual personal gogglecup prec_year last_race].sample).id },
-          { number: 'TEST_CODE', has_to_pay_fees: true },
-          { number: 'TEST_CODE', has_to_pay_relays: true, has_to_pay_badge: [false, true].sample }
+          { number: 'TEST_CODE', fees_due: true },
+          { number: 'TEST_CODE', relays_due: true, badge_due: [false, true].sample }
         ].sample
       end
       before(:each) do

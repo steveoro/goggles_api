@@ -112,12 +112,10 @@ RSpec.describe Goggles::UsersAPI, type: :request do
 
   describe 'GET /api/v3/users/' do
     context 'when using a valid authentication' do
-      # Choose among some pretty common names in the seed => data guaranteed, but most of the times w/o pagination)
-      let(:fixture_first_name) { %w[Barbara Luca Marco Maria Paola Paolo Stefania Stefano].sample }
-      let(:fixture_last_name)  { %w[Alloro Bianchi Bonacini Ligabue Sesena].sample }
-
+      let(:fixture_first_name) { GogglesDb::User.select(:first_name).limit(100).map(&:first_name).sample }
+      let(:fixture_last_name)  { GogglesDb::User.select(:last_name).limit(100).map(&:last_name).sample }
       # Choose among the many existing rows in the seed w/ more than 25 rows per domain => pagination guaranteed)
-      let(:fixture_email)    { %w[@gmail.com @libero.it].sample }
+      let(:fixture_email)    { '@fake.example.' }
       let(:default_per_page) { 25 }
 
       # Make sure the Domain contains the expected seeds:

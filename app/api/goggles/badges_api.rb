@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Badge API Grape controller
   #
-  #   - version:  1.07
+  #   - version:  1.08
   #   - author:   Steve A.
-  #   - build:    20201006
+  #   - build:    20201201
   #
   class BadgesAPI < Grape::API
     helpers APIHelpers
@@ -44,9 +44,9 @@ module Goggles
         requires :id, type: Integer, desc: 'Badge ID'
         requires :number, type: String, desc: 'displayed number or code for the Badge'
         optional :entry_time_type_id, type: Integer, desc: 'associated EntryTimeType ID'
-        optional :has_to_pay_fees, type: Boolean, desc: 'true: the Swimmer has to pay additional meeting fees for the Championship; false: the Team provides'
-        optional :has_to_pay_badge, type: Boolean, desc: 'true: the Swimmer has to pay the badge registration; false: the Team provides'
-        optional :has_to_pay_relays, type: Boolean, desc: 'true: the Swimmer has to pay any relay event in the Championship; false: the Team provides'
+        optional :fees_due, type: Boolean, desc: 'true: the Swimmer has to pay additional meeting fees for the Championship; false: the Team provides'
+        optional :badge_due, type: Boolean, desc: 'true: the Swimmer has to pay the badge registration; false: the Team provides'
+        optional :relays_due, type: Boolean, desc: 'true: the Swimmer has to pay any relay event in the Championship; false: the Team provides'
       end
       route_param :id do
         put do

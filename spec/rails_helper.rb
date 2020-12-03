@@ -45,6 +45,9 @@ unless ENV['CODECOV_TOKEN'].to_s.empty?
   puts 'Setting CodeCov as SimpleCov formatter.'
 end
 
+# Add DSL for "N+1 query" issues directly inside RSpec:
+require 'n_plus_one_control/rspec'
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
@@ -75,7 +78,7 @@ FactoryBot.reload
 # require only the support files necessary.
 #
 # Add support files directly from Core engine and then from current app:
-Dir[GogglesDb::Engine.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
+# Dir[GogglesDb::Engine.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.

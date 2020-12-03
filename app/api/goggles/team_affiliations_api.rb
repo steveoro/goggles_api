@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: TeamAffiliation API Grape controller
   #
-  #   - version:  1.07
+  #   - version:  1.08
   #   - author:   Steve A.
-  #   - build:    20201006
+  #   - build:    20201201
   #
   class TeamAffiliationsAPI < Grape::API
     helpers APIHelpers
@@ -46,7 +46,7 @@ module Goggles
         optional :season_id, type: Integer, desc: 'associated Season ID'
         optional :name, type: String, desc: 'name as it appears in the registration rooster for the Championship Season'
         optional :number, type: String, desc: 'enrollment or registration badge number'
-        optional :must_calculate_goggle_cup, type: Boolean, desc: 'true when the customized GoggleCup has to be computed'
+        optional :compute_gogglecup, type: Boolean, desc: 'true when the customized GoggleCup has to be computed'
       end
       route_param :id do
         put do
@@ -83,7 +83,7 @@ module Goggles
         optional :season_id, type: Integer, desc: 'optional: Season ID'
         optional :name, type: String, desc: 'optional: enrollment name'
         optional :number, type: String, desc: 'optional: enrollment number'
-        optional :must_calculate_goggle_cup, type: Boolean, desc: 'optional: true for GoggleCup affiliations'
+        optional :compute_gogglecup, type: Boolean, desc: 'optional: true for GoggleCup affiliations'
         use :pagination
       end
       # Enforcing 'max_per_page' will add the allowed range to the swagger docs and
@@ -95,7 +95,7 @@ module Goggles
         check_jwt_session
 
         paginate GogglesDb::TeamAffiliation.where(
-          filtering_hash_for(params, %w[team_id season_id number must_calculate_goggle_cup])
+          filtering_hash_for(params, %w[team_id season_id number compute_gogglecup])
         ).where(
           filtering_like_for(params, %w[name])
         )

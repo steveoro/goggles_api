@@ -62,7 +62,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
           { season_id: new_season.id },
           { name: new_name },
           { number: new_number },
-          { must_calculate_goggle_cup: [true, false].sample }
+          { compute_gogglecup: [true, false].sample }
         ].sample
       end
       before(:each) do
@@ -92,7 +92,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
       before(:each) do
         put(
           api_v3_team_affiliation_path(id: fixture_ta.id),
-          params: { must_calculate_goggle_cup: true },
+          params: { compute_gogglecup: true },
           headers: { 'Authorization' => 'you wish!' }
         )
       end
@@ -103,7 +103,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
       before(:each) do
         put(
           api_v3_team_affiliation_path(id: -1),
-          params: { must_calculate_goggle_cup: true },
+          params: { compute_gogglecup: true },
           headers: fixture_headers
         )
       end
@@ -205,7 +205,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
             params: {
               season_id: fixture_ta.season_id,
               team_id: fixture_ta.team_id,
-              must_calculate_goggle_cup: fixture_ta.must_calculate_goggle_cup
+              compute_gogglecup: fixture_ta.compute_gogglecup
             },
             headers: fixture_headers
           )

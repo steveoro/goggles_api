@@ -17,10 +17,10 @@
             "entry_time_type_id": 5,
             "team_affiliation_id": 5727,
             "final_rank": null,
-            "is_out_of_goggle_cup": false,
-            "has_to_pay_fees": false,
-            "has_to_pay_badge": false,
-            "has_to_pay_relays": false,
+            "off_gogglecup": false,
+            "fees_due": false,
+            "badge_due": false,
+            "relays_due": false,
 
             // Embedded associated Swimmer:
             "swimmer": {
@@ -37,7 +37,7 @@
                 "gender_type_id": 1,
                 // [...]
                 "complete_name": "ALLORO STEFANO",
-                "is_year_guessed": false
+                "year_guessed": false
             },
 
             // Embedded associated TeamAffiliation:
@@ -45,11 +45,11 @@
                 "id": 5727,
                 "number": "04200002",
                 "name": "CSInuoto OberFerrari",
-                "must_calculate_goggle_cup": true,
+                "compute_gogglecup": true,
                 "team_id": 1,
                 "season_id": 191,
                 // [...]
-                "is_autofilled": false
+                "autofilled": false
             },
 
             // Embedded associated Season:
@@ -234,9 +234,9 @@ Returns 'true' on success, an empty result when not found.
     | 3 | `G` | GoggleCup |
     | 4 | `A` | preceding year |
     | 5 | `U` | last race |
-- `has_to_pay_fees` (boolean): 'true', the Swimmer has to pay additional meeting fees for the Championship; 'false', the Team provides
-- `has_to_pay_badge` (boolean): 'true', the Swimmer has to pay the badge registration; 'false', the Team provides
-- `has_to_pay_relays` (boolean): 'true', the Swimmer has to pay any relay event in the Championship; 'false', the Team provides
+- `fees_due` (boolean): 'true', the Swimmer has to pay additional meeting fees for the Championship; 'false', the Team provides
+- `badge_due` (boolean): 'true', the Swimmer has to pay the badge registration; 'false', the Team provides
+- `relays_due` (boolean): 'true', the Swimmer has to pay any relay event in the Championship; 'false', the Team provides
 
 
 * * *
@@ -256,7 +256,7 @@ Returns 'true' on success, an empty result when not found.
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
             -d '{"number": "A_NEW_OR_EXISTING_BADGE_CODE", \
-                "entry_time_type_id": 1, "has_to_pay_badge": "true"}' \
+                "entry_time_type_id": 1, "badge_due": "true"}' \
             "<API_HOST:PORT>/api/v3/badge/124947"
     ```
 
@@ -269,7 +269,7 @@ Returns 'true' on success, an empty result when not found.
                 payload: {
                     number: 'A_NEW_OR_EXISTING_BADGE_CODE',
                     entry_time_type_id: 1,
-                    has_to_pay_badge: true
+                    badge_due: true
                 },
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
@@ -287,9 +287,9 @@ Returns 'true' on success, an empty result when not found.
             {
                 "number": "A_NEW_OR_EXISTING_BADGE_CODE",
                 "entry_time_type_id": 1,
-                "has_to_pay_fees": false,
-                "has_to_pay_badge": false,
-                "has_to_pay_relays": false
+                "fees_due": false,
+                "badge_due": false,
+                "relays_due": false
             }
 
 + Response 200 (application/json)
@@ -310,9 +310,9 @@ Returns 'true' on success, an empty result when not found.
             {
                 "number": "A_NEW_OR_EXISTING_BADGE_CODE",
                 "entry_time_type_id": 1,
-                "has_to_pay_fees": false,
-                "has_to_pay_badge": false,
-                "has_to_pay_relays": false
+                "fees_due": false,
+                "badge_due": false,
+                "relays_due": false
             }
 
 + Response 200 (application/json)
@@ -333,9 +333,9 @@ Returns 'true' on success, an empty result when not found.
             {
                 "number": "A_NEW_OR_EXISTING_BADGE_CODE",
                 "entry_time_type_id": 1,
-                "has_to_pay_fees": false,
-                "has_to_pay_badge": false,
-                "has_to_pay_relays": false
+                "fees_due": false,
+                "badge_due": false,
+                "relays_due": false
             }
 
 + Response 401 (application/json)
@@ -354,9 +354,9 @@ Returns 'true' on success, an empty result when not found.
             {
                 "number": "A_NEW_OR_EXISTING_BADGE_CODE",
                 "entry_time_type_id": 1,
-                "has_to_pay_fees": false,
-                "has_to_pay_badge": false,
-                "has_to_pay_relays": false
+                "fees_due": false,
+                "badge_due": false,
+                "relays_due": false
             }
 
 + Response 401 (application/json)

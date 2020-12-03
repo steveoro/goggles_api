@@ -70,7 +70,7 @@ end
 rspec_options = {
   cmd: 'bin/rspec',
   # Exclude performance tests; to make it fail-fast, add option "--fail-fast":
-  cmd_additional_args: ' --color --profile 10 -f progress --order rand -t ~type:performance',
+  cmd_additional_args: ' --color --profile 10 -f progress --order rand -t ~type:performance -t ~tag:performance',
   all_after_pass: false,
   failed_mode: :focus
 }

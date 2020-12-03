@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Swimmer API Grape controller
   #
-  #   - version:  1.07
+  #   - version:  1.08
   #   - author:   Steve A.
-  #   - build:    20201006
+  #   - build:    20201201
   #
   class SwimmersAPI < Grape::API
     helpers APIHelpers
@@ -49,7 +49,7 @@ module Goggles
         optional :year_of_birth, type: Integer, desc: 'year of birth - may be guessed or approximated'
         optional :associated_user_id, type: Integer, desc: 'associated User ID'
         optional :gender_type_id, type: Integer, desc: 'associated GenderType ID'
-        optional :is_year_guessed, type: Boolean, desc: 'true when year of birth has been deduced from other data'
+        optional :year_guessed, type: Boolean, desc: 'true when year of birth has been deduced from other data'
       end
       route_param :id do
         put do
@@ -68,7 +68,7 @@ module Goggles
       #
       # == Returns:
       # The list of Swimmers for the specified filtering parameters as an array of JSON objects.
-      # Returns exact matches for gender_type_id, year_of_birth, & is_year_guessed; supports partial matches
+      # Returns exact matches for gender_type_id, year_of_birth, & year_guessed; supports partial matches
       # for the text name fields, but no fuzzy searches are performed here. (Use dedicated /search endpoints for that.)
       #
       # *Pagination* links are stored and returned in the response headers.
@@ -87,7 +87,7 @@ module Goggles
         optional :complete_name, type: String, desc: 'optional: complete name (partial match supported)'
         optional :gender_type_id, type: Integer, desc: 'optional: associated GenderType ID'
         optional :year_of_birth, type: Integer, desc: 'optional: year of birth'
-        optional :is_year_guessed, type: Integer, desc: 'optional: true when year of birth has been deduced from other data'
+        optional :year_guessed, type: Integer, desc: 'optional: true when year of birth has been deduced from other data'
         use :pagination
       end
       # Enforcing 'max_per_page' will add the allowed range to the swagger docs and
@@ -99,7 +99,7 @@ module Goggles
         check_jwt_session
 
         paginate GogglesDb::Swimmer.where(
-          filtering_hash_for(params, %w[gender_type_id year_of_birth is_year_guessed])
+          filtering_hash_for(params, %w[gender_type_id year_of_birth year_guessed])
         ).where(
           filtering_like_for(params, %w[first_name last_name complete_name])
         )

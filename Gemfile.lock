@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: 3dc29a154adfdd44ca7dd8dd38824512416b4063
+  revision: 8b529ba3ed9792630809499e9e2f60c3214edaa0
   specs:
-    goggles_db (0.1.21)
+    goggles_db (0.1.36)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -14,15 +14,20 @@ GIT
       draper
       factory_bot_rails
       ffaker
+      fuzzy-string-match
       haml
       jwt
       mini_magick
       rails (~> 6, >= 6.0.3.3)
+      simple_command
       tzinfo (~> 1.2, >= 1.2.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    RubyInline (3.12.5)
+      ZenTest (~> 4.3)
+    ZenTest (4.12.0)
     actioncable (6.0.3.4)
       actionpack (= 6.0.3.4)
       nio4r (~> 2.0)
@@ -176,7 +181,7 @@ GEM
       dry-equalizer (~> 0.3)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 1.0, >= 1.0.2)
-    erubi (1.9.0)
+    erubi (1.10.0)
     factory_bot (6.1.0)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.1.0)
@@ -185,6 +190,8 @@ GEM
     ffaker (2.17.0)
     ffi (1.13.1)
     formatador (0.2.5)
+    fuzzy-string-match (1.0.1)
+      RubyInline (>= 3.8.6)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     grape (1.4.0)
@@ -230,7 +237,7 @@ GEM
       guard (~> 2.0)
       guard-compat (~> 1.1)
       spring
-    haml (5.2.0)
+    haml (5.2.1)
       temple (>= 0.8.0)
       tilt
     http-accept (1.7.0)
@@ -239,7 +246,7 @@ GEM
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     i18n_data (0.10.0)
-    image_processing (1.12.0)
+    image_processing (1.12.1)
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
     json (2.3.1)
@@ -263,7 +270,7 @@ GEM
     listen (3.2.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    loofah (2.7.0)
+    loofah (2.8.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.2.8)
@@ -276,7 +283,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2020.0512)
     mimemagic (0.3.5)
-    mini_magick (4.10.1)
+    mini_magick (4.11.0)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.14.2)
@@ -287,6 +294,7 @@ GEM
     mustermann-grape (1.0.1)
       mustermann (>= 1.0.0)
     mysql2 (0.5.3)
+    n_plus_one_control (0.5.0)
     nenv (0.3.0)
     netrc (0.11.0)
     nio4r (2.5.4)
@@ -431,7 +439,7 @@ GEM
     tilt (2.0.10)
     tins (1.26.0)
       sync
-    tzinfo (1.2.7)
+    tzinfo (1.2.8)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
@@ -444,7 +452,7 @@ GEM
     websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    zeitwerk (2.4.1)
+    zeitwerk (2.4.2)
 
 PLATFORMS
   ruby
@@ -478,6 +486,7 @@ DEPENDENCIES
   letter_opener
   listen (~> 3.2)
   mysql2 (>= 0.4.4)
+  n_plus_one_control
   pry
   puma (~> 4.1)
   rack-cors

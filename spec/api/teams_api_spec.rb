@@ -139,8 +139,9 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
 
       %w[name editable_name].each do |field_name|
         context "filtering by a partial #{field_name}," do
-          let(:fixture_name) { %w[Ferrari Tricolore].sample }
+          let(:fixture_name) { GogglesDb::Team.select(field_name).limit(50).map(&field_name.to_sym).sample }
           let(:expected_team) { GogglesDb::Team.where("#{field_name} LIKE ?", "%#{fixture_name}%").first }
+          let(:expected_row_count) { GogglesDb::Team.where("#{field_name} LIKE ?", "%#{fixture_name}%").count }
 
           before(:each) { get(api_v3_teams_path, params: { field_name => fixture_name }, headers: fixture_headers) }
 
@@ -153,7 +154,10 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
             expect(result_array.count).to be >= 1
             expect(result_array.first['id']).to eq(expected_team.id)
           end
-          it_behaves_like 'single response without pagination links in headers'
+
+          # Typically any results filtered by name will be just a single row fitting
+          # in a single page (w/o pagination links), but with random names we can't be sure:
+          it_behaves_like 'multiple row response either with OR without pagination links'
         end
       end
 

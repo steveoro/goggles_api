@@ -31,7 +31,7 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 
 - Ruby 2.6+
 - Rails 6+
-- MySql
+- MariaDb 10.3.25+ or MySql equivalent version
 
 
 ## System dependencies
@@ -49,7 +49,7 @@ You can use them either as single composed containers or as full-blown local ins
 
 ### *Full Localhost* usage
 
-- a MariaDb 10.3.25 (tested & recommended) running server & client w/ `dev` libraries; alternatively an up-to-date MySQL installation.
+- a MariaDb running server & client w/ `dev` libraries (tested & recommended); alternatively, an up-to-date MySQL installation.
 
 Clone the repository on localhost and use it as you would with a normal Rails application.
 

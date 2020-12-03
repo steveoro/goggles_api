@@ -60,7 +60,7 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
           { associated_user_id: associated_user.id },
           { complete_name: FFaker::Name.name },
           { first_name: FFaker::Name.first_name, last_name: FFaker::Name.last_name, complete_name: "#{FFaker::Name.first_name} #{FFaker::Name.last_name}" },
-          { year_of_birth: (1960..2000).to_a.sample, is_year_guessed: false }
+          { year_of_birth: (1960..2000).to_a.sample, year_guessed: false }
         ].sample
       end
       before(:each) do
@@ -111,8 +111,11 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
   describe 'GET /api/v3/swimmers/' do
     context 'when using a valid authentication' do
       let(:fixture_gender_type_id) { GogglesDb::GenderType.send(%w[male female].sample).id }
-      let(:fixture_first_name)     { %w[Barbara Luca Marco Maria Paola Paolo Stefania Stefano].sample } # Choose among some pretty common names in the seed)
-      let(:default_per_page)       { 25 }
+      let(:fixture_first_name) do
+        %w[Aisha Carrol Chris Christoper Cordell Elvira Elisha Estelle Gilberto
+           Jarrod Jenna Kam Lita Mamie Merissa Noel Olympia Patsy].sample
+      end
+      let(:default_per_page) { 25 }
 
       # Make sure the Domain contains the expected seeds:
       before(:each) do
@@ -140,6 +143,8 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
         before(:each) do
           get(api_v3_swimmers_path, params: { first_name: fixture_first_name }, headers: fixture_headers)
         end
+        let(:expected_row_count)   { GogglesDb::Swimmer.where('first_name LIKE ?', "%#{fixture_first_name}%").count }
+        let(:expected_rows_x_page) { expected_row_count <= default_per_page ? expected_row_count : default_per_page }
 
         it 'is successful' do
           expect(response).to be_successful
@@ -147,10 +152,11 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
         it 'returns a paginated JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
-          full_count = GogglesDb::Swimmer.where(first_name: fixture_first_name).count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+          expect(result_array.count).to eq(expected_rows_x_page)
         end
-        it_behaves_like 'response with pagination links & values in headers'
+        # Typically any results filtered by name will be just a single row fitting
+        # in a single page (w/o pagination links), but with random names we can't be sure:
+        it_behaves_like 'multiple row response either with OR without pagination links'
       end
 
       context 'filtering by a specific gender_type_id,' do

@@ -9,13 +9,13 @@
             // [...]
             "number": "04200002",
             "name": "CSInuoto OberFerrari",
-            "must_calculate_goggle_cup": true,
+            "compute_gogglecup": true,
             "team_id": 1,
             "season_id": 191,
             // [...]
             "created_at": "2019-10-16T00:00:00.000Z",
             "updated_at": "2019-10-16T00:00:00.000Z",
-            "is_autofilled": false,
+            "autofilled": false,
 
             // Embedded associated Team:
             "team": {
@@ -74,10 +74,10 @@
                     "entry_time_type_id": 5,
                     "team_affiliation_id": 5727,
                     "final_rank": null,
-                    "is_out_of_goggle_cup": false,
-                    "has_to_pay_fees": false,
-                    "has_to_pay_badge": false,
-                    "has_to_pay_relays": false
+                    "off_gogglecup": false,
+                    "fees_due": false,
+                    "badge_due": false,
+                    "relays_due": false
                 },
                 // [...season 191 badges...]
             ]
@@ -196,7 +196,7 @@ Returns 'true' on success, an empty result when not found.
 - `season_id` (number): associated Season ID
 - `name` (string): name as it appears in the registration rooster for the Championship Season
 - `number` (string): enrollment or registration badge number
-- `must_calculate_goggle_cup` (boolean): 'true' when the customized GoggleCup has to be computed
+- `compute_gogglecup` (boolean): 'true' when the customized GoggleCup has to be computed
 
 
 * * *
@@ -248,7 +248,7 @@ Returns 'true' on success, an empty result when not found.
                 "season_id": 191,
                 "name": "C.S.I. Ober Ferrari",
                 "number": "EMI 123456",
-                "must_calculate_goggle_cup": true
+                "compute_gogglecup": true
             }
 
 + Response 200 (application/json)
@@ -271,7 +271,7 @@ Returns 'true' on success, an empty result when not found.
                 "season_id": 191,
                 "name": "C.S.I. Ober Ferrari",
                 "number": "EMI 123456",
-                "must_calculate_goggle_cup": true
+                "compute_gogglecup": true
             }
 
 + Response 200 (application/json)
@@ -294,7 +294,7 @@ Returns 'true' on success, an empty result when not found.
                 "season_id": 191,
                 "name": "C.S.I. Ober Ferrari",
                 "number": "EMI 123456",
-                "must_calculate_goggle_cup": true
+                "compute_gogglecup": true
             }
 
 + Response 401 (application/json)
@@ -315,7 +315,7 @@ Returns 'true' on success, an empty result when not found.
                 "season_id": 191,
                 "name": "C.S.I. Ober Ferrari",
                 "number": "EMI 123456",
-                "must_calculate_goggle_cup": true
+                "compute_gogglecup": true
             }
 
 + Response 401 (application/json)
@@ -329,7 +329,7 @@ Returns 'true' on success, an empty result when not found.
             { "msg": "Unauthorized" }
 
 
-# TeamAffiliation list [/api/v3/team_affiliations{?page,per_page,team_id,season_id,name,number,must_calculate_goggle_cup}]
+# TeamAffiliation list [/api/v3/team_affiliations{?page,per_page,team_id,season_id,name,number,compute_gogglecup}]
 
 + Model (application/json)
 
@@ -368,7 +368,7 @@ returned as JSON and optionally filtered by any or all from:
 - `season_id`
 - `name`
 - `number`
-- `must_calculate_goggle_cup`
+- `compute_gogglecup`
 
 Returns exact matches for most of the parameters, supports partial matches just for the text name,
 but no fuzzy searches are performed: the matching rows for the name strings
@@ -399,7 +399,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     + season_id: 191 (number, optional) - associated Season ID
     + name: `Ober Ferrari` (string, optional) - enrollment name (partial match supported)
     + number: `04200002` (string, optional) - enrollment number or Team badge code
-    + must_calculate_goggle_cup: false (boolean, optional) - 'true' when year of birth has been deduced from other data
+    + compute_gogglecup: false (boolean, optional) - 'true' when year of birth has been deduced from other data
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page

@@ -43,7 +43,6 @@ gem 'factory_bot_rails'
 gem 'ffaker'
 
 group :development do
-  gem 'awesome_print' # color output formatter for Ruby objects
   gem 'better_errors'
   gem 'binding_of_caller'
 
@@ -61,11 +60,11 @@ group :development do
 end
 
 group :development, :test do
+  gem 'awesome_print' # color output formatter for Ruby objects
   gem 'brakeman'
   gem 'bullet'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-
   gem 'letter_opener'
   gem 'pry'
   gem 'rspec'
@@ -79,6 +78,7 @@ group :test do
   gem 'codeclimate-test-reporter', require: false
   gem 'codecov', require: false
   gem 'coveralls', require: false
+  gem 'n_plus_one_control' # Adds DSL to check for "N+1 queries" directly in test environment ('bullet' works best just on development)
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

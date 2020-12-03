@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Team API Grape controller
   #
-  #   - version:  1.07
+  #   - version:  1.08
   #   - author:   Steve A.
-  #   - build:    20201006
+  #   - build:    20201201
   #
   class TeamsAPI < Grape::API
     helpers APIHelpers

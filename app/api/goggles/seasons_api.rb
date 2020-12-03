@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Season API Grape controller
   #
-  #   - version:  1.07
+  #   - version:  1.08
   #   - author:   Steve A.
-  #   - build:    20201013
+  #   - build:    20201201
   #
   class SeasonsAPI < Grape::API
     helpers APIHelpers
@@ -51,7 +51,7 @@ module Goggles
         optional :edition_type_id, type: Integer, desc: 'associated EditionType ID'
         optional :timing_type_id, type: Integer, desc: 'associated TimingType ID'
 
-        optional :has_individual_rank, type: Boolean, desc: 'true if individual rankings are supported'
+        optional :individual_rank, type: Boolean, desc: 'true if individual rankings are supported'
         optional :badge_fee, type: Float, desc: 'base registration/badge fee (in local currency)'
       end
       route_param :id do

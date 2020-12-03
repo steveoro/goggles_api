@@ -27,14 +27,18 @@ Layout/LineLength:
     - 'bin/bundle'
 
 Metrics/AbcSize:
-  Max: 21
+  Max: 26
   Exclude:
     - 'bin/bundle'
+    - 'db/migrate/*'
 
 Metrics/BlockLength:
-  Max: 35
+  Max: 40
   CountAsOne: ['array', 'heredoc']
-  ExcludedMethods: ['describe', 'context']
+  ExcludedMethods: ['describe', 'context', 'define']
+
+Metrics/ClassLength:
+  Max: 120
 
 Metrics/CyclomaticComplexity:
   Exclude:
