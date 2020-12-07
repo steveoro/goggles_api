@@ -103,6 +103,9 @@ guard :rspec, rspec_options do
     ]
   end
 
+  # Watch API subdirs and run individual spec files under a mirrored path:
+  watch(%r{app/api/.+/(.+_api)\.rb$})
+
   # Rails config changes
   watch(rails.spec_helper)     { rspec.spec_dir }
   watch(rails.routes)          { "#{rspec.spec_dir}/routing" }

@@ -7,6 +7,11 @@ module Goggles
   #   - author:   Steve A.
   #   - build:    20200923
   #
+  # Please, note that this is the only *singular* named API implementation file, due
+  # to this endpoint handling 1 session at a time.
+  #
+  # Associated spec file mirrors this naming convention.
+  #
   class SessionAPI < Grape::API
     format        :json
     content_type  :json, 'application/json'
