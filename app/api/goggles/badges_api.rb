@@ -3,15 +3,15 @@
 module Goggles
   # = Goggles API v3: Badge API Grape controller
   #
-  #   - version:  1.08
+  #   - version:  1.09
   #   - author:   Steve A.
-  #   - build:    20201201
+  #   - build:    20201207
   #
   class BadgesAPI < Grape::API
     helpers APIHelpers
 
-    format        :json
-    content_type  :json, 'application/json'
+    format       :json
+    content_type :json, 'application/json'
 
     resource :badge do
       # GET /api/:version/badge/:id
@@ -35,6 +35,7 @@ module Goggles
       # PUT /api/:version/badge/:id
       #
       # Allow direct update for the Badge number and other limited fields.
+      # Requires CRUD grant on entity ('Badge') for requesting user.
       #
       # == Returns:
       # 'true' when successful; an empty result when not found.
@@ -50,7 +51,8 @@ module Goggles
       end
       route_param :id do
         put do
-          check_jwt_session
+          api_user = check_jwt_session
+          reject_unless_authorized_for_crud(api_user, 'Badge')
 
           badge = GogglesDb::Badge.find_by_id(params['id'])
           badge&.update!(declared(params, include_missing: false))

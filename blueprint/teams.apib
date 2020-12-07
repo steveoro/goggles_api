@@ -206,7 +206,9 @@ Allows direct updates for some of the Team fields given the `id` of the row.
 
 Returns 'true' on success, an empty result when not found.
 
-:key: `Authorization` request header => valid JWT **required**
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'Swimmer' or have generic admin grants
 
 
 #### Body Attributes:
@@ -348,6 +350,27 @@ Returns 'true' on success, an empty result when not found.
     + Header
 
             X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "name": "CSI NUOTO OBER FERRARI ASD",
+                "editable_name": "C.S.I. NUOTO Ober Ferrari A.S.D.",
+                "city_id": 37,
+                "address": "Via Agosti, 6",
+                "contact_name": "Marco Ligabue"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
 
     + Body
 

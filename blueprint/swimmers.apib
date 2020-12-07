@@ -147,7 +147,9 @@ Allows direct updates for some of the Swimmer fields given the `id` of the row.
 
 Returns 'true' on success, an empty result when not found.
 
-:key: `Authorization` request header => valid JWT **required**
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'Swimmer' or have generic admin grants
 
 
 #### Body Attributes:
@@ -303,6 +305,30 @@ Returns 'true' on success, an empty result when not found.
     + Header
 
             X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "first_name": "Stefano",
+                "last_name": "Alloro",
+                "complete_name": "ALLORO STEFANO",
+                "nickname": "steve",
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                "year_guessed": false
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
 
     + Body
 

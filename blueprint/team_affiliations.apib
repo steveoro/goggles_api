@@ -187,7 +187,9 @@ Allows direct updates for some of the TeamAffiliation fields given the `id` of t
 
 Returns 'true' on success, an empty result when not found.
 
-:key: `Authorization` request header => valid JWT **required**
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'Swimmer' or have generic admin grants
 
 
 #### Body Attributes:
@@ -323,6 +325,27 @@ Returns 'true' on success, an empty result when not found.
     + Header
 
             X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "team_id": 1,
+                "season_id": 191,
+                "name": "C.S.I. Ober Ferrari",
+                "number": "EMI 123456",
+                "compute_gogglecup": true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
 
     + Body
 

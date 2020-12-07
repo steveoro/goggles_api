@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  1.07
+  #   - version:  1.08
   #   - author:   Steve A.
-  #   - build:    20201006
+  #   - build:    20201204
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -27,10 +27,20 @@ module Goggles
     #-- -----------------------------------------------------------------------
     #++
 
-    # Yields the 'JWT invalid' error if the session token is not valid anymore; it does nothing otherwise.
+    # Yields the 'JWT invalid' error if the session token or the credentials are invalid.
+    # On success, returns the authenticated *User* instance.
     def check_jwt_session
-      !CmdAuthorizeAPIRequest.new(headers).call.success? &&
+      authorization = CmdAuthorizeAPIRequest.new(headers).call
+      !authorization.success? &&
         error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.jwt.invalid'))
+      authorization.result
+    end
+
+    # Yields the 'Unauthorized' error if the user does not have associated grants for CRUD operations
+    # on the specified entity.
+    def reject_unless_authorized_for_crud(user, entity_name)
+      !GogglesDb::GrantChecker.crud?(user, entity_name) &&
+        error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.invalid_user_grants'))
     end
 
     # Returns a where-condition Hash (with exact matches) given a field list and the current params Hash.

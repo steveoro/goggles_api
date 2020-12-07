@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Season API Grape controller
   #
-  #   - version:  1.08
+  #   - version:  1.09
   #   - author:   Steve A.
-  #   - build:    20201201
+  #   - build:    20201207
   #
   class SeasonsAPI < Grape::API
     helpers APIHelpers
@@ -35,6 +35,7 @@ module Goggles
       # PUT /api/:version/season/:id
       #
       # Allow direct update for most of the Season fields.
+      # Requires CRUD grant on entity ('Season') for requesting user.
       #
       # == Returns:
       # 'true' when successful; an empty result when not found.
@@ -56,7 +57,8 @@ module Goggles
       end
       route_param :id do
         put do
-          check_jwt_session
+          api_user = check_jwt_session
+          reject_unless_authorized_for_crud(api_user, 'Season')
 
           season = GogglesDb::Season.find_by_id(params['id'])
           season&.update!(declared(params, include_missing: false))

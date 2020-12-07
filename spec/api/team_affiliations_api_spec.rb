@@ -51,6 +51,15 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
   #++
 
   describe 'PUT /api/v3/team_affiliation/:id' do
+    let(:crud_user) { FactoryBot.create(:user) }
+    let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
+    let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+    before(:each) do
+      expect(crud_user).to be_a(GogglesDb::User).and be_valid
+      expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+      expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+    end
+
     context 'when using valid parameters,' do
       let(:new_team)   { FactoryBot.create(:team) }
       let(:new_season) { FactoryBot.create(:season) }
@@ -70,21 +79,29 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
         expect(new_season).to be_a(GogglesDb::Season).and be_valid
         expect(new_name).to be_present
         expect(new_number).to be_present
-        put(
-          api_v3_team_affiliation_path(id: fixture_ta.id),
-          params: expected_changes,
-          headers: fixture_headers
-        )
       end
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'updates the row and returns true' do
-        expect(response.body).to eq('true')
-        updated_row = fixture_ta.reload
-        expected_changes.each do |key, _value|
-          expect(updated_row.send(key)).to eq(expected_changes[key])
+
+      context 'with an account having CRUD grants,' do
+        before(:each) do
+          put(api_v3_team_affiliation_path(id: fixture_ta.id), params: expected_changes, headers: crud_headers)
         end
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'updates the row and returns true' do
+          expect(response.body).to eq('true')
+          updated_row = fixture_ta.reload
+          expected_changes.each do |key, _value|
+            expect(updated_row.send(key)).to eq(expected_changes[key])
+          end
+        end
+      end
+
+      context 'with an account not having the proper grants,' do
+        before(:each) do
+          put(api_v3_team_affiliation_path(id: fixture_ta.id), params: expected_changes, headers: fixture_headers)
+        end
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
@@ -104,7 +121,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
         put(
           api_v3_team_affiliation_path(id: -1),
           params: { compute_gogglecup: true },
-          headers: fixture_headers
+          headers: crud_headers
         )
       end
       it_behaves_like 'an empty but successful JSON response'

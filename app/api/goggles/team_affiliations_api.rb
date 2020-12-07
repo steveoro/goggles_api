@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: TeamAffiliation API Grape controller
   #
-  #   - version:  1.08
+  #   - version:  1.09
   #   - author:   Steve A.
-  #   - build:    20201201
+  #   - build:    20201207
   #
   class TeamAffiliationsAPI < Grape::API
     helpers APIHelpers
@@ -35,6 +35,7 @@ module Goggles
       # PUT /api/:version/team_affiliation/:id
       #
       # Allow direct update for most of the TeamAffiliation fields.
+      # Requires CRUD grant on entity ('TeamAffiliation') for requesting user.
       #
       # == Returns:
       # 'true' when successful; an empty result when not found.
@@ -50,7 +51,8 @@ module Goggles
       end
       route_param :id do
         put do
-          check_jwt_session
+          api_user = check_jwt_session
+          reject_unless_authorized_for_crud(api_user, 'TeamAffiliation')
 
           team_affiliation = GogglesDb::TeamAffiliation.find_by_id(params['id'])
           team_affiliation&.update!(declared(params, include_missing: false))

@@ -12,6 +12,19 @@ shared_examples_for 'a failed auth attempt due to invalid JWT' do
     expect(response.headers['X-Error-Detail']).to eq(I18n.t('api.message.jwt.invalid'))
   end
 end
+
+shared_examples_for 'a failed auth attempt due to unauthorized credentials' do
+  it 'is NOT successful' do
+    expect(response).not_to be_successful
+  end
+  it 'responds with a generic error message and its details in the header' do
+    result = JSON.parse(response.body)
+    expect(result).to have_key('error')
+    expect(result['error']).to eq(I18n.t('api.message.unauthorized'))
+    expect(response.headers).to have_key('X-Error-Detail')
+    expect(response.headers['X-Error-Detail']).to eq(I18n.t('api.message.invalid_user_grants'))
+  end
+end
 #-- ---------------------------------------------------------------------------
 #++
 

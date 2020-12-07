@@ -51,33 +51,49 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
   #++
 
   describe 'PUT /api/v3/season/:id' do
+    let(:crud_user) { FactoryBot.create(:user) }
+    let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'Season') }
+    let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+    before(:each) do
+      expect(crud_user).to be_a(GogglesDb::User).and be_valid
+      expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+      expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+    end
+
     context 'when using valid parameters,' do
       let(:expected_changes) do
         [
           { description: 'FIXTURE Season test 1' },
           { description: 'FIXTURE Season test 2', season_type_id: GogglesDb::SeasonType.send(%w[mas_fin mas_csi mas_uisp].sample).id },
-          { description: 'FIXTURE Season test 3', has_individual_rank: true },
+          { description: 'FIXTURE Season test 3', individual_rank: true },
           { description: 'FIXTURE Season test 4', badge_fee: 24.99 },
           { description: 'FIXTURE Season test 5', begin_date: Date.today - 3.months, end_date: Date.today + 5.months },
           { description: 'FIXTURE Season test 6', header_year: "#{(Date.today - 3.months).year}/#{(Date.today + 5.months).year}" }
         ].sample
       end
-      before(:each) do
-        put(
-          api_v3_season_path(id: fixture_season.id),
-          params: expected_changes,
-          headers: fixture_headers
-        )
-      end
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'updates the row and returns true' do
-        expect(response.body).to eq('true')
-        updated_row = fixture_season.reload
-        expected_changes.each do |key, _value|
-          expect(updated_row.send(key)).to eq(expected_changes[key])
+      before(:each) { expect(expected_changes).to be_an(Hash) }
+
+      context 'with an account having CRUD grants,' do
+        before(:each) do
+          put(api_v3_season_path(id: fixture_season.id), params: expected_changes, headers: crud_headers)
         end
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'updates the row and returns true' do
+          expect(response.body).to eq('true')
+          updated_row = fixture_season.reload
+          expected_changes.each do |key, _value|
+            expect(updated_row.send(key)).to eq(expected_changes[key])
+          end
+        end
+      end
+
+      context 'with an account not having the proper grants,' do
+        before(:each) do
+          put(api_v3_season_path(id: fixture_season.id), params: expected_changes, headers: fixture_headers)
+        end
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
@@ -97,7 +113,7 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
         put(
           api_v3_season_path(id: -1),
           params: { description: 'FIXTURE Season' },
-          headers: fixture_headers
+          headers: crud_headers
         )
       end
       it_behaves_like 'an empty but successful JSON response'

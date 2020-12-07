@@ -8,7 +8,7 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
   include ApiSessionHelpers
 
-  let(:api_user)  { FactoryBot.create(:user) }
+  let(:api_user) { FactoryBot.create(:user) }
   let(:jwt_token) { jwt_for_api_session(api_user) }
   let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
@@ -51,7 +51,16 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
   #++
 
   describe 'PUT /api/v3/swimmer/:id' do
-    context 'when using valid parameters,' do
+    let(:crud_user) { FactoryBot.create(:user) }
+    let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'Swimmer') }
+    let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+    before(:each) do
+      expect(crud_user).to be_a(GogglesDb::User).and be_valid
+      expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+      expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+    end
+
+    context 'when using valid parameters' do
       let(:associated_user) { FactoryBot.create(:user) }
       let(:expected_changes) do
         [
@@ -65,21 +74,29 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
       end
       before(:each) do
         expect(associated_user).to be_a(GogglesDb::User).and be_valid
-        put(
-          api_v3_swimmer_path(id: fixture_swimmer.id),
-          params: expected_changes,
-          headers: fixture_headers
-        )
       end
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'updates the row and returns true' do
-        expect(response.body).to eq('true')
-        updated_row = fixture_swimmer.reload
-        expected_changes.each do |key, _value|
-          expect(updated_row.send(key)).to eq(expected_changes[key])
+
+      context 'with an account having CRUD grants,' do
+        before(:each) do
+          put(api_v3_swimmer_path(id: fixture_swimmer.id), params: expected_changes, headers: crud_headers)
         end
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'updates the row and returns true' do
+          expect(response.body).to eq('true')
+          updated_row = fixture_swimmer.reload
+          expected_changes.each do |key, _value|
+            expect(updated_row.send(key)).to eq(expected_changes[key])
+          end
+        end
+      end
+
+      context 'with an account not having the proper grants,' do
+        before(:each) do
+          put(api_v3_swimmer_path(id: fixture_swimmer.id), params: expected_changes, headers: fixture_headers)
+        end
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
@@ -99,7 +116,7 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
         put(
           api_v3_swimmer_path(id: -1),
           params: { gender_type_id: 1 },
-          headers: fixture_headers
+          headers: crud_headers
         )
       end
       it_behaves_like 'an empty but successful JSON response'

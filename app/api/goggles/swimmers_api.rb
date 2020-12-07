@@ -3,15 +3,15 @@
 module Goggles
   # = Goggles API v3: Swimmer API Grape controller
   #
-  #   - version:  1.08
+  #   - version:  1.09
   #   - author:   Steve A.
-  #   - build:    20201201
+  #   - build:    20201207
   #
   class SwimmersAPI < Grape::API
     helpers APIHelpers
 
-    format        :json
-    content_type  :json, 'application/json'
+    format       :json
+    content_type :json, 'application/json'
 
     resource :swimmer do
       # GET /api/:version/swimmer/:id
@@ -35,6 +35,7 @@ module Goggles
       # PUT /api/:version/swimmer/:id
       #
       # Allow direct update for most of the Swimmer fields.
+      # Requires CRUD grant on entity ('Swimmer') for requesting user.
       #
       # == Returns:
       # 'true' when successful; an empty result when not found.
@@ -53,7 +54,8 @@ module Goggles
       end
       route_param :id do
         put do
-          check_jwt_session
+          api_user = check_jwt_session
+          reject_unless_authorized_for_crud(api_user, 'Swimmer')
 
           swimmer = GogglesDb::Swimmer.find_by_id(params['id'])
           swimmer&.update!(declared(params, include_missing: false))

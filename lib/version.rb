@@ -15,10 +15,10 @@ module Version
   MAJOR   = '7'
 
   # Minor version.
-  MINOR   = '036'
+  MINOR   = '038'
 
   # Current build version.
-  BUILD   = '20201203'
+  BUILD   = '20201207'
 
   # Full versioning for the current release.
   FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE})"
@@ -27,5 +27,5 @@ module Version
   COMPACT = "#{MAJOR.gsub('.', '')}#{MINOR}"
 
   # Current internal DB version (independent from migrations and framework release)
-  DB      = '1.36.01'
+  DB      = '1.37.01'
 end

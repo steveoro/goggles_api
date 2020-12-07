@@ -1,0 +1,507 @@
+# Group SwimmingPools
+
+## SwimmingPool details [/api/v3/swimming_pool/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 51,
+            // [...]
+            "name": "Crocera",
+            "address": "Via Eridania 3",
+            "zip": "",
+            "nick_name": "genovacrocera",
+            "phone_number": "",
+            "fax_number": "",
+            "e_mail": "",
+            "contact_name": "",
+            "maps_uri": "",
+            "lanes_number": 0,
+            "multiple_pools": false,
+            "garden": false,
+            "bar": false,
+            "restaurant": false,
+            "gym": false,
+            "child_area": false,
+            "notes": "",
+            "city_id": 17,
+            "pool_type_id": 1,
+            "created_at": "2014-10-19T00:00:00.000Z",
+            "updated_at": "2014-10-19T00:00:00.000Z",
+
+            "read_only": true, // only admins can update this row
+
+            // Embedded associated City:
+            "city": {
+                "id": 17,
+                // [...]
+                "name": "Genova",
+                "zip": "?",
+                "area": "GENOVA",
+                "country": "Italy",
+                "country_code": "IT",
+                // [...]
+                "latitude": null,
+                "longitude": null
+            },
+
+            // Embedded associated PoolType:
+            "pool_type": {
+                "id": 1,
+                // [...]
+                "code": "25",
+                "length_in_meters": 25,
+                "eventable": true
+            },
+
+            // Embedded associated subentites (optional):
+            "shower_type_id": null,
+            "hair_dryer_type_id": null,
+            "locker_cabinet_type_id": null,
+            "shower_type": null,
+            "hair_dryer_type": null,
+            "locker_cabinet_type": null
+        }
+
+
+### find [GET]
+The SwimmingPool instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities:
+- `User`, the `associated_user` for this SwimmingPool
+- `PoolType`
+    | _id_ | _code_ | _length_in_meters_ |
+    | --- | --- | --- |
+    | 1 | `25` | 25 |
+    | 2 | `33` | 33 |
+    | 3 | `50` | 50 |
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 51 (number, required) - SwimmingPool ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/swimming_pool/51"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/swimming_pool/51',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":51, ...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [SwimmingPool details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for some of the SwimmingPool fields given the `id` of the row.
+
+Returns 'true' on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'SwimmingPool' or have generic admin grants
+
+
+#### Body Attributes:
+
+    optional :notes, type: String, desc: 'additional notes'
+    optional :read_only, type: Boolean, desc: 'true: disable any further updates'
+
+- `name` (string): official name of the venue
+- `last_name` (string): address
+- `nick_name` (string): typically, "<CITY_NAME><POOL_NAME>", all lowercase, without common prefixes or suffixes (like "Pool")
+- `contact_name` (string): contact person name for main events or info
+- `phone_number` (string): service phone number for the pool venue
+- `e_mail` (string): contact e-mail for info on events or pool access
+- `maps_uri` (string): URI for online map
+- `pool_type_id` (number): associated PoolType ID
+    | _id_ | _code_ | _length_in_meters_ |
+    | --- | --- | --- |
+    | 1 | `25` | 25 |
+    | 2 | `33` | 33 |
+    | 3 | `50` | 50 |
+- `city_id` (number): associated City ID
+- `lanes_number` (number): max usable lanes of the pool during an event (typically ranging from 5..10)
+- `multiple_pools` (boolean): 'true' if the venue has multiple pools available for events
+- `garden` (boolean): 'true' if there's a garden area
+- `bar` (boolean): 'true' if there's a bar
+- `restaurant` (boolean): 'true' if there's an internal restauran
+- `gym` (boolean): 'true' if there's an internal gym
+- `child_area` (boolean): 'true' if there's an children area or nursery
+- `shower_type_id` (number): associated ShowerType ID (*optional lookup entity*)
+- `hair_dryer_type_id` (number): associated HairDryerType ID (*optional lookup entity*)
+- `locker_cabinet_type_id` (number): associated LockerCabinetType ID (*optional lookup entity*)
+- `notes` (string): additional notes on the pool
+- `read_only` (boolean): 'true' when data can be updated by admins only
+
+Each lookup entity has the same standard JSON structure that includes localized labels for display.
+Refer to the dedicated `/lookup/:entity_name_plural/` endpoint for getting the list of all available values.
+
+| _id_ | _code_ | _label_ | _long_label_ | _alt_label_ |
+| --- | --- | --- | --- | --- |
+| integer | short string | localized std label | localized long description | localized alt label |
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number) - SwimmingPool ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"name": "Ferretti/Ferrari", "nick_name": "reggioemiliaferretti25"}' \
+            "<API_HOST:PORT>/api/v3/swimming_pool/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/swimming_pool/51',
+                payload: {
+                    name: "Ferretti/Ferrari", nick_name: "reggioemiliaferretti25",
+                    pool_type_id: 1
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "name": "Ferretti/Ferrari",
+                "nick_name": "reggioemiliaferretti25",
+                "pool_type_id": 1
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "name": "Ferretti/Ferrari",
+                "nick_name": "reggioemiliaferretti25",
+                "pool_type_id": 1
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "name": "Ferretti/Ferrari",
+                "nick_name": "reggioemiliaferretti25",
+                "pool_type_id": 1
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "name": "Ferretti/Ferrari",
+                "nick_name": "reggioemiliaferretti25",
+                "pool_type_id": 1
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "name": "Ferretti/Ferrari",
+                "nick_name": "reggioemiliaferretti25",
+                "pool_type_id": 1
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+# SwimmingPool list [/api/v3/swimming_pools{?page,per_page,name,address,nick_name,pool_type_id,city_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/swimming_pools?page=26&pool_type_id=1>; rel=\"last\", <http://localhost:3000/api/v3/swimming_pools?page=2&pool_type_id=1>; rel=\"next\""
+            Total: 652
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // SwimmingPool details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // SwimmingPool details 2
+                {
+                    "id": 3,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## swimming_pools [GET]
+
+The list of SwimmingPools associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `name`
+- `address`
+- `nick_name`
+- `pool_type_id`
+- `city_id`
+
+Returns exact matches for `pool_type_id` & `city_id`;
+supports partial matches for the string names, but no fuzzy searches are performed:
+the matching rows for the name strings are selected using a simple "LIKE %?%" on the specified parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + name: `Ferrari` (string, optional) - official name of the venue
+    + address: `Melato` (string, optional) - address of the venue
+    + nick_name: `reggiomelato25` (string, optional) - composed nickname (possibly unique)
+    + pool_type_id: 1 (number, optional) - associated PoolType ID
+    + city_id: 1 (number, optional) - associated CityType ID
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/swimming_pools?pool_type_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/swimming_pools',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { pool_type_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [SwimmingPool list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

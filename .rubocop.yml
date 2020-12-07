@@ -36,6 +36,8 @@ Metrics/BlockLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
   ExcludedMethods: ['describe', 'context', 'define']
+  Exclude:
+    - 'app/api/goggles/*_api.rb'
 
 Metrics/ClassLength:
   Max: 120

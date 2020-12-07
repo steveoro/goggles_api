@@ -6,6 +6,7 @@ en:
       generic_failure: 'ERROR: unexpected failure'
       invalid_token: 'Invalid API static token'
       invalid_credentials: 'Invalid User credentials'
+      invalid_user_grants: 'Invalid User grants'
       unconfirmed_email: 'Unconfirmed User email'
       status:
         ok: 'OK: reachable and running'

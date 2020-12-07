@@ -51,6 +51,15 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
   #++
 
   describe 'PUT /api/v3/badge/:id' do
+    let(:crud_user) { FactoryBot.create(:user) }
+    let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'Badge') }
+    let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+    before(:each) do
+      expect(crud_user).to be_a(GogglesDb::User).and be_valid
+      expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+      expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+    end
+
     context 'when using valid parameters,' do
       let(:expected_changes) do
         [
@@ -60,22 +69,29 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
           { number: 'TEST_CODE', relays_due: true, badge_due: [false, true].sample }
         ].sample
       end
-      before(:each) do
-        put(
-          api_v3_badge_path(id: fixture_badge.id),
-          params: expected_changes,
-          headers: fixture_headers
-        )
-      end
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'updates the row and returns true' do
-        expect(response.body).to eq('true')
-        updated_row = fixture_badge.reload
-        expected_changes.each do |key, _value|
-          expect(updated_row.send(key)).to eq(expected_changes[key])
+      before(:each) { expect(expected_changes).to be_an(Hash) }
+
+      context 'with an account having CRUD grants,' do
+        before(:each) do
+          put(api_v3_badge_path(id: fixture_badge.id), params: expected_changes, headers: crud_headers)
         end
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'updates the row and returns true' do
+          expect(response.body).to eq('true')
+          updated_row = fixture_badge.reload
+          expected_changes.each do |key, _value|
+            expect(updated_row.send(key)).to eq(expected_changes[key])
+          end
+        end
+      end
+
+      context 'with an account not having the proper grants,' do
+        before(:each) do
+          put(api_v3_badge_path(id: fixture_badge.id), params: expected_changes, headers: fixture_headers)
+        end
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
@@ -95,7 +111,7 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
         put(
           api_v3_badge_path(id: -1),
           params: { number: 'TEST_CODE' },
-          headers: fixture_headers
+          headers: crud_headers
         )
       end
       it_behaves_like 'an empty but successful JSON response'
