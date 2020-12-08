@@ -130,6 +130,88 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
   #-- -------------------------------------------------------------------------
   #++
 
+  describe 'POST /api/v3/team/affiliation' do
+    let(:new_team)   { FactoryBot.create(:team) }
+    let(:new_season) { FactoryBot.create(:season) }
+    let(:built_row)  { FactoryBot.build(:team_affiliation, team: new_team, season: new_season) }
+    let(:admin_user) { FactoryBot.create(:user) }
+    let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
+    let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
+    before(:each) do
+      expect(new_team).to be_a(GogglesDb::Team).and be_valid
+      expect(new_season).to be_a(GogglesDb::Season).and be_valid
+      expect(built_row).to be_a(GogglesDb::TeamAffiliation).and be_valid
+      expect(admin_user).to be_a(GogglesDb::User).and be_valid
+      expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+      expect(admin_headers).to be_an(Hash).and have_key('Authorization')
+    end
+
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before(:each) do
+          post(api_v3_team_affiliation_path, params: built_row.attributes, headers: admin_headers)
+        end
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'updates the row and returns the result msg and the new row as JSON' do
+          result = JSON.parse(response.body)
+          expect(result).to have_key('msg').and have_key('new')
+          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
+          attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
+          expect(attr_extractor.call(result['new'])).to eq(attr_extractor.call(built_row.attributes))
+        end
+      end
+
+      context 'with an account having just CRUD grants,' do
+        let(:crud_user) { FactoryBot.create(:user) }
+        let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
+        let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+        before(:each) do
+          expect(crud_user).to be_a(GogglesDb::User).and be_valid
+          expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+          expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+        end
+        before(:each) do
+          post(api_v3_team_affiliation_path, params: built_row.attributes, headers: crud_headers)
+        end
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+
+      context 'with an account not having any grants,' do
+        before(:each) do
+          post(api_v3_team_affiliation_path, params: built_row.attributes, headers: fixture_headers)
+        end
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before(:each) do
+        post(api_v3_team_affiliation_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' })
+      end
+      it_behaves_like 'a failed auth attempt due to invalid JWT'
+    end
+
+    context 'when using missing or invalid parameters,' do
+      before(:each) do
+        post(api_v3_team_affiliation_path, params: { team_id: built_row.team_id, season_id: -1 }, headers: admin_headers)
+      end
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+      it 'responds with a generic error message and its details in the header' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('error')
+        expect(result['error']).to eq(I18n.t('api.message.creation_failure'))
+        expect(response.headers).to have_key('X-Error-Detail')
+        expect(response.headers['X-Error-Detail']).to be_present
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   describe 'GET /api/v3/team/affiliations/' do
     context 'when using a valid authentication' do
       let(:fixture_season_id) { [171, 172, 181, 182, 191, 192].sample }

@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  1.08
+  #   - version:  1.11
   #   - author:   Steve A.
-  #   - build:    20201204
+  #   - build:    20201208
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -40,6 +40,12 @@ module Goggles
     # on the specified entity.
     def reject_unless_authorized_for_crud(user, entity_name)
       !GogglesDb::GrantChecker.crud?(user, entity_name) &&
+        error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.invalid_user_grants'))
+    end
+
+    # Yields the 'Unauthorized' error if the user does not have generic admin grants.
+    def reject_unless_authorized_admin(user)
+      !GogglesDb::GrantChecker.admin?(user) &&
         error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.invalid_user_grants'))
     end
 

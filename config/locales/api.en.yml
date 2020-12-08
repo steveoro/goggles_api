@@ -3,6 +3,7 @@ en:
     message:
       unauthorized: 'Unauthorized'
       generic_ok: 'OK'
+      creation_failure: 'ERROR during creation'
       generic_failure: 'ERROR: unexpected failure'
       invalid_token: 'Invalid API static token'
       invalid_credentials: 'Invalid User credentials'

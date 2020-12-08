@@ -351,6 +351,158 @@ Returns 'true' on success, an empty result when not found.
 
             { "msg": "Unauthorized" }
 
+### create [POST]
+
+Creates a new TeamAffiliation, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+- `team_id` (number, **required**): associated Team ID
+- `season_id` (number, **required**): associated Season ID
+- `name` (string): name as it appears in the registration rooster for the Championship Season
+- `number` (string): enrollment code or Team registration badge number
+- `compute_gogglecup` (boolean): 'true' when the customized GoggleCup has to be computed
+
+
+* * *
+
+
++ Attributes
+    + team_id (string) - associated Team ID
+    + season_id (string) - associated Season ID
+    + name (string) - Team registration name
+    + number (string) - enrollment code or Team registration badge number
+    + compute_gogglecup (boolean) - 'true' when the customized GoggleCup has to be computed
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"team_id": 1, "season_id": 194, "compute_gogglecup": "true"}' \
+            "<API_HOST:PORT>/api/v3/team/affiliation"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/team/affiliation',
+            {
+                'team_id': 1,
+                'season_id': 194,
+                'compute_gogglecup': true
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                'team_id': 1,
+                'season_id': 194,
+                'compute_gogglecup': true
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": "NEW_ROW_AS_JSON"
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                'team_id': 1,
+                'season_id': 194,
+                'compute_gogglecup': true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                'team_id': 1,
+                'season_id': 194,
+                'compute_gogglecup': true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                'team_id': 1,
+                'season_id': 194,
+                'compute_gogglecup': true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
 
 # Team/Affiliation list [/api/v3/team/affiliations{?page,per_page,team_id,season_id,name,number,compute_gogglecup}]
 

@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: TeamAffiliation API Grape controller
   #
-  #   - version:  1.10
+  #   - version:  1.11
   #   - author:   Steve A.
-  #   - build:    20201207
+  #   - build:    20201208
   #
   class TeamAffiliationsAPI < Grape::API
     helpers APIHelpers
@@ -58,6 +58,46 @@ module Goggles
             team_affiliation = GogglesDb::TeamAffiliation.find_by_id(params['id'])
             team_affiliation&.update!(declared(params, include_missing: false))
           end
+        end
+
+        # POST /api/:version/team/affiliation
+        #
+        # Creates a new TeamAffiliation given the specified parameters.
+        #
+        # == Params:
+        # - team_id: associated Team
+        # - season_id: associated Season
+        # - name: official registration name
+        # - number: team badge registration number or code
+        # - compute_gogglecup: 'true' if this team has requested a custom GoggleCup championship
+        #
+        # == Returns:
+        # A JSON Hash containing the result 'msg' and the newly created instance:
+        #
+        #    { "msg": "OK", "new": { ...new row in JSON format... } }
+        #
+        desc 'Creates a new TeamAffiliation.'
+        params do
+          requires :team_id, type: Integer, desc: 'associated Team ID'
+          requires :season_id, type: Integer, desc: 'associated Season ID'
+          optional :name, type: String, desc: 'optional: official registration name; when missing, the current Team editable_name will be used to fill it'
+          optional :number, type: String, desc: 'optional: team badge registration number or code'
+          optional :compute_gogglecup, type: Boolean, desc: 'optional: true for GoggleCup affiliations'
+        end
+        post do
+          api_user = check_jwt_session
+          reject_unless_authorized_admin(api_user)
+
+          new_row = GogglesDb::TeamAffiliation.create(params)
+          unless new_row.valid?
+            error!(
+              I18n.t('api.message.creation_failure'),
+              500,
+              'X-Error-Detail' => GogglesDb::ValidationErrorTools.recursive_error_for(new_row)
+            )
+          end
+
+          { msg: I18n.t('api.message.generic_ok'), new: new_row }
         end
       end
 
