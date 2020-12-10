@@ -1,0 +1,170 @@
+# Group Lookup
+
+
+# Lookup list [/api/v3/lookup/{entity}{?locale}]
+
++ Model (application/json)
+
+    + Body
+
+            [
+                // Lookup details 1
+                {
+                    "id": 1,
+                    // [...]
+                    "code": "B",
+                    "label": "HT",
+                    "long_label": "HEATS",
+                    "alt_label": "HT"
+                },
+                // Lookup details 2
+                {
+                    "id": 2,
+                    // [...]
+                    "code": "S",
+                    "label": "SF",
+                    "long_label": "SEMIFINALS",
+                    "alt_label": "SF"
+                },
+                // Lookup details 3
+                {
+                    "id": 3,
+                    // [...]
+                    "code": "F",
+                    "label": "FN",
+                    "long_label": "FINALS",
+                    "alt_label": "FN"
+                },
+
+                // [...]
+            ]
+
+
+## lookup [GET]
+
+Returns the unfiltered JSON list of all possible lookup values for a specific entity.
+
+**Supported values:**
+
+- `entity`
+    | _value_ | _result entity_ |
+    | --- | --- |
+    | `coach_level_types` | CoachLevelType |
+    | `day_part_types` | DayPartType |
+    | `disqualification_code_types` | DisqualificationCodeType |
+    | `edition_types` | EditionType |
+    | `entry_time_types` | EntryTimeType |
+    | `event_types` | EventType |
+    | `hair_dryer_types` | HairDryerType |
+    | `heat_types` | HeatType |
+    | `locker_cabinet_types` | LockerCabinetType |
+    | `medal_types` | MedalType |
+    | `pool_types` | PoolType |
+    | `record_types` | RecordType |
+    | `shower_types` | ShowerType |
+    | `stroke_types` | StrokeType |
+    | `swimmer_level_types` | SwimmerLevelType |
+    | `timing_types` | TimingType |
+
+- `locale`
+    | _value_ | _localization_ |
+    | --- | --- |
+    | `en` | English |
+    | `it` | Italian |
+
+No pagination is performed on results.
+
+Any unsupported `entity` value will result in a "not found" empty list response.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + entity: `heat_types` (string) - Lookup entity
+    + locale: `en` (string, optional) - locale code for labels
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/lookup/heat_types?locale=en"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/lookup/heat_types',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { locale: 'en' }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Lookup list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }

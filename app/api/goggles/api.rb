@@ -54,6 +54,7 @@ module Goggles
     end
 
     mount BadgesAPI
+    mount LookupAPI
     mount SeasonsAPI
     mount SessionAPI
     mount SwimmersAPI
