@@ -61,6 +61,7 @@ module Goggles
         end
 
         # POST /api/:version/team/affiliation
+        # (ADMIN only)
         #
         # Creates a new TeamAffiliation given the specified parameters.
         #
