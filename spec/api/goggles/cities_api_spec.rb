@@ -1,0 +1,254 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+require 'support/api_session_helpers'
+require 'support/shared_api_response_behaviors'
+
+RSpec.describe Goggles::CitiesAPI, type: :request do
+  include GrapeRouteHelpers::NamedRouteMatcher
+  include ApiSessionHelpers
+
+  let(:api_user) { FactoryBot.create(:user) }
+  let(:jwt_token) { jwt_for_api_session(api_user) }
+  let(:fixture_row) { GogglesDb::City.first(30).sample }
+  let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
+  let(:crud_user) { FactoryBot.create(:user) }
+  let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'City') }
+  let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+
+  # Enforce domain context creation
+  before(:each) do
+    expect(fixture_row).to be_a(GogglesDb::City).and be_valid
+    expect(api_user).to be_a(GogglesDb::User).and be_valid
+    expect(jwt_token).to be_a(String).and be_present
+    expect(crud_user).to be_a(GogglesDb::User).and be_valid
+    expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+    expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+  end
+
+  describe 'GET /api/v3/city/:id' do
+    context 'when using valid parameters,' do
+      before(:each) { get(api_v3_city_path(id: fixture_row.id), headers: fixture_headers) }
+      it 'is successful' do
+        expect(response).to be_successful
+      end
+      it 'returns the selected user as JSON' do
+        expect(response.body).to eq(fixture_row.to_json)
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before(:each) { get(api_v3_city_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like 'a failed auth attempt due to invalid JWT'
+    end
+
+    context 'when requesting a non-existing ID,' do
+      before(:each) { get api_v3_city_path(id: -1), headers: fixture_headers }
+      it_behaves_like 'an empty but successful JSON response'
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe 'PUT /api/v3/city/:id' do
+    let(:editable_row) { FactoryBot.create(:city) }
+    let(:new_values) do
+      FactoryBot.build(
+        :city,
+        area: FFaker::Address.neighborhood,
+        zip: FFaker::AddressCHIT.postal_code,
+        latitude: FFaker::Geolocation.lat,
+        longitude: FFaker::Geolocation.lng
+      )
+    end
+    let(:expected_changes) do
+      [
+        { name: new_values.name },
+        { country_code: new_values.country_code },
+        { country: new_values.country },
+        { area: new_values.area },
+        { zip: new_values.zip },
+        { latitude: new_values.latitude, longitude: new_values.longitude }
+      ].sample
+    end
+
+    before(:each) do
+      expect(editable_row).to be_a(GogglesDb::City).and be_valid
+      expect(new_values).to be_a(GogglesDb::City).and be_valid
+      expect(expected_changes).to be_a(Hash)
+    end
+
+    context 'when using valid parameters,' do
+      context 'with an account having CRUD grants,' do
+        before(:each) { put(api_v3_city_path(id: editable_row.id), params: expected_changes, headers: crud_headers) }
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'updates the row and returns true' do
+          expect(response.body).to eq('true')
+          updated_row = editable_row.reload
+          expected_changes.each do |key, _value|
+            expect(updated_row.send(key)).to eq(expected_changes[key])
+          end
+        end
+      end
+
+      context 'with an account not having the proper grants,' do
+        before(:each) { put(api_v3_city_path(id: editable_row.id), params: expected_changes, headers: fixture_headers) }
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before(:each) { put(api_v3_city_path(id: editable_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like 'a failed auth attempt due to invalid JWT'
+    end
+
+    context 'when requesting a non-existing ID,' do
+      before(:each) { put(api_v3_city_path(id: -1), params: expected_changes, headers: crud_headers) }
+      it_behaves_like 'an empty but successful JSON response'
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe 'POST /api/v3/city' do
+    let(:built_row)  { FactoryBot.build(:city, zip: FFaker::AddressCHIT.postal_code, latitude: FFaker::Geolocation.lat, longitude: FFaker::Geolocation.lng) }
+    let(:admin_user) { FactoryBot.create(:user) }
+    let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
+    let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
+    before(:each) do
+      expect(built_row).to be_a(GogglesDb::City).and be_valid
+      expect(admin_user).to be_a(GogglesDb::User).and be_valid
+      expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+      expect(admin_headers).to be_an(Hash).and have_key('Authorization')
+    end
+
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before(:each) { post(api_v3_city_path, params: built_row.attributes, headers: admin_headers) }
+
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'updates the row and returns the result msg and the new row as JSON' do
+          result = JSON.parse(response.body)
+          expect(result).to have_key('msg').and have_key('new')
+          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
+          attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
+          expect(attr_extractor.call(result['new'])).to eq(attr_extractor.call(built_row.attributes))
+        end
+      end
+
+      context 'with an account having just CRUD grants,' do
+        before(:each) { post(api_v3_city_path, params: built_row.attributes, headers: crud_headers) }
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+
+      context 'with an account not having any grants,' do
+        before(:each) { post(api_v3_city_path, params: built_row.attributes, headers: fixture_headers) }
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before(:each) { post(api_v3_city_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like 'a failed auth attempt due to invalid JWT'
+    end
+
+    context 'when using missing or invalid parameters,' do
+      before(:each) { post(api_v3_city_path, params: { name: [nil, ''].sample, country_code: [nil, ''].sample }, headers: admin_headers) }
+
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+      it 'responds with a generic error message and its details in the header' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('error')
+        expect(result['error']).to eq(I18n.t('api.message.creation_failure'))
+        expect(response.headers).to have_key('X-Error-Detail')
+        expect(response.headers['X-Error-Detail']).to be_present
+      end
+    end
+  end
+  # -- -------------------------------------------------------------------------
+  # ++
+
+  describe 'GET /api/v3/cities' do
+    context 'when using a valid authentication' do
+      let(:default_per_page) { 25 }
+
+      context 'without any filters,' do
+        before(:each) { get(api_v3_cities_path, headers: fixture_headers) }
+
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'returns a paginated JSON array of associated, filtered rows' do
+          result_array = JSON.parse(response.body)
+          expect(result_array).to be_an(Array)
+          expect(result_array.count).to eq(default_per_page)
+        end
+        it_behaves_like 'response with pagination links & values in headers'
+      end
+
+      context 'filtering by a specific country,' do
+        before(:each) { get(api_v3_cities_path, params: { country: 'Italy' }, headers: fixture_headers) }
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'returns a paginated JSON array of associated, filtered rows' do
+          result_array = JSON.parse(response.body)
+          expect(result_array).to be_an(Array)
+          full_count = GogglesDb::City.where(country: 'Italy').count
+          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+        end
+        it_behaves_like 'response with pagination links & values in headers'
+      end
+
+      context 'filtering by a specific country_code,' do
+        before(:each) { get(api_v3_cities_path, params: { country_code: 'IT' }, headers: fixture_headers) }
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'returns a paginated JSON array of associated, filtered rows' do
+          result_array = JSON.parse(response.body)
+          expect(result_array).to be_an(Array)
+          full_count = GogglesDb::City.where(country_code: 'IT').count
+          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+        end
+        it_behaves_like 'response with pagination links & values in headers'
+      end
+
+      # Checking specific accented or partial names:
+      %w[FORLI Cesena L'aquila LAquila reggio].each do |fixture_name|
+        context "filtering by a specific peculiar name (#{fixture_name})," do
+          let(:expected_results) { GogglesDb::City.where('name LIKE ?', "%#{fixture_name}%") }
+          let(:expected_row_count) { expected_results.count }
+
+          before(:each) { get(api_v3_cities_path, params: { name: fixture_name }, headers: fixture_headers) }
+
+          it 'is successful' do
+            expect(response).to be_successful
+          end
+          it 'returns a paginated JSON array of associated, filtered rows' do
+            result_array = JSON.parse(response.body)
+            expect(result_array).to be_an(Array)
+            expect(result_array.count).to eq(expected_row_count <= default_per_page ? expected_row_count : default_per_page)
+          end
+          it_behaves_like 'multiple row response either with OR without pagination links'
+        end
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before(:each) { get(api_v3_cities_path, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like 'a failed auth attempt due to invalid JWT'
+    end
+
+    context 'when filtering by a non-existing value,' do
+      before(:each) { get(api_v3_cities_path, params: { name: '?@No-City!' }, headers: fixture_headers) }
+      it_behaves_like 'an empty but successful JSON list response'
+    end
+  end
+end

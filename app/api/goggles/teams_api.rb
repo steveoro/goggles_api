@@ -40,7 +40,7 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update some Team details'
+      desc 'Update Team details'
       params do
         requires :id, type: Integer, desc: 'Team ID'
         optional :name, type: String, desc: 'name of the Team' # (This field was normally intended as read-only)

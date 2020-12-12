@@ -38,7 +38,7 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update some User details'
+      desc 'Update User details'
       params do
         requires :id, type: Integer, desc: 'User ID'
         optional :name, type: String, desc: 'optional: User name'

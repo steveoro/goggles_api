@@ -41,7 +41,7 @@ module Goggles
         # == Returns:
         # 'true' when successful; an empty result when not found.
         #
-        desc 'Update some TeamAffiliation details'
+        desc 'Update TeamAffiliation details'
         params do
           requires :id, type: Integer, desc: 'TeamAffiliation ID'
           optional :team_id, type: Integer, desc: 'associated Team ID'
@@ -77,7 +77,7 @@ module Goggles
         #
         #    { "msg": "OK", "new": { ...new row in JSON format... } }
         #
-        desc 'Creates a new TeamAffiliation.'
+        desc 'Create new TeamAffiliation'
         params do
           requires :team_id, type: Integer, desc: 'associated Team ID'
           requires :season_id, type: Integer, desc: 'associated Season ID'

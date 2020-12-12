@@ -206,7 +206,7 @@ Returns 'true' on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
-2. authenticated user must have CRUD grant on 'Swimmer' or have generic admin grants
+2. authenticated user must have CRUD grant on 'TeamAffiliation' or have generic admin grants
 
 
 #### Body Attributes:
@@ -551,7 +551,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
             ]
 
 
-## team/affiliations [GET]
+## list [GET]
 
 The list of TeamAffiliations associated to the specified filtering values,
 returned as JSON and optionally filtered by any or all from:

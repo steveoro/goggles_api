@@ -50,16 +50,16 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
   #-- -------------------------------------------------------------------------
   #++
 
+  let(:crud_user) { FactoryBot.create(:user) }
+  let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
+  let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+
   describe 'PUT /api/v3/team/affiliation/:id' do
-    let(:crud_user) { FactoryBot.create(:user) }
-    let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
-    let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
     before(:each) do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
     end
-
     context 'when using valid parameters,' do
       let(:new_team)   { FactoryBot.create(:team) }
       let(:new_season) { FactoryBot.create(:season) }
@@ -148,9 +148,8 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
-          post(api_v3_team_affiliation_path, params: built_row.attributes, headers: admin_headers)
-        end
+        before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: admin_headers) }
+
         it 'is successful' do
           expect(response).to be_successful
         end
@@ -164,39 +163,29 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
       end
 
       context 'with an account having just CRUD grants,' do
-        let(:crud_user) { FactoryBot.create(:user) }
-        let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
-        let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
         before(:each) do
           expect(crud_user).to be_a(GogglesDb::User).and be_valid
           expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
           expect(crud_headers).to be_an(Hash).and have_key('Authorization')
-        end
-        before(:each) do
           post(api_v3_team_affiliation_path, params: built_row.attributes, headers: crud_headers)
         end
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
 
       context 'with an account not having any grants,' do
-        before(:each) do
-          post(api_v3_team_affiliation_path, params: built_row.attributes, headers: fixture_headers)
-        end
+        before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: fixture_headers) }
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        post(api_v3_team_affiliation_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' })
-      end
+      before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when using missing or invalid parameters,' do
-      before(:each) do
-        post(api_v3_team_affiliation_path, params: { team_id: built_row.team_id, season_id: -1 }, headers: admin_headers)
-      end
+      before(:each) { post(api_v3_team_affiliation_path, params: { team_id: built_row.team_id, season_id: -1 }, headers: admin_headers) }
+
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
@@ -227,9 +216,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
       end
 
       context 'without any filters,' do
-        before(:each) do
-          get(api_v3_team_affiliations_path, headers: fixture_headers)
-        end
+        before(:each) { get(api_v3_team_affiliations_path, headers: fixture_headers) }
 
         it 'is successful' do
           expect(response).to be_successful
@@ -243,9 +230,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
       end
 
       context 'filtering by a specific season_id,' do
-        before(:each) do
-          get(api_v3_team_affiliations_path, params: { season_id: fixture_season_id }, headers: fixture_headers)
-        end
+        before(:each) { get(api_v3_team_affiliations_path, params: { season_id: fixture_season_id }, headers: fixture_headers) }
 
         it 'is successful' do
           expect(response).to be_successful
@@ -260,9 +245,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
       end
 
       context 'filtering by a specific team_id,' do
-        before(:each) do
-          get(api_v3_team_affiliations_path, params: { team_id: fixture_team.id }, headers: fixture_headers)
-        end
+        before(:each) { get(api_v3_team_affiliations_path, params: { team_id: fixture_team.id }, headers: fixture_headers) }
 
         it 'is successful' do
           expect(response).to be_successful

@@ -40,7 +40,7 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update some Badge details'
+      desc 'Update Badge details'
       params do
         requires :id, type: Integer, desc: 'Badge ID'
         requires :number, type: String, desc: 'displayed number or code for the Badge'

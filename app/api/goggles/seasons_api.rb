@@ -40,7 +40,7 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update some Season details'
+      desc 'Update Season details'
       params do
         requires :id, type: Integer, desc: 'Season ID'
         optional :description, type: String, desc: 'verbose description'

@@ -29,7 +29,7 @@ module Goggles
       # == Returns:
       # A new JWT.
       #
-      desc 'Creates a new JWT session.'
+      desc 'Create new JWT session'
       params do
         requires :e, type: String, desc: 'User email'
         requires :p, type: String, desc: 'User password'

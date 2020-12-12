@@ -40,7 +40,7 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update some Swimmer details'
+      desc 'Update Swimmer details'
       params do
         requires :id, type: Integer, desc: 'Swimmer ID'
         optional :first_name, type: String, desc: 'first name - filled only when actually known or obvious from the complete_name'
