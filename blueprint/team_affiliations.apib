@@ -222,7 +222,7 @@ Returns 'true' on success, an empty result when not found.
 
 
 + Parameters
-    + id: 5727 (number) - TeamAffiliation ID
+    + id: 5727 (number, required) - TeamAffiliation ID
 
 
 + Request ok (application/json)
@@ -392,11 +392,11 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 
 + Attributes
-    + team_id (string) - associated Team ID
-    + season_id (string) - associated Season ID
-    + name (string) - Team registration name
-    + number (string) - enrollment code or Team registration badge number
-    + compute_gogglecup (boolean) - 'true' when the customized GoggleCup has to be computed
+    + team_id (string, required) - associated Team ID
+    + season_id (string, required) - associated Season ID
+    + name (string, optional) - Team registration name
+    + number (string, optional) - enrollment code or Team registration badge number
+    + compute_gogglecup (boolean, optional) - 'true' when the customized GoggleCup has to be computed
 
 
 + Request ok (application/json)
