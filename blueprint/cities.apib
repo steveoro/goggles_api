@@ -138,7 +138,7 @@ Returns 'true' on success, an empty result when not found.
 
 
 + Parameters
-    + id: 37 (number) - City ID
+    + id: 37 (number, required) - City ID
 
 
 + Request ok (application/json)
@@ -291,8 +291,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 
 + Attributes
-    + name (string) - City name
-    + country_code (string) - Country code (2 chars)
+    + name (string, required) - City name
+    + country_code (string, required) - Country code (2 chars)
     + country (string, optional) - Country name
     + area (string, optional) - Area/Region/Division name
     + zip (string, optional) - ZIP/CAP or Postal code override (max 6 chars)
@@ -528,6 +528,174 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 + Response 200
 
     [City list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+# City search [/api/v3/cities/search{?page,per_page,name,country_code}]
+
++ Model (application/json)
+
+    + Header
+
+            Total: 3
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                {
+                    "data": {
+                    "city": "reggiolo",
+                    "accentcity": "Reggiolo",
+                    "region": "05",
+                    "population": null,
+                    "latitude": "44.916667",
+                    "longitude": "10.8"
+                    }
+                },
+                {
+                    "data": {
+                    "city": "reggio nell emilia",
+                    "accentcity": "Reggio nell Emilia",
+                    "region": "05",
+                    "population": null,
+                    "latitude": "44.716667",
+                    "longitude": "10.6"
+                    }
+                },
+                {
+                    "data": {
+                    "city": "reggio nell'emilia",
+                    "accentcity": "Reggio nell'Emilia",
+                    "region": "05",
+                    "population": null,
+                    "latitude": "44.716667",
+                    "longitude": "10.6"
+                    }
+                }
+            ]
+
+
+## search [GET]
+
+The list of Cities associated to the specified name & country code,
+returned as JSON data:
+
+- `name` (string): City name (partial name or mistyped)
+- `country_code` (string): Country code (2 chars)
+
+Returns the fuzzy matches found for the specified (partial) name; assumes an exact value for the `country_code`.
+
+**Note:**
+*Currently, the `region` returned in the `data` items is not a valid ISO 3166-2 standard subdivision
+code but is the result of the original dataset (dated 2016) which classified Regions depending on
+clusters of IP addresses.*
+
+(For example, the correct ISO 3166-2 standard code for Region "Emilia-Romagna" would be `45` (`IT-RE`),
+not "05" as reported in the JSON result. So, keep in mind that.)
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + name: `reggioemilia` (string, required) - City name
+    + country_code: `IT` (string, required) - Country code (2 chars)
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/cities/search?name=reggioemilia&country_code=IT"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/cities/search',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { name: 'reggioemilia', country_code: 'IT' }
+                }
+            )
+    => <RestClient::Response 200 "[{\"data\":{\"city\":\"reggiolo\",...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [City search][]
 
 
 + Request not found (application/json)

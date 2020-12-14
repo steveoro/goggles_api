@@ -251,4 +251,65 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
       it_behaves_like 'an empty but successful JSON list response'
     end
   end
+  # -- -------------------------------------------------------------------------
+  # ++
+
+  describe 'GET /api/v3/cities/search' do
+    context 'when using a valid authentication' do
+      let(:default_per_page) { 25 }
+
+      context 'without any filters,' do
+        before(:each) { get(api_v3_cities_search_path, headers: fixture_headers) }
+        it 'is NOT successful' do
+          expect(response).not_to be_successful
+        end
+        it 'responds with a generic error message and its details in the header' do
+          result = JSON.parse(response.body)
+          expect(result).to have_key('error')
+          expect(result['error']).to eq('name is missing, country_code is missing')
+        end
+      end
+
+      # Checking specific accented or partial names:
+      %w[
+        FORLI forlì Cesena L'aquila LAquila reggio Parm modena riccione lodi reggioemilia
+      ].each do |fixture_name|
+        context "when searching for a specific peculiar name (#{fixture_name}) with multiple results," do
+          let(:result_country) { GogglesDb::CmdFindIsoCountry.call(nil, 'IT').result }
+          let(:result_city_finder) { GogglesDb::CmdFindIsoCity.call(result_country, fixture_name) }
+          let(:expected_row_count) { result_city_finder.matches.count }
+
+          before(:each) do
+            expect(result_country).to be_an(ISO3166::Country)
+            expect(result_city_finder).to be_successful
+            get(
+              api_v3_cities_search_path,
+              params: { name: fixture_name, country_code: 'IT' },
+              headers: fixture_headers
+            )
+          end
+
+          it 'is successful' do
+            expect(response).to be_successful
+          end
+          it 'returns a paginated JSON array of associated, filtered rows' do
+            result_array = JSON.parse(response.body)
+            expect(result_array).to be_an(Array)
+            expect(result_array.count).to eq(expected_row_count <= default_per_page ? expected_row_count : default_per_page)
+          end
+          it_behaves_like 'multiple row response either with OR without pagination links'
+        end
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before(:each) { get(api_v3_cities_search_path, params: { name: 'Roma', country_code: 'IT' }, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like 'a failed auth attempt due to invalid JWT'
+    end
+
+    context 'when filtering by a non-existing value,' do
+      before(:each) { get(api_v3_cities_search_path, params: { name: '?@No-City!', country_code: 'IT' }, headers: fixture_headers) }
+      it_behaves_like 'an empty but successful JSON list response'
+    end
+  end
 end
