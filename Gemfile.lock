@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: 01d660e49356079fc2c42ea7075d4f3ca10038b5
+  revision: a9d0e5ecb4b0fb702bae0a6ca5ae868702338fb5
   specs:
-    goggles_db (0.1.44)
+    goggles_db (0.1.46)
       acts-as-taggable-on
       acts_as_votable
       carrierwave

@@ -297,6 +297,10 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
             expect(result_array).to be_an(Array)
             expect(result_array.count).to eq(expected_row_count <= default_per_page ? expected_row_count : default_per_page)
           end
+          it 'has the required field structure' do
+            result_array = JSON.parse(response.body)
+            expect(result_array.first.keys).to include('name', 'latitude', 'longitude', 'region_num', 'region')
+          end
           it_behaves_like 'multiple row response either with OR without pagination links'
         end
       end

@@ -579,34 +579,28 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
             [
                 {
-                    "data": {
-                    "city": "reggiolo",
-                    "accentcity": "Reggiolo",
-                    "region": "05",
+                    "name": "Reggiolo",
                     "population": null,
-                    "latitude": "44.916667",
-                    "longitude": "10.8"
-                    }
+                    "latitude": 44.916667,
+                    "longitude": 10.8,
+                    "region_num": "05",
+                    "region": "Emilia-Romagna"
                 },
                 {
-                    "data": {
-                    "city": "reggio nell emilia",
-                    "accentcity": "Reggio nell Emilia",
-                    "region": "05",
+                    "name": "Reggio nell Emilia",
                     "population": null,
-                    "latitude": "44.716667",
-                    "longitude": "10.6"
-                    }
+                    "latitude": 44.716667,
+                    "longitude": 10.6,
+                    "region_num": "05",
+                    "region": "Emilia-Romagna"
                 },
                 {
-                    "data": {
-                    "city": "reggio nell'emilia",
-                    "accentcity": "Reggio nell'Emilia",
-                    "region": "05",
+                    "name": "Reggio nell'Emilia",
                     "population": null,
-                    "latitude": "44.716667",
-                    "longitude": "10.6"
-                    }
+                    "latitude": 44.716667,
+                    "longitude": 10.6,
+                    "region_num": "05",
+                    "region": "Emilia-Romagna"
                 }
             ]
 
@@ -620,14 +614,6 @@ returned as JSON data:
 - `country_code` (string): Country code (2 chars)
 
 Returns the fuzzy matches found for the specified (partial) name; assumes an exact value for the `country_code`.
-
-**Note:**
-*Currently, the `region` returned in the `data` items is not a valid ISO 3166-2 standard subdivision
-code but is the result of the original dataset (dated 2016) which classified Regions depending on
-clusters of IP addresses.*
-
-(For example, the correct ISO 3166-2 standard code for Region "Emilia-Romagna" would be `45` (`IT-RE`),
-not "05" as reported in the JSON result. So, keep in mind that.)
 
 Optional pagination parameters for the request:
 

@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: City API Grape controller
   #
-  #   - version:  1.13
+  #   - version:  1.14
   #   - author:   Steve A.
   #   - build:    20201214
   #
@@ -177,7 +177,22 @@ module Goggles
 
         country_finder = GogglesDb::CmdFindIsoCountry.call(nil, params['country_code'])
         city_finder = GogglesDb::CmdFindIsoCity.call(country_finder.result, params['name']) if country_finder.success?
-        results = city_finder.success? ? city_finder.matches.map(&:candidate) : []
+        region_list = GogglesDb::IsoRegionList.new(params['country_code'])
+        results = if city_finder.success?
+                    city_finder.matches.map do |match_struct|
+                      candidate = match_struct.candidate
+                      {
+                        'name' => candidate.name,
+                        'population' => candidate.population,
+                        'latitude' => candidate.latitude,
+                        'longitude' => candidate.longitude,
+                        'region_num' => candidate.region,
+                        'region' => region_list.fetch(candidate.region)
+                      }
+                    end
+                  else
+                    []
+                  end
 
         paginate results
       end
