@@ -1,0 +1,719 @@
+# Group Meetings
+
+# Meeting details [/api/v3/meeting/{id}]
+
++ Model (application/json)
+
+            {
+                "id": 1,
+                "lock_version": 0,
+                "description": "3A PROVA REGIONALE CSI",
+                "entry_deadline": null,
+                "warm_up_pool": false,
+                "allows_under_25": false,
+                "reference_phone": "",
+                "reference_e_mail": "",
+                "reference_name": "",
+                "notes": "",
+                "manifest": false,
+                "startlist": false,
+                "results_acquired": true,
+                "max_individual_events": 2,
+                "configuration_file": "",
+                "edition": 0,
+                "season_id": 1,
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z",
+                "autofilled": false,
+                "header_date": "2001-04-01",
+                "code": "csiprova3",
+                "header_year": "2000/2001",
+                "max_individual_events_per_session": 0,
+                "off_season": false,
+                "edition_type_id": 5,
+                "timing_type_id": 2,
+                "individual_score_computation_type_id": 3,
+                "relay_score_computation_type_id": 15,
+                "team_score_computation_type_id": 14,
+                "meeting_score_computation_type_id": 7,
+                "manifest_body": null,
+                "confirmed": true,
+                "tweeted": false,
+                "posted": false,
+                "cancelled": false,
+                "pb_acquired": true,
+                "organization_team_id": null,
+                "read_only": false,
+                "meeting_fee": null,
+                "event_fee": null,
+                "relay_fee": null,
+                "edition_label": "2000/2001",
+                "season": {
+                    "id": 1,
+                    "description": "Circuito Regionale Emilia master CSI 2000/2001",
+                    "begin_date": "2000-09-01",
+                    "end_date": "2001-06-30",
+                    "season_type_id": 2,
+                    "header_year": "2000/2001",
+                    "edition": 1,
+                    "edition_type_id": 5,
+                    "timing_type_id": 2,
+                    "rules": null,
+                    "individual_rank": true,
+                    "badge_fee": null
+                },
+                "edition_type": {
+                    "id": 5,
+                    "code": "S",
+                    "label": "SEA",
+                    "long_label": "SEASON",
+                    "alt_label": "SEA"
+                },
+                "timing_type": {
+                    "id": 2,
+                    "code": "S",
+                    "label": "SEM",
+                    "long_label": "SEMIAUTOMATIC",
+                    "alt_label": "SEM"
+                },
+                "season_type": {
+                    "id": 2,
+                    "code": "MASCSI",
+                    "description": "CIRCUITO ITALIANO MASTER CSI",
+                    "short_name": "MASTER CSI",
+                    "federation_type_id": 2
+                },
+                "federation_type": {
+                    "id": 2,
+                    "code": "CSI",
+                    "description": "CENTRO SPORTIVO ITALIANO",
+                    "short_name": "CSI"
+                },
+                "meeting_sessions": [
+                    {
+                        "id": 1,
+                        "session_order": 1,
+                        "scheduled_date": "2001-04-01",
+                        "warm_up_time": "2000-01-01T00:00:00.000Z",
+                        "begin_time": "2000-01-01T00:00:00.000Z",
+                        "notes": "",
+                        "meeting_id": 1,
+                        "swimming_pool_id": 5,
+                        "description": "FINALI",
+                        "autofilled": false,
+                        "day_part_type_id": null
+                    }
+                ],
+                "meeting_events": [
+                    {
+                        "id": 1230,
+                        "event_order": 1,
+                        "begin_time": "2000-01-01T00:00:00.000Z",
+                        "out_of_race": false,
+                        "autofilled": false,
+                        "notes": null,
+                        "meeting_session_id": 1,
+                        "event_type_id": 19,
+                        "heat_type_id": 3,
+                        "split_gender_start_list": true,
+                        "split_category_start_list": false,
+                        "event_type": {
+                            "id": 19,
+                            "code": "50RA",
+                            "length_in_meters": 50,
+                            "relay": false,
+                            "stroke_type_id": 4,
+                            "style_order": 19,
+                            "mixed_gender": false,
+                            "partecipants": 1,
+                            "phases": 1,
+                            "phase_length_in_meters": 50,
+                            "label": "50 BS",
+                            "long_label": "50 BREASTROKE",
+                            "alt_label": "50 BS"
+                        },
+                        "stroke_type": {
+                            "id": 4,
+                            "code": "RA",
+                            "eventable": true,
+                            "label": "BR",
+                            "long_label": "BREASTROKE",
+                            "alt_label": "BS"
+                        },
+                        "heat_type": {
+                            "id": 3,
+                            "code": "F",
+                            "default": false,
+                            "label": "FN",
+                            "long_label": "FINALS",
+                            "alt_label": "FN"
+                        }
+                    },
+                    {
+                        "id": 1231,
+                        "event_order": 2,
+                        "begin_time": "2000-01-01T00:00:00.000Z",
+                        "out_of_race": false,
+                        "autofilled": false,
+                        "notes": null,
+                        "meeting_session_id": 1,
+                        "event_type_id": 15,
+                        "heat_type_id": 3,
+                        "split_gender_start_list": true,
+                        "split_category_start_list": false,
+                        "event_type": {
+                            "id": 15,
+                            "code": "50DO",
+                            "length_in_meters": 50,
+                            "relay": false,
+                            "stroke_type_id": 3,
+                            "style_order": 15,
+                            "mixed_gender": false,
+                            "partecipants": 1,
+                            "phases": 1,
+                            "phase_length_in_meters": 50,
+                            "label": "50 BK",
+                            "long_label": "50 BACKSTROKE",
+                            "alt_label": "50 BK"
+                        },
+                        "stroke_type": {
+                            "id": 3,
+                            "code": "DO",
+                            "eventable": true,
+                            "label": "BK",
+                            "long_label": "BACKSTROKE",
+                            "alt_label": "BA"
+                        },
+                        "heat_type": {
+                            "id": 3,
+                            "code": "F",
+                            "default": false,
+                            "label": "FN",
+                            "long_label": "FINALS",
+                            "alt_label": "FN"
+                        }
+                    },
+                    {
+                        "id": 1232,
+                        "event_order": 3,
+                        "begin_time": "2000-01-01T00:00:00.000Z",
+                        "out_of_race": false,
+                        "autofilled": false,
+                        "notes": null,
+                        "meeting_session_id": 1,
+                        "event_type_id": 11,
+                        "heat_type_id": 3,
+                        "split_gender_start_list": true,
+                        "split_category_start_list": false,
+                        "event_type": {
+                            "id": 11,
+                            "code": "50FA",
+                            "length_in_meters": 50,
+                            "relay": false,
+                            "stroke_type_id": 2,
+                            "style_order": 11,
+                            "mixed_gender": false,
+                            "partecipants": 1,
+                            "phases": 1,
+                            "phase_length_in_meters": 50,
+                            "label": "50 BF",
+                            "long_label": "50 BUTTERFLY",
+                            "alt_label": "50 BF"
+                        },
+                        "stroke_type": {
+                            "id": 2,
+                            "code": "FA",
+                            "eventable": true,
+                            "label": "BT",
+                            "long_label": "BUTTERFLY",
+                            "alt_label": "BU"
+                        },
+                        "heat_type": {
+                            "id": 3,
+                            "code": "F",
+                            "default": false,
+                            "label": "FN",
+                            "long_label": "FINALS",
+                            "alt_label": "FN"
+                        }
+                    },
+                    {
+                        "id": 1233,
+                        "event_order": 4,
+                        "begin_time": "2000-01-01T00:00:00.000Z",
+                        "out_of_race": false,
+                        "autofilled": false,
+                        "notes": null,
+                        "meeting_session_id": 1,
+                        "event_type_id": 22,
+                        "heat_type_id": 3,
+                        "split_gender_start_list": true,
+                        "split_category_start_list": false,
+                        "event_type": {
+                            "id": 22,
+                            "code": "100MI",
+                            "length_in_meters": 100,
+                            "relay": false,
+                            "stroke_type_id": 5,
+                            "style_order": 22,
+                            "mixed_gender": false,
+                            "partecipants": 1,
+                            "phases": 1,
+                            "phase_length_in_meters": 100,
+                            "label": "100 IM",
+                            "long_label": "100 INTERMIXED",
+                            "alt_label": "100 IM"
+                        },
+                        "stroke_type": {
+                            "id": 5,
+                            "code": "MI",
+                            "eventable": true,
+                            "label": "IM",
+                            "long_label": "INDIVIDUAL MEDLEY",
+                            "alt_label": "MI"
+                        },
+                        "heat_type": {
+                            "id": 3,
+                            "code": "F",
+                            "default": false,
+                            "label": "FN",
+                            "long_label": "FINALS",
+                            "alt_label": "FN"
+                        }
+                    }
+                ]
+            }
+
+
+## find [GET]
+
+The Meeting instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities:
+- `Season`
+- `EditionType`
+- `TimingType`
+- `SeasonType`
+- `FederationType`
+- `MeetingSessions` list
+- `MeetingEvents` list
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number, required) - Meeting ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: 'localhost:3000/api/v3/meeting/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":1...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Meeting details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for the Meeting number and other limited fields given the `id` of the row.
+
+Returns 'true' on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'Swimmer' or have generic admin grants
+
+
+#### Body Attributes:
+
+- `number` (string, **required**): Meeting code or number
+- `entry_time_type_id` (number): associated EntryTimeType ID for referencing default timings
+    | _id_ | _code_ | _description_ |
+    | --- | --- | --- |
+    | 1 | `M` | manual |
+    | 2 | `P` | personal |
+    | 3 | `G` | GoggleCup |
+    | 4 | `A` | preceding year |
+    | 5 | `U` | last race |
+- `fees_due` (boolean): 'true', the Swimmer has to pay additional meeting fees for the Championship; 'false', the Team provides
+- `meeting_due` (boolean): 'true', the Swimmer has to pay the meeting registration; 'false', the Team provides
+- `relays_due` (boolean): 'true', the Swimmer has to pay any relay event in the Championship; 'false', the Team provides
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number, required) - Meeting ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"number": "A_NEW_OR_EXISTING_BADGE_CODE", \
+                "entry_time_type_id": 1, "meeting_due": "true"}' \
+            "<API_HOST:PORT>/api/v3/meeting/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/meeting/1',
+                payload: {
+                    number: 'A_NEW_OR_EXISTING_BADGE_CODE',
+                    entry_time_type_id: 1,
+                    meeting_due: true
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
+                "entry_time_type_id": 1,
+                "fees_due": false,
+                "meeting_due": false,
+                "relays_due": false
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
+                "entry_time_type_id": 1,
+                "fees_due": false,
+                "meeting_due": false,
+                "relays_due": false
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
+                "entry_time_type_id": 1,
+                "fees_due": false,
+                "meeting_due": false,
+                "relays_due": false
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
+                "entry_time_type_id": 1,
+                "fees_due": false,
+                "meeting_due": false,
+                "relays_due": false
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
+                "entry_time_type_id": 1,
+                "fees_due": false,
+                "meeting_due": false,
+                "relays_due": false
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+# Meeting list [/api/v3/meetings{?page,per_page,team_id,team_affiliation_id,season_id,swimmer_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/meetings?page=60&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/meetings?page=2&team_id=1>; rel=\"next\""
+            Total: 1483
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // Meeting details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // Meeting details 2
+                {
+                    "id": 124948,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of Meetings associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `team_id`
+- `team_affiliation_id`
+- `season_id`
+- `swimmer_id`
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + team_id: 1 (number, optional) - associated Meeting ID
+    + swimmer_id: 142 (number, optional) - associated Swimmer ID
+    + team_affiliation_id: 5727 (number, optional) - associated TeamAffiliation ID
+    + season_id: 1 (number, optional) - associated Season ID
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meetings?team_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meetings',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { team_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":12494...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Meeting list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }

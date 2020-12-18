@@ -180,63 +180,27 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
 
       context 'without any filters,' do
         before(:each) { get(api_v3_cities_path, headers: fixture_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      context 'filtering by a specific country,' do
+      context 'when filtering by a specific country,' do
         before(:each) { get(api_v3_cities_path, params: { country: 'Italy' }, headers: fixture_headers) }
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          full_count = GogglesDb::City.where(country: 'Italy').count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      context 'filtering by a specific country_code,' do
+      context 'when filtering by a specific country_code,' do
         before(:each) { get(api_v3_cities_path, params: { country_code: 'IT' }, headers: fixture_headers) }
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          full_count = GogglesDb::City.where(country_code: 'IT').count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
       # Checking specific accented or partial names:
       %w[FORLI Cesena L'aquila LAquila reggio].each do |fixture_name|
-        context "filtering by a specific peculiar name (#{fixture_name})," do
-          let(:expected_results) { GogglesDb::City.where('name LIKE ?', "%#{fixture_name}%") }
+        context "filtering by a generic name (#{fixture_name})," do
+          let(:expected_results) { GogglesDb::City.for_name(fixture_name) }
           let(:expected_row_count) { expected_results.count }
-
           before(:each) { get(api_v3_cities_path, params: { name: fixture_name }, headers: fixture_headers) }
 
-          it 'is successful' do
-            expect(response).to be_successful
-          end
-          it 'returns a paginated JSON array of associated, filtered rows' do
-            result_array = JSON.parse(response.body)
-            expect(result_array).to be_an(Array)
-            expect(result_array.count).to eq(expected_row_count <= default_per_page ? expected_row_count : default_per_page)
-          end
-          it_behaves_like 'multiple row response either with OR without pagination links'
+          it_behaves_like 'successful multiple row response either with OR without pagination links'
         end
       end
     end
@@ -247,7 +211,7 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) { get(api_v3_cities_path, params: { name: '?@No-City!' }, headers: fixture_headers) }
+      before(:each) { get(api_v3_cities_path, params: { name: '?@12345!' }, headers: fixture_headers) }
       it_behaves_like 'an empty but successful JSON list response'
     end
   end
@@ -289,19 +253,12 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
             )
           end
 
-          it 'is successful' do
-            expect(response).to be_successful
-          end
-          it 'returns a paginated JSON array of associated, filtered rows' do
-            result_array = JSON.parse(response.body)
-            expect(result_array).to be_an(Array)
-            expect(result_array.count).to eq(expected_row_count <= default_per_page ? expected_row_count : default_per_page)
-          end
           it 'has the required field structure' do
             result_array = JSON.parse(response.body)
             expect(result_array.first.keys).to include('name', 'latitude', 'longitude', 'region_num', 'region')
           end
-          it_behaves_like 'multiple row response either with OR without pagination links'
+
+          it_behaves_like 'successful multiple row response either with OR without pagination links'
         end
       end
     end

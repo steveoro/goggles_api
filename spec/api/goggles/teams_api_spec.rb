@@ -34,13 +34,11 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_team_path(id: fixture_team.id), headers: { 'Authorization' => 'you wish!' }) }
-
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) { get api_v3_team_path(id: -1), headers: fixture_headers }
-
       it_behaves_like 'an empty but successful JSON response'
     end
   end
@@ -72,9 +70,8 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
       before(:each) { expect(expected_changes).to be_an(Hash) }
 
       context 'with an account having CRUD grants,' do
-        before(:each) do
-          put(api_v3_team_path(id: fixture_team.id), params: expected_changes, headers: crud_headers)
-        end
+        before(:each) { put(api_v3_team_path(id: fixture_team.id), params: expected_changes, headers: crud_headers) }
+
         it 'is successful' do
           expect(response).to be_successful
         end
@@ -88,9 +85,7 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) do
-          put(api_v3_team_path(id: fixture_team.id), params: expected_changes, headers: fixture_headers)
-        end
+        before(:each) { put(api_v3_team_path(id: fixture_team.id), params: expected_changes, headers: fixture_headers) }
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
@@ -130,19 +125,10 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
 
       context 'without any filters,' do
         before(:each) { get(api_v3_teams_path, headers: fixture_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      context 'filtering by a specific city_id,' do
+      context 'when filtering by a specific city_id,' do
         before(:each) { get(api_v3_teams_path, params: { city_id: fixture_city_id }, headers: fixture_headers) }
 
         it 'is successful' do
@@ -157,53 +143,30 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
         # (We can't really assert pagination links here, it's enough to test these in the context below)
       end
 
-      %w[name editable_name].each do |field_name|
-        context "filtering by a partial #{field_name}," do
-          let(:fixture_name) { GogglesDb::Team.select(field_name).limit(50).map(&field_name.to_sym).sample }
-          let(:expected_team) { GogglesDb::Team.where("#{field_name} LIKE ?", "%#{fixture_name}%").first }
-          let(:expected_row_count) { GogglesDb::Team.where("#{field_name} LIKE ?", "%#{fixture_name}%").count }
+      context 'when filtering by name,' do
+        let(:search_term) { GogglesDb::Team.select(:name).limit(50).sample.name.split(' ').first }
+        let(:data_domain) { GogglesDb::Team.for_name(search_term) }
+        let(:expected_team) { data_domain.first }
+        let(:expected_row_count) { data_domain.count }
+        before(:each) { get(api_v3_teams_path, params: { name: search_term }, headers: fixture_headers) }
 
-          before(:each) { get(api_v3_teams_path, params: { field_name => fixture_name }, headers: fixture_headers) }
-
-          it 'is successful' do
-            expect(response).to be_successful
-          end
-          it 'returns a JSON array containing the single expected row' do
-            result_array = JSON.parse(response.body)
-            expect(result_array).to be_an(Array)
-            expect(result_array.count).to be >= 1
-            expect(result_array.first['id']).to eq(expected_team.id)
-          end
-
-          # Typically any results filtered by name will be just a single row fitting
-          # in a single page (w/o pagination links), but with random names we can't be sure:
-          it_behaves_like 'multiple row response either with OR without pagination links'
+        it 'includes the expected row in the result array' do
+          result_ids = JSON.parse(response.body).map { |row| row['id'] }
+          expect(result_ids).to include(expected_team.id)
         end
-      end
-
-      # Uses random fixtures, to have a quick 1-row result (no pagination, always):
-      context 'filtering by a specific single random fixture,' do
-        before(:each) { get(api_v3_teams_path, params: { city_id: fixture_team.city_id }, headers: fixture_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a JSON array containing the single associated row' do
-          expect(response.body).to eq([fixture_team].to_json)
-        end
-        it_behaves_like 'single response without pagination links in headers'
+        # Typically any results filtered by name will be just a single row fitting
+        # in a single page (w/o pagination links), but with random names we can't be sure:
+        it_behaves_like 'successful multiple row response either with OR without pagination links'
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_teams_path, headers: { 'Authorization' => 'you wish!' }) }
-
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_teams_path, params: { city_id: -1 }, headers: fixture_headers) }
-
       it_behaves_like 'an empty but successful JSON list response'
     end
   end

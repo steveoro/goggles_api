@@ -22,9 +22,7 @@ RSpec.describe Goggles::UsersAPI, type: :request do
 
   describe 'GET /api/v3/user/:id' do
     context 'when using valid parameters,' do
-      before(:each) do
-        get api_v3_user_path(id: fixture_user.id), headers: fixture_headers
-      end
+      before(:each) { get(api_v3_user_path(id: fixture_user.id), headers: fixture_headers) }
       it 'is successful' do
         expect(response).to be_successful
       end
@@ -34,16 +32,12 @@ RSpec.describe Goggles::UsersAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        get api_v3_user_path(id: fixture_user.id), headers: { 'Authorization' => 'you wish!' }
-      end
+      before(:each) { get(api_v3_user_path(id: fixture_user.id), headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        get api_v3_user_path(id: -1), headers: fixture_headers
-      end
+      before(:each) { get(api_v3_user_path(id: -1), headers: fixture_headers) }
       it_behaves_like 'an empty but successful JSON response'
     end
   end
@@ -127,22 +121,11 @@ RSpec.describe Goggles::UsersAPI, type: :request do
       end
 
       context 'without any filters,' do
-        before(:each) do
-          get(api_v3_users_path, headers: fixture_headers)
-        end
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        before(:each) { get(api_v3_users_path, headers: fixture_headers) }
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      context 'filtering by a specific first_name,' do
+      context 'when filtering by a specific first_name,' do
         before(:each) { get(api_v3_users_path, params: { first_name: fixture_first_name }, headers: fixture_headers) }
 
         it 'is successful' do
@@ -157,7 +140,7 @@ RSpec.describe Goggles::UsersAPI, type: :request do
         # (We can't really assert pagination links here)
       end
 
-      context 'filtering by a specific last_name,' do
+      context 'when filtering by a specific last_name,' do
         before(:each) { get(api_v3_users_path, params: { last_name: fixture_last_name }, headers: fixture_headers) }
 
         it 'is successful' do
@@ -172,44 +155,29 @@ RSpec.describe Goggles::UsersAPI, type: :request do
         # (We can't really assert pagination links here)
       end
 
-      context 'filtering by a portion of an email address,' do
+      context 'when filtering by a portion of an email address,' do
         before(:each) { get(api_v3_users_path, params: { email: fixture_email }, headers: fixture_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          full_count = GogglesDb::User.where('email LIKE ?', "%#{fixture_email}%").count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
       # This will result in a single row without pagination, always:
-      context 'filtering with a specific email address,' do
+      context 'when filtering with a specific email address,' do
         before(:each) { get(api_v3_users_path, params: { email: fixture_user.email }, headers: fixture_headers) }
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
         it 'returns a JSON array containing the single associated row' do
           expect(response.body).to eq([fixture_user].to_json)
         end
-        it_behaves_like 'single response without pagination links in headers'
+        it_behaves_like 'successful single response without pagination links in headers'
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_users_path, headers: { 'Authorization' => 'you wish!' }) }
-
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_users_path, params: { name: 'NOT-A-NAME' }, headers: fixture_headers) }
-
       it_behaves_like 'an empty but successful JSON list response'
     end
   end

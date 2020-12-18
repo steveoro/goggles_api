@@ -36,9 +36,7 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
-          post(api_v3_team_manager_path, params: built_row.attributes, headers: admin_headers)
-        end
+        before(:each) { post(api_v3_team_manager_path, params: built_row.attributes, headers: admin_headers) }
         it 'is successful' do
           expect(response).to be_successful
         end
@@ -59,17 +57,13 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
           expect(crud_user).to be_a(GogglesDb::User).and be_valid
           expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
           expect(crud_headers).to be_an(Hash).and have_key('Authorization')
-        end
-        before(:each) do
           post(api_v3_team_manager_path, params: built_row.attributes, headers: crud_headers)
         end
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
 
       context 'with an account not having any grants,' do
-        before(:each) do
-          post(api_v3_team_manager_path, params: built_row.attributes, headers: fixture_headers)
-        end
+        before(:each) { post(api_v3_team_manager_path, params: built_row.attributes, headers: fixture_headers) }
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end

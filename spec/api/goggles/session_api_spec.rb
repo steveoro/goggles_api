@@ -17,7 +17,7 @@ RSpec.describe Goggles::SessionAPI, type: :request do
   describe 'POST /api/:version/session' do
     context 'when using valid parameters,' do
       before(:each) do
-        post api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key }
+        post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key })
       end
       it 'is successful' do
         expect(response).to be_successful
@@ -39,7 +39,7 @@ RSpec.describe Goggles::SessionAPI, type: :request do
 
     context 'when using invalid user credentials,' do
       before(:each) do
-        post api_v3_session_path, params: { e: 'non.existing.user@example.com', p: 'password', t: Rails.application.credentials.api_static_key }
+        post(api_v3_session_path, params: { e: 'non.existing.user@example.com', p: 'password', t: Rails.application.credentials.api_static_key })
       end
       it 'is NOT successful' do
         expect(response).not_to be_successful
@@ -55,7 +55,7 @@ RSpec.describe Goggles::SessionAPI, type: :request do
 
     context 'when using an invalid static token,' do
       before(:each) do
-        post api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: 'NOT-the-correct-token-for-sure' }
+        post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: 'NOT-the-correct-token-for-sure' })
       end
       it 'is NOT successful' do
         expect(response).not_to be_successful

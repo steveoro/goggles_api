@@ -50,16 +50,12 @@ RSpec.describe Goggles::LookupAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        get(api_v3_lookup_path(entity_name: 'gender_types'), headers: { 'Authorization' => 'you wish!' })
-      end
+      before(:each) { get(api_v3_lookup_path(entity_name: 'gender_types'), headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when using an invalid entity name,' do
-      before(:each) do
-        get(api_v3_lookup_path(entity_name: 'non_existing_table_rows'), headers: fixture_headers)
-      end
+      before(:each) { get(api_v3_lookup_path(entity_name: 'non_existing_table_rows'), headers: fixture_headers) }
       it_behaves_like 'an empty but successful JSON list response'
     end
   end

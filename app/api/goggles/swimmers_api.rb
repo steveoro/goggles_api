@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Swimmer API Grape controller
   #
-  #   - version:  1.09
+  #   - version:  7.051
   #   - author:   Steve A.
-  #   - build:    20201207
+  #   - build:    20201218
   #
   class SwimmersAPI < Grape::API
     helpers APIHelpers
@@ -71,7 +71,7 @@ module Goggles
       # == Returns:
       # The list of Swimmers for the specified filtering parameters as an array of JSON objects.
       # Returns exact matches for gender_type_id, year_of_birth, & year_guessed; supports partial matches
-      # for the text name fields, but no fuzzy searches are performed here. (Use dedicated /search endpoints for that.)
+      # for the text fields, plus a FULLTEXT search by the generic 'name' parameter on all name-related fields.
       #
       # *Pagination* links are stored and returned in the response headers.
       # - 'Link': list of request links for last & next data pages, separated by ", "
@@ -84,6 +84,7 @@ module Goggles
       #
       desc 'List Swimmers'
       params do
+        optional :name, type: String, desc: 'optional: generic FULLTEXT name search on first, last and complete_name fields'
         optional :first_name, type: String, desc: 'optional: first name (partial match supported)'
         optional :last_name, type: String, desc: 'optional: last name (partial match supported)'
         optional :complete_name, type: String, desc: 'optional: complete name (partial match supported)'
@@ -100,10 +101,10 @@ module Goggles
       get do
         check_jwt_session
 
-        paginate GogglesDb::Swimmer.where(
-          filtering_hash_for(params, %w[gender_type_id year_of_birth year_guessed])
-        ).where(
-          filtering_like_for(params, %w[first_name last_name complete_name])
+        paginate(
+          filtering_fulltext_search_for(GogglesDb::Swimmer, params['name'])
+            .where(filtering_hash_for(params, %w[gender_type_id year_of_birth year_guessed]))
+            .where(filtering_like_for(params, %w[first_name last_name complete_name]))
         )
       end
     end

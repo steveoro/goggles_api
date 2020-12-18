@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: a9d0e5ecb4b0fb702bae0a6ca5ae868702338fb5
+  revision: 7a398c83a8794e54ab04a26d7e4d383e7ee9b93a
   specs:
-    goggles_db (0.1.46)
+    goggles_db (0.1.51)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -439,7 +439,7 @@ GEM
     tilt (2.0.10)
     tins (1.26.0)
       sync
-    tzinfo (1.2.8)
+    tzinfo (1.2.9)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext

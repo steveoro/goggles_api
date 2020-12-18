@@ -51,12 +51,23 @@ end
 # REQUIRES/ASSUMES:
 # - many results, multiple pages (always pagination)
 # - 'default_per_page' to be already set (default pagination size)
-shared_examples_for 'response with pagination links & values in headers' do
+shared_examples_for 'successful response with pagination links & values in headers' do
+  it 'is successful' do
+    expect(response).to be_successful
+  end
+
+  it 'returns a paginated array of JSON rows' do
+    result_array = JSON.parse(response.body)
+    expect(result_array).to be_an(Array)
+    expect(result_array.count).to eq(default_per_page)
+  end
+
   it 'contains the pagination values for the first data page in the response headers' do
     expect(response.headers['Page']).to eq('1')
     expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
     expect(response.headers['Total'].to_i).to be_positive
   end
+
   it 'contains the next & last pagination links in the response headers' do
     expect(response.headers['Link']).to be_present
     expect(response.headers['Link']).to include('next').and include('last')
@@ -75,7 +86,17 @@ end
 # REQUIRES/ASSUMES:
 # - just 1 result, just 1 page (no pagination)
 # - 'default_per_page' to be already set (default pagination size)
-shared_examples_for 'single response without pagination links in headers' do
+shared_examples_for 'successful single response without pagination links in headers' do
+  it 'is successful' do
+    expect(response).to be_successful
+  end
+
+  it 'returns a paginated array of JSON rows' do
+    result_array = JSON.parse(response.body)
+    expect(result_array).to be_an(Array)
+    expect(result_array.count).to eq(1)
+  end
+
   it 'does not contain the pagination values or links in the response headers' do
     expect(response.headers['Page']).to eq('1')
     expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
@@ -85,10 +106,20 @@ shared_examples_for 'single response without pagination links in headers' do
 end
 
 # REQUIRES/ASSUMES:
-# - more than 1 result, possibly just 1 page (no pagination) OR multiple pages
+# - 1 or more results, possibly just 1 page (no pagination) OR even multiple pages
 # - 'default_per_page' to be already set (default pagination size)
 # - 'expected_row_count' to be already set (row count for expected result)
-shared_examples_for 'multiple row response either with OR without pagination links' do
+shared_examples_for 'successful multiple row response either with OR without pagination links' do
+  it 'is successful' do
+    expect(response).to be_successful
+  end
+
+  it 'returns a paginated JSON array of associated, filtered rows' do
+    result_array = JSON.parse(response.body)
+    expect(result_array).to be_an(Array)
+    expect(result_array.count).to eq(expected_row_count <= default_per_page ? expected_row_count : default_per_page)
+  end
+
   it 'may or may not contain pagination links in the headers, depending on the number of results' do
     expect(response.headers['Page']).to eq('1')
     expect(response.headers['Per-Page']).to eq(default_per_page.to_s)

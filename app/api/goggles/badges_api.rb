@@ -35,7 +35,7 @@ module Goggles
       # PUT /api/:version/badge/:id
       #
       # Allow direct update for the Badge number and other limited fields.
-      # Requires CRUD grant on entity ('Badge') for requesting user.
+      # Requires CRUD grant on entity ('Badge') for the requesting user.
       #
       # == Returns:
       # 'true' when successful; an empty result when not found.

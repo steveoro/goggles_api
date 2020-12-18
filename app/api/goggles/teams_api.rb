@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Team API Grape controller
   #
-  #   - version:  1.09
+  #   - version:  7.051
   #   - author:   Steve A.
-  #   - build:    20201207
+  #   - build:    20201218
   #
   class TeamsAPI < Grape::API
     helpers APIHelpers
@@ -73,8 +73,8 @@ module Goggles
       #
       # == Returns:
       # The list of Teams for the specified filtering parameters as an array of JSON objects.
-      # Returns exact matches for city_id, supports partial matches for the text names,
-      # but no fuzzy searches are performed here. (Use dedicated /search endpoints for that.)
+      # Returns exact matches for city_id; supports FULLTEXT search by the generic 'name' parameter
+      # which acts on the 'name', 'editable_name' and 'name_variations' fields.
       #
       # *Pagination* links are stored and returned in the response headers.
       # - 'Link': list of request links for last & next data pages, separated by ", "
@@ -87,23 +87,17 @@ module Goggles
       #
       desc 'List Teams'
       params do
+        optional :name, type: String, desc: 'optional: generic FULLTEXT name search on name, editable_name & name_variations fields'
         optional :city_id, type: Integer, desc: 'optional: associated City ID'
-        optional :name, type: String, desc: 'optional: name of the Team (partial match supported)'
-        optional :editable_name, type: String, desc: 'optional: name of the Team, as edited by the Team Manager (partial match supported)'
         use :pagination
       end
-      # Enforcing 'max_per_page' will add the allowed range to the swagger docs and
-      # cause Grape to return an error when an out-of-range value is specified.
-      # Defaults:
-      # paginate per_page: 25, max_per_page: nil, enforce_max_per_page: false
       paginate
       get do
         check_jwt_session
 
-        paginate GogglesDb::Team.where(
-          filtering_hash_for(params, %w[city_id])
-        ).where(
-          filtering_like_for(params, %w[name editable_name])
+        paginate(
+          filtering_fulltext_search_for(GogglesDb::Team, params['name'])
+            .where(filtering_hash_for(params, %w[city_id]))
         )
       end
     end

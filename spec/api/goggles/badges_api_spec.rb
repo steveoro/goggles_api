@@ -139,34 +139,18 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
           get(api_v3_badges_path, headers: fixture_headers)
         end
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated array of JSON rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      context 'filtering by a specific team_id & season_id,' do
+      context 'when filtering by a specific team_id & season_id,' do
         before(:each) do
           get(api_v3_badges_path, params: { team_id: fixture_team.id, season_id: fixture_season_id }, headers: fixture_headers)
         end
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated array of JSON rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      context 'filtering by a specific swimmer_id,' do
+      context 'when filtering by a specific swimmer_id,' do
         # Note: some actual swimmers from the selected seasons may have just a handful of badges,
         #       so pagination is not guarateed to be there and we don't need to test that here.
         let(:fixture_swimmer) { fixture_team.badges.where(season_id: fixture_season_id).sample.swimmer }
@@ -187,18 +171,15 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
       end
 
       # Uses random fixtures, to have a quick 1-row result (no pagination, always):
-      context 'filtering by a specific team_affiliation_id for a random single fixture,' do
+      context 'when filtering by a specific team_affiliation_id for a random single fixture,' do
         before(:each) do
           get(api_v3_badges_path, params: { team_affiliation_id: fixture_badge.team_affiliation_id }, headers: fixture_headers)
         end
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
         it 'returns a JSON array containing the single associated row' do
           expect(response.body).to eq([fixture_badge].to_json)
         end
-        it_behaves_like 'single response without pagination links in headers'
+        it_behaves_like 'successful single response without pagination links in headers'
       end
     end
 

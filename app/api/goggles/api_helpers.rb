@@ -58,10 +58,10 @@ module Goggles
       field_list.each do |field_name|
         filtering.merge!(field_name => params[field_name]) if params[field_name].present?
       end
-      filtering
+      ActiveRecord::Base.sanitize_sql_for_conditions(filtering)
     end
 
-    # Similarly to filtering_hash_for, returns a where-condition Hash but based on 'LIKE %?%' matches
+    # Similarly to filtering_hash_for, returns a WHERE-condition Hash but based on 'LIKE' matches
     # instead of perfect matches, given the specified field list and the current params Hash.
     # Returns nil when no condition is appliable.
     #
@@ -70,10 +70,38 @@ module Goggles
     def filtering_like_for(params, field_list)
       like_condition = field_list.dup.keep_if { |field_name| params.key?(field_name) }
                                  .map { |field_name| "(#{field_name} LIKE ?)" }.join(' AND ')
-      # TODO: SANITIZE THE VALUES!
       field_values = params.dup.keep_if { |key, _v| field_list.include?(key) }
                            .values.map { |value| "%#{value}%" }
-      [like_condition, field_values].flatten unless field_values.empty?
+      ActiveRecord::Base.sanitize_sql_array([like_condition, field_values].flatten) unless field_values.empty?
+    end
+
+    # Returns a filtering WHERE condition or nil given the param. name.
+    # +sql_condition+ must be an SQL string based on a single parameter using'?' as
+    # placeholders for any value. Multiple occurrences of the same value are supported.
+    def filtering_for_single_parameter(sql_condition, params, field_name)
+      return nil unless params[field_name].present?
+
+      ActiveRecord::Base.sanitize_sql_array(
+        [sql_condition, [params[field_name]] * sql_condition.count('?')].flatten
+      )
+    end
+
+    # Same as 'filtering_for_single_parameter', but for a LIKE clause.
+    # Returns a filtering WHERE condition or nil given the param. name.
+    # +sql_condition+ must be an SQL string based on a single parameter using'?' as
+    # placeholders for any value. Multiple occurrences of the same value are supported.
+    def filtering_like_for_single_parameter(sql_condition, params, field_name)
+      return nil unless params[field_name].present?
+
+      ActiveRecord::Base.sanitize_sql_array(
+        [sql_condition, ["%#{params[field_name]}%"] * sql_condition.count('?')].flatten
+      )
+    end
+
+    # Assuming domain_class is a relation or a sibling of ActiveRecord::Base,
+    # returns the 'for_name' full-text search scope or the full data domain if the search term is not present.
+    def filtering_fulltext_search_for(domain_class, search_term)
+      search_term.present? ? domain_class.for_name(search_term) : domain_class
     end
   end
 end

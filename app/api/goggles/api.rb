@@ -9,9 +9,9 @@ module Goggles
   #
   # Mounts all required API modules
   #
-  #   - version:  1.12
+  #   - version:  1.15
   #   - author:   Steve A.
-  #   - build:    20201212
+  #   - build:    20201215
   #
   class API < Grape::API
     helpers APIHelpers
@@ -56,6 +56,7 @@ module Goggles
     mount BadgesAPI
     mount CitiesAPI
     mount LookupAPI
+    mount MeetingsAPI
     mount SeasonsAPI
     mount SessionAPI
     mount SwimmersAPI

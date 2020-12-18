@@ -22,9 +22,7 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
 
   describe 'GET /api/v3/season/:id' do
     context 'when using valid parameters,' do
-      before(:each) do
-        get api_v3_season_path(id: fixture_season.id), headers: fixture_headers
-      end
+      before(:each) { get(api_v3_season_path(id: fixture_season.id), headers: fixture_headers) }
       it 'is successful' do
         expect(response).to be_successful
       end
@@ -34,16 +32,12 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        get api_v3_season_path(id: fixture_season.id), headers: { 'Authorization' => 'you wish!' }
-      end
+      before(:each) { get(api_v3_season_path(id: fixture_season.id), headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        get api_v3_season_path(id: -1), headers: fixture_headers
-      end
+      before(:each) { get(api_v3_season_path(id: -1), headers: fixture_headers) }
       it_behaves_like 'an empty but successful JSON response'
     end
   end
@@ -135,25 +129,12 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
       before(:each) { expect(existing_season).to be_a(GogglesDb::Season).and be_valid }
 
       context 'without any filters,' do
-        before(:each) do
-          get(api_v3_seasons_path, headers: fixture_headers)
-        end
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated array of JSON rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        before(:each) { get(api_v3_seasons_path, headers: fixture_headers) }
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      context 'filtering by a specific season_type_id,' do
-        before(:each) do
-          get(api_v3_seasons_path, params: { season_type_id: fixture_season_type_id }, headers: fixture_headers)
-        end
+      context 'when filtering by a specific season_type_id,' do
+        before(:each) { get(api_v3_seasons_path, params: { season_type_id: fixture_season_type_id }, headers: fixture_headers) }
 
         it 'is successful' do
           expect(response).to be_successful
@@ -166,10 +147,8 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
         # (We can't really assert pagination links here)
       end
 
-      context 'filtering by a specific header_year,' do
-        before(:each) do
-          get(api_v3_seasons_path, params: { header_year: header_year }, headers: fixture_headers)
-        end
+      context 'when filtering by a specific header_year,' do
+        before(:each) { get(api_v3_seasons_path, params: { header_year: header_year }, headers: fixture_headers) }
 
         it 'is successful' do
           expect(response).to be_successful
@@ -179,10 +158,9 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
           expect(result_array).to be_an(Array)
           expect(result_array.count).to be <= default_per_page
         end
-        # (We can't really assert pagination links here)
       end
 
-      context 'filtering by a specific header_year,' do
+      context 'when filtering by a specific header_year,' do
         before(:each) do
           get(api_v3_seasons_path, params: { begin_date: begin_date, end_date: end_date }, headers: fixture_headers)
         end
@@ -195,21 +173,16 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
           expect(result_array).to be_an(Array)
           expect(result_array.count).to be <= default_per_page
         end
-        # (We can't really assert pagination links here)
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        get(api_v3_seasons_path, headers: { 'Authorization' => 'you wish!' })
-      end
+      before(:each) { get(api_v3_seasons_path, headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) do
-        get(api_v3_seasons_path, params: { header_year: '1969/1970' }, headers: fixture_headers)
-      end
+      before(:each) { get(api_v3_seasons_path, params: { header_year: '1969/1970' }, headers: fixture_headers) }
       it_behaves_like 'an empty but successful JSON list response'
     end
   end

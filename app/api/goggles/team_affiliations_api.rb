@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: TeamAffiliation API Grape controller
   #
-  #   - version:  1.11
+  #   - version:  7.051
   #   - author:   Steve A.
-  #   - build:    20201208
+  #   - build:    20201218
   #
   class TeamAffiliationsAPI < Grape::API
     helpers APIHelpers
@@ -109,8 +109,7 @@ module Goggles
         #
         # == Returns:
         # The list of TeamAffiliations for the specified filtering parameters as an array of JSON objects.
-        # Returns exact matches for most of the parameters, supports partial matches just for the text name,
-        # but no fuzzy searches are performed here. (Use dedicated /search endpoints for that.)
+        # Returns exact matches for most of the parameters; supports FULLTEXT search for the 'name' field.
         #
         # *Pagination* links are stored and returned in the response headers.
         # - 'Link': list of request links for last & next data pages, separated by ", "
@@ -123,9 +122,9 @@ module Goggles
         #
         desc 'List TeamAffiliations'
         params do
+          optional :name, type: String, desc: 'optional: generic FULLTEXT name search'
           optional :team_id, type: Integer, desc: 'optional: Team ID'
           optional :season_id, type: Integer, desc: 'optional: Season ID'
-          optional :name, type: String, desc: 'optional: enrollment name'
           optional :number, type: String, desc: 'optional: enrollment number'
           optional :compute_gogglecup, type: Boolean, desc: 'optional: true for GoggleCup affiliations'
           use :pagination
@@ -138,10 +137,9 @@ module Goggles
         get do
           check_jwt_session
 
-          paginate GogglesDb::TeamAffiliation.where(
-            filtering_hash_for(params, %w[team_id season_id number compute_gogglecup])
-          ).where(
-            filtering_like_for(params, %w[name])
+          paginate(
+            filtering_fulltext_search_for(GogglesDb::TeamAffiliation, params['name'])
+              .where(filtering_hash_for(params, %w[team_id season_id number compute_gogglecup]))
           )
         end
       end

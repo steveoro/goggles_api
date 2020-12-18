@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: City API Grape controller
   #
-  #   - version:  1.14
+  #   - version:  7.051
   #   - author:   Steve A.
-  #   - build:    20201214
+  #   - build:    20201217
   #
   class CitiesAPI < Grape::API
     helpers APIHelpers
@@ -114,8 +114,9 @@ module Goggles
       #
       # == Returns:
       # The list of Cities for the specified filtering parameters as an array of JSON objects.
-      # Returns exact matches for the 'country_code' parameters; supports partial matches
-      # just for Country & City names; no fuzzy searches are performed.
+      # Returns exact matches for the 'country_code' parametersd; supports partial matches
+      # for the country name field plus a FULLTEXT search by the generic 'name' parameter on both
+      # 'area' and 'name'.
       #
       # *Pagination* links are stored and returned in the response headers.
       # - 'Link': list of request links for last & next data pages, separated by ", "
@@ -128,7 +129,7 @@ module Goggles
       #
       desc 'List Cities'
       params do
-        optional :name, type: String, desc: 'optional: City name'
+        optional :name, type: String, desc: 'optional: generic FULLTEXT search on name & area fields'
         optional :country_code, type: String, desc: 'optional: Country code (2 chars)'
         optional :country, type: String, desc: 'optional: Country name'
         use :pagination
@@ -139,10 +140,10 @@ module Goggles
       get do
         check_jwt_session
 
-        paginate GogglesDb::City.where(
-          filtering_hash_for(params, %w[country_code])
-        ).where(
-          filtering_like_for(params, %w[name country])
+        paginate(
+          filtering_fulltext_search_for(GogglesDb::City, params['name'])
+            .where(filtering_hash_for(params, %w[country_code]))
+            .where(filtering_like_for(params, %w[country]))
         )
       end
 

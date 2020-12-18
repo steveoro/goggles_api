@@ -22,9 +22,7 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
 
   describe 'GET /api/v3/swimmer/:id' do
     context 'when using valid parameters,' do
-      before(:each) do
-        get api_v3_swimmer_path(id: fixture_swimmer.id), headers: fixture_headers
-      end
+      before(:each) { get api_v3_swimmer_path(id: fixture_swimmer.id), headers: fixture_headers }
       it 'is successful' do
         expect(response).to be_successful
       end
@@ -34,16 +32,12 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        get api_v3_swimmer_path(id: fixture_swimmer.id), headers: { 'Authorization' => 'you wish!' }
-      end
+      before(:each) { get api_v3_swimmer_path(id: fixture_swimmer.id), headers: { 'Authorization' => 'you wish!' } }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        get api_v3_swimmer_path(id: -1), headers: fixture_headers
-      end
+      before(:each) { get api_v3_swimmer_path(id: -1), headers: fixture_headers }
       it_behaves_like 'an empty but successful JSON response'
     end
   end
@@ -141,60 +135,29 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
       end
 
       context 'without any filters,' do
-        before(:each) do
-          get(api_v3_swimmers_path, headers: fixture_headers)
-        end
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        before(:each) { get(api_v3_swimmers_path, headers: fixture_headers) }
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      context 'filtering by a specific last_name,' do
-        before(:each) do
-          get(api_v3_swimmers_path, params: { first_name: fixture_first_name }, headers: fixture_headers)
-        end
-        let(:expected_row_count)   { GogglesDb::Swimmer.where('first_name LIKE ?', "%#{fixture_first_name}%").count }
-        let(:expected_rows_x_page) { expected_row_count <= default_per_page ? expected_row_count : default_per_page }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(expected_rows_x_page)
-        end
-        # Typically any results filtered by name will be just a single row fitting
-        # in a single page (w/o pagination links), but with random names we can't be sure:
-        it_behaves_like 'multiple row response either with OR without pagination links'
+      context 'when filtering by a specific last_name,' do
+        before(:each) { get(api_v3_swimmers_path, params: { first_name: fixture_first_name }, headers: fixture_headers) }
+        let(:expected_row_count) { GogglesDb::Swimmer.where('first_name LIKE ?', "%#{fixture_first_name}%").count }
+        it_behaves_like 'successful multiple row response either with OR without pagination links'
       end
 
-      context 'filtering by a specific gender_type_id,' do
-        before(:each) do
-          get(api_v3_swimmers_path, params: { gender_type_id: fixture_gender_type_id }, headers: fixture_headers)
-        end
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          full_count = GogglesDb::Swimmer.where(gender_type_id: fixture_gender_type_id).count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+      context 'when filtering by name (generic search),' do
+        before(:each) { get(api_v3_swimmers_path, params: { name: fixture_first_name }, headers: fixture_headers) }
+        let(:expected_row_count) { GogglesDb::Swimmer.for_name(fixture_first_name).count }
+        it_behaves_like 'successful multiple row response either with OR without pagination links'
       end
 
-      # Uses random fixtures, to have a quick 1-row result (no pagination, always):
-      context 'filtering by a specific complete_name of a random single fixture,' do
+      context 'when filtering by a specific gender_type_id,' do
+        before(:each) { get(api_v3_swimmers_path, params: { gender_type_id: fixture_gender_type_id }, headers: fixture_headers) }
+        it_behaves_like 'successful response with pagination links & values in headers'
+      end
+
+      # Uses random fixtures to have a quick 1-row result (no pagination, always):
+      context 'when filtering by a specific complete_name of a random single fixture,' do
         before(:each) do
           get(
             api_v3_swimmers_path,
@@ -203,27 +166,20 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
           )
         end
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
         it 'returns a JSON array containing the single associated row' do
           expect(response.body).to eq([fixture_swimmer].to_json)
         end
-        it_behaves_like 'single response without pagination links in headers'
+        it_behaves_like 'successful single response without pagination links in headers'
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        get(api_v3_swimmers_path, headers: { 'Authorization' => 'you wish!' })
-      end
+      before(:each) { get(api_v3_swimmers_path, headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) do
-        get(api_v3_swimmers_path, params: { gender_type_id: -1 }, headers: fixture_headers)
-      end
+      before(:each) { get(api_v3_swimmers_path, params: { gender_type_id: -1 }, headers: fixture_headers) }
       it_behaves_like 'an empty but successful JSON list response'
     end
   end

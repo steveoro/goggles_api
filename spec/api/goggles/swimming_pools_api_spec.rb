@@ -22,9 +22,7 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
 
   describe 'GET /api/v3/swimming_pool/:id' do
     context 'when using valid parameters,' do
-      before(:each) do
-        get api_v3_swimming_pool_path(id: fixture_swimming_pool.id), headers: fixture_headers
-      end
+      before(:each) { get(api_v3_swimming_pool_path(id: fixture_swimming_pool.id), headers: fixture_headers) }
       it 'is successful' do
         expect(response).to be_successful
       end
@@ -34,16 +32,12 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        get api_v3_swimming_pool_path(id: fixture_swimming_pool.id), headers: { 'Authorization' => 'you wish!' }
-      end
+      before(:each) { get(api_v3_swimming_pool_path(id: fixture_swimming_pool.id), headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        get api_v3_swimming_pool_path(id: -1), headers: fixture_headers
-      end
+      before(:each) { get(api_v3_swimming_pool_path(id: -1), headers: fixture_headers) }
       it_behaves_like 'an empty but successful JSON response'
     end
   end
@@ -63,7 +57,6 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
     context 'when using valid parameters' do
       let(:associated_user) { FactoryBot.create(:user) }
       let(:expected_changes) do
-        # optional :read_only, type: Boolean, desc: 'true: disable any further updates'
         [
           {
             name: "#{FFaker::Address.street_name} pool",
@@ -171,76 +164,68 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
 
   describe 'GET /api/v3/swimming_pools/' do
     context 'when using a valid authentication' do
-      let(:fixture_pool_type_id) { GogglesDb::PoolType.all_eventable.sample.id }
+      let(:fixture_row) { GogglesDb::SwimmingPool.where('(address IS NOT NULL) AND (address != \'\')').limit(50).sample }
+      let(:fixture_pool_type_id) { fixture_row.pool_type_id }
       let(:default_per_page) { 25 }
 
       # Make sure the Domain contains the expected seeds:
-      before(:each) { expect(fixture_pool_type_id).to be_positive }
+      before(:each) do
+        expect(fixture_row).to be_a(GogglesDb::SwimmingPool).and be_valid
+        expect(fixture_pool_type_id).to be_positive
+      end
 
       context 'without any filters,' do
-        before(:each) do
-          get(api_v3_swimming_pools_path, headers: fixture_headers)
-        end
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+        before(:each) { get(api_v3_swimming_pools_path, headers: fixture_headers) }
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      context 'filtering by a specific pool_type_id,' do
-        before(:each) do
-          get(api_v3_swimming_pools_path, params: { pool_type_id: fixture_pool_type_id }, headers: fixture_headers)
-        end
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns a paginated JSON array of associated, filtered rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          full_count = GogglesDb::SwimmingPool.where(pool_type_id: fixture_pool_type_id).count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
-        end
-        it_behaves_like 'response with pagination links & values in headers'
+      context 'when filtering by a specific pool_type_id,' do
+        before(:each) { get(api_v3_swimming_pools_path, params: { pool_type_id: fixture_pool_type_id }, headers: fixture_headers) }
+        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
-      # Uses random fixtures, to have a quick 1-row result (no pagination, always):
-      context 'filtering by a specific address of a random single fixture,' do
+      context 'when filtering by a generic name search term,' do
+        let(:search_term) { fixture_row.name.split(' ').first }
+        let(:expected_row_count) { GogglesDb::SwimmingPool.for_name(search_term).count }
+        before(:each) { get(api_v3_swimming_pools_path, params: { name: search_term }, headers: fixture_headers) }
+
+        it 'returns a JSON array including the existing row' do
+          returned_ids = JSON.parse(response.body).map { |row| row['id'] }
+          expect(returned_ids).to include(fixture_row.id)
+        end
+        it_behaves_like 'successful multiple row response either with OR without pagination links'
+      end
+
+      context 'when filtering by a specific name & address of an existing single data row,' do
+        let(:expected_row_count) do
+          GogglesDb::SwimmingPool.for_name(fixture_row.name)
+                                 .where(city_id: fixture_row.city_id, address: fixture_row.address)
+                                 .count
+        end
         before(:each) do
           get(
             api_v3_swimming_pools_path,
-            params: { name: fixture_swimming_pool.name, address: fixture_swimming_pool.address },
+            params: { name: fixture_row.name, city_id: fixture_row.city_id, address: fixture_row.address },
             headers: fixture_headers
           )
         end
-
-        it 'is successful' do
-          expect(response).to be_successful
+        # Several cities have more than 1 pool at the same address, with also similar name and just an
+        # added prefix ('Comunale'), so a single row result here is not guaranteed:
+        it 'returns a JSON array including the existing row' do
+          returned_ids = JSON.parse(response.body).map { |row| row['id'] }
+          expect(returned_ids).to include(fixture_row.id)
         end
-        it 'returns a JSON array containing the single associated row' do
-          expect(response.body).to eq([fixture_swimming_pool].to_json)
-        end
-        it_behaves_like 'single response without pagination links in headers'
+        it_behaves_like 'successful multiple row response either with OR without pagination links'
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        get(api_v3_swimming_pools_path, headers: { 'Authorization' => 'you wish!' })
-      end
+      before(:each) { get(api_v3_swimming_pools_path, headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) do
-        get(api_v3_swimming_pools_path, params: { pool_type_id: -1 }, headers: fixture_headers)
-      end
+      before(:each) { get(api_v3_swimming_pools_path, params: { pool_type_id: -1 }, headers: fixture_headers) }
       it_behaves_like 'an empty but successful JSON list response'
     end
   end

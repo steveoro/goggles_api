@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: SwimmingPool API Grape controller
   #
-  #   - version:  1.09
+  #   - version:  7.051
   #   - author:   Steve A.
-  #   - build:    20201207
+  #   - build:    20201218
   #
   class SwimmingPoolsAPI < Grape::API
     helpers APIHelpers
@@ -86,8 +86,9 @@ module Goggles
       #
       # == Returns:
       # The list of SwimmingPools for the specified filtering parameters as an array of JSON objects.
-      # Returns exact matches given the specified optional filters (some support partial string matches).
-      # No fuzzy searches are performed here.
+      # Returns exact matches given the specified optional filters; supports partial matches
+      # for the address field, plus a FULLTEXT search by the generic 'name' parameter which acts on
+      # both the actual 'name' *and* the 'nick_name' fields.
       #
       # *Pagination* links are stored and returned in the response headers.
       # - 'Link': list of request links for last & next data pages, separated by ", "
@@ -100,9 +101,8 @@ module Goggles
       #
       desc 'List SwimmingPools'
       params do
-        optional :name, type: String, desc: 'optional: name (partial match supported)'
+        optional :name, type: String, desc: 'optional: generic FULLTEXT name search on name & nick_name fields'
         optional :address, type: String, desc: 'optional: address (partial match supported)'
-        optional :nick_name, type: String, desc: 'optional: nick-name (partial match supported)'
         optional :pool_type_id, type: Integer, desc: 'optional: associated PoolType ID'
         optional :city_id, type: Integer, desc: 'optional: associated City ID'
         use :pagination
@@ -111,10 +111,10 @@ module Goggles
       get do
         check_jwt_session
 
-        paginate GogglesDb::SwimmingPool.where(
-          filtering_hash_for(params, %w[pool_type_id city_id])
-        ).where(
-          filtering_like_for(params, %w[name address nick_name])
+        paginate(
+          filtering_fulltext_search_for(GogglesDb::SwimmingPool, params['name'])
+            .where(filtering_hash_for(params, %w[pool_type_id city_id]))
+            .where(filtering_like_for(params, %w[address]))
         )
       end
     end
