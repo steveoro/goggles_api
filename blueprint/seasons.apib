@@ -6,6 +6,7 @@
 
         {
             "id": 192,
+            "lock_version": 0,
             "description": "Circuito italiano supermaster FIN 2019/2020",
             "begin_date": "2019-10-01",
             "end_date": "2020-09-30",
@@ -17,58 +18,78 @@
             "edition_type_id": 5,
             "timing_type_id": 3,
             "rules": null,
-            "has_individual_rank": true,
+            "individual_rank": true,
             "badge_fee": "24.0",
 
-            // Embedded associated SeasonType:
+            // Embedded associated entities:
             "season_type": {
                 "id": 1,
                 "code": "MASFIN",
                 "description": "CIRCUITO ITALIANO MASTER FIN",
                 "short_name": "MASTER FIN",
-                "federation_type_id": 1,
-                "created_at": "2014-10-19T00:00:00.000Z",
-                "updated_at": "2014-10-19T00:00:00.000Z"
+                "federation_type_id": 1
             },
 
-            // Embedded associated EditionType:
             "edition_type": {
                 "id": 5,
-                "created_at": "2014-10-19T00:00:00.000Z",
-                "updated_at": "2014-10-19T00:00:00.000Z",
-                "code": "S"
+                "code": "S",
+                "label": "SEA",
+                "long_label": "SEASON",
+                "alt_label": "SEA"
             },
 
-            // Embedded associated TimingType:
             "timing_type": {
                 "id": 3,
                 "code": "A",
-                "created_at": "2014-10-19T00:00:00.000Z",
-                "updated_at": "2014-10-19T00:00:00.000Z"
+                "label": "AUT",
+                "long_label": "AUTOMATIC",
+                "alt_label": "AUT"
             },
 
             // *All* associated CategoryTypes (usually, more than 20):
             "category_types": [
-                [0] {
-                "id": 1288,
-                "code": "M25",
-                "federation_code": "B",
-                "description": "MASTER 25",
-                "short_name": "M25",
-                "group_name": "MASTER",
-                "age_begin": 25,
-                "age_end": 29,
-                "is_a_relay": false,
-                "created_at": "2019-10-14T05:52:03.000Z",
-                "updated_at": "2019-10-14T05:52:03.000Z",
-                "season_id": 192,
-                "is_out_of_race": false,
-                "is_undivided": false
+                {
+                    "id": 1288,
+                    "code": "M25",
+                    "federation_code": "B",
+                    "description": "MASTER 25",
+                    "short_name": "M25",
+                    "group_name": "MASTER",
+                    "age_begin": 25,
+                    "age_end": 29,
+                    "relay": false,
+                    "season_id": 192,
+                    "out_of_race": false,
+                    "undivided": false
                 },
-
-                [1] {
-                    // [...]
-                }
+                {
+                    "id": 1289,
+                    "code": "M30",
+                    "federation_code": "C",
+                    "description": "MASTER 30",
+                    "short_name": "M30",
+                    "group_name": "MASTER",
+                    "age_begin": 30,
+                    "age_end": 34,
+                    "relay": false,
+                    "season_id": 192,
+                    "out_of_race": false,
+                    "undivided": false
+                },
+                {
+                    "id": 1290,
+                    "code": "M35",
+                    "federation_code": "D",
+                    "description": "MASTER 35",
+                    "short_name": "M35",
+                    "group_name": "MASTER",
+                    "age_begin": 35,
+                    "age_end": 39,
+                    "relay": false,
+                    "season_id": 192,
+                    "out_of_race": false,
+                    "undivided": false
+                },
 
                 // [...]
             ]
@@ -80,31 +101,11 @@ The Season instance matching the specified `id` returned as JSON.
 
 The returned result includes these other 1st-level linked entities:
 - `SeasonType`
-    | _id_ | _code_ | _description_ |
-    | --- | --- | --- |
-    | 1 | `MASFIN` | FIN Masters |
-    | 2 | `MASCSI` | CSI Masters |
-    | 3 | `MASUISP` | UISP Masters |
-    | 4 | `AGOFIN` | FIN Pro |
-    | 5 | `AGOCSI` | CSI Pro |
-    | 5 | `AGOUISP` | UISP Pro |
-    | 5 | `MASLEN` | FINA Masters |
-    | 5 | `MASFINA` | FINA Masters |
 - `EditionType`
-    | _id_ | _code_ | _description_ |
-    | --- | --- | --- |
-    | 1 | `O` | ordinal |
-    | 2 | `R` | roman numeral |
-    | 3 | `N` | none |
-    | 4 | `A` | yearly |
-    | 5 | `S` | seasonal |
 - `TimingType`
-    | _id_ | _code_ | _description_ |
-    | --- | --- | --- |
-    | 1 | `M` | manual |
-    | 2 | `S` | semi-auto |
-    | 3 | `A` | automatic |
 - `CategoryType`, _full list_ of associated rows
+
+_See the `edit` endpoint for the list of supported values_
 
 :key: `Authorization` request header => valid JWT **required**
 
@@ -196,7 +197,7 @@ The returned result includes these other 1st-level linked entities:
 
 Allows direct updates for some of the Season fields given the `id` of the row.
 
-Returns 'true' on success, an empty result when not found.
+Returns `true` on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
@@ -205,39 +206,39 @@ Returns 'true' on success, an empty result when not found.
 
 #### Body Attributes:
 
-- `description` (string): verbose name or description for the Season
-- `begin_date` (date): starting date or Season first day
-- `end_date` (date): ending date or Season last day
-- `season_type_id` (number): associated SeasonType ID
-    | _id_ | _code_ | _description_ |
-    | --- | --- | --- |
-    | 1 | `MASFIN` | FIN Masters |
-    | 2 | `MASCSI` | CSI Masters |
-    | 3 | `MASUISP` | UISP Masters |
-    | 4 | `AGOFIN` | FIN Pro |
-    | 5 | `AGOCSI` | CSI Pro |
-    | 5 | `AGOUISP` | UISP Pro |
-    | 5 | `MASLEN` | FINA Masters |
-    | 5 | `MASFINA` | FINA Masters |
-- `header_year` (string): descriptive label for Season year; typical format: `YYYY` (season year)
-   or `YYYY/YYYY+1`(season first year/season closing year)
-- `edition` (number): edition ordinal number
-- `edition_type_id` (number): associated EditionType ID
-    | _id_ | _code_ | _description_ |
-    | --- | --- | --- |
-    | 1 | `O` | ordinal |
-    | 2 | `R` | roman numeral |
-    | 3 | `N` | none |
-    | 4 | `A` | yearly |
-    | 5 | `S` | seasonal |
-- `timing_type_id` (number): associated TimingType ID
-    | _id_ | _code_ | _description_ |
-    | --- | --- | --- |
-    | 1 | `M` | manual |
-    | 2 | `S` | semi-auto |
-    | 3 | `A` | automatic |
-- `has_individual_rank` (boolean): true when individual rankings are supported
-- `badge_fee` (string/float): 'base registration/badge fee (in local currency)
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `description` | string | verbose name or description for the Season |
+| begin_date`` | date | starting date or Season first day |
+| `end_date` | date | ending date or Season last day |
+| `season_type_id` | number | associated SeasonType ID |
+| | _id_ | _code: description_ |
+| | 1 | `MASFIN`: FIN Masters |
+| | 2 | `MASCSI`: CSI Masters |
+| | 3 | `MASUISP`: UISP Masters |
+| | 4 | `AGOFIN`: FIN Pro |
+| | 5 | `AGOCSI`: CSI Pro |
+| | 6 | `AGOUISP`: UISP Pro |
+| | 7 | `MASLEN`: FINA Masters |
+| | 8 | `MASFINA`: FINA Masters |
+| `header_year` | string | descriptive label for Season year; typical format: `YYYY` or `YYYY/YYYY+1` |
+| `edition` | integer | Edition number |
+| `edition_type_id` | number | associated EditionType ID |
+| | _id_ | _code: description_ |
+| | 1 | `O`: ordinal number |
+| | 2 | `R`: roman numeral |
+| | 3 | `N`: none |
+| | 4 | `Y`: year |
+| | 5 | `S`: season |
+| `timing_type_id` | number | associated TimingType ID |
+| | _id_ | _code: description_ |
+| | 1 | `M`: manual |
+| | 2 | `S`: semi-automatic |
+| | 3 | `A`: automatic |
+| `has_individual_rank` | boolean | true if individual rankings are supported |
+| `badge_fee` | string/float | base registration/badge fee (in local currency) |
 
 
 * * *

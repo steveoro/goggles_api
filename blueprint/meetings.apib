@@ -22,6 +22,7 @@
                 "configuration_file": "",
                 "edition": 0,
                 "season_id": 1,
+                "user_id": 2,
                 "created_at": "2014-10-19T00:00:00.000Z",
                 "updated_at": "2014-10-19T00:00:00.000Z",
                 "autofilled": false,
@@ -99,12 +100,14 @@
                         "notes": "",
                         "meeting_id": 1,
                         "swimming_pool_id": 5,
+                        "user_id": 2,
                         "description": "FINALI",
                         "autofilled": false,
                         "day_part_type_id": null
                     }
                 ],
                 "meeting_events": [
+                    // Event 1:
                     {
                         "id": 1230,
                         "event_order": 1,
@@ -115,6 +118,7 @@
                         "meeting_session_id": 1,
                         "event_type_id": 19,
                         "heat_type_id": 3,
+                        "user_id": 2,
                         "split_gender_start_list": true,
                         "split_category_start_list": false,
                         "event_type": {
@@ -149,6 +153,8 @@
                             "alt_label": "FN"
                         }
                     },
+
+                    // Event 2:
                     {
                         "id": 1231,
                         "event_order": 2,
@@ -159,6 +165,7 @@
                         "meeting_session_id": 1,
                         "event_type_id": 15,
                         "heat_type_id": 3,
+                        "user_id": 2,
                         "split_gender_start_list": true,
                         "split_category_start_list": false,
                         "event_type": {
@@ -193,6 +200,8 @@
                             "alt_label": "FN"
                         }
                     },
+
+                    // Event 3:
                     {
                         "id": 1232,
                         "event_order": 3,
@@ -203,6 +212,7 @@
                         "meeting_session_id": 1,
                         "event_type_id": 11,
                         "heat_type_id": 3,
+                        "user_id": 2,
                         "split_gender_start_list": true,
                         "split_category_start_list": false,
                         "event_type": {
@@ -237,50 +247,8 @@
                             "alt_label": "FN"
                         }
                     },
-                    {
-                        "id": 1233,
-                        "event_order": 4,
-                        "begin_time": "2000-01-01T00:00:00.000Z",
-                        "out_of_race": false,
-                        "autofilled": false,
-                        "notes": null,
-                        "meeting_session_id": 1,
-                        "event_type_id": 22,
-                        "heat_type_id": 3,
-                        "split_gender_start_list": true,
-                        "split_category_start_list": false,
-                        "event_type": {
-                            "id": 22,
-                            "code": "100MI",
-                            "length_in_meters": 100,
-                            "relay": false,
-                            "stroke_type_id": 5,
-                            "style_order": 22,
-                            "mixed_gender": false,
-                            "partecipants": 1,
-                            "phases": 1,
-                            "phase_length_in_meters": 100,
-                            "label": "100 IM",
-                            "long_label": "100 INTERMIXED",
-                            "alt_label": "100 IM"
-                        },
-                        "stroke_type": {
-                            "id": 5,
-                            "code": "MI",
-                            "eventable": true,
-                            "label": "IM",
-                            "long_label": "INDIVIDUAL MEDLEY",
-                            "alt_label": "MI"
-                        },
-                        "heat_type": {
-                            "id": 3,
-                            "code": "F",
-                            "default": false,
-                            "label": "FN",
-                            "long_label": "FINALS",
-                            "alt_label": "FN"
-                        }
-                    }
+
+                    // [...More event definitions...]
                 ]
             }
 
@@ -288,15 +256,7 @@
 ## find [GET]
 
 The Meeting instance matching the specified `id` returned as JSON.
-
-The returned result includes these other 1st-level linked entities:
-- `Season`
-- `EditionType`
-- `TimingType`
-- `SeasonType`
-- `FederationType`
-- `MeetingSessions` list
-- `MeetingEvents` list
+The returned result includes most of all its associated entities, up to the `MeetingEvent` definitions.
 
 :key: `Authorization` request header => valid JWT **required**
 
@@ -388,9 +348,11 @@ The returned result includes these other 1st-level linked entities:
 
 ## edit [PUT]
 
-Allows direct updates for the Meeting number and other limited fields given the `id` of the row.
+Allows direct updates for any Meeting field, given its `id`.
+Requires CRUD grant on entity ('Meeting') for the requesting user.
+Generic admin grants are required for `read_only` & `season_id` fields.
 
-Returns 'true' on success, an empty result when not found.
+Returns `true` on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
@@ -399,18 +361,52 @@ Returns 'true' on success, an empty result when not found.
 
 #### Body Attributes:
 
-- `number` (string, **required**): Meeting code or number
-- `entry_time_type_id` (number): associated EntryTimeType ID for referencing default timings
-    | _id_ | _code_ | _description_ |
-    | --- | --- | --- |
-    | 1 | `M` | manual |
-    | 2 | `P` | personal |
-    | 3 | `G` | GoggleCup |
-    | 4 | `A` | preceding year |
-    | 5 | `U` | last race |
-- `fees_due` (boolean): 'true', the Swimmer has to pay additional meeting fees for the Championship; 'false', the Team provides
-- `meeting_due` (boolean): 'true', the Swimmer has to pay the meeting registration; 'false', the Team provides
-- `relays_due` (boolean): 'true', the Swimmer has to pay any relay event in the Championship; 'false', the Team provides
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `code` | string | Meeting code-name (recurring meetings should have the same code to be easily identified) |
+| `header_date` | string | header (main) date for the Meeting in ISO format (`YYYY-MM-DD`) |
+| `header_year` | string | header (main) year for the Meeting (`YYYY`) |
+| `description` | string | displayed Meeting description |
+| `entry_deadline` | string | entry deadline for registration, in ISO format (`YYYY-MM-DD`) |
+| `warm_up_pool` | boolean | `true` if a warm-up pool is available during the Meeting |
+| `allows_under_25` | boolean | `true` if under-25 can compete |
+| `reference_phone` | string | contact or reference phone |
+| `reference_e_mail` | string | contact or reference e-mail |
+| `reference_name` | string | contact or reference name |
+| `max_individual_events` | integer | max number of indiv. events x session (x athlete) |
+| `meeting_fee` | integer | main enrollment/registration cost (converted to Euros, if needed) |
+| `event_fee` | integer | individual event cost (converted to Euros, if needed) |
+| `relay_fee` | integer | relay event cost (converted to Euros, if needed) |
+| `notes` | string | additional notes |
+| `organization_team_id` | integer | Team ID of the organizing Team behind this Meeting |
+| `edition` | integer | Edition number |
+| `edition_type_id` | integer | EditionType ID |
+| | _id_ | _code: description_ |
+| | 1 | `O`: ordinal number |
+| | 2 | `R`: roman numeral |
+| | 3 | `N`: none |
+| | 4 | `Y`: year |
+| | 5 | `S`: season |
+| `timing_type_id` | integer | TimingType ID |
+| | _id_ | _code: description_ |
+| | 1 | `M`: manual |
+| | 2 | `S`: semi-automatic |
+| | 3 | `A`: automatic |
+| `manifest_body` | string | Meeting Manifest body (either in text or html format, stripped of styles & scripts) |
+| `manifest` | boolean | `true` if the Meeting manifest is available or published and can be acquired |
+| `confirmed` | boolean | `true` if the Meeting has been confirmed |
+| `cancelled` | boolean | `true` if the Meeting has been cancelled |
+| `startlist` | boolean | `true` if the starting list has been published (and can be acquired) |
+| `results_acquired` | boolean | `true` if the results have been already acquired |
+| `off_season` | boolean | `true` if the Meeting does not concur in the overall scoring of its Season |
+| `autofilled` | boolean | `true` if the fields have been filled-in by the data-import procedure (may need revision) |
+| `tweeted` | boolean | `true` if the Meeting result link has been already tweeted |
+| `posted` | boolean | `true` if the Meeting result link has been already posted on other Social Media |
+| `pb_acquired` | boolean | `true` if athletes' personal-best timings and scores have already been computed |
+| `season_id` | integer | Season ID for the Meeting (Admin only) |
+| `read_only` | boolean | `true` to disable further editing by automatic data-import procedure (Admin only) |
 
 
 * * *
@@ -429,8 +425,7 @@ Returns 'true' on success, an empty result when not found.
     ```bash
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            -d '{"number": "A_NEW_OR_EXISTING_BADGE_CODE", \
-                "entry_time_type_id": 1, "meeting_due": "true"}' \
+            -d '{"code": "csiprova2", "edition_type_id": 1, "confirmed": "true"}' \
             "<API_HOST:PORT>/api/v3/meeting/1"
     ```
 
@@ -441,9 +436,9 @@ Returns 'true' on success, an empty result when not found.
                 method: :put,
                 url: '<API_HOST:PORT>/api/v3/meeting/1',
                 payload: {
-                    number: 'A_NEW_OR_EXISTING_BADGE_CODE',
-                    entry_time_type_id: 1,
-                    meeting_due: true
+                    code: 'csiprova2',
+                    edition_type_id: 1,
+                    confirmed: true
                 },
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
@@ -459,11 +454,9 @@ Returns 'true' on success, an empty result when not found.
     + Body
 
             {
-                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
-                "entry_time_type_id": 1,
-                "fees_due": false,
-                "meeting_due": false,
-                "relays_due": false
+                code: 'csiprova2',
+                edition_type_id: 1,
+                confirmed: true
             }
 
 + Response 200 (application/json)
@@ -482,11 +475,9 @@ Returns 'true' on success, an empty result when not found.
     + Body
 
             {
-                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
-                "entry_time_type_id": 1,
-                "fees_due": false,
-                "meeting_due": false,
-                "relays_due": false
+                code: 'csiprova2',
+                edition_type_id: 1,
+                confirmed: true
             }
 
 + Response 200 (application/json)
@@ -505,11 +496,9 @@ Returns 'true' on success, an empty result when not found.
     + Body
 
             {
-                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
-                "entry_time_type_id": 1,
-                "fees_due": false,
-                "meeting_due": false,
-                "relays_due": false
+                code: 'csiprova2',
+                edition_type_id: 1,
+                confirmed: true
             }
 
 + Response 401 (application/json)
@@ -526,11 +515,9 @@ Returns 'true' on success, an empty result when not found.
 + Request no JWT (application/json)
 
             {
-                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
-                "entry_time_type_id": 1,
-                "fees_due": false,
-                "meeting_due": false,
-                "relays_due": false
+                code: 'csiprova2',
+                edition_type_id: 1,
+                confirmed: true
             }
 
 + Response 401 (application/json)
@@ -547,11 +534,9 @@ Returns 'true' on success, an empty result when not found.
 + Request no grant (application/json)
 
             {
-                "number": "A_NEW_OR_EXISTING_BADGE_CODE",
-                "entry_time_type_id": 1,
-                "fees_due": false,
-                "meeting_due": false,
-                "relays_due": false
+                code: 'csiprova2',
+                edition_type_id: 1,
+                confirmed: true
             }
 
 + Response 401 (application/json)
@@ -565,14 +550,14 @@ Returns 'true' on success, an empty result when not found.
             { "msg": "Unauthorized" }
 
 
-# Meeting list [/api/v3/meetings{?page,per_page,team_id,team_affiliation_id,season_id,swimmer_id}]
+# Meeting list [/api/v3/meetings{?page,per_page,name,date,season_id,pool_type_id}]
 
 + Model (application/json)
 
     + Header
 
-            Link: "<API_HOST:PORT/api/v3/meetings?page=60&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/meetings?page=2&team_id=1>; rel=\"next\""
-            Total: 1483
+            Link: "<API_HOST:PORT/api/v3/meetings?page=60&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/meetings?page=2&season_id=1>; rel=\"next\""
+            Total: 5
             Per-Page: 25
             Page: 1
 
@@ -587,7 +572,7 @@ Returns 'true' on success, an empty result when not found.
 
                 // Meeting details 2
                 {
-                    "id": 124948,
+                    "id": 2,
                     // [...]
                 },
 
@@ -600,10 +585,10 @@ Returns 'true' on success, an empty result when not found.
 The list of Meetings associated to the specified filtering values,
 returned as JSON and optionally filtered by any or all from:
 
-- `team_id`
-- `team_affiliation_id`
+- `name`
+- `date`
 - `season_id`
-- `swimmer_id`
+- `pool_type_id`
 
 Optional pagination parameters for the request:
 
@@ -626,10 +611,10 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 
 + Parameters
-    + team_id: 1 (number, optional) - associated Meeting ID
-    + swimmer_id: 142 (number, optional) - associated Swimmer ID
-    + team_affiliation_id: 5727 (number, optional) - associated TeamAffiliation ID
+    + name: `csiprova` (string, optional) - generic FULLTEXT search on `description` & `code` fields
+    + date: `2005-11-23` (string, optional) - filter by `header_date` or Meeting session's `scheduled_date` in ISO format (`YYYY-MM-DD`)
     + season_id: 1 (number, optional) - associated Season ID
+    + pool_type_id: 1 (number, optional) - associated PoolType ID, from any associated Meeting session
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
@@ -645,7 +630,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     ```bash
     $> curl -i -X GET -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/meetings?team_id=1"
+            "<API_HOST:PORT>/api/v3/meetings?season_id=1"
     ```
 
     #### `RestClient` (Ruby):
@@ -659,10 +644,10 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
                 url: '<API_HOST:PORT>/api/v3/meetings',
                 headers: {
                     "Authorization" => "Bearer VALID-SESSION-JWT",
-                    params: { team_id: 1 }
+                    params: { season_id: 1 }
                 }
             )
-    => <RestClient::Response 200 "[{\"id\":12494...">
+    => <RestClient::Response 200 "[{\"id\":1...">
     ```
 
     * * *

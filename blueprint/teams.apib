@@ -204,26 +204,30 @@ The returned result includes these other 1st-level linked entities:
 
 Allows direct updates for some of the Team fields given the `id` of the row.
 
-Returns 'true' on success, an empty result when not found.
+Returns `true` on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
-2. authenticated user must have CRUD grant on 'Swimmer' or have generic admin grants
+2. authenticated user must have CRUD grant on 'Team' or have generic admin grants
 
 
 #### Body Attributes:
 
-- `name` (string): first name(s): name of the Team (typically, read-only)
-- `editable_name` (string): name of the Team, as edited by the Team Manager
-- `city_id` (number): associated City ID
-- `address` (string): complete name, as it appears from the public rankings (italian ordering: last name first)
-- `zip` (string): Team HQ zip code, if available
-- `phone_mobile` (string): HQ mobile or secondary phone
-- `phone_number` (string): HQ official phone number
-- `contact_name` (string): official contact e-mail
-- `e_mail` (string): nickname
-- `notes` (string): additional notes by the Team Manager
-- `home_page_url` (string): Team Website URL
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `name` | string | name of the Team (typically, read-only, imported/detected "as-is") |
+| `editable_name` | string | name of the Team, as edited by the Team Manager |
+| `city_id` | integer | associated City ID |
+| `address` | string | Team HQ address |
+| `zip` | string | Team HQ zip code |
+| `phone_mobile` | string | HQ mobile or secondary phone |
+| `phone_number` | string | HQ official phone number |
+| `contact_name` | string | official contact e-mail |
+| `e_mail` | string | team contact e-mail |
+| `notes` | string | additional notes by the Team Manager |
+| `home_page_url` | string | Team Website URL |
 
 
 * * *

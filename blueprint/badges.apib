@@ -6,12 +6,13 @@
 
         {
             "id": 124947,
+            "lock_version": 0,
             "number": "04204788",
             "season_id": 191,
             "swimmer_id": 142,
             "team_id": 1,
             "category_type_id": 1320,
-            // [...]
+            "user_id": 1,
             "created_at": "2019-10-16T00:00:00.000Z",
             "updated_at": "2019-10-16T00:00:00.000Z",
             "entry_time_type_id": 5,
@@ -22,10 +23,9 @@
             "badge_due": false,
             "relays_due": false,
 
-            // Embedded associated Swimmer:
+            // Embedded associated entities:
             "swimmer": {
                 "id": 142,
-                "lock_version": 1,
                 "last_name": "ALLORO",
                 "first_name": "STEFANO",
                 "year_of_birth": 1969,
@@ -35,12 +35,19 @@
                 "nickname": "",
                 "associated_user_id": 1,
                 "gender_type_id": 1,
-                // [...]
+                "user_id": 2,
                 "complete_name": "ALLORO STEFANO",
                 "year_guessed": false
             },
 
-            // Embedded associated TeamAffiliation:
+            "gender_type": {
+                "id": 1,
+                "code": "M",
+                "label": "MAL",
+                "long_label": "MALE",
+                "alt_label": "MALE"
+            },
+
             "team_affiliation": {
                 "id": 5727,
                 "number": "04200002",
@@ -48,51 +55,45 @@
                 "compute_gogglecup": true,
                 "team_id": 1,
                 "season_id": 191,
-                // [...]
+                "user_id": 2,
                 "autofilled": false
             },
 
-            // Embedded associated Season:
             "season": {
                 "id": 191,
-                // [...]
                 "description": "Circuito regionale Emilia master CSI 2019/2020",
                 "begin_date": "2019-10-01",
                 "end_date": "2020-09-30",
                 "season_type_id": 2,
-                "created_at": "2019-10-16T07:20:51.000Z",
-                "updated_at": "2019-10-16T07:20:51.000Z",
                 "header_year": "2019/2020",
                 "edition": 20,
                 "edition_type_id": 5,
                 "timing_type_id": 2,
                 "rules": null,
-                "has_individual_rank": true,
+                "individual_rank": true,
                 "badge_fee": "10.0"
             },
+
             "team": {
                 "id": 1,
-                // [...]
-                "created_at": "2014-10-19T00:00:00.000Z",
-                "updated_at": "2014-10-19T16:04:16.000Z",
                 "name": "CSI NUOTO OBER FERRARI ASD",
                 "editable_name": "CSI NUOTO OBER FERRARI ASD",
-                "address": "Team HQ address",
+                "address": "Via Agosti, 6",
                 "zip": "",
                 "phone_mobile": "",
                 "phone_number": "",
                 "fax_number": null,
-                "e_mail": "contact.email@this.is.just.a.fake.domain.com",
+                "e_mail": "leegaweb@gmail.com",
                 "contact_name": "Marco Ligabue",
-                "notes": "whatever the team manager needs to write here",
+                "notes": "L'IBAN per i pagamenti delle iscrizioni alle gare è IT91T0347501605CC0010433557",
                 "name_variations": null,
                 "city_id": 37,
-                // [...]
-                "home_page_url": "",
+                "user_id": 2,
+                "home_page_url": ""
             },
+
             "category_type": {
                 "id": 1320,
-                // [...]
                 "code": "M50",
                 "federation_code": "8",
                 "description": "MASTER 50",
@@ -100,16 +101,18 @@
                 "group_name": "MASTER",
                 "age_begin": 50,
                 "age_end": 54,
-                "is_a_relay": false,
-                // [...]
+                "relay": false,
                 "season_id": 191,
-                "is_out_of_race": false,
-                "is_undivided": false
+                "out_of_race": false,
+                "undivided": false
             },
+
             "entry_time_type": {
                 "id": 5,
                 "code": "U",
-                // [...]
+                "label": "LR",
+                "long_label": "LAST RESULT",
+                "alt_label": "LR"
             }
         }
 
@@ -218,27 +221,30 @@ The returned result includes these other 1st-level linked entities:
 
 Allows direct updates for the Badge number and other limited fields given the `id` of the row.
 
-Returns 'true' on success, an empty result when not found.
+Returns `true` on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
-2. authenticated user must have CRUD grant on 'Swimmer' or have generic admin grants
+2. authenticated user must have CRUD grant on 'Badge' or have generic admin grants
 
 
 #### Body Attributes:
 
-- `number` (string, **required**): Badge code or number
-- `entry_time_type_id` (number): associated EntryTimeType ID for referencing default timings
-    | _id_ | _code_ | _description_ |
-    | --- | --- | --- |
-    | 1 | `M` | manual |
-    | 2 | `P` | personal |
-    | 3 | `G` | GoggleCup |
-    | 4 | `A` | preceding year |
-    | 5 | `U` | last race |
-- `fees_due` (boolean): 'true', the Swimmer has to pay additional meeting fees for the Championship; 'false', the Team provides
-- `badge_due` (boolean): 'true', the Swimmer has to pay the badge registration; 'false', the Team provides
-- `relays_due` (boolean): 'true', the Swimmer has to pay any relay event in the Championship; 'false', the Team provides
+All are optional (except `id` & `number`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `number` | string | **required**, Badge code or number |
+| `entry_time_type_id` | integer | associated EntryTimeType ID for referencing entry timings |
+| | _id_ | _code: description_ |
+| | 1 | `M`: manual |
+| | 2 | `P`: personal |
+| | 3 | `G`: GoggleCup |
+| | 4 | `A`: preceding year |
+| | 5 | `U`: last race |
+| `fees_due` | boolean | 'true', the swimmer has to pay additional meeting fees for the Championship; 'false', the team provides |
+| `badge_due` | boolean | 'true', the swimmer has to pay the badge registration; 'false', the team provides |
+| `relays_due` | boolean | 'true', the swimmer has to pay any relay event in the Championship; 'false', the team provides |
 
 
 * * *

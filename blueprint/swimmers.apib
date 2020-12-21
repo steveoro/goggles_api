@@ -145,7 +145,7 @@ The returned result includes these other 1st-level linked entities:
 
 Allows direct updates for some of the Swimmer fields given the `id` of the row.
 
-Returns 'true' on success, an empty result when not found.
+Returns `true` on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
@@ -154,19 +154,22 @@ Returns 'true' on success, an empty result when not found.
 
 #### Body Attributes:
 
-- `first_name` (string): first name(s): when middle names are present, these will be concatenated and stored here too
-- `last_name` (string): the family name portion of the complete name, when it is known
-- `complete_name` (string): complete name, as it appears from the public rankings (italian ordering: last name first)
-- `nickname` (string): nickname
-- `year_of_birth` (number): year of birth
-- `associated_user_id` (number): associated User ID
-- `gender_type_id` (number): associated GenderType ID
-    | _id_ | _code_ | _description_ |
-    | --- | --- | --- |
-    | 1 | `M` | male |
-    | 2 | `F` | female |
-    | 3 | `X` | unknown |
-- `year_guessed` (boolean): 'true' when year of birth has been deduced from other data
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `first_name` | string | first name(s): when middle names are present, these will be concatenated and stored here too |
+| `last_name` | string | the family name portion of the complete name, when it is known |
+| `complete_name` | string | complete name, as it appears from the public rankings (italian ordering: last name first) |
+| `nickname` | string | nickname |
+| `year_of_birth` | number | year of birth |
+| `associated_user_id` | number | associated User ID |
+| `gender_type_id` | number | associated GenderType ID |
+| | _id_ | _code: description_ |
+| | 1 | `M`: male |
+| | 2 | `F`: female |
+| | 3 | `X`: unknown |
+| `year_guessed` | boolean |'true' when year of birth has been deduced from other data  |
 
 
 * * *
@@ -335,7 +338,7 @@ Returns 'true' on success, an empty result when not found.
             { "msg": "Unauthorized" }
 
 
-# Swimmer list [/api/v3/swimmers{?page,per_page,first_name,last_name,complete_name,gender_type_id,year_of_birth,year_guessed}]
+# Swimmer list [/api/v3/swimmers{?page,per_page,name,first_name,last_name,complete_name,gender_type_id,year_of_birth,year_guessed}]
 
 + Model (application/json)
 
@@ -367,21 +370,11 @@ Returns 'true' on success, an empty result when not found.
 
 ## list [GET]
 
-The list of Swimmers associated to the specified filtering values,
-returned as JSON and optionally filtered by any or all from:
+The list of Swimmers for the specified filtering parameters, returned as an array of JSON objects.
+Returns exact matches for gender_type_id, year_of_birth, & year_guessed; supports partial matches
+for the text fields, plus a FULLTEXT search by the generic 'name' parameter on all name-related fields.
 
-- `first_name`
-- `last_name`
-- `complete_name`
-- `gender_type_id`
-- `year_of_birth`
-- `year_guessed`
-
-Returns exact matches for `gender_type_id`, `year_of_birth` & `year_guessed`;
-supports partial matches for the string names, but no fuzzy searches are performed:
-the matching rows for the name strings are selected using a simple "LIKE %?%" on the specified parameters.
-
-Optional pagination parameters for the request:
+Additional (optional) pagination parameters for the request:
 
 - `page`: current/selected page cursor
 - `per_page`: total items per data page (default: 25)
@@ -402,12 +395,13 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 
 + Parameters
+    + name: `Stefano` (string, optional) - generic FULLTEXT search on `first_name`, `last_name and `complete_name` values
     + first_name: `Stefano` (string, optional) - first name(s): when middle names are present, these will be concatenated and stored here too (partial match supported)
     + last_name: `Alloro` (string, optional) - the family name portion of the complete name, when it is known (partial match supported)
     + complete_name: `ALLORO STEFANO` (string, optional) - complete name, as it appears from the public rankings (italian ordering: last name first; partial match supported)
     + gender_type_id: 1 (number, optional) - associated GenderType ID
     + year_of_birth: 1969 (number, optional) - year of birth
-    + year_guessed: false (boolean, optional) - 'true' when year of birth has been deduced from other data
+    + year_guessed: false (boolean, optional) - `true` when year of birth has been deduced from other data
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page

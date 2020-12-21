@@ -5,62 +5,80 @@
 + Model (application/json)
 
         {
-            "id": 51,
-            // [...]
-            "name": "Crocera",
-            "address": "Via Eridania 3",
+            "id": 1,
+            "lock_version": 0,
+            "name": "S.Ferretti",
+            "address": "Viale Melato",
             "zip": "",
-            "nick_name": "genovacrocera",
+            "nick_name": "reggiocomunale25",
             "phone_number": "",
             "fax_number": "",
             "e_mail": "",
             "contact_name": "",
             "maps_uri": "",
-            "lanes_number": 0,
-            "multiple_pools": false,
+            "lanes_number": 6,
+            "multiple_pools": true,
             "garden": false,
-            "bar": false,
+            "bar": true,
             "restaurant": false,
-            "gym": false,
-            "child_area": false,
+            "gym": true,
+            "child_area": true,
             "notes": "",
-            "city_id": 17,
+            "city_id": 37,
             "pool_type_id": 1,
+            "shower_type_id": 4,
+            "hair_dryer_type_id": 4,
+            "locker_cabinet_type_id": 1,
+            "user_id": 2,
             "created_at": "2014-10-19T00:00:00.000Z",
             "updated_at": "2014-10-19T00:00:00.000Z",
-
             "read_only": true, // only admins can update this row
 
-            // Embedded associated City:
+            // Embedded associated entities:
             "city": {
-                "id": 17,
-                // [...]
-                "name": "Genova",
+                "id": 37,
+                "name": "Reggio nell Emilia",
                 "zip": "?",
-                "area": "GENOVA",
+                "area": "Reggio Emilia",
                 "country": "Italy",
                 "country_code": "IT",
-                // [...]
-                "latitude": null,
-                "longitude": null
+                "latitude": "44.716667",
+                "longitude": "10.6"
             },
 
-            // Embedded associated PoolType:
             "pool_type": {
                 "id": 1,
-                // [...]
                 "code": "25",
                 "length_in_meters": 25,
-                "eventable": true
+                "eventable": true,
+                "label": "25 M",
+                "long_label": "25 METERS",
+                "alt_label": "25 M"
             },
 
-            // Embedded associated lookup entites (optional):
-            "shower_type_id": null,
-            "hair_dryer_type_id": null,
-            "locker_cabinet_type_id": null,
-            "shower_type": null,
-            "hair_dryer_type": null,
-            "locker_cabinet_type": null
+            "shower_type": {
+                "id": 4,
+                "code": "B",
+                "label": "BADGE",
+                "long_label": "BADGE",
+                "alt_label": "BADGE"
+            },
+
+            "hair_dryer_type": {
+                "id": 4,
+                "code": "B",
+                "label": "BADGE",
+                "long_label": "BADGE",
+                "alt_label": "BADGE"
+            },
+
+            "locker_cabinet_type": {
+                "id": 1,
+                "code": "G",
+                "label": "BIG",
+                "long_label": "LOCKER (big)",
+                "alt_label": "BIG"
+            }
         }
 
 
@@ -168,7 +186,7 @@ The returned result includes these other 1st-level linked entities:
 
 Allows direct updates for some of the SwimmingPool fields given the `id` of the row.
 
-Returns 'true' on success, an empty result when not found.
+Returns `true` on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
@@ -177,38 +195,39 @@ Returns 'true' on success, an empty result when not found.
 
 #### Body Attributes:
 
-    optional :notes, type: String, desc: 'additional notes'
-    optional :read_only, type: Boolean, desc: 'true: disable any further updates'
+All are optional (except `id`):
 
-- `name` (string): official name of the venue
-- `last_name` (string): address
-- `nick_name` (string): typically, "<CITY_NAME><POOL_NAME>", all lowercase, without common prefixes or suffixes (like "Pool")
-- `contact_name` (string): contact person name for main events or info
-- `phone_number` (string): service phone number for the pool venue
-- `e_mail` (string): contact e-mail for info on events or pool access
-- `maps_uri` (string): URI for online map
-- `pool_type_id` (number): associated PoolType ID
-    | _id_ | _code_ | _length_in_meters_ |
-    | --- | --- | --- |
-    | 1 | `25` | 25 |
-    | 2 | `33` | 33 |
-    | 3 | `50` | 50 |
-- `city_id` (number): associated City ID
-- `lanes_number` (number): max usable lanes of the pool during an event (typically ranging from 5..10)
-- `multiple_pools` (boolean): 'true' if the venue has multiple pools available for events
-- `garden` (boolean): 'true' if there's a garden area
-- `bar` (boolean): 'true' if there's a bar
-- `restaurant` (boolean): 'true' if there's an internal restauran
-- `gym` (boolean): 'true' if there's an internal gym
-- `child_area` (boolean): 'true' if there's an children area or nursery
-- `shower_type_id` (number): associated ShowerType ID (*optional lookup entity*)
-- `hair_dryer_type_id` (number): associated HairDryerType ID (*optional lookup entity*)
-- `locker_cabinet_type_id` (number): associated LockerCabinetType ID (*optional lookup entity*)
-- `notes` (string): additional notes on the pool
-- `read_only` (boolean): 'true' when data can be updated by admins only
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `name` | string | official name of the venue |
+| `last_name` | string | address |
+| `nick_name` | string | typically, "<CITY_NAME><POOL_NAME>", all lowercase, without common prefixes or suffixes (like "Pool") |
+| `contact_name` | string | contact person name for main events or info |
+| `phone_number` | string | service phone number for the pool venue |
+| `e_mail` | string | contact e-mail for info on events or pool access |
+| `maps_uri` | string | URI for online map |
+| `pool_type_id` | integer | associated PoolType ID |
+| | _id_ | _code: description_ |
+| | 1 | `25`: 25 meters |
+| | 2 | `33`: 33 meters |
+| | 3 | `50`: 50 meters |
+| `city_id` | integer | associated City ID |
+| `lanes_number` | integer | max usable lanes of the pool during an event (typically ranging from 5..10) |
+| `multiple_pools` | boolean | `true` if the venue has multiple pools available for events |
+| `garden` | boolean | `true` if there's a garden area |
+| `bar` | boolean | `true` if there's a bar |
+| `restaurant` | boolean | `true` if there's an internal restauran |
+| `gym` | boolean | `true` if there's an internal gym |
+| `child_area` | boolean | `true` if there's an children area or nursery |
+| `shower_type_id` | integer | associated ShowerType ID (*lookup entity*) |
+| `hair_dryer_type_id` | integer | associated HairDryerType ID (*lookup entity*) |
+| `locker_cabinet_type_id` | integer | associated LockerCabinetType ID (*lookup entity*) |
+| `notes` | string | additional notes on the pool |
+| `read_only` | boolean | `true` to disable further editing by automatic data-import procedure (Admin only) |
 
-Each lookup entity has the same standard JSON structure that includes localized labels for display.
-Refer to the dedicated `/lookup/:entity_name_plural/` endpoint for getting the list of all available values.
+Each lookup entity has a standard JSON structure that includes localized labels for display (see below).
+
+A call to `/lookup/:entity_name_plural/` endpoint will list all available values for a specific entity.
 
 | _id_ | _code_ | _label_ | _long_label_ | _alt_label_ |
 | --- | --- | --- | --- | --- |

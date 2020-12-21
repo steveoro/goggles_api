@@ -116,7 +116,7 @@ The City instance matching the specified `id` returned as JSON.
 
 Allows direct updates for some of the City fields given the `id` of the row.
 
-Returns 'true' on success, an empty result when not found.
+Returns `true` on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
@@ -125,13 +125,17 @@ Returns 'true' on success, an empty result when not found.
 
 #### Body Attributes:
 
-- `name` (string): optional: City name
-- `country_code` (string): optional: Country code (2 chars)
-- `country` (string): optional: Country name
-- `area` (string): optional: Area/Region/Division name
-- `zip` (string): optional: ZIP/CAP or Postal code override (max 6 chars)
-- `latitude` (string): optional: City latitude
-- `longitude` (string): optional: City longitude
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `name` | string | City name |
+| `country_code` | string | Country code (2 chars) |
+| `country` | string | Country name (full) |
+| `area` | string | Area/Region/Division name |
+| `zip` | string | ZIP/CAP or Postal code override (currently, max 6 chars) |
+| `latitude` | string | City latitude |
+| `longitude` | string | longitude |
 
 
 * * *
@@ -278,26 +282,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 #### Body Attributes:
 
-- `name` (string): City name
-- `country_code` (string): Country code (2 chars)
-- `country` (string): optional: Country name
-- `area` (string): optional: Area/Region/Division name
-- `zip` (string): optional: ZIP/CAP or Postal code override (max 6 chars)
-- `latitude` (string): optional: City latitude
-- `longitude` (string): optional: City longitude
-
-
-* * *
-
-
-+ Attributes
-    + name (string, required) - City name
-    + country_code (string, required) - Country code (2 chars)
-    + country (string, optional) - Country name
-    + area (string, optional) - Area/Region/Division name
-    + zip (string, optional) - ZIP/CAP or Postal code override (max 6 chars)
-    + latitude (string, optional) - City latitude
-    + longitude (string, optional) - City longitude
+_Same supported attributes as `PUT /edit`_
 
 
 + Request ok (application/json)
@@ -433,14 +418,45 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
             [
                 // City details 1
                 {
-                    "id": 1,
-                    // [...]
+                    "id": 37,
+                    "lock_version": 5,
+                    "name": "Reggio nell Emilia",
+                    "zip": "?",
+                    "area": "Reggio Emilia",
+                    "country": "Italy",
+                    "country_code": "IT",
+                    "created_at": "2014-10-19T00:00:00.000Z",
+                    "updated_at": "2020-12-11T12:09:40.000Z",
+                    "latitude": "44.716667",
+                    "longitude": "10.6"
                 },
-
                 // City details 2
                 {
                     "id": 2,
-                    // [...]
+                    "lock_version": 4,
+                    "name": "Bibbiano",
+                    "zip": "?",
+                    "area": "Reggio Emilia",
+                    "country": "Italy",
+                    "country_code": "IT",
+                    "created_at": "2014-10-19T00:00:00.000Z",
+                    "updated_at": "2020-12-11T12:09:35.000Z",
+                    "latitude": "43.116667",
+                    "longitude": "11.45"
+                },
+                // City details 3
+                {
+                    "id": 6,
+                    "lock_version": 4,
+                    "name": "Castelnovo ne' Monti",
+                    "zip": "?",
+                    "area": "Reggio Emilia",
+                    "country": "Italy",
+                    "country_code": "IT",
+                    "created_at": "2014-10-19T00:00:00.000Z",
+                    "updated_at": "2020-12-11T12:09:36.000Z",
+                    "latitude": "44.433333",
+                    "longitude": "10.4"
                 },
 
                 // [...]
@@ -449,16 +465,16 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 ## list [GET]
 
-The list of Cities associated to the specified filtering values,
-returned as JSON and optionally filtered by any or all from:
+The list of Cities rows associated to the specified filtering values, searched among the database rows
+and returned as JSON, optionally filtered by any or all from:
 
-- `name` (string): City name
+- `name` (string): generic FULLTEXT search on `name` & `area` fields
+- `country` (string): Country name
 - `country_code` (string): Country code (2 chars)
-- `country` (string): optional: Country name
 
-Returns exact matches for most of the parameters, supports partial matches just for the text name,
-but no fuzzy searches are performed: the matching rows for the name strings
-are selected using a simple "LIKE %?%" on the specified parameters.
+Returns exact matches for the 'country_code' parameters.
+Supports partial matches for the country name field plus a FULLTEXT search by the generic
+`name` parameter for both the `area` and `name` fields.
 
 Optional pagination parameters for the request:
 
@@ -481,9 +497,9 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 
 + Parameters
-    + name (string, optional) - City name
-    + country_code (string, optional) - Country code (2 chars)
-    + country (string, optional) - Country name
+    + name: `reggio` (string, optional) - generic FULLTEXT search on `name` & `area` fields
+    + country: `Italy` (string, optional) - Country name
+    + country_code: `IT` (string, optional) - Country code (2 chars)
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
@@ -607,8 +623,11 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 ## search [GET]
 
-The list of Cities associated to the specified name & country code,
-returned as JSON data:
+The list of ISO-standardized names of Cities associated to the specified name & country code and returned as JSON data.
+
+(Note that this is not a Database search, but a fuzzy-string search on a memory list)
+
+Search by:
 
 - `name` (string): City name (partial name or mistyped)
 - `country_code` (string): Country code (2 chars)

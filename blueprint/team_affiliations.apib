@@ -202,7 +202,7 @@ The returned result includes these other 1st-level linked entities:
 
 Allows direct updates for some of the TeamAffiliation fields given the `id` of the row.
 
-Returns 'true' on success, an empty result when not found.
+Returns `true` on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
@@ -211,11 +211,15 @@ Returns 'true' on success, an empty result when not found.
 
 #### Body Attributes:
 
-- `team_id` (number): associated Team ID
-- `season_id` (number): associated Season ID
-- `name` (string): name as it appears in the registration rooster for the Championship Season
-- `number` (string): enrollment or registration badge number
-- `compute_gogglecup` (boolean): 'true' when the customized GoggleCup has to be computed
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `team_id` | integer | associated Team ID |
+| `season_id` | integer | associated Season ID |
+| `name` | string | name as it appears in the registration rooster for the Championship Season |
+| `number` | string | enrollment or registration badge number |
+| `compute_gogglecup` | boolean | `true` when a bespoke GoggleCup has to be computed |
 
 
 * * *
@@ -381,11 +385,13 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 #### Body Attributes:
 
-- `team_id` (number, **required**): associated Team ID
-- `season_id` (number, **required**): associated Season ID
-- `name` (string): name as it appears in the registration rooster for the Championship Season
-- `number` (string): enrollment code or Team registration badge number
-- `compute_gogglecup` (boolean): 'true' when the customized GoggleCup has to be computed
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `team_id` | integer | **required**, associated Team ID |
+| `season_id` | integer | **required**, associated Season ID |
+| `name` | string | name as it appears in the registration rooster for the Championship Season |
+| `number` | string | enrollment or registration badge number |
+| `compute_gogglecup` | boolean | `true` when a bespoke GoggleCup has to be computed |
 
 
 * * *
@@ -396,7 +402,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + season_id (string, required) - associated Season ID
     + name (string, optional) - Team registration name
     + number (string, optional) - enrollment code or Team registration badge number
-    + compute_gogglecup (boolean, optional) - 'true' when the customized GoggleCup has to be computed
+    + compute_gogglecup (boolean, optional) - `true` when the customized GoggleCup has to be computed
 
 
 + Request ok (application/json)
@@ -591,7 +597,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     + season_id: 191 (number, optional) - associated Season ID
     + name: `Ober Ferrari` (string, optional) - enrollment name (partial match supported)
     + number: `04200002` (string, optional) - enrollment number or Team badge code
-    + compute_gogglecup: false (boolean, optional) - 'true' when year of birth has been deduced from other data
+    + compute_gogglecup: false (boolean, optional) - `true` when year of birth has been deduced from other data
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
