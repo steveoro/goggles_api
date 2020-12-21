@@ -1,6 +1,6 @@
-# Group Team/Affiliations
+# Group TeamAffiliations
 
-## Team/Affiliation details [/api/v3/team/affiliation/{id}]
+## TeamAffiliation details [/api/v3/team_affiliation/{id}]
 
 + Model (application/json)
 
@@ -128,7 +128,7 @@ The returned result includes these other 1st-level linked entities:
     ```bash
     $> curl -i -X GET -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/team/affiliation/5727"
+            "<API_HOST:PORT>/api/v3/team_affiliation/5727"
     ```
 
     ##### `RestClient` (Ruby):
@@ -136,7 +136,7 @@ The returned result includes these other 1st-level linked entities:
     ```ruby
     > res = RestClient::Request.execute(
                 method: :get,
-                url: '<API_HOST:PORT>/api/v3/team/affiliation/5727',
+                url: '<API_HOST:PORT>/api/v3/team_affiliation/5727',
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
             )
     => <RestClient::Response 200 "{\"id\":5727, ...">
@@ -151,7 +151,7 @@ The returned result includes these other 1st-level linked entities:
 
 + Response 200
 
-    [Team/Affiliation details][]
+    [TeamAffiliation details][]
 
 
 + Request not found (application/json)
@@ -240,7 +240,7 @@ All are optional (except `id`):
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
             -d '{"name": "C.S.I. Ober Ferrari", \
                  "number": "EMI 123456"}' \
-            "<API_HOST:PORT>/api/v3/team/affiliation/5727"
+            "<API_HOST:PORT>/api/v3/team_affiliation/5727"
     ```
 
     ##### `RestClient` (Ruby):
@@ -248,7 +248,7 @@ All are optional (except `id`):
     ```ruby
     > res = RestClient::Request.execute(
                 method: :put,
-                url: '<API_HOST:PORT>/api/v3/team/affiliation/5727',
+                url: '<API_HOST:PORT>/api/v3/team_affiliation/5727',
                 payload: {
                     name: "C.S.I. Ober Ferrari",
                     number: "EMI 123456"
@@ -398,8 +398,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 
 + Attributes
-    + team_id (string, required) - associated Team ID
-    + season_id (string, required) - associated Season ID
+    + team_id (number, required) - associated Team ID
+    + season_id (number, required) - associated Season ID
     + name (string, optional) - Team registration name
     + number (string, optional) - enrollment code or Team registration badge number
     + compute_gogglecup (boolean, optional) - `true` when the customized GoggleCup has to be computed
@@ -414,13 +414,13 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     ```bash
     $> curl -i -X POST -H "Content-Type: application/json" \
             -d '{"team_id": 1, "season_id": 194, "compute_gogglecup": "true"}' \
-            "<API_HOST:PORT>/api/v3/team/affiliation"
+            "<API_HOST:PORT>/api/v3/team_affiliation"
     ```
 
     ##### `RestClient` (Ruby):
 
     ```ruby
-    > res = RestClient.post('<API_HOST:PORT>/api/v3/team/affiliation',
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/team_affiliation',
             {
                 'team_id': 1,
                 'season_id': 194,
@@ -527,13 +527,13 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
             { "msg": "Unauthorized" }
 
 
-# Team/Affiliation list [/api/v3/team/affiliations{?page,per_page,team_id,season_id,name,number,compute_gogglecup}]
+# TeamAffiliation list [/api/v3/team_affiliations{?page,per_page,team_id,season_id,name,number,compute_gogglecup}]
 
 + Model (application/json)
 
     + Header
 
-            Link: "<API_HOST:PORT/api/v3/team/affiliations?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/team/affiliations?page=2&team_id=1>; rel=\"next\""
+            Link: "<API_HOST:PORT/api/v3/team_affiliations?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/team_affiliations?page=2&team_id=1>; rel=\"next\""
             Total: 46
             Per-Page: 25
             Page: 1
@@ -613,7 +613,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     ```bash
     $> curl -i -X GET -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/team/affiliations?team_id=1"
+            "<API_HOST:PORT>/api/v3/team_affiliations?team_id=1"
     ```
 
     #### `RestClient` (Ruby):
@@ -624,7 +624,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     ```ruby
     > res = RestClient::Request.execute(
                 method: :get,
-                url: '<API_HOST:PORT>/api/v3/team/affiliations',
+                url: '<API_HOST:PORT>/api/v3/team_affiliations',
                 headers: {
                     "Authorization" => "Bearer VALID-SESSION-JWT",
                     params: { team_id: 1 }
@@ -641,7 +641,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 + Response 200
 
-    [Team/Affiliation list][]
+    [TeamAffiliation list][]
 
 
 + Request not found (application/json)

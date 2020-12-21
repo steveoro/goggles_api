@@ -18,7 +18,7 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
     expect(jwt_token).to be_a(String).and be_present
   end
 
-  describe 'POST /api/v3/team/manager' do
+  describe 'POST /api/v3/team_manager' do
     let(:new_manager) { FactoryBot.create(:user) }
     let(:new_affiliation) { FactoryBot.create(:team_affiliation) }
     let(:built_row) { FactoryBot.build(:managed_affiliation, manager: new_manager, team_affiliation: new_affiliation) }

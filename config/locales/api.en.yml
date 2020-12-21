@@ -12,6 +12,7 @@ en:
       status:
         ok: 'OK: reachable and running'
         maintenance: 'Maintenance mode is ON'
+        maintenance_description: 'Server under maintenance: try again later'
       jwt:
         missing: 'Missing JWT token'
         invalid: 'Invalid JWT token'

@@ -3,7 +3,7 @@
 #
 # = Version module
 #
-#   - version:  7.001
+#   - version:  7.052
 #   - author:   Steve A.
 #
 #   Semantic Versioning implementation.
@@ -15,10 +15,10 @@ module Version
   MAJOR   = '7'
 
   # Minor version.
-  MINOR   = '051'
+  MINOR   = '052'
 
   # Current build version.
-  BUILD   = '20201218'
+  BUILD   = '20201221'
 
   # Full versioning for the current release.
   FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE})"

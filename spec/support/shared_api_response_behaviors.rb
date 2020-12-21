@@ -37,6 +37,15 @@ shared_examples_for 'an empty but successful JSON response' do
   end
 end
 
+shared_examples_for 'a successful response with an empty body' do
+  it 'is successful anyway' do
+    expect(response).to be_successful
+  end
+  it 'returns a nil body' do
+    expect(response.body).to be_empty
+  end
+end
+
 shared_examples_for 'an empty but successful JSON list response' do
   it 'is successful anyway' do
     expect(response).to be_successful

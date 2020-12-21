@@ -1,0 +1,938 @@
+# Group MeetingEntries
+
+## MeetingEntry details [/api/v3/meeting_entry/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 1,
+            "lock_version": 0,
+            "created_at": "2014-10-19T00:00:00.000Z",
+            "updated_at": "2014-10-19T00:00:00.000Z",
+            "start_list_number": null,
+            "lane_number": null,
+            "heat_number": null,
+            "heat_arrival_order": null,
+            "meeting_program_id": 3454,
+            "swimmer_id": 142,
+            "team_id": 1,
+            "team_affiliation_id": 202,
+            "badge_id": 4677,
+            "entry_time_type_id": 1,
+            "user_id": 2,
+            "minutes": 1,
+            "seconds": 8,
+            "hundreds": 80,
+            "no_time": false,
+
+            "meeting": {
+                "id": 13101,
+                "code": "csiprova1",
+                "header_year": "2013/2014",
+                "edition_label": "2013/2014"
+            },
+
+            "meeting_session": {
+                "id": 310,
+                "session_order": 1,
+                "scheduled_date": "2013-11-24"
+            },
+
+            "meeting_program": {
+                "id": 3454,
+                "event_order": 20,
+                "category_type_id": 687,
+                "gender_type_id": 1,
+                "user_id": 2,
+                "autofilled": false,
+                "out_of_race": false,
+                "begin_time": null,
+                "meeting_event_id": 1136,
+                "pool_type_id": 1,
+                "time_standard_id": null,
+
+                "pool_type": {
+                    "id": 1,
+                    "code": "25",
+                    "length_in_meters": 25,
+                    "eventable": true,
+                    "label": "25 M",
+                    "long_label": "25 METERS",
+                    "alt_label": "25 M"
+                },
+
+                "event_type": {
+                    "id": 3,
+                    "code": "100SL",
+                    "length_in_meters": 100,
+                    "relay": false,
+                    "stroke_type_id": 1,
+                    "style_order": 3,
+                    "mixed_gender": false,
+                    "partecipants": 1,
+                    "phases": 1,
+                    "phase_length_in_meters": 100,
+                    "label": "100 FS",
+                    "long_label": "100 FREESTYLE",
+                    "alt_label": "100 FS"
+                },
+
+                "category_type": {
+                    "id": 687,
+                    "code": "M45",
+                    "federation_code": "7",
+                    "description": "MASTER 45",
+                    "short_name": "M45",
+                    "group_name": "MASTER",
+                    "age_begin": 45,
+                    "age_end": 49,
+                    "relay": false,
+                    "season_id": 131,
+                    "out_of_race": false,
+                    "undivided": false
+                },
+
+                "gender_type": {
+                    "id": 1,
+                    "code": "M",
+                    "label": "MAL",
+                    "long_label": "MALE",
+                    "alt_label": "MALE"
+                },
+
+                "stroke_type": {
+                    "id": 1,
+                    "code": "SL",
+                    "eventable": true,
+                    "label": "FS",
+                    "long_label": "FREESTYLE",
+                    "alt_label": "CR"
+                }
+            },
+
+            "team": {
+                "id": 1,
+                "name": "Lake Ramiro Swimming Club ASD",
+                "editable_name": "Lake Ramiro Swimming Club ASD",
+                "address": "9038 Littel Lights",
+                "zip": "028088",
+                "phone_mobile": "265-752-0508 x022",
+                "phone_number": "493-278-0409",
+                "fax_number": null,
+                "e_mail": "zenaida@example.net",
+                "contact_name": "Dede Sipes",
+                "notes": "Meatloaf rump pork ribeye shank sirloin venison tongue.",
+                "name_variations": null,
+                "city_id": 37,
+                "user_id": 2,
+                "home_page_url": "http://watsica.us"
+            },
+
+            "team_affiliation": {
+                "id": 202,
+                "number": "04200002",
+                "name": "CSInuoto OberFerrari",
+                "compute_gogglecup": true,
+                "team_id": 1,
+                "season_id": 131,
+                "user_id": 2,
+                "autofilled": false
+            },
+
+            "swimmer": {
+                "id": 142,
+                "last_name": "ALLORO",
+                "first_name": "STEFANO",
+                "year_of_birth": 1969,
+                "phone_mobile": null,
+                "phone_number": null,
+                "e_mail": null,
+                "nickname": "",
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                "user_id": 2,
+                "complete_name": "ALLORO STEFANO",
+                "year_guessed": false
+            },
+
+            "pool_type": {
+                "id": 1,
+                "code": "25",
+                "length_in_meters": 25,
+                "eventable": true,
+                "label": "25 M",
+                "long_label": "25 METERS",
+                "alt_label": "25 M"
+            },
+
+            "event_type": {
+                "id": 3,
+                "code": "100SL",
+                "length_in_meters": 100,
+                "relay": false,
+                "stroke_type_id": 1,
+                "style_order": 3,
+                "mixed_gender": false,
+                "partecipants": 1,
+                "phases": 1,
+                "phase_length_in_meters": 100,
+                "label": "100 FS",
+                "long_label": "100 FREESTYLE",
+                "alt_label": "100 FS"
+            },
+
+            "category_type": {
+                "id": 687,
+                "code": "M45",
+                "federation_code": "7",
+                "description": "MASTER 45",
+                "short_name": "M45",
+                "group_name": "MASTER",
+                "age_begin": 45,
+                "age_end": 49,
+                "relay": false,
+                "season_id": 131,
+                "out_of_race": false,
+                "undivided": false
+            },
+
+            "gender_type": {
+                "id": 1,
+                "code": "M",
+                "label": "MAL",
+                "long_label": "MALE",
+                "alt_label": "MALE"
+            }
+        }
+
+
+### find [GET]
+The MeetingEntry instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities (some with minimal attributes):
+- `Team`
+- `TeamAffiliation`
+- `Swimmer`
+- `PoolType`
+- `EventType`
+- `CategoryType`
+- `GenderType`
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number, required) - MeetingEntry ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_entry/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meeting_entry/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":1, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [MeetingEntry details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the MeetingEntry fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'MeetingEntry' or have generic admin grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `meeting_program_id` | integer | associated MeetingProgram ID |
+| `team_affiliation_id` | integer | associated TeamAffiliation ID |
+| `team_id` | integer | associated Team ID |
+| `swimmer_id` | integer | associated Swimmer ID |
+| `badge_id` | integer | associated Badge ID |
+| `entry_time_type_id` | integer | associated EntryTimeType ID for referencing entry timings |
+| | _id_ | _code: description_ |
+| | 1 | `M`: manual |
+| | 2 | `P`: personal |
+| | 3 | `G`: GoggleCup |
+| | 4 | `A`: preceding year |
+| | 5 | `U`: last race |
+| `minutes` | integer | minutes for the registration entry timing |
+| `seconds` | integer | seconds for the registration entry timing |
+| `hundreds` | integer | hundredths of seconds for the registration entry timing |
+| `no_time` | boolean | `true` for entries with an unspecified timing |
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number, required) - MeetingEntry ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"entry_time_type_id": 1, "minutes": 0, "seconds": 36 }' \
+            "<API_HOST:PORT>/api/v3/meeting_entry/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/meeting_entry/1',
+                payload: {
+                    entry_time_type_id: 1,
+                    minutes: 0,
+                    seconds: 36
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "entry_time_type_id": 1,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "entry_time_type_id": 1,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "entry_time_type_id": 1,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "entry_time_type_id": 1,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "entry_time_type_id": 1,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new MeetingEntry, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `meeting_program_id` | integer | **required**, associated MeetingProgram ID |
+| `team_affiliation_id` | integer | **required**, associated TeamAffiliation ID |
+| `team_id` | integer | **required**, associated Team ID |
+| `swimmer_id` | integer | associated Swimmer ID |
+| `badge_id` | integer | associated Badge ID |
+| `entry_time_type_id` | integer | associated EntryTimeType ID for referencing entry timings |
+| | _id_ | _code: description_ |
+| | 1 | `M`: manual |
+| | 2 | `P`: personal |
+| | 3 | `G`: GoggleCup |
+| | 4 | `A`: preceding year |
+| | 5 | `U`: last race |
+| `minutes` | integer | minutes for the registration entry timing |
+| `seconds` | integer | seconds for the registration entry timing |
+| `hundreds` | integer | hundredths of seconds for the registration entry timing |
+| `no_time` | boolean | `true` for entries with an unspecified timing |
+
+
+* * *
+
+
++ Attributes
+    + meeting_program_id (number, required) - associated MeetingProgram ID
+    + team_affiliation_id (number, required) - associated TeamAffiliation ID
+    + team_id (number, required) - associated Team ID
+    + swimmer_id (number, optional) - associated Swimmer ID
+    + badge_id (number, optional) - associated badge_id ID
+    + entry_time_type_id (number, optional) - associated EntryTimeType ID for referencing entry timings
+    + minutes (number, optional) - minutes for the registration entry timing
+    + seconds (number, optional) - seconds for the registration entry timing
+    + hundreds (number, optional) - hundredths of seconds for the registration entry timing
+    + no_time (boolean, optional) - `true` for entries with an unspecified timing
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"meeting_program_id": 1, "team_affiliation_id": 1, "team_id": 1, \
+                 "swimmer_id": 142, "entry_time_type_id": 1, "minutes": 0, "seconds": 36 }'
+            "<API_HOST:PORT>/api/v3/meeting_entry"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/meeting_entry',
+            {
+                'meeting_program_id': 1,
+                'team_affiliation_id': 1,
+                'team_id': 1,
+                'swimmer_id': 142,
+                'entry_time_type_id': 1,
+                'minutes': 0,
+                'seconds': 36
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                'meeting_program_id': 1,
+                'team_affiliation_id': 1,
+                'team_id': 1,
+                'swimmer_id': 142,
+                'entry_time_type_id': 1,
+                'minutes': 0,
+                'seconds': 36
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": "NEW_ROW_AS_JSON"
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                'meeting_program_id': 1,
+                'team_affiliation_id': 1,
+                'team_id': 1,
+                'swimmer_id': 142,
+                'entry_time_type_id': 1,
+                'minutes': 0,
+                'seconds': 36
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                'meeting_program_id': 1,
+                'team_affiliation_id': 1,
+                'team_id': 1,
+                'swimmer_id': 142,
+                'entry_time_type_id': 1,
+                'minutes': 0,
+                'seconds': 36
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                'meeting_program_id': 1,
+                'team_affiliation_id': 1,
+                'team_id': 1,
+                'swimmer_id': 142,
+                'entry_time_type_id': 1,
+                'minutes': 0,
+                'seconds': 36
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'MeetingEntry' or have generic admin grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 1 (number, required) - MeetingEntry ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"entry_time_type_id": 1, "minutes": 0, "seconds": 36 }' \
+            "<API_HOST:PORT>/api/v3/meeting_entry/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/meeting_entry/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# MeetingEntry list [/api/v3/meeting_entries{?page,per_page,meeting_program_id,team_affiliation_id,team_id,swimmer_id,badge_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/meeting_entries?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/meeting_entries?page=2&team_id=1>; rel=\"next\""
+            Total: 46
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // MeetingEntry details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // MeetingEntry details 2
+                {
+                    "id": 15,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of MeetingEntries associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `meeting_program_id`
+- `team_affiliation_id`
+- `team_id`
+- `swimmer_id`
+- `badge_id`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + meeting_program_id: 1 (number, optional) - associated MeetingProgram ID
+    + team_affiliation_id: 1 (number, optional) - associated TeamAffiliation ID
+    + team_id: 1 (number, optional) - associated Team ID
+    + swimmer_id: 142 (number, optional) - associated Swimmer ID
+    + badge_id: 156 (number, optional) - associated Badge ID
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_entries?team_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meeting_entries',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { team_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [MeetingEntry list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

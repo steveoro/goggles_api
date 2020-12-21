@@ -20,7 +20,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
     expect(jwt_token).to be_a(String).and be_present
   end
 
-  describe 'GET /api/v3/team/affiliation/:id' do
+  describe 'GET /api/v3/team_affiliation/:id' do
     context 'when using valid parameters,' do
       before(:each) { get(api_v3_team_affiliation_path(id: fixture_ta.id), headers: fixture_headers) }
       it 'is successful' do
@@ -48,7 +48,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
   let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
   let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
 
-  describe 'PUT /api/v3/team/affiliation/:id' do
+  describe 'PUT /api/v3/team_affiliation/:id' do
     before(:each) do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
@@ -124,7 +124,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe 'POST /api/v3/team/affiliation' do
+  describe 'POST /api/v3/team_affiliation' do
     let(:new_team)   { FactoryBot.create(:team) }
     let(:new_season) { FactoryBot.create(:season) }
     let(:built_row)  { FactoryBot.build(:team_affiliation, team: new_team, season: new_season) }
@@ -195,7 +195,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe 'GET /api/v3/team/affiliations/' do
+  describe 'GET /api/v3/team_affiliations/' do
     context 'when using a valid authentication' do
       let(:fixture_season_id) { [171, 172, 181, 182, 191, 192].sample }
       let(:fixture_team)      { GogglesDb::Team.first }

@@ -1,9 +1,9 @@
-# Group Team/Managers
+# Group TeamManagers
 
-## Team/Manager details [/api/v3/team/manager]
+## TeamManager details [/api/v3/team_manager]
 
 The complete list of current team managers for a specific TeamAffiliation is already returned as part
-of the `GET /api/v3/team/affiliation/{:id}` response.
+of the `GET /api/v3/team_affiliation/{:id}` response.
 
 
 ### create [POST]
@@ -41,13 +41,13 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     ```bash
     $> curl -i -X POST -H "Content-Type: application/json" \
             -d '{"user_id": 2, "team_affiliation_id": 12179}' \
-            "<API_HOST:PORT>/api/v3/team/manager"
+            "<API_HOST:PORT>/api/v3/team_manager"
     ```
 
     ##### `RestClient` (Ruby):
 
     ```ruby
-    > res = RestClient.post('<API_HOST:PORT>/api/v3/team/manager',
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/team_manager',
             {
                 'user_id': 2,
                 'team_affiliation_id': 12179

@@ -36,6 +36,15 @@ module Goggles
       authorization.result
     end
 
+    # Helps to reject incoming requests when the maintenance status is toggled ON.
+    # (Only few endpoints may be deemed critical enough to include this helper; the majority should be designed
+    #  fault tolerant enough)
+    def reject_during_maintenance
+      return unless GogglesDb::AppParameter.maintenance?
+
+      error!(I18n.t('api.message.status.maintenance'), 401, 'X-Error-Detail' => I18n.t('api.message.status.maintenance.maintenance_description'))
+    end
+
     # Yields the 'Unauthorized' error if the user does not have associated grants for CRUD operations
     # on the specified entity.
     def reject_unless_authorized_for_crud(user, entity_name)
