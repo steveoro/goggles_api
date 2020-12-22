@@ -31,7 +31,7 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new ManagedAffiliation'
+      desc 'Create a new ManagedAffiliation'
       params do
         requires :user_id, type: Integer, desc: 'associated User ID (new Manager)'
         requires :team_affiliation_id, type: Integer, desc: 'associated TeamAffiliation ID'

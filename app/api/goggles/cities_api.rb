@@ -80,7 +80,7 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new City'
+      desc 'Create a new City'
       params do
         requires :name, type: String, desc: 'City name'
         requires :country_code, type: String, desc: 'Country code (2 chars)'

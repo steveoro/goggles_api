@@ -169,7 +169,7 @@ All are optional (except `id`):
 | | 1 | `M`: male |
 | | 2 | `F`: female |
 | | 3 | `X`: unknown |
-| `year_guessed` | boolean |'true' when year of birth has been deduced from other data  |
+| `year_guessed` | boolean |`true` when year of birth has been deduced from other data  |
 
 
 * * *
@@ -336,6 +336,185 @@ All are optional (except `id`):
     + Body
 
             { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new Swimmer, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `complete_name` | string | **required**, complete name, as it appears from the public rankings (italian ordering: last name first) |
+| `year_of_birth` | number | **required**, year of birth |
+| `gender_type_id` | number | **required**, associated GenderType ID |
+| | _id_ | _code: description_ |
+| | 1 | `M`: male |
+| | 2 | `F`: female |
+| | 3 | `X`: unknown |
+| `first_name` | string | first name(s): when middle names are present, these will be concatenated and stored here too |
+| `last_name` | string | the family name portion of the complete name, when it is known |
+| `nickname` | string | swimmer nickname |
+| `associated_user_id` | number | associated User ID |
+| `year_guessed` | boolean |`true` when year of birth has been deduced from other data  |
+
+
+* * *
+
+
++ Attributes
+    + complete_name (string, required) - complete name, as it appears from the public rankings
+    + year_of_birth (number, required) - year of birth
+    + gender_type_id (number, required) - associated GenderType ID
+    + first_name (string, optional) - swimmer first name(s)
+    + last_name (string, optional) - swimmer family name
+    + nickname (string, optional) - swimmer nickname
+    + associated_user_id (number, optional) - associated User ID
+    + year_guessed (boolean, optional) - `true` when year of birth has been deduced from other data
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"complete_name": "ALLORO STEFANO", "gender_type_id": 1, \
+                 "year_of_birth": 1969, "associated_user_id": 1, \
+                 "nickname": "steve"}' \
+            "<API_HOST:PORT>/api/v3/team_affiliation"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/team_affiliation',
+            {
+                "complete_name": "ALLORO STEFANO",
+                "gender_type_id": 1,
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "nickname": "steve"
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "complete_name": "ALLORO STEFANO",
+                "gender_type_id": 1,
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "nickname": "steve"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": "NEW_ROW_AS_JSON"
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "complete_name": "ALLORO STEFANO",
+                "gender_type_id": 1,
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "nickname": "steve"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "complete_name": "ALLORO STEFANO",
+                "gender_type_id": 1,
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "nickname": "steve"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "complete_name": "ALLORO STEFANO",
+                "gender_type_id": 1,
+                "year_of_birth": 1969,
+                "associated_user_id": 1,
+                "nickname": "steve"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
 
 
 # Swimmer list [/api/v3/swimmers{?page,per_page,name,first_name,last_name,complete_name,gender_type_id,year_of_birth,year_guessed}]

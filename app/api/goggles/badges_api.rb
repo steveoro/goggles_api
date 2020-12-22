@@ -78,7 +78,7 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new Badge'
+      desc 'Create a new Badge'
       params do
         requires :swimmer_id, type: Integer, desc: 'associated Swimmer ID (required)'
         requires :team_affiliation_id, type: Integer, desc: 'associated TeamAffiliation ID (required)'

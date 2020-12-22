@@ -76,7 +76,7 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new TeamAffiliation'
+      desc 'Create a new TeamAffiliation'
       params do
         requires :team_id, type: Integer, desc: 'associated Team ID'
         requires :season_id, type: Integer, desc: 'associated Season ID'
