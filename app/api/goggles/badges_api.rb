@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Badge API Grape controller
   #
-  #   - version:  1.09
+  #   - version:  7.53
   #   - author:   Steve A.
-  #   - build:    20201207
+  #   - build:    20201222
   #
   class BadgesAPI < Grape::API
     helpers APIHelpers
@@ -42,9 +42,10 @@ module Goggles
       #
       desc 'Update Badge details'
       params do
-        requires :id, type: Integer, desc: 'Badge ID'
-        requires :number, type: String, desc: 'displayed number or code for the Badge'
+        requires :id, type: Integer, desc: 'Badge ID (required)'
+        requires :number, type: String, desc: 'displayed number or code for the Badge (required)'
         optional :entry_time_type_id, type: Integer, desc: 'associated EntryTimeType ID'
+        optional :off_gogglecup, type: Boolean, desc: 'true if the swimmer does not run for the bespoke GoggleCup'
         optional :fees_due, type: Boolean, desc: 'true: the Swimmer has to pay additional meeting fees for the Championship; false: the Team provides'
         optional :badge_due, type: Boolean, desc: 'true: the Swimmer has to pay the badge registration; false: the Team provides'
         optional :relays_due, type: Boolean, desc: 'true: the Swimmer has to pay any relay event in the Championship; false: the Team provides'
@@ -57,6 +58,54 @@ module Goggles
           badge = GogglesDb::Badge.find_by_id(params['id'])
           badge&.update!(declared(params, include_missing: false))
         end
+      end
+
+      # POST /api/:version/badge
+      # (ADMIN only)
+      #
+      # Creates a new Badge given the specified parameters.
+      #
+      # == Main Params:
+      # - swimmer_id (required)
+      # - team_affiliation_id (required)
+      # - season_id (required)
+      # - team_id (required)
+      # - category_type_id (required)
+      # - entry_time_type_id (required)
+      #
+      # == Returns:
+      # A JSON Hash containing the result 'msg' and the newly created instance:
+      #
+      #    { "msg": "OK", "new": { ...new row in JSON format... } }
+      #
+      desc 'Create new Badge'
+      params do
+        requires :swimmer_id, type: Integer, desc: 'associated Swimmer ID (required)'
+        requires :team_affiliation_id, type: Integer, desc: 'associated TeamAffiliation ID (required)'
+        requires :season_id, type: Integer, desc: 'associated Season ID (required)'
+        requires :team_id, type: Integer, desc: 'associated Team ID (required)'
+        requires :category_type_id, type: Integer, desc: 'associated CategoryType ID (required)'
+        requires :entry_time_type_id, type: Integer, desc: 'associated EntryTimeType ID (required)'
+        optional :number, type: String, desc: 'displayed number or code for the Badge'
+        optional :off_gogglecup, type: Boolean, desc: 'true if the swimmer does not run for the bespoke GoggleCup'
+        optional :fees_due, type: Boolean, desc: 'true: the Swimmer has to pay additional meeting fees for the Championship; false: the Team provides'
+        optional :badge_due, type: Boolean, desc: 'true: the Swimmer has to pay the badge registration; false: the Team provides'
+        optional :relays_due, type: Boolean, desc: 'true: the Swimmer has to pay any relay event in the Championship; false: the Team provides'
+      end
+      post do
+        api_user = check_jwt_session
+        reject_unless_authorized_admin(api_user)
+
+        new_row = GogglesDb::Badge.create(params)
+        unless new_row.valid?
+          error!(
+            I18n.t('api.message.creation_failure'),
+            500,
+            'X-Error-Detail' => GogglesDb::ValidationErrorTools.recursive_error_for(new_row)
+          )
+        end
+
+        { msg: I18n.t('api.message.generic_ok'), new: new_row }
       end
     end
 
@@ -80,10 +129,10 @@ module Goggles
       #
       desc 'List Badges'
       params do
-        optional :team_id, type: Integer, desc: 'optional: associated Team ID'
-        optional :team_affiliation_id, type: Integer, desc: 'optional: associated TeamAffiliation ID'
-        optional :season_id, type: Integer, desc: 'optional: associated Season ID'
-        optional :swimmer_id, type: Integer, desc: 'optional: associated Swimmer ID'
+        optional :team_id, type: Integer, desc: 'associated Team ID'
+        optional :team_affiliation_id, type: Integer, desc: 'associated TeamAffiliation ID'
+        optional :season_id, type: Integer, desc: 'associated Season ID'
+        optional :swimmer_id, type: Integer, desc: 'associated Swimmer ID'
         use :pagination
       end
       # Enforcing 'max_per_page' will add the allowed range to the swagger docs and
