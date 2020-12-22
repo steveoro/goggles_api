@@ -224,7 +224,7 @@ All are optional (except `id`):
 | `zip` | string | Team HQ zip code |
 | `phone_mobile` | string | HQ mobile or secondary phone |
 | `phone_number` | string | HQ official phone number |
-| `contact_name` | string | official contact e-mail |
+| `contact_name` | string | official contact name |
 | `e_mail` | string | team contact e-mail |
 | `notes` | string | additional notes by the Team Manager |
 | `home_page_url` | string | Team Website URL |
@@ -379,6 +379,170 @@ All are optional (except `id`):
     + Body
 
             { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new Team, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `name` | string | name of the Team (typically, read-only, imported/detected "as-is") |
+| `editable_name` | string | name of the Team, as edited by the Team Manager |
+| `city_id` | integer | associated City ID |
+| `address` | string | Team HQ address |
+| `zip` | string | Team HQ zip code |
+| `phone_mobile` | string | HQ mobile or secondary phone |
+| `phone_number` | string | HQ official phone number |
+| `contact_name` | string | official contact name |
+| `e_mail` | string | team contact e-mail |
+| `notes` | string | additional notes by the Team Manager |
+| `home_page_url` | string | Team Website URL |
+
+
+* * *
+
+
++ Attributes
+    + name (string, optional) - name of the team (typically, read-only, imported/detected "as-is")
+    + editable_name (string, optional) - name of the team, as edited by the Team Manager
+    + city_id (number, required) - associated City ID
+    + address (string, optional) - Team HQ address
+    + zip (string, optional) - Team HQ zip code
+    + phone_mobile (string, optional) - HQ mobile or secondary phone
+    + phone_number (string, optional) - HQ official phone number
+    + contact_name (string, optional) - official contact name
+    + e_mail (string, optional) - team contact e-mail
+    + notes (string, optional) - additional notes by the Team Manager
+    + home_page_url (string, optional) - Team Website URL
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"name": "SuperDuper AquaTeam", "editable_name": "SuperDuper Aqua-Team 2020"}' \
+            "<API_HOST:PORT>/api/v3/team"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/team',
+            {
+                "name": "SuperDuper AquaTeam",
+                "editable_name": "SuperDuper Aqua-Team 2020"
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "name": "SuperDuper AquaTeam",
+                "editable_name": "SuperDuper Aqua-Team 2020"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": "NEW_ROW_AS_JSON"
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "name": "SuperDuper AquaTeam",
+                "editable_name": "SuperDuper Aqua-Team 2020"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "name": "SuperDuper AquaTeam",
+                "editable_name": "SuperDuper Aqua-Team 2020"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "name": "SuperDuper AquaTeam",
+                "editable_name": "SuperDuper Aqua-Team 2020"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
 
 
 # Team list [/api/v3/teams{?page,per_page,city_id,name,editable_name}]

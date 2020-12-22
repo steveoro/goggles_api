@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: SwimmingPool API Grape controller
   #
-  #   - version:  7.051
+  #   - version:  7.053
   #   - author:   Steve A.
-  #   - build:    20201218
+  #   - build:    20201222
   #
   class SwimmingPoolsAPI < Grape::API
     helpers APIHelpers
@@ -76,6 +76,59 @@ module Goggles
           # Don't do anything if we're left with no editing parameters:
           result&.update!(declared(params, include_missing: false)) unless params.keys.size == 1
         end
+      end
+
+      # POST /api/:version/swimming_pool
+      # (ADMIN only)
+      #
+      # Creates a new Swimmer given the specified parameters.
+      #
+      # == Main Params:
+      # Same params as PUT, with city_id, pool_type_id, name & nick_name required.
+      #
+      # == Returns:
+      # A JSON Hash containing the result 'msg' and the newly created instance:
+      #
+      #    { "msg": "OK", "new": { ...new row in JSON format... } }
+      #
+      desc 'Create a new SwimmingPool'
+      params do
+        requires :name, type: String, desc: 'official name'
+        requires :nick_name, type: String, desc: 'short name or nick-name for the pool'
+        requires :city_id, type: Integer, desc: 'associated City ID'
+        requires :pool_type_id, type: Integer, desc: 'associated PoolType ID'
+        optional :address, type: String, desc: 'address'
+        optional :phone_number, type: String, desc: 'phone number'
+        optional :e_mail, type: String, desc: 'e-mail address'
+        optional :contact_name, type: String, desc: 'contact name'
+        optional :maps_uri, type: String, desc: 'online map URI'
+        optional :lanes_number, type: Integer, desc: 'total number of pool lanes for the main pool'
+        optional :multiple_pools, type: Boolean, desc: 'true: has more than 1 pool'
+        optional :garden, type: Boolean, desc: 'true: has a garden area or solarium'
+        optional :bar, type: Boolean, desc: 'true: includes an internal Bar'
+        optional :restaurant, type: Boolean, desc: 'true: includes an internal Restaurant'
+        optional :gym, type: Boolean, desc: 'true: this includes an internal Gym area'
+        optional :child_area, type: Boolean, desc: 'true: includes a dedicated Children Area or Nursery'
+        optional :shower_type_id, type: Integer, desc: 'associated ShowerType ID'
+        optional :hair_dryer_type_id, type: Integer, desc: 'associated HairDryerType ID'
+        optional :locker_cabinet_type_id, type: Integer, desc: 'associated LockerCabinetType ID'
+        optional :notes, type: String, desc: 'additional notes'
+        optional :read_only, type: Boolean, desc: 'true: disable any further updates'
+      end
+      post do
+        api_user = check_jwt_session
+        reject_unless_authorized_admin(api_user)
+
+        new_row = GogglesDb::SwimmingPool.create(params)
+        unless new_row.valid?
+          error!(
+            I18n.t('api.message.creation_failure'),
+            500,
+            'X-Error-Detail' => GogglesDb::ValidationErrorTools.recursive_error_for(new_row)
+          )
+        end
+
+        { msg: I18n.t('api.message.generic_ok'), new: new_row }
       end
     end
 
