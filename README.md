@@ -34,10 +34,11 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 - MariaDb 10.3.25+ or MySql equivalent version
 
 
-## System dependencies
+## Dependencies
 
 - GogglesDb base engine, core 7+
 - JWT for session handling
+- [Grape gem](https://github.com/ruby-grape/grape) for API definition
 
 
 ## Configuration
@@ -185,23 +186,9 @@ Basically, remember to:
 
 ## Database setup
 
+See [GogglesDb setup](https://github.com/steveoro/goggles_db#database-setup).
+
 You'll need a proper DB for both the test suite and the local development.
-
-GogglesDb, among others, adds these tasks:
-
-- `db:dump`: dumps current Rails environment DB;
-- `db:rebuild`: restores any *.sql.bz2 dump file stored in `db/dump`, provided it is a DB dump without any DB namespaces in it. (No `USE` or `CREATE` database statements)
-
-If you don't have a proper test seed dump, either ask Steve A. nicely for one, or build one yourself by force-loading the SQL structure file after resetting the current DB:
-
-```bash
-$> rails db:reset
-$> rails structure:load
-```
-
-Then, you'll need to use the Factories in spec/factories to create fixtures.
-
-A fully randomized `seed.rb` script is still a work-in-progress. Contributions are welcome.
 
 Assuming we want the `test` environment DB up and running, you can either have:
 
@@ -331,3 +318,8 @@ TODO
 
 ## License
 The application is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+
+## Supporting
+
+Check out the "sponsor" button at the top of the page.
