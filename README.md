@@ -36,9 +36,19 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 
 ## Dependencies
 
-- GogglesDb base engine, core 7+
+- [GogglesDb base engine](https://github.com/steveoro/goggles_db), core 7+
 - JWT for session handling
 - [Grape gem](https://github.com/ruby-grape/grape) for API definition
+
+You may need to install the GogglesDb gem disabling the download of the embedded test dump with:
+
+```bash
+$> GIT_LFS_SKIP_SMUDGE=1 bundle install
+```
+
+Use the same parameter when updating the gem with `bundle update goggles_db`.
+
+To obtain a valid anonymized test DB dump image, just install [`goggles_db`](https://github.com/steveoro/goggles_db) on localhost by itself.
 
 
 ## Configuration
