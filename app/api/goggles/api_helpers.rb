@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  1.11
+  #   - version:  7.54
   #   - author:   Steve A.
-  #   - build:    20201208
+  #   - build:    20201229
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -111,6 +111,33 @@ module Goggles
     # returns the 'for_name' full-text search scope or the full data domain if the search term is not present.
     def filtering_fulltext_search_for(domain_class, search_term)
       search_term.present? ? domain_class.for_name(search_term) : domain_class
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    # Updates any existing sub-entity list of rows.
+    #
+    # The detail_key in the parent hash points to an array of detail parameters that
+    # shall be used to modify the associated rows. (See example below for events/relays.)
+    #
+    # Assumes that each detail update item regards an already existing row, with a
+    # given 'id' (required).
+    # Will do nothing at all if the row is not found.
+    #
+    # === Example params structure:
+    #
+    # For GogglesDb::MeetingEventReservation or GogglesDb::MeetingRelayReservation:
+    #
+    # 'events'|'relays' => [
+    #   { id: UPDATED_ROW_ID_1, accepted: true|false, ... },
+    #   { id: UPDATED_ROW_ID_2, ... },
+    #   ...
+    # ]
+    def update_subentity_details(params, detail_key, detail_class)
+      params.select { |key, _v| key == detail_key }.fetch(detail_key, []).each do |detail_values|
+        detail_row = detail_class.find_by_id(detail_values['id'])
+        detail_row&.update!(detail_values.reject { |key, _v| key == 'id' })
+      end
     end
   end
 end

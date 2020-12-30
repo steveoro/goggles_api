@@ -77,8 +77,8 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
         it 'updates the row and returns true' do
           expect(response.body).to eq('true')
           updated_row = fixture_season.reload
-          expected_changes.each do |key, _value|
-            expect(updated_row.send(key)).to eq(expected_changes[key])
+          expected_changes.each do |key, value|
+            expect(updated_row.send(key)).to eq(value)
           end
         end
       end

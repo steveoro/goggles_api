@@ -41,6 +41,8 @@ Metrics/BlockLength:
 
 Metrics/ClassLength:
   Max: 120
+  Exclude:
+    - 'app/api/goggles/meeting_reservations_api.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
