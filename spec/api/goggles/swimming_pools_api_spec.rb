@@ -259,10 +259,16 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
         let(:expected_row_count) { GogglesDb::SwimmingPool.for_name(search_term).count }
         before(:each) { get(api_v3_swimming_pools_path, params: { name: search_term }, headers: fixture_headers) }
 
-        it 'returns a JSON array including the existing row' do
-          returned_ids = JSON.parse(response.body).map { |row| row['id'] }
-          expect(returned_ids).to include(fixture_row.id)
-        end
+        # [Steve, 20210111]
+        # We cannot assert the inclusion of the fixture_row.id inside the returned_ids
+        # because of pagination (the expected ID could be shown in a follow-up page).
+        # So, this cannot be tested: (yields random failures)
+        #
+        # it 'returns a JSON array including the existing row' do
+        #   returned_ids = JSON.parse(response.body).map { |row| row['id'] }
+        #   expect(returned_ids).to include(fixture_row.id)
+        # end
+
         it_behaves_like 'successful multiple row response either with OR without pagination links'
       end
 

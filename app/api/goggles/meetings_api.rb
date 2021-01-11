@@ -60,7 +60,7 @@ module Goggles
         optional :relay_fee, type: Integer, desc: 'optional: relay event cost (converted to Euros, if needed)'
         optional :notes, type: String, desc: 'optional: additional notes'
 
-        optional :organization_team_id, type: Integer, desc: 'optional: Team ID of the organizing Team behind this Meeting'
+        optional :home_team_id, type: Integer, desc: 'optional: Team ID of the organizing Team behind this Meeting'
         optional :edition, type: Integer, desc: 'optional: Edition number'
         optional :edition_type_id, type: Integer, desc: 'optional: EditionType ID'
         optional :timing_type_id, type: Integer, desc: 'optional: TimingType ID'

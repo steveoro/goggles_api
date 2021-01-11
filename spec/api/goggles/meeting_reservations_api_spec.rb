@@ -201,82 +201,91 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
   #-- -------------------------------------------------------------------------
   #++
 
-  # describe 'POST /api/v3/meeting_reservation' do
-  #   let(:built_row)  { FactoryBot.build(:meeting_reservation) }
-  #   let(:admin_user) { FactoryBot.create(:user) }
-  #   let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
-  #   let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
-  #   before(:each) do
-  #     expect(built_row).to be_a(GogglesDb::MeetingReservation).and be_valid
-  #     expect(admin_user).to be_a(GogglesDb::User).and be_valid
-  #     expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
-  #     expect(admin_headers).to be_an(Hash).and have_key('Authorization')
-  #   end
+  describe 'POST /api/v3/meeting_reservation' do
+    # To assure that the selected meeting has indeed events, we'll start from the
+    # events themselves; then, proceed to create a new random badge in order to avoid
+    # conflict with any existing reservations:
+    let(:fixture_meeting) do
+      mev = GogglesDb::MeetingEvent.limit(200).sample
+      mev.meeting
+    end
+    let(:fixture_season)   { fixture_meeting.season }
+    let(:fixture_team_aff) { fixture_season.team_affiliations.sample }
+    let(:fixture_category) { fixture_season.category_types.sample }
+    let(:fixture_swimmer)  { FactoryBot.create(:swimmer) }
+    let(:fixture_badge) do
+      FactoryBot.create(
+        :badge,
+        swimmer: fixture_swimmer,
+        category_type: fixture_category,
+        team_affiliation: fixture_team_aff,
+        season: fixture_season,
+        team: fixture_team_aff.team
+      )
+    end
+    let(:valid_parameters) { { badge_id: fixture_badge.id, meeting_id: fixture_meeting.id } }
 
-  #   context 'when using valid parameters,' do
-  #     context 'with an account having ADMIN grants,' do
-  #       before(:each) { post(api_v3_meeting_reservation_path, params: built_row.attributes, headers: admin_headers) }
+    # Make sure domain is coherent with expected context:
+    before(:each) do
+      expect(crud_user).to be_a(GogglesDb::User).and be_valid
+      expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+      expect(crud_headers).to be_an(Hash).and have_key('Authorization')
 
-  #       it 'is successful' do
-  #         expect(response).to be_successful
-  #       end
-  #       it 'updates the row and returns the result msg and the new row as JSON' do
-  #         result = JSON.parse(response.body)
-  #         expect(result).to have_key('msg').and have_key('new')
-  #         expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
-  #         attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
-  #         expect(attr_extractor.call(result['new'])).to eq(attr_extractor.call(built_row.attributes))
-  #       end
-  #     end
+      expect(fixture_meeting).to be_a(GogglesDb::Meeting).and be_valid
+      expect(fixture_meeting.meeting_events.count).to be_positive
+      expect(fixture_season).to be_a(GogglesDb::Season).and be_valid
+      expect(fixture_team_aff).to be_a(GogglesDb::TeamAffiliation).and be_valid
+      expect(fixture_swimmer).to be_a(GogglesDb::Swimmer).and be_valid
+      expect(fixture_category).to be_a(GogglesDb::CategoryType).and be_valid
+      expect(fixture_badge).to be_a(GogglesDb::Badge).and be_valid
+      expect(valid_parameters).to be_an(Hash).and have_key(:badge_id).and have_key(:meeting_id)
+    end
 
-  #     context 'with an account having just CRUD grants,' do
-  #       before(:each) do
-  #         expect(crud_user).to be_a(GogglesDb::User).and be_valid
-  #         expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
-  #         expect(crud_headers).to be_an(Hash).and have_key('Authorization')
-  #         post(api_v3_meeting_reservation_path, params: built_row.attributes, headers: crud_headers)
-  #       end
-  #       it_behaves_like 'a failed auth attempt due to unauthorized credentials'
-  #     end
+    context 'when using valid parameters,' do
+      context 'with an account having CRUD grants,' do
+        before(:each) { post(api_v3_meeting_reservation_path, params: valid_parameters, headers: crud_headers) }
 
-  #     context 'with an account not having any grants,' do
-  #       before(:each) { post(api_v3_meeting_reservation_path, params: built_row.attributes, headers: fixture_headers) }
-  #       it_behaves_like 'a failed auth attempt due to unauthorized credentials'
-  #     end
-  #   end
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+        it 'updates the row and returns the result msg and the new row as JSON' do
+          result = JSON.parse(response.body)
+          expect(result).to have_key('msg').and have_key('new')
+          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
+          expect(result['new']).to have_key('id').and have_key('badge_id').and have_key('meeting_id')
+          expect(result['new']['badge_id'].to_i).to eq(fixture_badge.id)
+          expect(result['new']['meeting_id'].to_i).to eq(fixture_meeting.id)
+        end
+      end
 
-  #   context 'when using an invalid JWT,' do
-  #     before(:each) { post(api_v3_meeting_reservation_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
-  #     it_behaves_like 'a failed auth attempt due to invalid JWT'
-  #   end
+      context 'with an account not having any grants,' do
+        before(:each) { post(api_v3_meeting_reservation_path, params: valid_parameters, headers: fixture_headers) }
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
 
-  #   context 'when using missing or invalid parameters,' do
-  #     before(:each) do
-  #       post(
-  #         api_v3_meeting_reservation_path,
-  #         params: {
-  #           meeting_program_id: built_row.meeting_program_id,
-  #           team_affiliation_id: built_row.team_affiliation_id,
-  #           team_id: -1
-  #         },
-  #         headers: admin_headers
-  #       )
-  #     end
+    context 'when using an invalid JWT,' do
+      before(:each) { post(api_v3_meeting_reservation_path, params: valid_parameters, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like 'a failed auth attempt due to invalid JWT'
+    end
 
-  #     it 'is NOT successful' do
-  #       expect(response).not_to be_successful
-  #     end
-  #     it 'responds with a generic error message and its details in the header' do
-  #       result = JSON.parse(response.body)
-  #       expect(result).to have_key('error')
-  #       expect(result['error']).to eq(I18n.t('api.message.creation_failure'))
-  #       expect(response.headers).to have_key('X-Error-Detail')
-  #       expect(response.headers['X-Error-Detail']).to be_present
-  #     end
-  #   end
-  # end
-  # #-- -------------------------------------------------------------------------
-  # #++
+    context 'when using missing or invalid parameters,' do
+      before(:each) { post(api_v3_meeting_reservation_path, params: { badge_id: -1, meeting_id: fixture_meeting.id }, headers: crud_headers) }
+
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+      it 'responds with a generic error message and its details in the header' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('error')
+        expect(result['error']).to eq(I18n.t('api.message.creation_failure'))
+        expect(response.headers).to have_key('X-Error-Detail')
+        expect(response.headers['X-Error-Detail']).to be_present
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   describe 'DELETE /api/v3/meeting_reservation/:id' do
     before(:each) do

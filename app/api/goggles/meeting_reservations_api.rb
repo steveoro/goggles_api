@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingReservation API Grape controller
   #
-  #   - version:  7.054
+  #   - version:  7.060
   #   - author:   Steve A.
-  #   - build:    20201229
+  #   - build:    20210111
   #
   class MeetingReservationsAPI < Grape::API
     helpers APIHelpers
@@ -79,7 +79,12 @@ module Goggles
 
       # POST /api/:version/meeting_reservation
       #
-      # Creates a new MeetingReservation given the specified parameters.
+      # Creates a new MeetingReservation given the specified parameters, together
+      # with the list of children reservations needed for the associated events & relays
+      # found existing for this Meeting definition.
+      # (The Meeting needs to be completely defined already for the reservation matrix
+      #  to be complete.)
+      #
       # Requires CRUD grant on entity ('MeetingReservation') for the requesting user.
       #
       # == Returns:
@@ -87,52 +92,28 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new MeetingReservation'
+      desc 'Create new MeetingReservation row with event & relay reservation details'
       params do
-        requires :meeting_id, type: Integer, desc: 'optional: associated Meeting ID'
-        optional :user_id, type: Integer, desc: 'optional: associated User ID performing this update'
-        # TODO: either require & use badge (fill swimmer+team) or require swimmer+team
-        optional :team_id, type: Integer, desc: 'optional: associated Team ID'
-        optional :swimmer_id, type: Integer, desc: 'optional: associated Swimmer ID'
-        optional :badge_id, type: Integer, desc: 'optional: associated Badge ID'
-        optional :not_coming, type: Boolean, desc: 'optional: true if the swimmer is not attending at all at this Meeting'
-        optional :confirmed, type: Boolean, desc: 'optional: true if the swimmer has already confirmed enrolling or presence at the Meeting'
-        optional :notes, type: String, desc: 'optional: additional free notes'
-        requires :events, type: Array do
-          requires :meeting_event_id, type: Integer, desc: 'associated MeetingEvent ID'
-          # TODO: set default values from parent reservation
-          optional :minutes, type: Integer, desc: 'optional: minutes for the entry timing'
-          optional :seconds, type: Integer, desc: 'optional: seconds for the entry timing'
-          optional :hundreds, type: Integer, desc: 'optional: hundredths of seconds for the entry timing'
-          optional :accepted, type: Boolean, desc: 'optional: true if the swimmer has accepted taking part in this relay event'
-          optional :notes, type: String, desc: 'optional: additional free notes'
-        end
-        requires :relays, type: Array do
-          requires :meeting_event_id, type: Integer, desc: 'associated MeetingEvent ID'
-          # TODO: set default values from parent reservation
-          optional :accepted, type: Boolean, desc: 'optional: true if the swimmer has accepted taking part in this relay event'
-          optional :notes, type: String, desc: 'optional: additional free notes'
-        end
+        requires :badge_id, type: Integer, desc: 'associated Badge ID'
+        requires :meeting_id, type: Integer, desc: 'associated Meeting ID'
       end
       post do
         api_user = check_jwt_session
         reject_unless_authorized_for_crud(api_user, 'MeetingReservation')
 
-        new_row = GogglesDb::MeetingReservation.create(params)
-        unless new_row.valid?
-          error!(
-            I18n.t('api.message.creation_failure'),
-            500,
-            'X-Error-Detail' => GogglesDb::ValidationErrorTools.recursive_error_for(new_row)
-          )
-        end
+        cmd = GogglesDb::CmdCreateReservation.call(
+          GogglesDb::Badge.find_by_id(params['badge_id']),
+          GogglesDb::Meeting.find_by_id(params['meeting_id']),
+          api_user
+        )
+        error!(I18n.t('api.message.creation_failure'), 500, 'X-Error-Detail' => cmd.errors[:msg]) unless cmd.success?
 
-        { msg: I18n.t('api.message.generic_ok'), new: new_row }
+        { msg: I18n.t('api.message.generic_ok'), new: cmd.result }
       end
 
       # DELETE /api/:version/meeting_reservation/:id
       #
-      # Allows to delete a specific row given its ID.
+      # Allows to delete a specific row with its associated details given its ID.
       # Requires CRUD grant on entity ('MeetingReservation') for the requesting user.
       #
       # == Returns:
