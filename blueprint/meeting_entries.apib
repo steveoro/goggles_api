@@ -19,7 +19,6 @@
             "team_affiliation_id": 202,
             "badge_id": 4677,
             "entry_time_type_id": 1,
-            "user_id": 2,
             "minutes": 1,
             "seconds": 8,
             "hundreds": 80,
@@ -124,8 +123,20 @@
                 "notes": "Meatloaf rump pork ribeye shank sirloin venison tongue.",
                 "name_variations": null,
                 "city_id": 37,
-                "user_id": 2,
                 "home_page_url": "http://watsica.us"
+
+                "city": {
+                    "id": 37,
+                    "name": "Reggio nell Emilia",
+                    "zip": "?",
+                    "area": "Reggio Emilia",
+                    "country": "Italy",
+                    "country_code": "IT",
+                    "latitude": "44.716667",
+                    "longitude": "10.6",
+                    "region": "Emilia-Romagna",
+                    "area_code": "RE"
+                }
             },
 
             "team_affiliation": {
@@ -135,7 +146,6 @@
                 "compute_gogglecup": true,
                 "team_id": 1,
                 "season_id": 131,
-                "user_id": 2,
                 "autofilled": false
             },
 
@@ -153,6 +163,18 @@
                 "user_id": 2,
                 "complete_name": "ALLORO STEFANO",
                 "year_guessed": false
+
+                "associated_user": {
+                    "id": 1,
+                    "name": "steve",
+                    "description": "Stefano Alloro",
+                    "swimmer_id": 142,
+                    // [...Associated user details...]
+                }
+
+                "gender_type": {
+                    // [...Duplicated GenderType details...]
+                }
             },
 
             "pool_type": {
@@ -703,7 +725,6 @@ Returns `true` on success, an empty body when not found.
     ```bash
     $> curl -i -X DELETE -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            -d '{"entry_time_type_id": 1, "minutes": 0, "seconds": 36 }' \
             "<API_HOST:PORT>/api/v3/meeting_entry/1"
     ```
 

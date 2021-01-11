@@ -31,12 +31,25 @@
                 "e_mail": "contact.email@this.is.just.a.fake.domain.com",
                 "contact_name": "Marco Ligabue",
                 "notes": "whatever the team manager needs to write here",
-                "name_variations": null,
-                "city_id": 37,
                 "created_at": "2014-10-19T00:00:00.000Z",
                 "updated_at": "2019-02-17T10:26:36.000Z",
-                // [...]
-                "home_page_url": ""
+                "name_variations": null,
+                "city_id": 37,
+                "home_page_url": "",
+
+                // City details:
+                "city": {
+                    "id": 37,
+                    "name": "Reggio nell Emilia",
+                    "zip": "?",
+                    "area": "Reggio Emilia",
+                    "country": "Italy",
+                    "country_code": "IT",
+                    "latitude": "44.716667",
+                    "longitude": "10.6",
+                    "region": "Emilia-Romagna",
+                    "area_code": "RE"
+                }
             },
 
             // Embedded associated Season:
@@ -58,7 +71,8 @@
                 "badge_fee": "10.0"
             },
 
-            // Embedded Badges (all) from the associated Season:
+            // All Badges beloging to any year found in between
+            // associated Season's `begin_date.year`..`end_date.year`:
             "badges": [
                 {
                     "id": 124947,
@@ -82,7 +96,7 @@
                 // [...season 191 badges...]
             ],
 
-            // Embedded Managers (all) from the associated Season:
+            // All embedded Team Managers for the associated Season:
             "managers": [
                             {
                                 "id": 2,
@@ -94,7 +108,7 @@
                                 // [...]
                                 "last_name": "Ligabue",
                                 "first_name": "Marco",
-                                // [...]
+                                // [...remaning User details...]
                             }
                         ]
         }

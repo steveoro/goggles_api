@@ -1,0 +1,485 @@
+# Group MeetingEvents
+
+## MeetingEvent details [/api/v3/meeting_event/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 1,
+            "lock_version": 0,
+            "created_at": "2014-10-19T00:00:00.000Z",
+            "updated_at": "2014-10-19T00:00:00.000Z",
+            "event_order": 1,
+            "begin_time": "2000-01-01T00:00:00.000Z",
+            "out_of_race": false,
+            "autofilled": false,
+            "notes": null,
+            "meeting_session_id": 12,
+            "event_type_id": 19,
+            "heat_type_id": 3,
+            "split_gender_start_list": true,
+            "split_category_start_list": false,
+
+            "meeting_session": {
+                "id": 12,
+                "session_order": 1,
+                "scheduled_date": "2003-11-30",
+                "warm_up_time": "2000-01-01T00:00:00.000Z",
+                "begin_time": "2000-01-01T00:00:00.000Z",
+                "notes": "",
+                "meeting_id": 12,
+                "swimming_pool_id": 6,
+                "description": "FINALI",
+                "autofilled": false,
+                "day_part_type_id": null
+            },
+
+            "event_type": {
+                "id": 19,
+                "code": "50RA",
+                "length_in_meters": 50,
+                "relay": false,
+                "stroke_type_id": 4,
+                "style_order": 19,
+                "mixed_gender": false,
+                "partecipants": 1,
+                "phases": 1,
+                "phase_length_in_meters": 50,
+                "label": "50 BS",
+                "long_label": "50 BREASTROKE",
+                "alt_label": "50 BS"
+            },
+
+            "pool_type": {
+                "id": 1,
+                "code": "25",
+                "length_in_meters": 25,
+                "eventable": true,
+                "label": "25 M",
+                "long_label": "25 METERS",
+                "alt_label": "25 M"
+            },
+            "stroke_type": {
+                "id": 4,
+                "code": "RA",
+                "eventable": true,
+                "label": "BR",
+                "long_label": "BREASTROKE",
+                "alt_label": "BS"
+            },
+            "heat_type": {
+                "id": 3,
+                "code": "F",
+                "default": false,
+                "label": "FN",
+                "long_label": "FINALS",
+                "alt_label": "FN"
+            },
+
+            "season": {
+                "id": 4,
+                "description": "Circuito Regionale Emilia master CSI 2003/2004",
+                "begin_date": "2003-09-01",
+                "end_date": "2004-06-30",
+                "season_type_id": 2,
+                "header_year": "2003/2004",
+                "edition": 4,
+                "edition_type_id": 5,
+                "timing_type_id": 2,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": null
+            },
+            "season_type": {
+                "id": 2,
+                "code": "MASCSI",
+                "description": "CIRCUITO ITALIANO MASTER CSI",
+                "short_name": "MASTER CSI",
+                "federation_type_id": 2
+            },
+
+            "meeting_programs": [
+                {
+                    "id": 448,
+                    "event_order": 12,
+                    "category_type_id": 43,
+                    "gender_type_id": 1,
+                    "autofilled": false,
+                    "out_of_race": false,
+                    "begin_time": null,
+                    "meeting_event_id": 1,
+                    "pool_type_id": 1,
+                    "time_standard_id": null,
+                    "pool_type": {
+                        "id": 1,
+                        "code": "25",
+                        "length_in_meters": 25,
+                        "eventable": true,
+                        "label": "25 M",
+                        "long_label": "25 METERS",
+                        "alt_label": "25 M"
+                    },
+                    "event_type": {
+                        "id": 19,
+                        "code": "50RA",
+                        "length_in_meters": 50,
+                        "relay": false,
+                        "stroke_type_id": 4,
+                        "style_order": 19,
+                        "mixed_gender": false,
+                        "partecipants": 1,
+                        "phases": 1,
+                        "phase_length_in_meters": 50,
+                        "label": "50 BS",
+                        "long_label": "50 BREASTROKE",
+                        "alt_label": "50 BS"
+                    },
+                    "category_type": {
+                        "id": 43,
+                        "code": "M25",
+                        "federation_code": "3",
+                        "description": "MASTER 25",
+                        "short_name": "M25",
+                        "group_name": "MASTER",
+                        "age_begin": 25,
+                        "age_end": 29,
+                        "relay": false,
+                        "season_id": 4,
+                        "out_of_race": false,
+                        "undivided": false
+                    },
+                    "gender_type": {
+                        "id": 1,
+                        "code": "M",
+                        "label": "MAL",
+                        "long_label": "MALE",
+                        "alt_label": "MALE"
+                    },
+                    "stroke_type": {
+                        "id": 4,
+                        "code": "RA",
+                        "eventable": true,
+                        "label": "BR",
+                        "long_label": "BREASTROKE",
+                        "alt_label": "BS"
+                    }
+                },
+
+                {
+                    "id": 449,
+                    "event_order": 13,
+                    "category_type_id": 44,
+                    "gender_type_id": 2,
+                    "autofilled": false,
+                    "out_of_race": false,
+                    "begin_time": null,
+                    "meeting_event_id": 1,
+                    "pool_type_id": 1,
+                    "time_standard_id": null,
+                    "pool_type": {
+                        "id": 1,
+                        "code": "25",
+                        "length_in_meters": 25,
+                        "eventable": true,
+                        "label": "25 M",
+                        "long_label": "25 METERS",
+                        "alt_label": "25 M"
+                    },
+                    "event_type": {
+                        "id": 19,
+                        "code": "50RA",
+                        "length_in_meters": 50,
+                        "relay": false,
+                        "stroke_type_id": 4,
+                        "style_order": 19,
+                        "mixed_gender": false,
+                        "partecipants": 1,
+                        "phases": 1,
+                        "phase_length_in_meters": 50,
+                        "label": "50 BS",
+                        "long_label": "50 BREASTROKE",
+                        "alt_label": "50 BS"
+                    },
+                    "category_type": {
+                        "id": 44,
+                        "code": "M30",
+                        "federation_code": "4",
+                        "description": "MASTER 30",
+                        "short_name": "M30",
+                        "group_name": "MASTER",
+                        "age_begin": 30,
+                        "age_end": 34,
+                        "relay": false,
+                        "season_id": 4,
+                        "out_of_race": false,
+                        "undivided": false
+                    },
+                    "gender_type": {
+                        "id": 2,
+                        "code": "F",
+                        "label": "FEM",
+                        "long_label": "FEMALE",
+                        "alt_label": "FEMALE"
+                    },
+                    "stroke_type": {
+                        "id": 4,
+                        "code": "RA",
+                        "eventable": true,
+                        "label": "BR",
+                        "long_label": "BREASTROKE",
+                        "alt_label": "BS"
+                    }
+                },
+
+                // ...All remaining MeetingProgram rows w/ details...
+            ]
+        }
+
+
+
+### find [GET]
+The MeetingEvent instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities (some with minimal attributes):
+- `MeetingSession`
+- `HeatType`
+- `Season`
+- `SeasonType`
+- `MeetingProgram` (all associated rows, one for each category), each one embedding its own:
+    - `EventType`
+    - `PoolType`
+    - `CategoryType`
+    - `GenderType`
+    - `StrokeType`
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number, required) - MeetingEvent ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_event/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meeting_event/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":1, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [MeetingEvent details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# MeetingEvent list [/api/v3/meeting_events{?page,per_page,meeting_id,meeting_session_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/meeting_events?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/meeting_events?page=2&team_id=1>; rel=\"next\""
+            Total: 46
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // MeetingEvent details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // MeetingEvent details 2
+                {
+                    "id": 15,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of MeetingEvents associated to the specified filtering values,
+returned as JSON and filtered by :
+
+- `meeting_id` (**required**)
+- `meeting_session_id`
+
+Returns the exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + meeting_id: 1 (number, required) - associated Meeting ID
+    + meeting_session_id: 1 (number, optional) - associated MeetingSession ID
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_events?meeting_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meeting_events',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { meeting_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [MeetingEvent list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

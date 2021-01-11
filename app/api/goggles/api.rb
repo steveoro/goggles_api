@@ -9,9 +9,9 @@ module Goggles
   #
   # Mounts all required API modules
   #
-  #   - version:  7.54
+  #   - version:  7.60
   #   - author:   Steve A.
-  #   - build:    20201229
+  #   - build:    20210111
   #
   class API < Grape::API
     helpers APIHelpers
@@ -58,6 +58,7 @@ module Goggles
     mount LookupAPI
     mount MeetingsAPI
     mount MeetingEntriesAPI
+    mount MeetingEventsAPI
     mount MeetingReservationsAPI
     mount SeasonsAPI
     mount SessionAPI

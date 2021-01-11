@@ -21,7 +21,6 @@
             "notes": "whatever the team manager needs to write here",
             "name_variations": null,
             "city_id": 37,
-            // [...]
             "home_page_url": "",
 
             // Embedded associated City:
@@ -41,13 +40,11 @@
             "badges": [
                 {
                     "id": 124914,
-                    // [...]
                     "number": "43446",
                     "season_id": 192,
                     "team_id": 142,
                     "team_id": 1,
                     "category_type_id": 1293,
-                    // [...]
                     "entry_time_type_id": 5,
                     "team_affiliation_id": 5726,
                     "final_rank": null,
@@ -55,17 +52,16 @@
                     "fees_due": true,
                     "badge_due": false,
                     "relays_due": true
+                    // [...]
                 },
                 // [...season 192 badges...]
                 {
                     "id": 124947,
-                    // [...]
                     "number": "04204788",
                     "season_id": 191,
                     "team_id": 142,
                     "team_id": 1,
                     "category_type_id": 1320,
-                    // [...]
                     "entry_time_type_id": 5,
                     "team_affiliation_id": 5727,
                     "final_rank": null,
@@ -73,6 +69,7 @@
                     "fees_due": false,
                     "badge_due": false,
                     "relays_due": false
+                    // [...]
                 },
                 // [...season 191 badges...]
             ],
@@ -87,9 +84,8 @@
                     "compute_gogglecup": true,
                     "team_id": 1,
                     "season_id": 191,
-                    "user_id": 2,
-                    // [...]
-                    "autofilled": false
+                    "autofilled": false,
+                    // [...remaining TeamAffiliation details...]
                 },
                 {
                     "id": 5726,
@@ -99,8 +95,8 @@
                     "compute_gogglecup": true,
                     "team_id": 1,
                     "season_id": 192,
-                    // [...]
-                    "autofilled": false
+                    "autofilled": false,
+                    // [...remaining TeamAffiliation details...]
                 }
             ]
         }
@@ -111,7 +107,7 @@ The Team instance matching the specified `id` returned as JSON.
 
 The returned result includes these other 1st-level linked entities:
 - `City`
-- `TeamAffiliation`, list of rows found for the last 2 most recent Seasons
+- `TeamAffiliation`, list of rows found for the last 2 most recent Seasons (given there's any association dating back as far as 1 year)
 - `Badge`, as above, list of rows found for the selected TeamAffiliations
 
 :key: `Authorization` request header => valid JWT **required**

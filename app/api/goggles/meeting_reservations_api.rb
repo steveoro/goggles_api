@@ -51,7 +51,7 @@ module Goggles
           optional :minutes, type: Integer, desc: 'optional: minutes for the entry timing'
           optional :seconds, type: Integer, desc: 'optional: seconds for the entry timing'
           optional :hundreds, type: Integer, desc: 'optional: hundredths of seconds for the entry timing'
-          optional :accepted, type: Boolean, desc: 'optional: true if the swimmer has accepted taking part in this relay event'
+          optional :accepted, type: Boolean, desc: 'optional: true if the swimmer has accepted taking part in this event'
           optional :notes, type: String, desc: 'optional: additional free notes'
         end
         optional :relays, type: Array do
@@ -82,8 +82,7 @@ module Goggles
       # Creates a new MeetingReservation given the specified parameters, together
       # with the list of children reservations needed for the associated events & relays
       # found existing for this Meeting definition.
-      # (The Meeting needs to be completely defined already for the reservation matrix
-      #  to be complete.)
+      # (Thus, the Meeting needs to be already defined for the "reservation matrix" to result complete.)
       #
       # Requires CRUD grant on entity ('MeetingReservation') for the requesting user.
       #

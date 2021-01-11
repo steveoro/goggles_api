@@ -1,0 +1,1153 @@
+# Group MeetingReservations
+
+## MeetingReservation details [/api/v3/meeting_reservation/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 1,
+            "meeting_id": 16102,
+            "user_id": 2,
+            "team_id": 1,
+            "swimmer_id": 142,
+            "badge_id": 60192,
+            "notes": "",
+            "not_coming": false,
+            "confirmed": true,
+            "created_at": "2017-01-10T11:52:39.000Z",
+            "updated_at": "2017-01-10T12:21:45.000Z",
+            "meeting": {
+                "id": 16102,
+                "code": "csiprova2",
+                "header_year": "2016/2017",
+                "edition_label": "2016/2017"
+            },
+            "user": {
+                "id": 2,
+                "name": "leega",
+                "description": "Marco Ligabue",
+                "swimmer_id": 23,
+                "email": "leegaweb@gmail.com",
+                "encrypted_password": "$2a$10$.MsPtU248xvGAN26mxjntOgMeSYvleYd3qe9NI5qk7pLRVxCgbjga",
+                "reset_password_token": null,
+                "reset_password_sent_at": null,
+                "remember_created_at": "2018-04-13T08:08:27.000Z",
+                "sign_in_count": 1364,
+                "current_sign_in_at": "2020-09-16T09:03:49.000Z",
+                "last_sign_in_at": "2020-09-11T16:08:08.000Z",
+                "current_sign_in_ip": "93.36.217.35",
+                "last_sign_in_ip": "93.36.217.35",
+                "confirmation_token": "f767e941f857f10d7dfed303c7aa2844a2c0446a3295fb0cc4c7deb283689e79",
+                "confirmed_at": "2013-10-23T17:10:05.000Z",
+                "confirmation_sent_at": "2013-10-23T17:10:02.000Z",
+                "unconfirmed_email": null,
+                "failed_attempts": 0,
+                "unlock_token": null,
+                "locked_at": null,
+                "use_email_data_updates_notify": false,
+                "use_email_achievements_notify": false,
+                "use_email_newsletter_notify": false,
+                "use_email_community_notify": false,
+                "avatar_resource_filename": null,
+                "swimmer_level_type_id": null,
+                "coach_level_type_id": null,
+                "authentication_token": "DKQjdxe5mZXXTSFyUMjM",
+                "outstanding_goggle_score_bias": 800,
+                "outstanding_standard_score_bias": 800,
+                "last_name": "Ligabue",
+                "first_name": "Marco",
+                "year_of_birth": 1971,
+                "facebook_uid": null,
+                "goggle_uid": null,
+                "twitter_uid": null
+            },
+
+            "badge": {
+                "id": 60192,
+                "number": "04205745",
+                "season_id": 161,
+                "swimmer_id": 142,
+                "team_id": 1,
+                "category_type_id": 980,
+                "entry_time_type_id": 3,
+                "team_affiliation_id": 2754,
+                "final_rank": null,
+                "off_gogglecup": false,
+                "fees_due": false,
+                "badge_due": false,
+                "relays_due": false,
+
+                "swimmer": {
+                    "id": 142,
+                    "complete_name": "ALLORO STEFANO",
+                    "last_name": "ALLORO",
+                    "first_name": "STEFANO",
+                    "year_of_birth": 1969,
+                    "year_guessed": false
+                },
+                "gender_type": {
+                    "id": 1,
+                    "code": "M",
+                    "label": "MAL",
+                    "long_label": "MALE",
+                    "alt_label": "MALE"
+                },
+                "category_type": {
+                    "id": 980,
+                    "code": "M45",
+                    "federation_code": "7",
+                    "description": "MASTER 45",
+                    "short_name": "M45",
+                    "group_name": "MASTER",
+                    "age_begin": 45,
+                    "age_end": 49,
+                    "relay": false,
+                    "season_id": 161,
+                    "out_of_race": false,
+                    "undivided": false
+                },
+                "entry_time_type": {
+                    "id": 3,
+                    "code": "G",
+                    "label": "GC",
+                    "long_label": "GOGGLE CUP",
+                    "alt_label": "GC"
+                }
+            },
+
+            "team": {
+                "id": 1,
+                "name": "Lake Ramiro Swimming Club ASD",
+                "editable_name": "Lake Ramiro Swimming Club ASD",
+                "address": "9038 Littel Lights",
+                "zip": "028088",
+                "phone_mobile": "265-752-0508 x022",
+                "phone_number": "493-278-0409",
+                "fax_number": null,
+                "e_mail": "zenaida@example.net",
+                "contact_name": "Dede Sipes",
+                "notes": "Meatloaf rump pork ribeye shank sirloin venison tongue.",
+                "name_variations": null,
+                "city_id": 37,
+                "home_page_url": "http://watsica.us",
+                "city": {
+                    "id": 37,
+                    "name": "Reggio nell Emilia",
+                    "zip": "?",
+                    "area": "Reggio Emilia",
+                    "country": "Italy",
+                    "country_code": "IT",
+                    "latitude": "44.716667",
+                    "longitude": "10.6",
+                    "region": "Emilia-Romagna",
+                    "area_code": "RE"
+                }
+            },
+
+            "swimmer": {
+                "id": 142,
+                "last_name": "ALLORO",
+                "first_name": "STEFANO",
+                "year_of_birth": 1969,
+                "phone_mobile": null,
+                "phone_number": null,
+                "e_mail": null,
+                "nickname": "",
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                "complete_name": "ALLORO STEFANO",
+                "year_guessed": false,
+
+                "associated_user": {
+                    "id": 1,
+                    "name": "steve",
+                    "description": "Stefano Alloro",
+                    "swimmer_id": 142,
+                    "email": "steve.alloro@gmail.com",
+                    "encrypted_password": "$2a$04$w0GRgP7gkKmOzoESHrBU7.spxIOggDhUB3lQJniqqNLYTjHZcDi9u",
+                    "reset_password_token": null,
+                    "reset_password_sent_at": null,
+                    "remember_created_at": "2019-12-06T19:52:15.000Z",
+                    "sign_in_count": 654,
+                    "current_sign_in_at": "2020-02-09T18:17:29.000Z",
+                    "last_sign_in_at": "2020-02-06T09:23:04.000Z",
+                    "current_sign_in_ip": "82.54.169.188",
+                    "last_sign_in_ip": "188.11.195.229",
+                    "confirmation_token": "201a65fdf52975e0b4c4de988192fb53695a266d85b83975954127db6a4b54e1",
+                    "confirmed_at": "2013-10-23T17:10:05.000Z",
+                    "confirmation_sent_at": "2013-10-23T17:10:00.000Z",
+                    "unconfirmed_email": null,
+                    "failed_attempts": 0,
+                    "unlock_token": null,
+                    "locked_at": null,
+                    "use_email_data_updates_notify": false,
+                    "use_email_achievements_notify": false,
+                    "use_email_newsletter_notify": false,
+                    "use_email_community_notify": false,
+                    "avatar_resource_filename": null,
+                    "swimmer_level_type_id": null,
+                    "coach_level_type_id": null,
+                    "authentication_token": "zcjHAztDSzevSqaKsC3D",
+                    "outstanding_goggle_score_bias": 800,
+                    "outstanding_standard_score_bias": 800,
+                    "last_name": "Alloro",
+                    "first_name": "Stefano",
+                    "year_of_birth": 1969,
+                    "facebook_uid": null,
+                    "goggle_uid": null,
+                    "twitter_uid": null
+                },
+                "gender_type": {
+                    "id": 1,
+                    "code": "M",
+                    "label": "MAL",
+                    "long_label": "MALE",
+                    "alt_label": "MALE"
+                }
+            },
+
+            "meeting_event_reservations": [
+                {
+                    "id": 1,
+                    "meeting_id": 16102,
+                    "team_id": 1,
+                    "swimmer_id": 142,
+                    "badge_id": 60192,
+                    "meeting_event_id": 6699,
+                    "minutes": 2,
+                    "seconds": 37,
+                    "hundreds": 30,
+                    "accepted": false,
+                    "meeting_reservation_id": 1,
+
+                    "meeting_event": {
+                        "id": 6699,
+                        "event_order": 1,
+                        "begin_time": "2000-01-01T00:00:00.000Z",
+                        "out_of_race": false,
+                        "autofilled": true,
+                        "notes": null,
+                        "meeting_session_id": 1298,
+                        "event_type_id": 4,
+                        "heat_type_id": 3,
+                        "split_gender_start_list": true,
+                        "split_category_start_list": false,
+
+                        "event_type": {
+                            "id": 4,
+                            "code": "200SL",
+                            "length_in_meters": 200,
+                            "relay": false,
+                            "stroke_type_id": 1,
+                            "style_order": 4,
+                            "mixed_gender": false,
+                            "partecipants": 1,
+                            "phases": 1,
+                            "phase_length_in_meters": 200,
+                            "label": "200 FS",
+                            "long_label": "200 FREESTYLE",
+                            "alt_label": "200 FS"
+                        },
+                        "pool_type": {
+                            "id": 1,
+                            "code": "25",
+                            "length_in_meters": 25,
+                            "eventable": true,
+                            "label": "25 M",
+                            "long_label": "25 METERS",
+                            "alt_label": "25 M"
+                        },
+                        "stroke_type": {
+                            "id": 1,
+                            "code": "SL",
+                            "eventable": true,
+                            "label": "FS",
+                            "long_label": "FREESTYLE",
+                            "alt_label": "CR"
+                        },
+                        "heat_type": {
+                            "id": 3,
+                            "code": "F",
+                            "default": false,
+                            "label": "FN",
+                            "long_label": "FINALS",
+                            "alt_label": "FN"
+                        }
+                    }
+                },
+
+                {
+                    "id": 2,
+                    "meeting_id": 16102,
+                    "team_id": 1,
+                    "swimmer_id": 142,
+                    "badge_id": 60192,
+                    "meeting_event_id": 6700,
+                    "minutes": 0,
+                    "seconds": 37,
+                    "hundreds": 30,
+                    "accepted": true,
+                    "meeting_reservation_id": 1,
+
+                    "meeting_event": {
+                        "id": 6700,
+                        "event_order": 2,
+                        "begin_time": "2000-01-01T00:00:00.000Z",
+                        "out_of_race": false,
+                        "autofilled": true,
+                        "notes": null,
+                        "meeting_session_id": 1298,
+                        "event_type_id": 15,
+                        "heat_type_id": 3,
+                        "split_gender_start_list": true,
+                        "split_category_start_list": false,
+
+                        "event_type": {
+                            "id": 15,
+                            "code": "50DO",
+                            "length_in_meters": 50,
+                            "relay": false,
+                            "stroke_type_id": 3,
+                            "style_order": 15,
+                            "mixed_gender": false,
+                            "partecipants": 1,
+                            "phases": 1,
+                            "phase_length_in_meters": 50,
+                            "label": "50 BK",
+                            "long_label": "50 BACKSTROKE",
+                            "alt_label": "50 BK"
+                        },
+                        "pool_type": {
+                            "id": 1,
+                            "code": "25",
+                            "length_in_meters": 25,
+                            "eventable": true,
+                            "label": "25 M",
+                            "long_label": "25 METERS",
+                            "alt_label": "25 M"
+                        },
+                        "stroke_type": {
+                            "id": 3,
+                            "code": "DO",
+                            "eventable": true,
+                            "label": "BK",
+                            "long_label": "BACKSTROKE",
+                            "alt_label": "BA"
+                        },
+                        "heat_type": {
+                            "id": 3,
+                            "code": "F",
+                            "default": false,
+                            "label": "FN",
+                            "long_label": "FINALS",
+                            "alt_label": "FN"
+                        }
+                    }
+                },
+
+                // ...Additional MeetingEventReservation rows w/ details..
+            ],
+
+            "meeting_relay_reservations": [
+                {
+                    "id": 1,
+                    "meeting_id": 16102,
+                    "team_id": 1,
+                    "swimmer_id": 142,
+                    "badge_id": 60192,
+                    "meeting_event_id": 6703,
+                    "notes": null,
+                    "accepted": true,
+                    "meeting_reservation_id": 1,
+
+                    "meeting_event": {
+                        "id": 6703,
+                        "event_order": 5,
+                        "begin_time": "2000-01-01T00:00:00.000Z",
+                        "out_of_race": false,
+                        "autofilled": true,
+                        "notes": null,
+                        "meeting_session_id": 1298,
+                        "event_type_id": 27,
+                        "heat_type_id": 3,
+                        "split_gender_start_list": true,
+                        "split_category_start_list": false,
+
+                        "event_type": {
+                            "id": 27,
+                            "code": "S4X100SL",
+                            "length_in_meters": 400,
+                            "relay": true,
+                            "stroke_type_id": 1,
+                            "style_order": 27,
+                            "mixed_gender": false,
+                            "partecipants": 4,
+                            "phases": 4,
+                            "phase_length_in_meters": 100,
+                            "label": "4x100 FS",
+                            "long_label": "4x100 FREESTYLE RELAY",
+                            "alt_label": "4x100 FS"
+                        },
+                        "pool_type": {
+                            "id": 1,
+                            "code": "25",
+                            "length_in_meters": 25,
+                            "eventable": true,
+                            "label": "25 M",
+                            "long_label": "25 METERS",
+                            "alt_label": "25 M"
+                        },
+                        "stroke_type": {
+                            "id": 1,
+                            "code": "SL",
+                            "eventable": true,
+                            "label": "FS",
+                            "long_label": "FREESTYLE",
+                            "alt_label": "CR"
+                        },
+                        "heat_type": {
+                            "id": 3,
+                            "code": "F",
+                            "default": false,
+                            "label": "FN",
+                            "long_label": "FINALS",
+                            "alt_label": "FN"
+                        }
+                    }
+                }
+            ]
+        }
+
+
+### find [GET]
+The MeetingReservation instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities (some with minimal attributes):
+- `Team`
+- `TeamAffiliation`
+- `Swimmer`
+- `PoolType`
+- `EventType`
+- `CategoryType`
+- `GenderType`
+
+Currently, for convenience and for ease of reference, most sub-entities like `gender_type` or `pool_type`
+are kept duplicated even if already present inside parent entities.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number, required) - MeetingReservation ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_reservation/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meeting_reservation/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":1, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [MeetingReservation details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the MeetingReservation fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'MeetingReservation' or have generic admin grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+| Master field | Sub-field | Data type |  description |
+| --- | --- | --- | --- |
+| `not_coming` | | boolean | `true` if the swimmer is not attending at all at this Meeting |
+| `confirmed` | | boolean | `true` if the swimmer has already confirmed enrolling or presence at the Meeting |
+| `notes` | | string | additional free notes |
+| `events` | --- | array | array of event reservation parameters _(see below)_ |
+| | `id` | integer | MeetingEventReservation ID (required whenever including any of the nested fields) |
+| | `minutes` | integer | minutes for the entry timing |
+| | `seconds` | integer | seconds for the entry timing |
+| | `hundreds` | integer | hundreds for the entry timing |
+| | `accepted` | boolean | `true` if the swimmer has accepted taking part in this event |
+| | `notes` | string | additional free notes, specific for this event |
+| `relays` | --- | array | array of relay reservation parameters _(see below)_ |
+| | `id` | integer | MeetingRelayReservation ID (required whenever including any of the nested fields) |
+| | `accepted` | boolean | `true` if the swimmer has accepted taking part in this relay event |
+| | `notes` | string | additional free notes, specific for this relay |
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number, required) - MeetingReservation ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{\"not_coming\":false,\"confirmed\":true,\"events\":[{\"id\":6699,\"accepted\":false,\"minutes\":2,\"seconds\":37,\"hundreds\":30}]}' \
+            "<API_HOST:PORT>/api/v3/meeting_reservation/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/meeting_reservation/1',
+                payload: {
+                    not_coming: false,
+                    confirmed: true,
+                    events: [
+                        {
+                            id: 6699,
+                            accepted: false,
+                            minutes: 2,
+                            seconds: 37,
+                            hundreds: 30
+                        }
+                    ]
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "not_coming": false,
+                "confirmed": true,
+                "events": [
+                    {
+                        "id": 6699,
+                        "accepted": false,
+                        "minutes": 2,
+                        "seconds": 37,
+                        "hundreds": 30
+                    }
+                ]
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "not_coming": false,
+                "confirmed": true,
+                "events": [
+                    {
+                        "id": 6699,
+                        "accepted": false,
+                        "minutes": 2,
+                        "seconds": 37,
+                        "hundreds": 30
+                    }
+                ]
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "not_coming": false,
+                "confirmed": true,
+                "events": [
+                    {
+                        "id": 6699,
+                        "accepted": false,
+                        "minutes": 2,
+                        "seconds": 37,
+                        "hundreds": 30
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "not_coming": false,
+                "confirmed": true,
+                "events": [
+                    {
+                        "id": 6699,
+                        "accepted": false,
+                        "minutes": 2,
+                        "seconds": 37,
+                        "hundreds": 30
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "not_coming": false,
+                "confirmed": true,
+                "events": [
+                    {
+                        "id": 6699,
+                        "accepted": false,
+                        "minutes": 2,
+                        "seconds": 37,
+                        "hundreds": 30
+                    }
+                ]
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new MeetingReservation given the specified body parameters, together
+with the list of children reservations needed for the associated events & relays
+found for this Meeting definition.
+
+(Thus, the Meeting needs to be already defined for the "reservation matrix" to result complete.)
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'MeetingReservation' or have generic admin grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `badge_id` | integer | **required**, associated Badge ID |
+| `meeting_id` | integer | **required**, associated Meeting ID |
+
+
+* * *
+
+
++ Attributes
+    + badge_id (number, required) - associated Badge ID
+    + meeting_id (number, required) - associated Meeting ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"badge_id": 60192, "meeting_id": 16102 }'
+            "<API_HOST:PORT>/api/v3/meeting_reservation"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/meeting_reservation',
+            {
+                'badge_id': 60192,
+                'meeting_id': 16102
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                'badge_id': 60192,
+                'meeting_id': 16102
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": "NEW_ROW_AS_JSON"
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                'badge_id': 60192,
+                'meeting_id': 16102
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                'badge_id': 60192,
+                'meeting_id': 16102
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                'badge_id': 60192,
+                'meeting_id': 16102
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows to delete a specific row with its associated details given its `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'MeetingReservation' or have generic admin grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 1 (number, required) - MeetingReservation ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_reservation/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/meeting_reservation/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# MeetingReservation list [/api/v3/meeting_reservations{?page,per_page,meeting_id,team_id,swimmer_id,badge_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/meeting_reservations?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/meeting_reservations?page=2&team_id=1>; rel=\"next\""
+            Total: 46
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // MeetingReservation details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // MeetingReservation details 2
+                {
+                    "id": 15,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of MeetingReservations associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `meeting_id`
+- `team_id`
+- `swimmer_id`
+- `badge_id`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + meeting_id: 1 (number, optional) - associated Meeting ID
+    + team_id: 1 (number, optional) - associated Team ID
+    + swimmer_id: 142 (number, optional) - associated Swimmer ID
+    + badge_id: 156 (number, optional) - associated Badge ID
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_reservations?team_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meeting_reservations',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { team_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [MeetingReservation list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

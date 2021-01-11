@@ -37,7 +37,19 @@
                 "gender_type_id": 1,
                 "user_id": 2,
                 "complete_name": "ALLORO STEFANO",
-                "year_guessed": false
+                "year_guessed": false,
+
+                "associated_user": {
+                    "id": 1,
+                    "name": "steve",
+                    "description": "Stefano Alloro",
+                    "swimmer_id": 142,
+                    // [...Associated user details...]
+                }
+
+                "gender_type": {
+                    // [...Duplicated GenderType details...]
+                }
             },
 
             "gender_type": {
@@ -88,8 +100,21 @@
                 "notes": "L'IBAN per i pagamenti delle iscrizioni alle gare è IT91T0347501605CC0010433557",
                 "name_variations": null,
                 "city_id": 37,
-                "user_id": 2,
-                "home_page_url": ""
+                "home_page_url": "",
+
+                // City details:
+                "city": {
+                    "id": 37,
+                    "name": "Reggio nell Emilia",
+                    "zip": "?",
+                    "area": "Reggio Emilia",
+                    "country": "Italy",
+                    "country_code": "IT",
+                    "latitude": "44.716667",
+                    "longitude": "10.6",
+                    "region": "Emilia-Romagna",
+                    "area_code": "RE"
+                }
             },
 
             "category_type": {
@@ -122,10 +147,10 @@
 The Badge instance matching the specified `id` returned as JSON.
 
 The returned result includes these other 1st-level linked entities:
-- `Swimmer`
+- `Swimmer` (including associated `User` & `GenderType`)
 - `TeamAffiliation`
 - `Season`
-- `Team`
+- `Team` (including `City`)
 - `CategoryType`
 - `EntryTimeType`
 
