@@ -150,9 +150,40 @@
                     "team_points": "3.0",
                     "team_affiliation_id": 3,
                     "personal_best": false,
-                    "season_type_best": false
+                    "season_type_best": false,
+                    "swimmer": {
+                        "id": 47,
+                        "last_name": "Pacocha",
+                        "first_name": "Christa",
+                        "year_of_birth": 1960,
+                        "phone_mobile": null,
+                        "phone_number": null,
+                        "e_mail": "Christa.Pacocha-205@fake.example.com",
+                        "nickname": "Christ the Wolverine",
+                        "associated_user_id": null,
+                        "gender_type_id": 2,
+                        "complete_name": "Pacocha Christa 87497",
+                        "year_guessed": false,
+                        "associated_user": null,
+                        "gender_type": {
+                            "id": 2,
+                            "code": "F",
+                            "label": "FEM",
+                            "long_label": "FEMALE",
+                            "alt_label": "FEMALE"
+                        }
+                    },
+                    "team_affiliation": {
+                        "id": 3,
+                        "number": "",
+                        "name": "STELLA AZZURRA MO",
+                        "compute_gogglecup": false,
+                        "team_id": 4,
+                        "season_id": 1,
+                        "autofilled": false
+                    },
+                    "disqualification_code_type": null
                 },
-
                 {
                     "id": 19923,
                     "rank": 2,
@@ -174,7 +205,39 @@
                     "team_points": "8.0",
                     "team_affiliation_id": 3,
                     "personal_best": true,
-                    "season_type_best": false
+                    "season_type_best": false,
+                    "swimmer": {
+                        "id": 18,
+                        "last_name": "Baumbach",
+                        "first_name": "Lina",
+                        "year_of_birth": 1993,
+                        "phone_mobile": null,
+                        "phone_number": null,
+                        "e_mail": "Lina.Baumbach-67@fake.example.org",
+                        "nickname": "Lina the Fox",
+                        "associated_user_id": null,
+                        "gender_type_id": 2,
+                        "complete_name": "Baumbach Lina 75778",
+                        "year_guessed": false,
+                        "associated_user": null,
+                        "gender_type": {
+                            "id": 2,
+                            "code": "F",
+                            "label": "FEM",
+                            "long_label": "FEMALE",
+                            "alt_label": "FEMALE"
+                        }
+                    },
+                    "team_affiliation": {
+                        "id": 3,
+                        "number": "",
+                        "name": "STELLA AZZURRA MO",
+                        "compute_gogglecup": false,
+                        "team_id": 4,
+                        "season_id": 1,
+                        "autofilled": false
+                    },
+                    "disqualification_code_type": null
                 },
 
                 // ...Remaining individual results...
@@ -192,7 +255,7 @@ The returned result includes these other 1st-level linked entities (some with mi
 - `CategoryType`
 - `GenderType`
 - `StrokeType`
-- `MeetingIndividualResult` (all associated rows)
+- `MeetingIndividualResult` (all associated rows + sub-entities)
 
 :key: `Authorization` request header => valid JWT **required**
 
