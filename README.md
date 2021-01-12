@@ -2,7 +2,6 @@
 
 [![Build Status](https://steveoro.semaphoreci.com/badges/goggles_api/branches/master.svg)](https://steveoro.semaphoreci.com/projects/goggles_api)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ffc7f57dfb4ce9d73056/maintainability)](https://codeclimate.com/github/steveoro/goggles_api/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/ffc7f57dfb4ce9d73056/test_coverage)](https://codeclimate.com/github/steveoro/goggles_api/test_coverage)
 [![codecov](https://codecov.io/gh/steveoro/goggles_api/branch/master/graph/badge.svg?token=A5WG7PJ9HF)](https://codecov.io/gh/steveoro/goggles_api)
 [![Coverage Status](https://coveralls.io/repos/github/steveoro/goggles_api/badge.svg?branch=master)](https://coveralls.io/github/steveoro/goggles_api?branch=master)
 ![](https://api.kindspeech.org/v1/badge)
