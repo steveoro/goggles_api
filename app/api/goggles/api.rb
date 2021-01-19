@@ -9,7 +9,7 @@ module Goggles
   #
   # Mounts all required API modules
   #
-  #   - version:  7.60
+  #   - version:  7.061
   #   - author:   Steve A.
   #   - build:    20210111
   #
@@ -68,6 +68,7 @@ module Goggles
     mount TeamAffiliationsAPI
     mount TeamManagersAPI
     mount TeamsAPI
+    mount ToolsAPI
     mount UsersAPI
   end
 end

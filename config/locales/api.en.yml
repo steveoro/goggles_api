@@ -2,6 +2,7 @@ en:
   api:
     message:
       unauthorized: 'Unauthorized'
+      invalid_parameter: 'Invalid parameter specified'
       generic_ok: 'OK'
       creation_failure: 'ERROR during creation'
       generic_failure: 'ERROR: unexpected failure'

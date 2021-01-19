@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  7.54
+  #   - version:  7.061
   #   - author:   Steve A.
-  #   - build:    20201229
+  #   - build:    20210119
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -43,6 +43,14 @@ module Goggles
       return unless GogglesDb::AppParameter.maintenance?
 
       error!(I18n.t('api.message.status.maintenance'), 401, 'X-Error-Detail' => I18n.t('api.message.status.maintenance.maintenance_description'))
+    end
+
+    # Yields a parameter error if the specified +entity_id+ is not found among +entity_class+ rows.
+    # Returns the entity row when found.
+    def reject_unless_found(entity_id, entity_class)
+      result_row = entity_class.find_by_id(entity_id)
+      error!(I18n.t('api.message.invalid_parameter'), 401, 'X-Error-Detail' => "#{entity_class}, ID: #{entity_id}") unless result_row
+      result_row
     end
 
     # Yields the 'Unauthorized' error if the user does not have associated grants for CRUD operations

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Goggles
-  # = Goggles API v3: ManagedAffiliation (team/manager) API Grape controller
+  # = Goggles API v3: ManagedAffiliation (team/manager) API
   #
-  #   - version:  7.52
+  #   - version:  7.052
   #   - author:   Steve A.
   #   - build:    20201221
   #

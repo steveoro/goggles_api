@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Goggles
-  # = Goggles API v3: Swimmer API Grape controller
+  # = Goggles API v3: Lookup API for all subentities
   #
-  #   - version:  1.02
+  #   - version:  7.060
   #   - author:   Steve A.
   #   - build:    20201209
   #

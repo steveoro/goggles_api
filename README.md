@@ -8,17 +8,8 @@
 
 Wraps all main Goggles' API endpoints in a stand-alone application.
 
-The endpoints allow an authorized account to manage:
+The endpoints allow an authorized account to manage most DB entities as they are defined in the DB structure, returning usually a composed result that includes all first-level associations and look-up entities as well.
 
-- sessions
-- swimmer data
-- team data
-- badge data
-- meeting data
-- meeting results
-- meeting reservations
-- lap times
-- trainings & workout routines
 
 
 ## Wiki & HOW-TOs
@@ -33,42 +24,87 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 - MariaDb 10.3.25+ or MySql equivalent version
 
 
-## Dependencies
+
+## API documentation
+
+The official API documentation is in API Blueprint format and stored directly on this repository.
+
+Main index file is `api_main.apib` and all nested pages should be stored under `/blueprint` and included by the main file.
+
+To easily browse the documents while working on them, we recommend the usage of Visual Studio Code with the API Blueprint Viewer extension installed, since generating a new single static document each time is cumbersome. See below.
+
+
+### Suggested tools:
+
+*For editing & browsing API Blueprints:*
+
+- VisualStudio Code with at least the following extensions:
+  - API Blueprint syntax highlighter
+  - API Blueprint Viewer
+  - any JSON prettyfier
+  - any other relevant & VSCode-suggested extension (Ruby, Rails, MariaDB/MySQL & Docker)
+
+- Hercule, for managing the API document split among multiple files. Install it globally with:
+
+     ```bash
+     $> sudo npm install -g hercule
+     ```
+
+
+## Source dependencies & how to update `GogglesDb`
 
 - [GogglesDb base engine](https://github.com/steveoro/goggles_db), core 7+
 - JWT for session handling
 - [Grape gem](https://github.com/ruby-grape/grape) for API definition
 
-You may need to install the GogglesDb gem disabling the download of the embedded test dump with:
+You will need to install the GogglesDb gem disabling the download of the embedded test dump with:
 
 ```bash
 $> GIT_LFS_SKIP_SMUDGE=1 bundle install
 ```
 
-Use the same parameter when updating the gem with `bundle update goggles_db`.
+Use the same parameter _when updating the gem_ with `bundle update goggles_db` or run the dedicated script:
 
-To obtain a valid anonymized test DB dump image, just install [`goggles_db`](https://github.com/steveoro/goggles_db) on localhost by itself.
+```bash
+$> ./update_engine.sh
+```
+
+To obtain a valid anonymized test DB dump image, clone [`goggles_db`](https://github.com/steveoro/goggles_db) on localhost by itself and run from the GogglesDb project root:
+
+```bash
+$> RAILS_ENV=test rails app:db:rebuild
+```
+
+Check out [Database setup](https://github.com/steveoro/goggles_db#database-setup) on GogglesDb project's README for more info.
+
 
 
 ## Configuration
 
 All framework app projects (except for the mountable engines) handle multiple configurations for execution, development & deployment.
 
-You can use them either as single composed containers or as full-blown local installations, but also in other mixed ways, be it the application running on localhost while accessing the DB inside a container or vice-versa.
+You can use each project of the suite:
+
+- as full-blown local installations (by cloning the source repos on localhost)
+- as a single service composed from individual containers (either by rebuilding the individual containers from scratch or by pulling the images from their DockerHub repository)
+- in any other mixed way, be it the application running on localhost while accessing the DB inside a container or vice-versa.
+
+Check out also the WiKi about [repository credentials: management and creation](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-Goggles_credentials).
+
 
 
 ### *Full Localhost* usage
 
-- a MariaDb running server & client w/ `dev` libraries (tested & recommended); alternatively, an up-to-date MySQL installation.
+You'll need a MariaDb running server & client w/ `dev` libraries (tested & recommended); alternatively, an up-to-date MySQL installation.
 
 Clone the repository on localhost and use it as you would with a normal Rails application.
 
 In order to start development, you'll need to:
 
-- obtain a valid `config/master.key` file;
+- create new API credentials or obtain a valid `config/master.key` for the default `credentials` file (see [Wiki](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-Goggles_credentials) about this);
 - customize `config/database.yml.example` according to your local MySQL installation and save it as `config/database.yml`;
 - customize `.env.example` (as above) and save it as `.env` in case you want to build the Docker containers;
-- obtain a a valid compressed development or test seed (`.sql.bz2`) stored under `db/dump`; check out [Database setup](#database-setup).
+- obtain a a valid compressed development or test seed (`.sql.bz2`) stored under `db/dump` (see [Database setup](https://github.com/steveoro/goggles_db#database-setup)).
 
 
 ### *Composed Container* usage
@@ -77,7 +113,7 @@ For usage as a composed Docker container service you won't need an actual instal
 
 If you're using the orchestrated container, just choose a random password for the database in the `.env` file and follow the WiKi How-To:
 
-- [Docker & docker-compose setup & usage with GogglesAPI as reference example](#) :construction:
+- [Docker & docker-compose setup & usage with GogglesAPI as reference example](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi.md)
 
 
 ### *Mixed cases* usage
@@ -104,20 +140,6 @@ The Logger instance will split it and keep the latest 10 files of 1 MB each.
 
 
 
-## Suggested tools & dependencies
-
-*For editing & browsing API Blueprints:*
-
-- VisualStudio Code, with API Blueprint parser & preview: the extensions should also pre-install Aglio, the HTML renderer for the blueprints; add also a JSON prettyfier, plus any other relevant & VSCode-suggested extension while you're at it. (Ruby, Rails, MariaDB/MySQL & Docker)
-
-- Hercule, for managing the API document split among multiple files. Install it globally with:
-
-```bash
-$> sudo npm install -g hercule
-```
-
-
-
 ## How to run the test suite
 
 
@@ -139,14 +161,14 @@ In any case, although the Guard plugin for Brakeman runs correctly at start, it'
 $> brakeman -c .brakeman.cfg
 ```
 
-If you don't have a local test DB setup, check out [Database setup](#database-setup).
+If you don't have a local test DB setup, check out [Database setup](https://github.com/steveoro/goggles_db#database-setup).
 
 _Make sure you commit & push any changes only when the test suite is_ :green_heart:.
 
 
 ### B. Everything on _Docker containers_
 
-Althought not optimized for testing, the `dev` composed service can be used to run RSpec, Rubocop or anything else, including Guard too.
+Although not optimized for testing, the `dev` composed service can be used to run RSpec, Rubocop or anything else, including Guard too.
 
 Run the composed container in detached mode, then connect to its internal shell and run the tests:
 

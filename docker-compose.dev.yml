@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   goggles-db:
-    image: mariadb:10.3.25
+    image: mariadb:latest
     container_name: goggles-db
     ports:
       - '33060:3306'
@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: steveoro/goggles-api:dev-0.1.2
+    image: steveoro/goggles-api:dev-0.1.6
     depends_on:
       - goggles-db
     container_name: goggles-api.dev

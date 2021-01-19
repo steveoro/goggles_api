@@ -10,6 +10,42 @@ Backend internal API for the Goggles Engine, core7.
 
 _Previous legacy versions are deprecated and subseeded by this._
 
+
+* * *
+
+
+## Note on API routes
+
+"`find`" is used as a verb in API routes to discriminate requests that will yield a _single result_.
+
+Conversely, "`search`" and "`list`" are used whenever the request supports multiple results, with the
+difference being that "`list`" results are simple or filtered queries, whereas "`search`" implies always
+some kind of special back-end strategy (fuzzy matching, neural networks, deep search, whatever the case).
+
+For this reason, sometimes the "`search`" endpoints may result particularly slower when compared to the timing
+required by a possibly similar "`list`" fetch. (But this comparison is not always possible.)
+
+One exception to this naming scheme is the "`lookup`" group of endpoints, which is specifically chosen for
+just looking-up the read-only values of secondary subentities & lookup tables.
+
+Several single-result or single-target miscellaneous endpoints are grouped under the `tools` umbrella
+(such as any `find_`-type or `calc-` endpoint).
+
+Typically, whenever an endpoint path includes the full name of a specific DB entity (as in `meeting_programs`
+or `meeting_reservations`), the supported CRUD operations will always include _reading_ data,
+most of the times _updating_, some times _creating_ and, in a few cases, even _deleting_.
+
+The supported CRUD operations depend on how critical the entity is deemed to be.
+
+For instance, meeting reservations or meeting entries can be fully managed by this API.
+
+As a rule of thumb, if the entity allows remote creation by end-users, full CRUD support is usually
+conceeded and available with some kind of grant.
+
+
+* * *
+
+
 <!-- include(blueprint/session.apib) -->
 
 <!-- include(blueprint/cities.apib) -->
@@ -25,4 +61,5 @@ _Previous legacy versions are deprecated and subseeded by this._
 <!-- include(blueprint/team_affiliations.apib) -->
 <!-- include(blueprint/team_managers.apib) -->
 <!-- include(blueprint/teams.apib) -->
+<!-- include(blueprint/tools.apib) -->
 <!-- include(blueprint/users.apib) -->

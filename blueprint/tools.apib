@@ -1,0 +1,150 @@
+# Group Tools
+
+
+# find entry time [/api/v3/tools/find_entry_time{?swimmer_id,meeting_id,event_type_id,pool_type_id,entry_time_type_id}]
+
++ Model (application/json)
+
+    + Body
+
+            {
+                "label": "0'35\"03",
+                "timing": {
+                    "hundreds": 3,
+                    "seconds": 35,
+                    "minutes": 0,
+                    "hours": 0,
+                    "days": 0
+                }
+            }
+
+
+## find entry time [GET]
+
+Returns the suggested entry time given by specifying the IDs of a Swimmer, an EventType,
+a PoolType and, optionally, a Meeting and an expected EntryTimeType.
+
+**Sub-entities values:**
+
+- `PoolType`
+    | _id_ | _code_ | _length_in_meters_ |
+    | --- | --- | --- |
+    | 1 | `25` | 25 |
+    | 2 | `33` | 33 |
+    | 3 | `50` | 50 |
+- `EntryTimeType`: allows to determine the strategy for retrieving the suggested entry time.
+    | _id_ | _code: description_ |
+    | --- | --- |
+    | 1 | `M`: manual |
+    | 2 | `P`: personal |
+    | 3 | `G`: GoggleCup |
+    | 4 | `A`: preceding year |
+    | 5 | `U`: last race |
+
+Refer to `lookup/event_types` to retrieve the full list of valid `EventType` values
+(it can be quite long).
+
+The `label` result field is always present and it is `0'00"00` in the event of "no-time" (for instance,
+if the strategy specified by the EntryTimeType doesn't resolve to any matching entry time).
+
+The `timing` result hash will be missing only in the event of errors.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + swimmer_id: 142 (number, required) - Swimmer ID for which the entry time must be found
+    + meeting_id: 19243 (number, optional) - Meeting ID (when available)
+    + event_type_id: 11 (number, required) - EventType ID associated with the event
+    + pool_type_id: 3 (number, required) - PoolType ID associated with the event
+    + entry_time_type_id: 5 (number, optional) - EntryTimeType ID for the meeting entry
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/tools/find_entry_time?swimmer_id=142&event_type_id=11&pool_type_id=3"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/tools/find_entry_time',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { swimmer_id: 142, event_type_id: 11, pool_type_id: 3 }
+                }
+            )
+    => <RestClient::Response 200 "{\"label\":\"0'35\\\"03\",\"timing\":{\"hundreds\":3,\"seconds\":35,\"minutes\":0,\"hours\":0,\"days\":0}}">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [find entry time][]
+
+
++ Request not found (application/json)
+
+    ### Case
+
+    _There are **no matches** for the specified parameters_
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        {"label"=>"0'00\"00"}
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }

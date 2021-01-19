@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: Badge API Grape controller
   #
-  #   - version:  7.53
+  #   - version:  7.053
   #   - author:   Steve A.
   #   - build:    20201222
   #

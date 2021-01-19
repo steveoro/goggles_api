@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: TeamAffiliation API Grape controller
   #
-  #   - version:  7.52
+  #   - version:  7.052
   #   - author:   Steve A.
   #   - build:    20201221
   #
