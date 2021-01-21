@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: cf6d392f1998b5bf2a7caf5dadd02ea02d5bcbe9
+  revision: 24c50b9eeb6dc12175ce21ae4efbdea39d2891fe
   specs:
-    goggles_db (0.1.61)
+    goggles_db (0.1.65)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -125,7 +125,7 @@ GEM
       json
       simplecov
     coderay (1.1.3)
-    concurrent-ruby (1.1.7)
+    concurrent-ruby (1.1.8)
     countries (3.0.1)
       i18n_data (~> 0.10.0)
       sixarm_ruby_unaccent (~> 1.1)
@@ -270,7 +270,7 @@ GEM
     listen (3.2.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    loofah (2.8.0)
+    loofah (2.9.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.2.8)
@@ -436,7 +436,7 @@ GEM
     temple (0.8.2)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
-    thor (1.0.1)
+    thor (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
     tins (1.26.0)

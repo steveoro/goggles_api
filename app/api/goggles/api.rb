@@ -59,6 +59,7 @@ module Goggles
     mount MeetingsAPI
     mount MeetingEntriesAPI
     mount MeetingEventsAPI
+    mount MeetingIndividualResultsAPI
     mount MeetingProgramsAPI
     mount MeetingReservationsAPI
     mount SeasonsAPI

@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingEntry API Grape controller
   #
-  #   - version:  7.052
+  #   - version:  7.062
   #   - author:   Steve A.
-  #   - build:    20201221
+  #   - build:    20210119
   #
   class MeetingEntriesAPI < Grape::API
     helpers APIHelpers
@@ -65,7 +65,7 @@ module Goggles
       end
 
       # POST /api/:version/meeting_entry
-      # (ADMIN only)
+      # Requires CRUD grant on entity ('MeetingEntry') for requesting user.
       #
       # Creates a new MeetingEntry given the specified parameters.
       #
@@ -101,7 +101,7 @@ module Goggles
       end
       post do
         api_user = check_jwt_session
-        reject_unless_authorized_admin(api_user)
+        reject_unless_authorized_for_crud(api_user, 'MeetingEntry')
 
         new_row = GogglesDb::MeetingEntry.create(params)
         unless new_row.valid?
