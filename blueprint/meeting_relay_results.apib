@@ -1,57 +1,56 @@
-# Group MeetingIndividualResults
+# Group MeetingRelayResults
 
-## MeetingIndividualResult details [/api/v3/meeting_individual_result/{id}]
+## MeetingRelayResult details [/api/v3/meeting_relay_result/{id}]
 
 + Model (application/json)
 
         {
-            "id": 151,
+            "id": 33825,
             "lock_version": 0,
-            "rank": 7,
+            "created_at": "2018-11-22T00:00:00.000Z",
+            "updated_at": "2018-11-22T00:00:00.000Z",
+            "rank": 3,
             "play_off": false,
             "out_of_race": false,
             "disqualified": false,
             "standard_points": "0.0",
-            "meeting_individual_points": "0.0",
-            "minutes": 5,
-            "seconds": 54,
+            "meeting_points": "18.0",
+            "minutes": 4,
+            "seconds": 20,
             "hundreds": 10,
-            "meeting_program_id": 2913,
-            "swimmer_id": 1409,
-            "team_id": 35,
-            "badge_id": 4139,
-            "created_at": "2014-10-19T00:00:00.000Z",
-            "updated_at": "2014-10-19T00:00:00.000Z",
+            "team_id": 1,
+            "meeting_program_id": 149877,
             "disqualification_code_type_id": null,
-            "goggle_cup_points": "0.0",
+            "relay_header": "CSInuoto OberFerrari",
             "reaction_time": "0.0",
-            "team_points": "7.0",
-            "team_affiliation_id": 197,
-            "personal_best": false,
-            "season_type_best": false,
+            "entry_minutes": null,
+            "entry_seconds": null,
+            "entry_hundreds": null,
+            "team_affiliation_id": 5107,
+            "entry_time_type_id": null,
 
             "meeting": {
-                "id": 12101,
+                "id": 18101,
                 "code": "csiprova1",
-                "header_year": "2012/2013",
-                "edition_label": "2012/2013"
+                "header_year": "2018/2019",
+                "edition_label": "2018/2019"
             },
 
-            "meeting_session":
-                "id": 246,
+            "meeting_session": {
+                "id": 3004,
                 "session_order": 1,
-                "scheduled_date": "2012-11-04"
+                "scheduled_date": "2018-11-18"
             },
 
             "meeting_program": {
-                "id": 2913,
-                "event_order": 40,
-                "category_type_id": 621,
+                "id": 149877,
+                "event_order": 6,
+                "category_type_id": 1219,
                 "gender_type_id": 1,
                 "autofilled": false,
                 "out_of_race": false,
                 "begin_time": null,
-                "meeting_event_id": 693,
+                "meeting_event_id": 18415,
                 "pool_type_id": 1,
                 "time_standard_id": null,
 
@@ -65,31 +64,31 @@
                     "alt_label": "25 M"
                 },
                 "event_type": {
-                    "id": 5,
-                    "code": "400SL",
+                    "id": 27,
+                    "code": "S4X100SL",
                     "length_in_meters": 400,
-                    "relay": false,
+                    "relay": true,
                     "stroke_type_id": 1,
-                    "style_order": 5,
+                    "style_order": 27,
                     "mixed_gender": false,
-                    "partecipants": 1,
-                    "phases": 1,
-                    "phase_length_in_meters": 400,
-                    "label": "400 FS",
-                    "long_label": "400 FREESTYLE",
-                    "alt_label": "400 FS"
+                    "partecipants": 4,
+                    "phases": 4,
+                    "phase_length_in_meters": 100,
+                    "label": "4x100 FS",
+                    "long_label": "4x100 FREESTYLE RELAY",
+                    "alt_label": "4x100 FS"
                 },
                 "category_type": {
-                    "id": 621,
-                    "code": "M30",
-                    "federation_code": "4",
-                    "description": "MASTER 30",
-                    "short_name": "M30",
+                    "id": 1219,
+                    "code": "160-199",
+                    "federation_code": "x3",
+                    "description": "STAFF. M 160-199",
+                    "short_name": "160-199",
                     "group_name": "MASTER",
-                    "age_begin": 30,
-                    "age_end": 34,
-                    "relay": false,
-                    "season_id": 121,
+                    "age_begin": 160,
+                    "age_end": 199,
+                    "relay": true,
+                    "season_id": 181,
                     "out_of_race": false,
                     "undivided": false
                 },
@@ -120,35 +119,38 @@
                 "long_label": "25 METERS",
                 "alt_label": "25 M"
             },
+
             "event_type": {
-                "id": 5,
-                "code": "400SL",
+                "id": 27,
+                "code": "S4X100SL",
                 "length_in_meters": 400,
-                "relay": false,
+                "relay": true,
                 "stroke_type_id": 1,
-                "style_order": 5,
+                "style_order": 27,
                 "mixed_gender": false,
-                "partecipants": 1,
-                "phases": 1,
-                "phase_length_in_meters": 400,
-                "label": "400 FS",
-                "long_label": "400 FREESTYLE",
-                "alt_label": "400 FS"
+                "partecipants": 4,
+                "phases": 4,
+                "phase_length_in_meters": 100,
+                "label": "4x100 FS",
+                "long_label": "4x100 FREESTYLE RELAY",
+                "alt_label": "4x100 FS"
             },
+
             "category_type": {
-                "id": 621,
-                "code": "M30",
-                "federation_code": "4",
-                "description": "MASTER 30",
-                "short_name": "M30",
+                "id": 1219,
+                "code": "160-199",
+                "federation_code": "x3",
+                "description": "STAFF. M 160-199",
+                "short_name": "160-199",
                 "group_name": "MASTER",
-                "age_begin": 30,
-                "age_end": 34,
-                "relay": false,
-                "season_id": 121,
+                "age_begin": 160,
+                "age_end": 199,
+                "relay": true,
+                "season_id": 181,
                 "out_of_race": false,
                 "undivided": false
             },
+
             "gender_type": {
                 "id": 1,
                 "code": "M",
@@ -156,55 +158,75 @@
                 "long_label": "MALE",
                 "alt_label": "MALE"
             },
-            "stroke_type": {
-                "id": 1,
-                "code": "SL",
-                "eventable": true,
-                "label": "FS",
-                "long_label": "FREESTYLE",
-                "alt_label": "CR"
-            },
 
-            "laps": [], // (When available)
-
-            "team_affiliation": {
-                "id": 197,
-                "number": "",
-                "name": "Onda della Pietra",
-                "compute_gogglecup": false,
-                "team_id": 35,
-                "season_id": 121,
-                "autofilled": false
-            },
-
-            "swimmer": {
-                "id": 1409,
-                "complete_name": "Herman Anette 40753",
-                "last_name": "Herman",
-                "first_name": "Anette",
-                "year_of_birth": 1957,
-                "year_guessed": false
-            },
-
-            "disqualification_code_type": null
+            "meeting_relay_swimmers": [
+                {
+                    "id": 1873,
+                    "relay_order": 1,
+                    "swimmer_id": 1406,
+                    "badge_id": 110715,
+                    "stroke_type_id": 1,
+                    "reaction_time": "0.0",
+                    "minutes": 1,
+                    "seconds": 3,
+                    "hundreds": 56,
+                    "meeting_relay_result_id": 33825
+                },
+                {
+                    "id": 1874,
+                    "relay_order": 2,
+                    "swimmer_id": 97,
+                    "badge_id": 110751,
+                    "stroke_type_id": 1,
+                    "reaction_time": "0.0",
+                    "minutes": 1,
+                    "seconds": 6,
+                    "hundreds": 40,
+                    "meeting_relay_result_id": 33825
+                },
+                {
+                    "id": 1875,
+                    "relay_order": 3,
+                    "swimmer_id": 1227,
+                    "badge_id": 110749,
+                    "stroke_type_id": 1,
+                    "reaction_time": "0.0",
+                    "minutes": 1,
+                    "seconds": 2,
+                    "hundreds": 10,
+                    "meeting_relay_result_id": 33825
+                },
+                {
+                    "id": 1876,
+                    "relay_order": 4,
+                    "swimmer_id": 6681,
+                    "badge_id": 111385,
+                    "stroke_type_id": 1,
+                    "reaction_time": "0.0",
+                    "minutes": 1,
+                    "seconds": 8,
+                    "hundreds": 4,
+                    "meeting_relay_result_id": 33825
+                }
+            ]
         }
 
 
 ### find [GET]
-The MeetingIndividualResult instance matching the specified `id` returned as JSON.
+The MeetingRelayResult instance matching the specified `id` returned as JSON.
 
 The returned result includes these other 1st-level linked entities (some with minimal attributes):
 - `Meeting`
 - `MeetingSession`
 - `MeetingProgram`
 - `TeamAffiliation`
-- `Swimmer`
 - `PoolType`
 - `EventType`
 - `CategoryType`
 - `GenderType`
+- list of `MeetingRelaySwimmer`s (linking to an actual `Swimmer` instance)
 
-Some of the sub-entities (such as the EventType) are duplicated in the hierachy tree for ease of
+Some of the sub-entities (such as the GenderType) are duplicated in the hierachy tree for ease of
 reference.
 
 :key: `Authorization` request header => valid JWT **required**
@@ -214,7 +236,7 @@ reference.
 
 
 + Parameters
-    + id: 151 (number, required) - MeetingIndividualResult ID
+    + id: 38648 (number, required) - MeetingRelayResult ID
 
 
 + Request ok (application/json)
@@ -226,7 +248,7 @@ reference.
     ```bash
     $> curl -i -X GET -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/meeting_individual_result/151"
+            "<API_HOST:PORT>/api/v3/meeting_relay_result/38648"
     ```
 
     ##### `RestClient` (Ruby):
@@ -234,10 +256,10 @@ reference.
     ```ruby
     > res = RestClient::Request.execute(
                 method: :get,
-                url: '<API_HOST:PORT>/api/v3/meeting_individual_result/151',
+                url: '<API_HOST:PORT>/api/v3/meeting_relay_result/38648',
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
             )
-    => <RestClient::Response 200 "{\"id\":151, ...">
+    => <RestClient::Response 200 "{\"id\":38648, ...">
     ```
 
 
@@ -249,7 +271,7 @@ reference.
 
 + Response 200
 
-    [MeetingIndividualResult details][]
+    [MeetingRelayResult details][]
 
 
 + Request not found (application/json)
@@ -298,13 +320,13 @@ reference.
 
 ## edit [PUT]
 
-Allows direct updates for most of the MeetingIndividualResult fields given the `id` of the row.
+Allows direct updates for most of the MeetingRelayResult fields given the `id` of the row.
 
 Returns `true` on success, an empty result when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
-2. authenticated user must have CRUD grant on 'MeetingIndividualResult' or have generic admin grants
+2. authenticated user must have CRUD grant on 'MeetingRelayResult' or have generic admin grants
 
 
 #### Body Attributes:
@@ -316,30 +338,35 @@ All are optional (except `id`):
 | `meeting_program_id` | integer | associated MeetingProgram ID |
 | `team_affiliation_id` | integer | associated TeamAffiliation ID |
 | `team_id` | integer | associated Team ID |
-| `swimmer_id` | integer | associated Swimmer ID |
-| `badge_id` | integer | associated Badge ID |
+| `reaction_time` | float | reaction time (when available; must be positive to be considered) |
 | `minutes` | integer | result time minutes |
 | `seconds` | integer | result time seconds |
 | `hundreds` | integer | result time hundredths of seconds |
 | `play_off` | boolean | `true` if this result refers to a play-off at the end or after the end of a season (standard play otherwise) |
+| `out_of_race` | boolean | `true` if this result does not concur in the overall rankings or scores |
 | `rank` | integer | final heat rank (1+) for this result; usually 0 when disqualified |
 | `standard_points` | float | result score computed using standard rules of this Championship |
-| `meeting_individual_points` | float | result score computed with meeting-specific rules |
+| `meeting_points` | float | result score computed with meeting-specific rules |
 | `disqualified` | boolean | `true` if the swimmer has been disqualified; has precedence over `DisqualificationCodeType` |
 | `disqualification_code_type_id` | integer | GET `/lookup/disqualification_code_type` => list of supported values |
-| `goggle_cup_points` | float | score computed for any GoggleCup associated to this specific team |
-| `reaction_time` | float | reaction time (when available; must be positive to be considered) |
-| `team_points` | float | result score contributing to overall team scoring (may be standard or meeting-specific) |
-| `out_of_race` | boolean | `true` if this result does not concur in the overall rankings or scores |
-| `personal_best` | boolean | `true` to signal the latest personal best result for this swimmer |
-| `season_type_best` | boolean | `true` to signal the latest seasonal best result for this swimmer |
+| `relay_header` | string | descriptive code or number used whenever the same team has registered more than one relay |
+| `entry_time_type_id` | integer | associated EntryTimeType ID for the entry time |
+| | _id_ | _code: description_ |
+| | 1 | `M`: manual |
+| | 2 | `P`: personal |
+| | 3 | `G`: GoggleCup |
+| | 4 | `A`: preceding year |
+| | 5 | `U`: last race |
+| `entry_minutes` | integer | minutes for the registration entry time |
+| `entry_seconds` | integer | seconds for the registration entry time |
+| `entry_hundreds` | integer | hundredths of seconds for the registration entry time |
 
 
 * * *
 
 
 + Parameters
-    + id: 151 (number, required) - MeetingIndividualResult ID
+    + id: 33825 (number, required) - MeetingRelayResult ID
 
 
 + Request ok (application/json)
@@ -352,7 +379,7 @@ All are optional (except `id`):
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
             -d '{"rank": 4, "minutes": 5, "seconds": 45, "hundreds": 60 }' \
-            "<API_HOST:PORT>/api/v3/meeting_individual_result/151"
+            "<API_HOST:PORT>/api/v3/meeting_relay_result/33825"
     ```
 
     ##### `RestClient` (Ruby):
@@ -360,7 +387,7 @@ All are optional (except `id`):
     ```ruby
     > res = RestClient::Request.execute(
                 method: :put,
-                url: '<API_HOST:PORT>/api/v3/meeting_individual_result/151',
+                url: '<API_HOST:PORT>/api/v3/meeting_relay_result/33825',
                 payload: {
                     rank: 4,
                     minutes: 5,
@@ -485,13 +512,13 @@ All are optional (except `id`):
 
 ### create [POST]
 
-Creates a new MeetingIndividualResult, given the specified body parameters.
+Creates a new MeetingRelayResult, given the specified body parameters.
 
 Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
-2. authenticated user must have CRUD grant on 'MeetingIndividualResult' or have generic admin grants
+2. authenticated user must have CRUD grant on 'MeetingRelayResult' or have generic admin grants
 
 
 #### Body Attributes:
@@ -501,23 +528,28 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | `meeting_program_id` | integer | **required**, associated MeetingProgram ID |
 | `team_affiliation_id` | integer | **required**, associated TeamAffiliation ID |
 | `team_id` | integer | **required**, associated Team ID |
-| `swimmer_id` | integer | **required**, associated Swimmer ID |
-| `badge_id` | integer | associated Badge ID |
+| `reaction_time` | float | reaction time (when available; must be positive to be considered) |
 | `minutes` | integer | result time minutes |
 | `seconds` | integer | result time seconds |
 | `hundreds` | integer | result time hundredths of seconds |
 | `play_off` | boolean | `true` if this result refers to a play-off at the end or after the end of a season (standard play otherwise) |
+| `out_of_race` | boolean | `true` if this result does not concur in the overall rankings or scores |
 | `rank` | integer | final heat rank (1+) for this result; usually 0 when disqualified |
 | `standard_points` | float | result score computed using standard rules of this Championship |
-| `meeting_individual_points` | float | result score computed with meeting-specific rules |
+| `meeting_points` | float | result score computed with meeting-specific rules |
 | `disqualified` | boolean | `true` if the swimmer has been disqualified; has precedence over `DisqualificationCodeType` |
 | `disqualification_code_type_id` | integer | GET `/lookup/disqualification_code_type` => list of supported values |
-| `goggle_cup_points` | float | score computed for any GoggleCup associated to this specific team |
-| `reaction_time` | float | reaction time (when available; must be positive to be considered) |
-| `team_points` | float | result score contributing to overall team scoring (may be standard or meeting-specific) |
-| `out_of_race` | boolean | `true` if this result does not concur in the overall rankings or scores |
-| `personal_best` | boolean | `true` to signal the latest personal best result for this swimmer |
-| `season_type_best` | boolean | `true` to signal the latest seasonal best result for this swimmer |
+| `relay_header` | string | descriptive code or number used whenever the same team has registered more than one relay |
+| `entry_time_type_id` | integer | associated EntryTimeType ID for the entry time |
+| | _id_ | _code: description_ |
+| | 1 | `M`: manual |
+| | 2 | `P`: personal |
+| | 3 | `G`: GoggleCup |
+| | 4 | `A`: preceding year |
+| | 5 | `U`: last race |
+| `entry_minutes` | integer | minutes for the registration entry time |
+| `entry_seconds` | integer | seconds for the registration entry time |
+| `entry_hundreds` | integer | hundredths of seconds for the registration entry time |
 
 
 * * *
@@ -527,23 +559,22 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + meeting_program_id (number, required) - associated MeetingProgram ID
     + team_affiliation_id (number, required) - associated TeamAffiliation ID
     + team_id (number, required) - associated Team ID
-    + swimmer_id (number, required) - associated Swimmer ID
-    + badge_id (number, optional) - associated badge_id ID
+    + reaction_time (number, optional)
     + minutes (number, optional)
     + seconds (number, optional)
     + hundreds (number, optional)
     + play_off (boolean, optional)
+    + out_of_race (boolean, optional)
     + rank (number, optional)
     + standard_points (number, optional)
-    + meeting_individual_points (number, optional)
+    + meeting_points (number, optional)
     + disqualified (boolean, optional)
     + disqualification_code_type_id (number, optional)
-    + goggle_cup_points (number, optional)
-    + reaction_time (number, optional)
-    + team_points (number, optional)
-    + out_of_race (boolean, optional)
-    + personal_best (boolean, optional)
-    + season_type_best (boolean, optional)
+    + relay_header (string, optional) - (Relay entry part)
+    + entry_time_type_id (number, optional) - (Relay entry part)
+    + entry_minutes (number, optional) - (Relay entry part)
+    + entry_seconds (number, optional) - (Relay entry part)
+    + entry_hundreds (number, optional) - (Relay entry part)
 
 
 + Request ok (application/json)
@@ -554,26 +585,23 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
     ```bash
     $> curl -i -X POST -H "Content-Type: application/json" \
-            -d '{"meeting_program_id": 2913, "team_affiliation_id": 197, "team_id": 35, \
-                 "swimmer_id": 142, "rank": 7, "minutes": 6, "seconds": 12, "hundreds": 10 \
-                 "reaction_time": 0.85 }'
-            "<API_HOST:PORT>/api/v3/meeting_individual_result"
+            -d '{"meeting_program_id": 168301, "team_affiliation_id": 12178, "team_id": 9197, \
+                 "rank": 5, "minutes": 1, "seconds": 15, "hundreds": 97}'
+            "<API_HOST:PORT>/api/v3/meeting_relay_result"
     ```
 
     ##### `RestClient` (Ruby):
 
     ```ruby
-    > res = RestClient.post('<API_HOST:PORT>/api/v3/meeting_individual_result',
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/meeting_relay_result',
             {
-                'meeting_program_id': 2913,
-                'team_affiliation_id': 197,
-                'team_id': 35,
-                'swimmer_id': 142,
-                'rank': 7,
-                'minutes': 6,
-                'seconds': 12,
-                'hundreds': 10,
-                'reaction_time': 0.85
+                'meeting_program_id': 168301,
+                'team_affiliation_id': 12178,
+                'team_id': 9197,
+                'rank': 5,
+                'minutes': 1,
+                'seconds': 15,
+                'hundreds': 97
             } )
     => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
 
@@ -590,15 +618,13 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + Body
 
             {
-                'meeting_program_id': 2913,
-                'team_affiliation_id': 197,
-                'team_id': 35,
-                'swimmer_id': 142,
-                'rank': 7,
-                'minutes': 6,
-                'seconds': 12,
-                'hundreds': 10,
-                'reaction_time': 0.85
+                'meeting_program_id': 168301,
+                'team_affiliation_id': 12178,
+                'team_id': 9197,
+                'rank': 5,
+                'minutes': 1,
+                'seconds': 15,
+                'hundreds': 97
             }
 
 + Response 200 (application/json)
@@ -620,15 +646,13 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + Body
 
             {
-                'meeting_program_id': 2913,
-                'team_affiliation_id': 197,
-                'team_id': 35,
-                'swimmer_id': 142,
-                'rank': 7,
-                'minutes': 6,
-                'seconds': 12,
-                'hundreds': 10,
-                'reaction_time': 0.85
+                'meeting_program_id': 168301,
+                'team_affiliation_id': 12178,
+                'team_id': 9197,
+                'rank': 5,
+                'minutes': 1,
+                'seconds': 15,
+                'hundreds': 97
             }
 
 + Response 401 (application/json)
@@ -647,15 +671,13 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + Body
 
             {
-                'meeting_program_id': 2913,
-                'team_affiliation_id': 197,
-                'team_id': 35,
-                'swimmer_id': 142,
-                'rank': 7,
-                'minutes': 6,
-                'seconds': 12,
-                'hundreds': 10,
-                'reaction_time': 0.85
+                'meeting_program_id': 168301,
+                'team_affiliation_id': 12178,
+                'team_id': 9197,
+                'rank': 5,
+                'minutes': 1,
+                'seconds': 15,
+                'hundreds': 97
             }
 
 + Response 401 (application/json)
@@ -678,15 +700,13 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + Body
 
             {
-                'meeting_program_id': 2913,
-                'team_affiliation_id': 197,
-                'team_id': 35,
-                'swimmer_id': 142,
-                'rank': 7,
-                'minutes': 6,
-                'seconds': 12,
-                'hundreds': 10,
-                'reaction_time': 0.85
+                'meeting_program_id': 168301,
+                'team_affiliation_id': 12178,
+                'team_id': 9197,
+                'rank': 5,
+                'minutes': 1,
+                'seconds': 15,
+                'hundreds': 97
             }
 
 + Response 401 (application/json)
@@ -709,13 +729,13 @@ Returns `true` on success, an empty body when not found.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
-2. authenticated user must have CRUD grant on 'MeetingIndividualResult' or have generic admin grants
+2. authenticated user must have CRUD grant on 'MeetingRelayResult' or have generic admin grants
 
 
 #### Body Attributes:
 
 + Parameters
-    + id: 759112 (number, required) - MeetingIndividualResult ID of the row that has to be deleted
+    + id: 38649 (number, required) - MeetingRelayResult ID of the row that has to be deleted
 
 
 + Request ok (application/json)
@@ -727,7 +747,7 @@ Returns `true` on success, an empty body when not found.
     ```bash
     $> curl -i -X DELETE -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/meeting_individual_result/759112"
+            "<API_HOST:PORT>/api/v3/meeting_relay_result/38649"
     ```
 
     ##### `RestClient` (Ruby):
@@ -735,7 +755,7 @@ Returns `true` on success, an empty body when not found.
     ```ruby
     > res = RestClient::Request.execute(
                 method: :delete,
-                url: '<API_HOST:PORT>/api/v3/meeting_individual_result/759112',
+                url: '<API_HOST:PORT>/api/v3/meeting_relay_result/38649',
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
     => <RestClient::Response 200 "true">
@@ -811,29 +831,29 @@ Returns `true` on success, an empty body when not found.
 
 
 
-# MeetingIndividualResult list [/api/v3/meeting_individual_results{?page,per_page,meeting_program_id,team_affiliation_id,team_id,swimmer_id,badge_id}]
+# MeetingRelayResult list [/api/v3/meeting_relay_results{?page,per_page,meeting_program_id,team_affiliation_id,team_id,swimmer_id,badge_id}]
 
 + Model (application/json)
 
     + Header
 
-            Link: "<API_HOST:PORT/api/v3/meeting_individual_results?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/meeting_individual_results?page=2&team_id=1>; rel=\"next\""
-            Total: 7860
+            Link: "<API_HOST:PORT/api/v3/meeting_relay_results?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/meeting_relay_results?page=2&team_id=1>; rel=\"next\""
+            Total: 466
             Per-Page: 25
             Page: 1
 
     + Body
 
             [
-                // MeetingIndividualResult details 1
+                // MeetingRelayResult details 1
                 {
-                    "id": 8,
+                    "id": 16,
                     // [...]
                 },
 
-                // MeetingIndividualResult details 2
+                // MeetingRelayResult details 2
                 {
-                    "id": 9,
+                    "id": 26,
                     // [...]
                 },
 
@@ -843,14 +863,12 @@ Returns `true` on success, an empty body when not found.
 
 ## list [GET]
 
-The list of MeetingIndividualResults associated to the specified filtering values,
+The list of MeetingRelayResults associated to the specified filtering values,
 returned as JSON and optionally filtered by any or all from:
 
 - `meeting_program_id`
 - `team_affiliation_id`
 - `team_id`
-- `swimmer_id`
-- `badge_id`
 
 Returns exact matches for all the parameters.
 
@@ -875,11 +893,9 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 
 + Parameters
-    + meeting_program_id: 1 (number, optional) - associated MeetingProgram ID
-    + team_affiliation_id: 1 (number, optional) - associated TeamAffiliation ID
+    + meeting_program_id: 5325 (number, optional) - associated MeetingProgram ID
+    + team_affiliation_id: 101 (number, optional) - associated TeamAffiliation ID
     + team_id: 1 (number, optional) - associated Team ID
-    + swimmer_id: 142 (number, optional) - associated Swimmer ID
-    + badge_id: 156 (number, optional) - associated Badge ID
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
@@ -895,7 +911,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     ```bash
     $> curl -i -X GET -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/meeting_individual_results?team_id=1"
+            "<API_HOST:PORT>/api/v3/meeting_relay_results?team_id=1"
     ```
 
     #### `RestClient` (Ruby):
@@ -906,7 +922,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     ```ruby
     > res = RestClient::Request.execute(
                 method: :get,
-                url: '<API_HOST:PORT>/api/v3/meeting_individual_results',
+                url: '<API_HOST:PORT>/api/v3/meeting_relay_results',
                 headers: {
                     "Authorization" => "Bearer VALID-SESSION-JWT",
                     params: { team_id: 1 }
@@ -923,7 +939,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 + Response 200
 
-    [MeetingIndividualResult list][]
+    [MeetingRelayResult list][]
 
 
 + Request not found (application/json)

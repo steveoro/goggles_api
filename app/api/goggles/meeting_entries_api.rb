@@ -94,9 +94,9 @@ module Goggles
         optional :swimmer_id, type: Integer, desc: 'optional: associated Swimmer ID'
         optional :badge_id, type: Integer, desc: 'optional: associated Badge ID'
         optional :entry_time_type_id, type: Integer, desc: 'optional: associated EntryTimeType ID'
-        optional :minutes, type: Integer, desc: 'optional: minutes for the registration entry timing'
-        optional :seconds, type: Integer, desc: 'optional: seconds for the registration entry'
-        optional :hundreds, type: Integer, desc: 'optional: hundredths of seconds for the registration entry timing'
+        optional :minutes, type: Integer, desc: 'optional: minutes for the registration entry time'
+        optional :seconds, type: Integer, desc: 'optional: seconds for the registration entry time'
+        optional :hundreds, type: Integer, desc: 'optional: hundredths of seconds for the registration entry time'
         optional :no_time, type: Boolean, desc: 'optional: true for entries with an unspecified timing'
       end
       post do
