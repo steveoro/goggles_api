@@ -5,7 +5,11 @@ module Goggles
   #
   #   - version:  7.062
   #   - author:   Steve A.
-  #   - build:    20210119
+  #   - build:    20210122
+  #
+  # == Note:
+  # Lap data & registration entry data is stored on separated entities (MeetingEntries & Laps)
+  # for MIRs. Use the Lap-dedicated endpoints to manage MIR laps.
   #
   class MeetingIndividualResultsAPI < Grape::API
     helpers APIHelpers

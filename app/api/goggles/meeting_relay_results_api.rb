@@ -3,19 +3,22 @@
 module Goggles
   # = Goggles API v3: MeetingRelayResult API Grape controller
   #
-  #   - version:  7.066
+  #   - version:  7.067
   #   - author:   Steve A.
-  #   - build:    20210121
+  #   - build:    20210122
   #
   # == Note:
-  # Keep in mind that MRRs (countrary to MIRs) *do* store and manage registration entries
-  # together with their actual ending time result.
+  # Relay entries are more than often finalized during the Meeting itself and
+  # data is frequently collected "on the field".
   #
-  # Due to the nature of the competitions individual entries are considered a
-  # more "trasitory" kind of data, whereas actual relay entries are more than often
-  # established or finalized after the Meeting itself has already started;
-  # data is frequently collected "on the field" and the current structure of the table
-  # allows that.
+  # MRRs (countrary to MIRs) incorporate registration entries data together with their
+  # actual ending time result.
+  #
+  # This allows a remote client to prepare the relay setup directly when posting
+  # the relay entry itself; the timing result can be set later on when the relay is over.
+  #
+  # Lap data for MRRs is stored inside MeetingRelaySwimmers (MRSs).
+  # Use MRS dedicated endpoints to manage relay laps (& swimmers).
   #
   class MeetingRelayResultsAPI < Grape::API
     helpers APIHelpers

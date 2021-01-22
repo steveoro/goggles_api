@@ -6,7 +6,7 @@ Backend internal API for the Goggles Engine, core7.
 
     | _Framework_ | _API_ | _App version_ | _DB structure_ | _latest update_ |
     | --- | --- | --- | --- | --- |
-    | `core7` | `v3` | 7.62 | 1.60.01 | 20210120 |
+    | `core7` | `v3` | 7.67 | 1.60.01 | 20210122 |
 
 _Previous legacy versions are deprecated and subseeded by this._
 
@@ -42,6 +42,12 @@ For instance, meeting reservations or meeting entries can be fully managed by th
 As a rule of thumb, if the entity allows remote creation by end-users, full CRUD support is usually
 conceeded and available with some kind of grant.
 
+Whenever a _dedicated_ endpoint exists for an entity, retrieving a single row with a `GET .../{id}` will yield
+the most fine-grained structure detail available. Whereas, when retrieving one of its parents, the same entity
+may be included as a sibling reference but yielding usually less details.
+(That is the case for example, for Swimmers or Laps: the list of results included in a MeetingProgram response
+ contains less associations and details than those obtained by retrieving each result one by one.)
+
 
 * * *
 
@@ -49,12 +55,14 @@ conceeded and available with some kind of grant.
 <!-- include(blueprint/session.apib) -->
 
 <!-- include(blueprint/cities.apib) -->
+<!-- include(blueprint/laps.apib) -->
 <!-- include(blueprint/lookup.apib) -->
 <!-- include(blueprint/meeting_entries.apib) -->
 <!-- include(blueprint/meeting_events.apib) -->
 <!-- include(blueprint/meeting_individual_results.apib) -->
 <!-- include(blueprint/meeting_programs.apib) -->
 <!-- include(blueprint/meeting_relay_results.apib) -->
+<!-- include(blueprint/meeting_relay_swimmers.apib) -->
 <!-- include(blueprint/meeting_reservations.apib) -->
 <!-- include(blueprint/meetings.apib) -->
 <!-- include(blueprint/seasons.apib) -->
