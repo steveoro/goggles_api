@@ -6,7 +6,7 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::MeetingProgramsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user) { FactoryBot.create(:user) }
   let(:jwt_token) { jwt_for_api_session(api_user) }
@@ -23,22 +23,17 @@ RSpec.describe Goggles::MeetingProgramsAPI, type: :request do
   describe 'GET /api/v3/meeting_program/:id' do
     context 'when using valid parameters,' do
       before(:each) { get(api_v3_meeting_program_path(id: fixture_row.id), headers: fixture_headers) }
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'returns the selected user as JSON' do
-        expect(response.body).to eq(fixture_row.to_json)
-      end
+      it_behaves_like('a successful JSON row response')
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get api_v3_meeting_program_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) { get(api_v3_meeting_program_path(id: -1), headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON response'
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -64,43 +59,35 @@ RSpec.describe Goggles::MeetingProgramsAPI, type: :request do
     context 'when using a valid authentication' do
       context 'without any additional filters (only meeting_id),' do
         let(:expected_row_count) { fixture_meeting.meeting_programs.count }
-
-        before(:each) { get(api_v3_meeting_programs_path, params: { meeting_id: fixture_meeting.id }, headers: fixture_headers) }
-        it 'is successful' do
+        before(:each) do
+          get(api_v3_meeting_programs_path, params: { meeting_id: fixture_meeting.id }, headers: fixture_headers)
           expect(expected_row_count).to be_positive
-          expect(response).to be_successful
         end
-
-        it_behaves_like 'successful multiple row response either with OR without pagination links'
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when filtering by a specific meeting_event_id,' do
         let(:expected_row_count) { fixture_meeting_event.meeting_programs.count }
-
         before(:each) do
           expect(expected_row_count).to be_positive
           get(
             api_v3_meeting_programs_path,
-            params: {
-              meeting_id: fixture_meeting.id,
-              meeting_event_id: fixture_meeting_event.id
-            },
+            params: { meeting_id: fixture_meeting.id, meeting_event_id: fixture_meeting_event.id },
             headers: fixture_headers
           )
         end
-
-        it_behaves_like 'successful multiple row response either with OR without pagination links'
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_meeting_programs_path, params: { meeting_id: fixture_meeting.id }, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_meeting_programs_path, params: { meeting_id: -1 }, headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON list response'
+      it_behaves_like('an empty but successful JSON list response')
     end
   end
   #-- -------------------------------------------------------------------------

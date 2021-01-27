@@ -5,7 +5,7 @@ require 'support/api_session_helpers'
 
 RSpec.describe Goggles::SwimmersAPI, type: :request, tag: :performance do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   describe 'GET /api/v3/swimmers/', :n_plus_one do
     # The `populate` callbacks is responsible for data generation/population.

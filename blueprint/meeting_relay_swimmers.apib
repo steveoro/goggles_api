@@ -16,7 +16,7 @@
             "reaction_time": "0.0",
             "minutes": 0,
             "seconds": 0,
-            "hundreds": 0,
+            "hundredths": 0,
 
             "meeting_relay_result_id": 37828,
             "meeting_relay_result": {
@@ -29,15 +29,15 @@
                 "meeting_points": "18.0",
                 "minutes": 2,
                 "seconds": 34,
-                "hundreds": 40,
+                "hundredths": 40,
                 "team_id": 826,
                 "meeting_program_id": 163737,
                 "disqualification_code_type_id": null,
-                "relay_header": "Eden Sport",
+                "relay_code": "Eden Sport",
                 "reaction_time": "0.0",
                 "entry_minutes": null,
                 "entry_seconds": null,
-                "entry_hundreds": null,
+                "entry_hundredths": null,
                 "team_affiliation_id": 5196,
                 "entry_time_type_id": null
             },
@@ -273,7 +273,7 @@ All are optional (except `id`):
 | `reaction_time` | float | reaction time (when available; must be positive to be considered) |
 | `minutes` | integer | lap time, minutes |
 | `seconds` | integer | lap time, seconds |
-| `hundreds` | integer | lap time, hundredths of seconds |
+| `hundredths` | integer | lap time, hundredths of seconds |
 
 
 * * *
@@ -292,7 +292,7 @@ All are optional (except `id`):
     ```bash
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            -d '{"relay_order": 2, "minutes": 0, "seconds": 30, "hundreds": 55 }' \
+            -d '{"relay_order": 2, "minutes": 0, "seconds": 30, "hundredths": 55 }' \
             "<API_HOST:PORT>/api/v3/meeting_relay_swimmer/2285"
     ```
 
@@ -306,7 +306,7 @@ All are optional (except `id`):
                     relay_order: 2,
                     minutes: 0,
                     seconds: 30,
-                    hundreds: 55
+                    hundredths: 55
                 },
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
@@ -325,7 +325,7 @@ All are optional (except `id`):
                 "relay_order": 2,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 55
+                "hundredths": 55
             }
 
 + Response 200 (application/json)
@@ -347,7 +347,7 @@ All are optional (except `id`):
                 "relay_order": 2,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 55
+                "hundredths": 55
             }
 
 + Response 200 (application/json)
@@ -369,7 +369,7 @@ All are optional (except `id`):
                 "relay_order": 2,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 55
+                "hundredths": 55
             }
 
 + Response 401 (application/json)
@@ -389,7 +389,7 @@ All are optional (except `id`):
                 "relay_order": 2,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 55
+                "hundredths": 55
             }
 
 + Response 401 (application/json)
@@ -409,7 +409,7 @@ All are optional (except `id`):
                 "position": 2,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 55
+                "hundredths": 55
             }
 
 + Response 401 (application/json)
@@ -461,7 +461,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | `reaction_time` | float | reaction time (when available; must be positive to be considered) |
 | `minutes` | integer | lap time, minutes |
 | `seconds` | integer | lap time, seconds |
-| `hundreds` | integer | lap time, hundredths of seconds |
+| `hundredths` | integer | lap time, hundredths of seconds |
 
 
 * * *
@@ -476,7 +476,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + reaction_time (number, optional)
     + minutes: 1 (number, optional)
     + seconds: 15 (number, optional)
-    + hundreds: 97 (number, optional)
+    + hundredths: 97 (number, optional)
 
 
 + Request ok (application/json)
@@ -489,7 +489,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     $> curl -i -X POST -H "Content-Type: application/json" \
             -d '{"meeting_relay_result_id": 834879, "badge_id": 168301, \
                  "stroke_type_id": 1, "swimmer_id": 23, \
-                 "relay_order": 3, "minutes": 0, "seconds": 29 "hundreds": 97}'
+                 "relay_order": 3, "minutes": 0, "seconds": 29 "hundredths": 97}'
             "<API_HOST:PORT>/api/v3/meeting_relay_swimmer"
     ```
 
@@ -505,7 +505,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "relay_order": 3,
                 "minutes": 0,
                 "seconds": 29,
-                "hundreds": 97
+                "hundredths": 97
             } )
     => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
 
@@ -529,7 +529,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "relay_order": 3,
                 "minutes": 0,
                 "seconds": 29,
-                "hundreds": 97
+                "hundredths": 97
             }
 
 + Response 200 (application/json)
@@ -558,7 +558,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "relay_order": 3,
                 "minutes": 0,
                 "seconds": 29,
-                "hundreds": 97
+                "hundredths": 97
             }
 
 + Response 401 (application/json)
@@ -584,7 +584,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "relay_order": 3,
                 "minutes": 0,
                 "seconds": 29,
-                "hundreds": 97
+                "hundredths": 97
             }
 
 + Response 401 (application/json)
@@ -614,7 +614,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "relay_order": 3,
                 "minutes": 0,
                 "seconds": 29,
-                "hundreds": 97
+                "hundredths": 97
             }
 
 + Response 401 (application/json)

@@ -50,7 +50,7 @@ module Goggles
           requires :id, type: Integer, desc: 'MeetingEventReservation ID (required whenever including any of the nested fields)'
           optional :minutes, type: Integer, desc: 'optional: minutes for the entry timing'
           optional :seconds, type: Integer, desc: 'optional: seconds for the entry timing'
-          optional :hundreds, type: Integer, desc: 'optional: hundredths of seconds for the entry timing'
+          optional :hundredths, type: Integer, desc: 'optional: hundredths of seconds for the entry timing'
           optional :accepted, type: Boolean, desc: 'optional: true if the swimmer has accepted taking part in this event'
           optional :notes, type: String, desc: 'optional: additional free notes'
         end

@@ -17,15 +17,15 @@
             "meeting_points": "18.0",
             "minutes": 2,
             "seconds": 34,
-            "hundreds": 40,
+            "hundredths": 40,
             "team_id": 826,
             "meeting_program_id": 163737,
             "disqualification_code_type_id": null,
-            "relay_header": "Eden Sport",
+            "relay_code": "Eden Sport",
             "reaction_time": "0.0",
             "entry_minutes": null,
             "entry_seconds": null,
-            "entry_hundreds": null,
+            "entry_hundredths": null,
             "team_affiliation_id": 5196,
             "entry_time_type_id": null,
 
@@ -168,7 +168,7 @@
                     "reaction_time": "0.0",
                     "minutes": 0,
                     "seconds": 0,
-                    "hundreds": 0,
+                    "hundredths": 0,
                     "meeting_relay_result_id": 37828,
                     "swimmer": {
                         "id": 22149,
@@ -205,7 +205,7 @@
                     "reaction_time": "0.0",
                     "minutes": 0,
                     "seconds": 0,
-                    "hundreds": 0,
+                    "hundredths": 0,
                     "meeting_relay_result_id": 37828,
                     "swimmer": {
                         "id": 33677,
@@ -242,7 +242,7 @@
                     "reaction_time": "0.0",
                     "minutes": 0,
                     "seconds": 0,
-                    "hundreds": 0,
+                    "hundredths": 0,
                     "meeting_relay_result_id": 37828,
                     "swimmer": {
                         "id": 1652,
@@ -279,7 +279,7 @@
                     "reaction_time": "0.0",
                     "minutes": 0,
                     "seconds": 0,
-                    "hundreds": 0,
+                    "hundredths": 0,
                     "meeting_relay_result_id": 37828,
                     "swimmer": {
                         "id": 24842,
@@ -438,7 +438,7 @@ All are optional (except `id`):
 | `reaction_time` | float | reaction time (when available; must be positive to be considered) |
 | `minutes` | integer | result time minutes |
 | `seconds` | integer | result time seconds |
-| `hundreds` | integer | result time hundredths of seconds |
+| `hundredths` | integer | result time hundredths of seconds |
 | `play_off` | boolean | `true` if this result refers to a play-off at the end or after the end of a season (standard play otherwise) |
 | `out_of_race` | boolean | `true` if this result does not concur in the overall rankings or scores |
 | `rank` | integer | final heat rank (1+) for this result; usually 0 when disqualified |
@@ -446,7 +446,7 @@ All are optional (except `id`):
 | `meeting_points` | float | result score computed with meeting-specific rules |
 | `disqualified` | boolean | `true` if the swimmer has been disqualified; has precedence over `DisqualificationCodeType` |
 | `disqualification_code_type_id` | integer | GET `/lookup/disqualification_code_type` => list of supported values |
-| `relay_header` | string | descriptive code or number used whenever the same team has registered more than one relay |
+| `relay_code` | string | descriptive code or number used whenever the same team has registered more than one relay |
 | `entry_time_type_id` | integer | associated EntryTimeType ID for the entry time |
 | | _id_ | _code: description_ |
 | | 1 | `M`: manual |
@@ -456,7 +456,7 @@ All are optional (except `id`):
 | | 5 | `U`: last race |
 | `entry_minutes` | integer | minutes for the registration entry time |
 | `entry_seconds` | integer | seconds for the registration entry time |
-| `entry_hundreds` | integer | hundredths of seconds for the registration entry time |
+| `entry_hundredths` | integer | hundredths of seconds for the registration entry time |
 
 
 * * *
@@ -475,7 +475,7 @@ All are optional (except `id`):
     ```bash
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            -d '{"rank": 4, "minutes": 5, "seconds": 45, "hundreds": 60 }' \
+            -d '{"rank": 4, "minutes": 5, "seconds": 45, "hundredths": 60 }' \
             "<API_HOST:PORT>/api/v3/meeting_relay_result/33825"
     ```
 
@@ -489,7 +489,7 @@ All are optional (except `id`):
                     rank: 4,
                     minutes: 5,
                     seconds: 45,
-                    hundreds: 60
+                    hundredths: 60
                 },
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
@@ -508,7 +508,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 200 (application/json)
@@ -530,7 +530,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 200 (application/json)
@@ -552,7 +552,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 401 (application/json)
@@ -572,7 +572,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 401 (application/json)
@@ -592,7 +592,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 401 (application/json)
@@ -628,7 +628,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | `reaction_time` | float | reaction time (when available; must be positive to be considered) |
 | `minutes` | integer | result time minutes |
 | `seconds` | integer | result time seconds |
-| `hundreds` | integer | result time hundredths of seconds |
+| `hundredths` | integer | result time hundredths of seconds |
 | `play_off` | boolean | `true` if this result refers to a play-off at the end or after the end of a season (standard play otherwise) |
 | `out_of_race` | boolean | `true` if this result does not concur in the overall rankings or scores |
 | `rank` | integer | final heat rank (1+) for this result; usually 0 when disqualified |
@@ -636,7 +636,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | `meeting_points` | float | result score computed with meeting-specific rules |
 | `disqualified` | boolean | `true` if the swimmer has been disqualified; has precedence over `DisqualificationCodeType` |
 | `disqualification_code_type_id` | integer | GET `/lookup/disqualification_code_type` => list of supported values |
-| `relay_header` | string | descriptive code or number used whenever the same team has registered more than one relay |
+| `relay_code` | string | descriptive code or number used whenever the same team has registered more than one relay |
 | `entry_time_type_id` | integer | associated EntryTimeType ID for the entry time |
 | | _id_ | _code: description_ |
 | | 1 | `M`: manual |
@@ -646,7 +646,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | | 5 | `U`: last race |
 | `entry_minutes` | integer | minutes for the registration entry time |
 | `entry_seconds` | integer | seconds for the registration entry time |
-| `entry_hundreds` | integer | hundredths of seconds for the registration entry time |
+| `entry_hundredths` | integer | hundredths of seconds for the registration entry time |
 
 
 * * *
@@ -659,7 +659,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + reaction_time (number, optional)
     + minutes (number, optional)
     + seconds (number, optional)
-    + hundreds (number, optional)
+    + hundredths (number, optional)
     + play_off (boolean, optional)
     + out_of_race (boolean, optional)
     + rank (number, optional)
@@ -667,11 +667,11 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + meeting_points (number, optional)
     + disqualified (boolean, optional)
     + disqualification_code_type_id (number, optional)
-    + relay_header (string, optional) - (Relay entry part)
+    + relay_code (string, optional) - (Relay entry part)
     + entry_time_type_id (number, optional) - (Relay entry part)
     + entry_minutes (number, optional) - (Relay entry part)
     + entry_seconds (number, optional) - (Relay entry part)
-    + entry_hundreds (number, optional) - (Relay entry part)
+    + entry_hundredths (number, optional) - (Relay entry part)
 
 
 + Request ok (application/json)
@@ -683,7 +683,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     ```bash
     $> curl -i -X POST -H "Content-Type: application/json" \
             -d '{"meeting_program_id": 168301, "team_affiliation_id": 12178, "team_id": 9197, \
-                 "rank": 5, "minutes": 1, "seconds": 15, "hundreds": 97}'
+                 "rank": 5, "minutes": 1, "seconds": 15, "hundredths": 97}'
             "<API_HOST:PORT>/api/v3/meeting_relay_result"
     ```
 
@@ -698,7 +698,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 5,
                 'minutes': 1,
                 'seconds': 15,
-                'hundreds': 97
+                'hundredths': 97
             } )
     => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
 
@@ -721,7 +721,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 5,
                 'minutes': 1,
                 'seconds': 15,
-                'hundreds': 97
+                'hundredths': 97
             }
 
 + Response 200 (application/json)
@@ -749,7 +749,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 5,
                 'minutes': 1,
                 'seconds': 15,
-                'hundreds': 97
+                'hundredths': 97
             }
 
 + Response 401 (application/json)
@@ -774,7 +774,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 5,
                 'minutes': 1,
                 'seconds': 15,
-                'hundreds': 97
+                'hundredths': 97
             }
 
 + Response 401 (application/json)
@@ -803,7 +803,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 5,
                 'minutes': 1,
                 'seconds': 15,
-                'hundreds': 97
+                'hundredths': 97
             }
 
 + Response 401 (application/json)

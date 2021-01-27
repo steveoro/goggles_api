@@ -28,30 +28,90 @@ end
 #-- ---------------------------------------------------------------------------
 #++
 
-shared_examples_for 'an empty but successful JSON response' do
-  it 'is successful anyway' do
+shared_examples_for 'a successful request that has positive usage stats' do
+  it 'is successful' do
     expect(response).to be_successful
   end
+  it 'has a positive usage statistics' do
+    route_key = "#{response.request.env['REQUEST_METHOD']} #{response.request.path.gsub(%r{/-?\d+}, '/:id')}"
+    usage_row = GogglesDb::APIDailyUse.find_by(route: route_key, day: Date.today)
+    expect(usage_row).to be_a(GogglesDb::APIDailyUse).and be_valid
+    expect(usage_row.count).to be_positive
+  end
+end
+
+shared_examples_for 'an empty but successful JSON response' do
+  it_behaves_like('a successful request that has positive usage stats')
   it 'returns a nil JSON body' do
     expect(JSON.parse(response.body)).to be nil
   end
 end
 
 shared_examples_for 'a successful response with an empty body' do
-  it 'is successful anyway' do
-    expect(response).to be_successful
-  end
+  it_behaves_like('a successful request that has positive usage stats')
   it 'returns a nil body' do
     expect(response.body).to be_empty
   end
 end
 
 shared_examples_for 'an empty but successful JSON list response' do
-  it 'is successful anyway' do
-    expect(response).to be_successful
-  end
+  it_behaves_like('a successful request that has positive usage stats')
   it 'returns an empty JSON list body' do
     expect(JSON.parse(response.body)).to eq([])
+  end
+end
+
+# REQUIRES/ASSUMES:
+# - 'fixture_row' is the fetched row (request is returning fixture_row.to_json)
+shared_examples_for 'a successful JSON row response' do
+  it_behaves_like('a successful request that has positive usage stats')
+  it 'returns the selected row as JSON' do
+    expect(response.body).to eq(fixture_row.to_json)
+  end
+end
+
+# REQUIRES/ASSUMES:
+# - 'fixture_row' is the updated row
+# - 'expected_changes' is the attribute hash containing the updates
+shared_examples_for 'a successful JSON PUT response' do
+  it_behaves_like('a successful request that has positive usage stats')
+  it 'returns true' do
+    expect(response.body).to eq('true')
+  end
+  it 'updates the row' do
+    updated_row = fixture_row.reload
+    expected_changes.each do |key, value|
+      expect(updated_row.send(key)).to eq(value)
+    end
+  end
+end
+
+# REQUIRES/ASSUMES:
+# - 'deletable_row' is the destroyed row
+shared_examples_for 'a successful JSON DELETE response' do
+  it_behaves_like('a successful request that has positive usage stats')
+  it 'returns true' do
+    expect(response.body).to eq('true')
+  end
+  it 'deletes the specified row' do
+    expect { deletable_row.reload }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+end
+
+# REQUIRES/ASSUMES:
+# - 'built_row' should include all parameters as attributes (will reject some attributes such as IDs or timestamps)
+shared_examples_for 'a successful JSON POST response' do
+  it_behaves_like('a successful request that has positive usage stats')
+  it 'returns an OK message and the new row as a JSON object' do
+    result = JSON.parse(response.body)
+    expect(result).to have_key('msg').and have_key('new')
+    expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
+    attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
+    resulting_hash = attr_extractor.call(result['new'])
+    expected_hash  = attr_extractor.call(built_row.attributes)
+    # Adapt expected hash to the JSON-ified result which will store floats as strings so that the comparison is simpler:
+    expected_hash.each { |key, val| expected_hash[key] = val.to_s if val.is_a?(BigDecimal) || val.is_a?(Float) }
+    expect(resulting_hash).to eq(expected_hash)
   end
 end
 #-- ---------------------------------------------------------------------------
@@ -61,9 +121,7 @@ end
 # - many results, multiple pages (always pagination)
 # - 'default_per_page' to be already set (default pagination size)
 shared_examples_for 'successful response with pagination links & values in headers' do
-  it 'is successful' do
-    expect(response).to be_successful
-  end
+  it_behaves_like('a successful request that has positive usage stats')
 
   it 'returns a paginated array of JSON rows' do
     result_array = JSON.parse(response.body)
@@ -96,9 +154,7 @@ end
 # - just 1 result, just 1 page (no pagination)
 # - 'default_per_page' to be already set (default pagination size)
 shared_examples_for 'successful single response without pagination links in headers' do
-  it 'is successful' do
-    expect(response).to be_successful
-  end
+  it_behaves_like('a successful request that has positive usage stats')
 
   it 'returns a paginated array of JSON rows' do
     result_array = JSON.parse(response.body)
@@ -119,9 +175,7 @@ end
 # - 'default_per_page' to be already set (default pagination size)
 # - 'expected_row_count' to be already set (row count for expected result)
 shared_examples_for 'successful multiple row response either with OR without pagination links' do
-  it 'is successful' do
-    expect(response).to be_successful
-  end
+  it_behaves_like('a successful request that has positive usage stats')
 
   it 'returns a paginated JSON array of associated, filtered rows' do
     result_array = JSON.parse(response.body)

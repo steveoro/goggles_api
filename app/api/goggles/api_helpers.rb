@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  7.061
+  #   - version:  7.072
   #   - author:   Steve A.
-  #   - build:    20210119
+  #   - build:    20210126
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -33,6 +33,10 @@ module Goggles
       authorization = CmdAuthorizeAPIRequest.new(headers).call
       !authorization.success? &&
         error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.jwt.invalid'))
+
+      # Update stats using as key a path stripped of all IDs & return authorization result:
+      # (Note: for some tests negative IDs may be used, so we consider those too)
+      GogglesDb::APIDailyUse.increase_for!("#{request.env['REQUEST_METHOD']} #{request.path.gsub(%r{/-?\d+}, '/:id')}")
       authorization.result
     end
 

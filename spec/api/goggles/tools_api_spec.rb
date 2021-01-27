@@ -6,7 +6,7 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::ToolsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user)  { FactoryBot.create(:user) }
   let(:jwt_token) { jwt_for_api_session(api_user) }
@@ -55,9 +55,8 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
         before(:each) { get(api_v3_tools_find_entry_time_path, params: api_request_params, headers: fixture_headers) }
         let(:result_hash) { JSON.parse(response.body) }
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
+        it_behaves_like('a successful request that has positive usage stats')
+
         it 'returns a valid JSON hash' do
           expect(result_hash).to be_a(Hash)
         end
@@ -71,11 +70,11 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
           expect(result_hash['timing']).to be_a(Hash)
           expect(result_hash['timing']).to have_key('minutes')
           expect(result_hash['timing']).to have_key('seconds')
-          expect(result_hash['timing']).to have_key('hundreds') # (sic: "hundredths")
+          expect(result_hash['timing']).to have_key('hundredths') # (sic: "hundredths")
         end
         it "has the 'label' field equal to the default string representation of its 'timing' field" do
           timing = Timing.new(
-            result_hash['timing']['hundreds'],
+            result_hash['timing']['hundredths'],
             result_hash['timing']['seconds'],
             result_hash['timing']['minutes'],
             result_hash['timing']['hours'],
@@ -110,7 +109,7 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_tools_find_entry_time_path, params: api_request_params, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
   end
 end

@@ -216,7 +216,7 @@
                     "meeting_event_id": 6699,
                     "minutes": 2,
                     "seconds": 37,
-                    "hundreds": 30,
+                    "hundredths": 30,
                     "accepted": false,
                     "meeting_reservation_id": 1,
 
@@ -285,7 +285,7 @@
                     "meeting_event_id": 6700,
                     "minutes": 0,
                     "seconds": 37,
-                    "hundreds": 30,
+                    "hundredths": 30,
                     "accepted": true,
                     "meeting_reservation_id": 1,
 
@@ -547,7 +547,7 @@ All are optional (except `id`):
 | | `id` | integer | MeetingEventReservation ID (required whenever including any of the nested fields) |
 | | `minutes` | integer | minutes for the entry timing |
 | | `seconds` | integer | seconds for the entry timing |
-| | `hundreds` | integer | hundreds for the entry timing |
+| | `hundredths` | integer | hundredths for the entry timing |
 | | `accepted` | boolean | `true` if the swimmer has accepted taking part in this event |
 | | `notes` | string | additional free notes, specific for this event |
 | `relays` | --- | array | array of relay reservation parameters _(see below)_ |
@@ -572,7 +572,7 @@ All are optional (except `id`):
     ```bash
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            -d '{\"not_coming\":false,\"confirmed\":true,\"events\":[{\"id\":6699,\"accepted\":false,\"minutes\":2,\"seconds\":37,\"hundreds\":30}]}' \
+            -d '{\"not_coming\":false,\"confirmed\":true,\"events\":[{\"id\":6699,\"accepted\":false,\"minutes\":2,\"seconds\":37,\"hundredths\":30}]}' \
             "<API_HOST:PORT>/api/v3/meeting_reservation/1"
     ```
 
@@ -591,7 +591,7 @@ All are optional (except `id`):
                             accepted: false,
                             minutes: 2,
                             seconds: 37,
-                            hundreds: 30
+                            hundredths: 30
                         }
                     ]
                 },
@@ -617,7 +617,7 @@ All are optional (except `id`):
                         "accepted": false,
                         "minutes": 2,
                         "seconds": 37,
-                        "hundreds": 30
+                        "hundredths": 30
                     }
                 ]
             }
@@ -646,7 +646,7 @@ All are optional (except `id`):
                         "accepted": false,
                         "minutes": 2,
                         "seconds": 37,
-                        "hundreds": 30
+                        "hundredths": 30
                     }
                 ]
             }
@@ -675,7 +675,7 @@ All are optional (except `id`):
                         "accepted": false,
                         "minutes": 2,
                         "seconds": 37,
-                        "hundreds": 30
+                        "hundredths": 30
                     }
                 ]
             }
@@ -702,7 +702,7 @@ All are optional (except `id`):
                         "accepted": false,
                         "minutes": 2,
                         "seconds": 37,
-                        "hundreds": 30
+                        "hundredths": 30
                     }
                 ]
             }
@@ -729,7 +729,7 @@ All are optional (except `id`):
                         "accepted": false,
                         "minutes": 2,
                         "seconds": 37,
-                        "hundreds": 30
+                        "hundredths": 30
                     }
                 ]
             }

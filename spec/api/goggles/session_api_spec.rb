@@ -5,7 +5,7 @@ require 'support/api_session_helpers'
 
 RSpec.describe Goggles::SessionAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user) { FactoryBot.create(:user) }
 
@@ -16,9 +16,8 @@ RSpec.describe Goggles::SessionAPI, type: :request do
 
   describe 'POST /api/:version/session' do
     context 'when using valid parameters,' do
-      before(:each) do
-        post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key })
-      end
+      before(:each) { post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key }) }
+
       it 'is successful' do
         expect(response).to be_successful
       end
@@ -38,9 +37,8 @@ RSpec.describe Goggles::SessionAPI, type: :request do
     end
 
     context 'when using invalid user credentials,' do
-      before(:each) do
-        post(api_v3_session_path, params: { e: 'non.existing.user@example.com', p: 'password', t: Rails.application.credentials.api_static_key })
-      end
+      before(:each) { post(api_v3_session_path, params: { e: 'non.existing.user@example.com', p: 'password', t: Rails.application.credentials.api_static_key }) }
+
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
@@ -54,9 +52,8 @@ RSpec.describe Goggles::SessionAPI, type: :request do
     end
 
     context 'when using an invalid static token,' do
-      before(:each) do
-        post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: 'NOT-the-correct-token-for-sure' })
-      end
+      before(:each) { post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: 'NOT-the-correct-token-for-sure' }) }
+
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end

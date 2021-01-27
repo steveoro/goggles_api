@@ -63,7 +63,7 @@ module Goggles
         optional :reaction_time, type: Float, desc: 'optional: reaction time'
         optional :minutes, type: Integer, desc: 'optional: result time minutes'
         optional :seconds, type: Integer, desc: 'optional: result time seconds'
-        optional :hundreds, type: Integer, desc: 'optional: result time hundredths of seconds'
+        optional :hundredths, type: Integer, desc: 'optional: result time hundredths of seconds'
         optional :play_off, type: Boolean, desc: 'optional: true for play-offs at (or after) the end of a season; standard play otherwise'
         optional :out_of_race, type: Boolean, desc: 'optional: true if this result does not concur in the overall rankings or scores'
         optional :rank, type: Integer, desc: 'optional: final heat rank (1+) for this result'
@@ -72,11 +72,11 @@ module Goggles
         optional :disqualified, type: Boolean, desc: 'optional: true if this team relay has been disqualified; has precedence over DisqualificationCodeType'
         optional :disqualification_code_type_id, type: Integer, desc: 'optional: Disqualification code type used only for description (not always known)'
         # Entries-related:
-        optional :relay_header, type: String, desc: 'optional: descriptive code or number used whenever the same team has registered more than one relay'
+        optional :relay_code, type: String, desc: 'optional: descriptive code or number used whenever the same team has registered more than one relay'
         optional :entry_time_type_id, type: Integer, desc: 'optional: associated EntryTimeType ID for the relay entry'
         optional :entry_minutes, type: Integer, desc: 'optional: minutes for the registration entry time'
         optional :entry_seconds, type: Integer, desc: 'optional: seconds for the registration entry time'
-        optional :entry_hundreds, type: Integer, desc: 'optional: hundredths of seconds for the registration entry time'
+        optional :entry_hundredths, type: Integer, desc: 'optional: hundredths of seconds for the registration entry time'
       end
       route_param :id do
         put do
@@ -116,7 +116,7 @@ module Goggles
         optional :reaction_time, type: Float, desc: 'optional: reaction time'
         optional :minutes, type: Integer, desc: 'optional: result time minutes'
         optional :seconds, type: Integer, desc: 'optional: result time seconds'
-        optional :hundreds, type: Integer, desc: 'optional: result time hundredths of seconds'
+        optional :hundredths, type: Integer, desc: 'optional: result time hundredths of seconds'
         optional :play_off, type: Boolean, desc: 'optional: true for play-offs at (or after) the end of a season; standard play otherwise'
         optional :out_of_race, type: Boolean, desc: 'optional: true if this result does not concur in the overall rankings or scores'
         optional :rank, type: Integer, desc: 'optional: final heat rank (1+) for this result'
@@ -125,11 +125,11 @@ module Goggles
         optional :disqualified, type: Boolean, desc: 'optional: true if this team relay has been disqualified; has precedence over DisqualificationCodeType'
         optional :disqualification_code_type_id, type: Integer, desc: 'optional: Disqualification code type used only for description (not always known)'
         # Entries-related:
-        optional :relay_header, type: String, desc: 'optional: descriptive code or number used whenever the same team has registered more than one relay'
+        optional :relay_code, type: String, desc: 'optional: descriptive code or number used whenever the same team has registered more than one relay'
         optional :entry_time_type_id, type: Integer, desc: 'optional: associated EntryTimeType ID for the relay entry'
         optional :entry_minutes, type: Integer, desc: 'optional: minutes for the registration entry time'
         optional :entry_seconds, type: Integer, desc: 'optional: seconds for the registration entry time'
-        optional :entry_hundreds, type: Integer, desc: 'optional: hundredths of seconds for the registration entry time'
+        optional :entry_hundredths, type: Integer, desc: 'optional: hundredths of seconds for the registration entry time'
       end
       post do
         api_user = check_jwt_session

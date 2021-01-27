@@ -6,11 +6,11 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::TeamsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user)  { FactoryBot.create(:user) }
   let(:jwt_token) { jwt_for_api_session(api_user) }
-  let(:fixture_team) { FactoryBot.create(:team, city: FactoryBot.create(:city)) }
+  let(:fixture_row) { FactoryBot.create(:team, city: FactoryBot.create(:city)) }
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
   let(:crud_user) { FactoryBot.create(:user) }
   let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'Team') }
@@ -18,31 +18,25 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
 
   # Enforce domain context creation
   before(:each) do
-    expect(fixture_team).to be_a(GogglesDb::Team).and be_valid
+    expect(fixture_row).to be_a(GogglesDb::Team).and be_valid
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
   end
 
   describe 'GET /api/v3/team/:id' do
     context 'when using valid parameters,' do
-      before(:each) { get(api_v3_team_path(id: fixture_team.id), headers: fixture_headers) }
-
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'returns the selected user as JSON' do
-        expect(response.body).to eq(fixture_team.to_json)
-      end
+      before(:each) { get(api_v3_team_path(id: fixture_row.id), headers: fixture_headers) }
+      it_behaves_like('a successful JSON row response')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_team_path(id: fixture_team.id), headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { get(api_v3_team_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) { get api_v3_team_path(id: -1), headers: fixture_headers }
-      it_behaves_like 'an empty but successful JSON response'
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -50,66 +44,44 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
 
   describe 'PUT /api/v3/team/:id' do
     let(:new_team_values) { FactoryBot.build(:team) }
+    let(:expected_changes) do
+      [
+        { name: new_team_values.name, editable_name: new_team_values.editable_name },
+        { city_id: new_team_values.city_id, address: new_team_values.address, zip: new_team_values.zip },
+        { phone_mobile: new_team_values.phone_mobile, phone_number: new_team_values.phone_number },
+        { e_mail: new_team_values.e_mail, contact_name: new_team_values.contact_name },
+        { notes: new_team_values.notes },
+        { home_page_url: new_team_values.home_page_url }
+      ].sample
+    end
     before(:each) do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+      expect(new_team_values).to be_a(GogglesDb::Team)
+      expect(expected_changes).to be_an(Hash)
     end
 
     context 'when using valid parameters,' do
-      let(:expected_changes) do
-        [
-          { name: new_team_values.name, editable_name: new_team_values.editable_name },
-          { city_id: new_team_values.city_id, address: new_team_values.address, zip: new_team_values.zip },
-          { phone_mobile: new_team_values.phone_mobile, phone_number: new_team_values.phone_number },
-          { e_mail: new_team_values.e_mail, contact_name: new_team_values.contact_name },
-          { notes: new_team_values.notes },
-          { home_page_url: new_team_values.home_page_url }
-        ].sample
-      end
-      before(:each) { expect(expected_changes).to be_an(Hash) }
-
       context 'with an account having CRUD grants,' do
-        before(:each) { put(api_v3_team_path(id: fixture_team.id), params: expected_changes, headers: crud_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns true' do
-          expect(response.body).to eq('true')
-          updated_row = fixture_team.reload
-          expected_changes.each do |key, value|
-            expect(updated_row.send(key)).to eq(value)
-          end
-        end
+        before(:each) { put(api_v3_team_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        it_behaves_like('a successful JSON PUT response')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { put(api_v3_team_path(id: fixture_team.id), params: expected_changes, headers: fixture_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        before(:each) { put(api_v3_team_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        put(
-          api_v3_team_path(id: fixture_team.id),
-          params: { name: new_team_values.name },
-          headers: { 'Authorization' => 'you wish!' }
-        )
-      end
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { put(api_v3_team_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        put(
-          api_v3_team_path(id: -1),
-          params: { name: new_team_values.name },
-          headers: crud_headers
-        )
-      end
-      it_behaves_like 'an empty but successful JSON response'
+      before(:each) { put(api_v3_team_path(id: -1), params: expected_changes, headers: crud_headers) }
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -121,50 +93,35 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
     let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
     let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
     before(:each) do
-      expect(built_row).to be_a(GogglesDb::Team).and be_valid
       expect(admin_user).to be_a(GogglesDb::User).and be_valid
       expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(admin_headers).to be_an(Hash).and have_key('Authorization')
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+      expect(built_row).to be_a(GogglesDb::Team).and be_valid
     end
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
         before(:each) { post(api_v3_team_path, params: built_row.attributes, headers: admin_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns the result msg and the new row as JSON' do
-          result = JSON.parse(response.body)
-          expect(result).to have_key('msg').and have_key('new')
-          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
-          attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
-          expect(attr_extractor.call(result['new'])).to eq(attr_extractor.call(built_row.attributes))
-        end
+        it_behaves_like('a successful JSON POST response')
       end
 
       context 'with an account having just CRUD grants,' do
-        before(:each) do
-          expect(crud_user).to be_a(GogglesDb::User).and be_valid
-          expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
-          expect(crud_headers).to be_an(Hash).and have_key('Authorization')
-          post(api_v3_team_path, params: built_row.attributes, headers: crud_headers)
-        end
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        before(:each) { post(api_v3_team_path, params: built_row.attributes, headers: crud_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
 
       context 'with an account not having any grants,' do
         before(:each) { post(api_v3_team_path, params: built_row.attributes, headers: fixture_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { post(api_v3_team_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when using invalid parameters,' do
@@ -195,15 +152,14 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
 
       context 'without any filters,' do
         before(:each) { get(api_v3_teams_path, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific city_id,' do
         before(:each) { get(api_v3_teams_path, params: { city_id: fixture_city_id }, headers: fixture_headers) }
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
+        it_behaves_like('a successful request that has positive usage stats')
+
         it 'returns a JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
@@ -226,18 +182,18 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
         end
         # Typically any results filtered by name will be just a single row fitting
         # in a single page (w/o pagination links), but with random names we can't be sure:
-        it_behaves_like 'successful multiple row response either with OR without pagination links'
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_teams_path, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_teams_path, params: { city_id: -1 }, headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON list response'
+      it_behaves_like('an empty but successful JSON list response')
     end
   end
   #-- -------------------------------------------------------------------------

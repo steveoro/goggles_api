@@ -54,7 +54,7 @@ module Goggles
         optional :reaction_time, type: Float, desc: 'optional: reaction time'
         optional :minutes, type: Integer, desc: 'optional: lap time, minutes'
         optional :seconds, type: Integer, desc: 'optional: lap time, seconds'
-        optional :hundreds, type: Integer, desc: 'optional: lap time, hundredths of seconds'
+        optional :hundredths, type: Integer, desc: 'optional: lap time, hundredths of seconds'
       end
       route_param :id do
         put do
@@ -79,8 +79,8 @@ module Goggles
       # - relay_order
       #
       # Timing can be set by either one of these tuples:
-      # - meeting_relay_swimmer-relative:( [reaction_time] minutes seconds hundreds )
-      # - meeting_relay_swimmer-absolute: ( [reaction_time] minutes_from_start seconds_from_start hundreds_from_start )
+      # - meeting_relay_swimmer-relative:( [reaction_time] minutes seconds hundredths )
+      # - meeting_relay_swimmer-absolute: ( [reaction_time] minutes_from_start seconds_from_start hundredths_from_start )
       #
       # When not set, timing will default to zero and shall be ignored on display.
       #
@@ -99,7 +99,7 @@ module Goggles
         optional :reaction_time, type: Float, desc: 'optional: reaction time'
         optional :minutes, type: Integer, desc: 'optional: lap time, minutes'
         optional :seconds, type: Integer, desc: 'optional: lap time, seconds'
-        optional :hundreds, type: Integer, desc: 'optional: lap time, hundredths of seconds'
+        optional :hundredths, type: Integer, desc: 'optional: lap time, hundredths of seconds'
       end
       post do
         api_user = check_jwt_session

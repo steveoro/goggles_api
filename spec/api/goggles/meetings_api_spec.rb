@@ -6,40 +6,34 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::MeetingsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user)  { FactoryBot.create(:user) }
   let(:jwt_token) { jwt_for_api_session(api_user) }
-  let(:fixture_meeting) { FactoryBot.create(:meeting) }
+  let(:fixture_row) { FactoryBot.create(:meeting) }
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
   before(:each) do
-    expect(fixture_meeting).to be_a(GogglesDb::Meeting).and be_valid
+    expect(fixture_row).to be_a(GogglesDb::Meeting).and be_valid
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
   end
 
   describe 'GET /api/v3/meeting/:id' do
     context 'when using valid parameters,' do
-      before(:each) { get api_v3_meeting_path(id: fixture_meeting.id), headers: fixture_headers }
-
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'returns the selected row as JSON' do
-        expect(response.body).to eq(fixture_meeting.to_json)
-      end
+      before(:each) { get api_v3_meeting_path(id: fixture_row.id), headers: fixture_headers }
+      it_behaves_like('a successful JSON row response')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get api_v3_meeting_path(id: fixture_meeting.id), headers: { 'Authorization' => 'you wish!' } }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { get api_v3_meeting_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) { get(api_v3_meeting_path(id: -1), headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON response'
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -57,7 +51,7 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
     end
 
     context 'when using valid parameters,' do
-      let(:new_date) { fixture_meeting.season.begin_date + (rand * 100).to_i.days }
+      let(:new_date) { fixture_row.season.begin_date + (rand * 100).to_i.days }
       let(:expected_changes) do
         [
           { code: fixture_code, header_date: new_date, entry_deadline: (new_date - 15.days) },
@@ -68,31 +62,22 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
       end
       before(:each) do
         expect(expected_changes).to be_an(Hash)
-        expect(fixture_meeting).to be_a(GogglesDb::Meeting).and be_valid
+        expect(fixture_row).to be_a(GogglesDb::Meeting).and be_valid
       end
 
       context 'with an account having CRUD grants,' do
-        before(:each) { put(api_v3_meeting_path(id: fixture_meeting.id), params: expected_changes, headers: crud_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns true' do
-          expect(response.body).to eq('true')
-          updated_row = fixture_meeting.reload
-          expected_changes.each do |key, value|
-            expect(updated_row.send(key)).to eq(value)
-          end
-        end
+        before(:each) { put(api_v3_meeting_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        it_behaves_like('a successful JSON PUT response')
       end
 
+      # Admin-only fields update test:
       [
         { season_id: FactoryBot.create(:season).id },
         { read_only: [true, false].sample }
       ].each do |admin_changes|
         context "when editing the #{admin_changes.keys.first} attribute" do
-          let(:fixture_meeting_2) { FactoryBot.create(:meeting) }
-          before(:each) { expect(fixture_meeting_2).to be_a(GogglesDb::Meeting).and be_valid }
+          let(:fixture_row_2) { FactoryBot.create(:meeting) }
+          before(:each) { expect(fixture_row_2).to be_a(GogglesDb::Meeting).and be_valid }
 
           context 'with an account having ADMIN grants,' do
             let(:admin_user) { FactoryBot.create(:user) }
@@ -102,52 +87,39 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
               expect(admin_user).to be_a(GogglesDb::User).and be_valid
               expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
               expect(admin_headers).to be_an(Hash).and have_key('Authorization')
-              put(api_v3_meeting_path(id: fixture_meeting_2.id), params: admin_changes, headers: admin_headers)
+              put(api_v3_meeting_path(id: fixture_row_2.id), params: admin_changes, headers: admin_headers)
             end
 
-            it 'is successful' do
-              expect(response).to be_successful
-            end
+            it_behaves_like('a successful request that has positive usage stats')
+
             it 'updates the row and returns true' do
               expect(response.body).to eq('true')
-              updated_row = fixture_meeting_2.reload
+              updated_row = fixture_row_2.reload
               expect(updated_row.send(admin_changes.keys.first) == admin_changes.values.first).to be true
             end
           end
 
           context 'with an account having just CRUD grants,' do
-            before(:each) { put(api_v3_meeting_path(id: fixture_meeting_2.id), params: admin_changes, headers: crud_headers) }
-            it_behaves_like 'an empty but successful JSON response'
+            before(:each) { put(api_v3_meeting_path(id: fixture_row_2.id), params: admin_changes, headers: crud_headers) }
+            it_behaves_like('an empty but successful JSON response')
           end
         end
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { put(api_v3_meeting_path(id: fixture_meeting.id), params: expected_changes, headers: fixture_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        before(:each) { put(api_v3_meeting_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        put(
-          api_v3_meeting_path(id: fixture_meeting.id),
-          params: { code: fixture_code },
-          headers: { 'Authorization' => 'you wish!' }
-        )
-      end
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { put(api_v3_meeting_path(id: fixture_row.id), params: { code: fixture_code }, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        put(
-          api_v3_meeting_path(id: -1),
-          params: { code: fixture_code },
-          headers: crud_headers
-        )
-      end
-      it_behaves_like 'an empty but successful JSON response'
+      before(:each) { put(api_v3_meeting_path(id: -1), params: { code: fixture_code }, headers: crud_headers) }
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -168,32 +140,21 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
 
       context 'without any filters,' do
         before(:each) { get(api_v3_meetings_path, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific season (yielding > 25 meetings),' do
         before(:each) { get(api_v3_meetings_path, params: { season_id: many_pages_season_id }, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific season (yielding <= 25 meetings),' do
         let(:expected_row_count) { GogglesDb::Meeting.select(:id).where(season_id: single_page_season_id).count }
-        before(:each) { get(api_v3_meetings_path, params: { season_id: single_page_season_id }, headers: fixture_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
+        before(:each) do
+          expect(expected_row_count).to be_positive
+          get(api_v3_meetings_path, params: { season_id: single_page_season_id }, headers: fixture_headers)
         end
-        it 'returns an array of JSON rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(expected_row_count)
-        end
-        it 'does not contain the pagination values or links in the response headers' do
-          expect(response.headers['Page']).to eq('1')
-          expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
-          expect(response.headers['Total']).to eq(expected_row_count.to_s)
-          expect(response.headers['Link']).to be nil
-        end
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when filtering by a specific date and season,' do
@@ -207,22 +168,7 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
           expect(expected_row_count).to be_positive
           get(api_v3_meetings_path, params: { date: sample_date, season_id: many_pages_season_id }, headers: fixture_headers)
         end
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'returns an array of JSON rows' do
-          result_array = JSON.parse(response.body)
-          expect(result_array).to be_an(Array)
-          expect(result_array.count).to eq(expected_row_count)
-        end
-        # Typically there won't be no more than 4 or 5 meetings for the same date & season)
-        it 'does not contain the pagination values or links in the response headers' do
-          expect(response.headers['Page']).to eq('1')
-          expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
-          expect(response.headers['Total']).to eq(expected_row_count.to_s)
-          expect(response.headers['Link']).to be nil
-        end
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when filtering by a specific pool_type and season,' do
@@ -232,9 +178,11 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
                             .where(season_id: many_pages_season_id, 'swimming_pools.pool_type_id': fixture_pool_type_id)
                             .distinct.count
         end
-        before(:each) { get(api_v3_meetings_path, params: { pool_type_id: fixture_pool_type_id, season_id: many_pages_season_id }, headers: fixture_headers) }
-
-        it_behaves_like 'successful multiple row response either with OR without pagination links'
+        before(:each) do
+          expect(expected_row_count).to be_positive
+          get(api_v3_meetings_path, params: { pool_type_id: fixture_pool_type_id, season_id: many_pages_season_id }, headers: fixture_headers)
+        end
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when filtering by name,' do
@@ -244,20 +192,22 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
                             .for_name(fixture_description)
                             .distinct.count
         end
-        before(:each) { get(api_v3_meetings_path, params: { name: fixture_description }, headers: fixture_headers) }
-
-        it_behaves_like 'successful multiple row response either with OR without pagination links'
+        before(:each) do
+          expect(expected_row_count).to be_positive
+          get(api_v3_meetings_path, params: { name: fixture_description }, headers: fixture_headers)
+        end
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_meetings_path, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_meetings_path, params: { date: '1986-01-01' }, headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON list response'
+      it_behaves_like('an empty but successful JSON list response')
     end
   end
   #-- -------------------------------------------------------------------------

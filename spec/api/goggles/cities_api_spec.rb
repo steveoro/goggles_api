@@ -6,7 +6,7 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::CitiesAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user) { FactoryBot.create(:user) }
   let(:jwt_token) { jwt_for_api_session(api_user) }
@@ -29,29 +29,24 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
   describe 'GET /api/v3/city/:id' do
     context 'when using valid parameters,' do
       before(:each) { get(api_v3_city_path(id: fixture_row.id), headers: fixture_headers) }
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'returns the selected user as JSON' do
-        expect(response.body).to eq(fixture_row.to_json)
-      end
+      it_behaves_like('a successful JSON row response')
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_city_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) { get api_v3_city_path(id: -1), headers: fixture_headers }
-      it_behaves_like 'an empty but successful JSON response'
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
   #++
 
   describe 'PUT /api/v3/city/:id' do
-    let(:editable_row) { FactoryBot.create(:city) }
+    let(:fixture_row) { FactoryBot.create(:city) }
     let(:new_values) do
       FactoryBot.build(
         :city,
@@ -73,40 +68,31 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
     end
 
     before(:each) do
-      expect(editable_row).to be_a(GogglesDb::City).and be_valid
+      expect(fixture_row).to be_a(GogglesDb::City).and be_valid
       expect(new_values).to be_a(GogglesDb::City).and be_valid
       expect(expected_changes).to be_a(Hash)
     end
 
     context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
-        before(:each) { put(api_v3_city_path(id: editable_row.id), params: expected_changes, headers: crud_headers) }
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns true' do
-          expect(response.body).to eq('true')
-          updated_row = editable_row.reload
-          expected_changes.each do |key, value|
-            expect(updated_row.send(key)).to eq(value)
-          end
-        end
+        before(:each) { put(api_v3_city_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        it_behaves_like('a successful JSON PUT response')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { put(api_v3_city_path(id: editable_row.id), params: expected_changes, headers: fixture_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        before(:each) { put(api_v3_city_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { put(api_v3_city_path(id: editable_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { put(api_v3_city_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) { put(api_v3_city_path(id: -1), params: expected_changes, headers: crud_headers) }
-      it_behaves_like 'an empty but successful JSON response'
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -127,27 +113,17 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
         before(:each) { post(api_v3_city_path, params: built_row.attributes, headers: admin_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns the result msg and the new row as JSON' do
-          result = JSON.parse(response.body)
-          expect(result).to have_key('msg').and have_key('new')
-          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
-          attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
-          expect(attr_extractor.call(result['new'])).to eq(attr_extractor.call(built_row.attributes))
-        end
+        it_behaves_like('a successful JSON POST response')
       end
 
       context 'with an account having just CRUD grants,' do
         before(:each) { post(api_v3_city_path, params: built_row.attributes, headers: crud_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
 
       context 'with an account not having any grants,' do
         before(:each) { post(api_v3_city_path, params: built_row.attributes, headers: fixture_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
@@ -180,17 +156,17 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
 
       context 'without any filters,' do
         before(:each) { get(api_v3_cities_path, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific country,' do
         before(:each) { get(api_v3_cities_path, params: { country: 'Italy' }, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific country_code,' do
         before(:each) { get(api_v3_cities_path, params: { country_code: 'IT' }, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       # Checking specific accented or partial names:
@@ -200,19 +176,19 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
           let(:expected_row_count) { expected_results.count }
           before(:each) { get(api_v3_cities_path, params: { name: fixture_name }, headers: fixture_headers) }
 
-          it_behaves_like 'successful multiple row response either with OR without pagination links'
+          it_behaves_like('successful multiple row response either with OR without pagination links')
         end
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_cities_path, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_cities_path, params: { name: '?@12345!' }, headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON list response'
+      it_behaves_like('an empty but successful JSON list response')
     end
   end
   # -- -------------------------------------------------------------------------
@@ -258,19 +234,19 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
             expect(result_array.first.keys).to include('name', 'latitude', 'longitude', 'region_num', 'region')
           end
 
-          it_behaves_like 'successful multiple row response either with OR without pagination links'
+          it_behaves_like('successful multiple row response either with OR without pagination links')
         end
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_cities_search_path, params: { name: 'Roma', country_code: 'IT' }, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_cities_search_path, params: { name: '?@No-City!', country_code: 'IT' }, headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON list response'
+      it_behaves_like('an empty but successful JSON list response')
     end
   end
 end

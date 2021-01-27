@@ -6,7 +6,7 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::TeamManagersAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user)   { FactoryBot.create(:user) }
   let(:jwt_token)  { jwt_for_api_session(api_user) }
@@ -37,16 +37,7 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
         before(:each) { post(api_v3_team_manager_path, params: built_row.attributes, headers: admin_headers) }
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns the result msg and the new row as JSON' do
-          result = JSON.parse(response.body)
-          expect(result).to have_key('msg').and have_key('new')
-          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
-          attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
-          expect(attr_extractor.call(result['new'])).to eq(attr_extractor.call(built_row.attributes))
-        end
+        it_behaves_like('a successful JSON POST response')
       end
 
       context 'with an account having just CRUD grants,' do
@@ -59,26 +50,23 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
           expect(crud_headers).to be_an(Hash).and have_key('Authorization')
           post(api_v3_team_manager_path, params: built_row.attributes, headers: crud_headers)
         end
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
 
       context 'with an account not having any grants,' do
         before(:each) { post(api_v3_team_manager_path, params: built_row.attributes, headers: fixture_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        post(api_v3_team_manager_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' })
-      end
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { post(api_v3_team_manager_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when using missing or invalid parameters,' do
-      before(:each) do
-        post(api_v3_team_manager_path, params: { user_id: built_row.user_id, team_affiliation_id: -1 }, headers: admin_headers)
-      end
+      before(:each) { post(api_v3_team_manager_path, params: { user_id: built_row.user_id, team_affiliation_id: -1 }, headers: admin_headers) }
+
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end

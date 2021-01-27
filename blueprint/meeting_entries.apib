@@ -21,7 +21,7 @@
             "entry_time_type_id": 1,
             "minutes": 1,
             "seconds": 8,
-            "hundreds": 80,
+            "hundredths": 80,
             "no_time": false,
 
             "meeting": {
@@ -360,7 +360,7 @@ All are optional (except `id`):
 | | 5 | `U`: last race |
 | `minutes` | integer | minutes for the registration entry timing |
 | `seconds` | integer | seconds for the registration entry timing |
-| `hundreds` | integer | hundredths of seconds for the registration entry timing |
+| `hundredths` | integer | hundredths of seconds for the registration entry timing |
 | `no_time` | boolean | `true` for entries with an unspecified timing |
 
 
@@ -535,7 +535,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | | 5 | `U`: last race |
 | `minutes` | integer | minutes for the registration entry timing |
 | `seconds` | integer | seconds for the registration entry timing |
-| `hundreds` | integer | hundredths of seconds for the registration entry timing |
+| `hundredths` | integer | hundredths of seconds for the registration entry timing |
 | `no_time` | boolean | `true` for entries with an unspecified timing |
 
 
@@ -551,7 +551,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + entry_time_type_id (number, optional) - associated EntryTimeType ID for referencing entry timings
     + minutes (number, optional) - minutes for the registration entry timing
     + seconds (number, optional) - seconds for the registration entry timing
-    + hundreds (number, optional) - hundredths of seconds for the registration entry timing
+    + hundredths (number, optional) - hundredths of seconds for the registration entry timing
     + no_time (boolean, optional) - `true` for entries with an unspecified timing
 
 

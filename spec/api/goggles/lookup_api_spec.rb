@@ -6,7 +6,7 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::LookupAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user)  { FactoryBot.create(:user) }
   let(:jwt_token) { jwt_for_api_session(api_user) }
@@ -30,9 +30,8 @@ RSpec.describe Goggles::LookupAPI, type: :request do
               get(api_v3_lookup_path(entity_name: entity_name), params: { locale: locale }, headers: fixture_headers)
             end
 
-            it 'is successful' do
-              expect(response).to be_successful
-            end
+            it_behaves_like('a successful request that has positive usage stats')
+
             it 'returns a non-empty list of JSON rows' do
               result_array = JSON.parse(response.body)
               expect(result_array).to be_an(Array)

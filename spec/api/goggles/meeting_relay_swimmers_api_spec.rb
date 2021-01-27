@@ -6,7 +6,7 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user) { FactoryBot.create(:user) }
   let(:jwt_token) { jwt_for_api_session(api_user) }
@@ -23,22 +23,17 @@ RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
   describe 'GET /api/v3/meeting_relay_swimmer/:id' do
     context 'when using valid parameters,' do
       before(:each) { get(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), headers: fixture_headers) }
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'returns the selected user as JSON' do
-        expect(response.body).to eq(fixture_row.to_json)
-      end
+      it_behaves_like('a successful JSON row response')
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get api_v3_meeting_relay_swimmer_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) { get(api_v3_meeting_relay_swimmer_path(id: -1), headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON response'
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -50,67 +45,42 @@ RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
   let(:new_built_row) { FactoryBot.build(:meeting_relay_swimmer) }
 
   describe 'PUT /api/v3/meeting_relay_swimmer/:id' do
+    let(:expected_changes) do
+      [
+        { meeting_relay_result_id: new_built_row.meeting_relay_result_id, swimmer_id: new_built_row.swimmer_id },
+        { stroke_type_id: new_built_row.stroke_type_id, badge_id: new_built_row.badge_id, swimmer_id: new_built_row.swimmer_id },
+        { minutes: new_built_row.minutes, seconds: new_built_row.seconds, hundredths: new_built_row.hundredths },
+        { relay_order: (1..4).to_a.sample, reaction_time: (rand + 0.07).round(2) }
+      ].sample
+    end
     before(:each) do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
       expect(new_built_row).to be_a(GogglesDb::MeetingRelaySwimmer).and be_valid
+      expect(expected_changes).to be_an(Hash).and be_present
     end
-    context 'when using valid parameters,' do
-      let(:expected_changes) do
-        [
-          { meeting_relay_result_id: new_built_row.meeting_relay_result_id, swimmer_id: new_built_row.swimmer_id },
-          { stroke_type_id: new_built_row.stroke_type_id, badge_id: new_built_row.badge_id, swimmer_id: new_built_row.swimmer_id },
-          { minutes: new_built_row.minutes, seconds: new_built_row.seconds, hundreds: new_built_row.hundreds },
-          { relay_order: (1..4).to_a.sample, reaction_time: (rand + 0.07).round(2) }
-        ].sample
-      end
-      before(:each) { expect(expected_changes).to be_an(Hash).and be_present }
 
+    context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
-        before(:each) do
-          put(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), params: expected_changes, headers: crud_headers)
-        end
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns true' do
-          expect(response.body).to eq('true')
-          updated_row = fixture_row.reload
-          expected_changes.each do |key, value|
-            expect(updated_row.send(key)).to eq(value)
-          end
-        end
+        before(:each) { put(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        it_behaves_like('a successful JSON PUT response')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) do
-          put(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers)
-        end
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        before(:each) { put(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        put(
-          api_v3_meeting_relay_swimmer_path(id: fixture_row.id),
-          params: { stroke_type_id: new_built_row.stroke_type_id },
-          headers: { 'Authorization' => 'you wish!' }
-        )
-      end
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { put(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        put(
-          api_v3_meeting_relay_swimmer_path(id: -1),
-          params: { stroke_type_id: new_built_row.stroke_type_id },
-          headers: crud_headers
-        )
-      end
-      it_behaves_like 'an empty but successful JSON response'
+      before(:each) { put(api_v3_meeting_relay_swimmer_path(id: -1), params: expected_changes, headers: crud_headers) }
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -118,57 +88,35 @@ RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
 
   describe 'POST /api/v3/meeting_relay_swimmer' do
     let(:built_row) { FactoryBot.build(:meeting_relay_swimmer) }
-    before(:each) { expect(built_row).to be_a(GogglesDb::MeetingRelaySwimmer).and be_valid }
+    before(:each) do
+      expect(crud_user).to be_a(GogglesDb::User).and be_valid
+      expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+      expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+      expect(built_row).to be_a(GogglesDb::MeetingRelaySwimmer).and be_valid
+    end
 
     context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
-        before(:each) do
-          expect(crud_user).to be_a(GogglesDb::User).and be_valid
-          expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
-          expect(crud_headers).to be_an(Hash).and have_key('Authorization')
-          post(api_v3_meeting_relay_swimmer_path, params: built_row.attributes, headers: crud_headers)
-        end
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns the result msg and the new row as JSON' do
-          result = JSON.parse(response.body)
-          expect(result).to have_key('msg').and have_key('new')
-          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
-          attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
-          resulting_hash = attr_extractor.call(result['new'])
-          expected_hash  = attr_extractor.call(built_row.attributes)
-          # Adapt expected hash to the JSON-ified result which will store floats as strings so that the comparison is simpler:
-          expected_hash.each { |key, val| expected_hash[key] = val.to_s if val.is_a?(BigDecimal) || val.is_a?(Float) }
-          expect(resulting_hash).to eq(expected_hash)
-        end
+        before(:each) { post(api_v3_meeting_relay_swimmer_path, params: built_row.attributes, headers: crud_headers) }
+        it_behaves_like('a successful JSON POST response')
       end
 
       context 'with an account not having any grants,' do
         before(:each) { post(api_v3_meeting_relay_swimmer_path, params: built_row.attributes, headers: fixture_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { post(api_v3_meeting_relay_swimmer_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
-    context 'when using missing parameters,' do
+    context 'when calling with missing parameters,' do
       before(:each) do
-        expect(crud_user).to be_a(GogglesDb::User).and be_valid
-        expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
-        expect(crud_headers).to be_an(Hash).and have_key('Authorization')
         post(
           api_v3_meeting_relay_swimmer_path,
-          params: {
-            meeting_relay_result_id: built_row.meeting_relay_result_id,
-            swimmer_id: built_row.swimmer_id,
-            badge_id: built_row.badge_id,
-            relay_order: built_row.relay_order
-          },
+          params: built_row.attributes.reject { |key, _val| key == 'stroke_type_id' },
           headers: crud_headers
         )
       end
@@ -198,35 +146,23 @@ RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
 
       context 'with an account having CRUD grants,' do
         before(:each) { delete(api_v3_meeting_relay_swimmer_path(id: deletable_row.id), headers: crud_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'deletes the row and returns true' do
-          expect(response.body).to eq('true')
-        end
+        it_behaves_like('a successful JSON DELETE response')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) do
-          delete(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), headers: fixture_headers)
-        end
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        before(:each) { delete(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), headers: fixture_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        delete(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' })
-      end
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { delete(api_v3_meeting_relay_swimmer_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        delete(api_v3_meeting_relay_swimmer_path(id: -1), headers: crud_headers)
-      end
-      it_behaves_like 'a successful response with an empty body'
+      before(:each) { delete(api_v3_meeting_relay_swimmer_path(id: -1), headers: crud_headers) }
+      it_behaves_like('a successful response with an empty body')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -250,10 +186,7 @@ RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
 
       context 'without any filters,' do
         before(:each) { get(api_v3_meeting_relay_swimmers_path, headers: fixture_headers) }
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific meeting_relay_result_id,' do
@@ -262,7 +195,7 @@ RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
           expect(expected_row_count).to be_positive
           get(api_v3_meeting_relay_swimmers_path, params: { meeting_relay_result_id: fixture_mrr.id }, headers: fixture_headers)
         end
-        it_behaves_like 'successful multiple row response either with OR without pagination links'
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when filtering by a specific badge_id,' do
@@ -272,7 +205,7 @@ RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
           get(api_v3_meeting_relay_swimmers_path, params: { badge_id: fixture_mrs.badge_id }, headers: fixture_headers)
         end
         # This will support even just 1 result row:
-        it_behaves_like 'successful multiple row response either with OR without pagination links'
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when filtering by a specific swimmer_id,' do
@@ -281,29 +214,29 @@ RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
           expect(expected_row_count).to be_positive
           get(api_v3_meeting_relay_swimmers_path, params: { swimmer_id: fixture_mrs.swimmer_id }, headers: fixture_headers)
         end
-        it_behaves_like 'successful multiple row response either with OR without pagination links'
+        it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when filtering by a specific stroke_type_id,' do
         # (stroke_type_id ID 1 is expected to have definitely more than 25 entries in the test database)
         before(:each) { get(api_v3_meeting_relay_swimmers_path, params: { stroke_type_id: 1 }, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific relay_order,' do
         before(:each) { get(api_v3_meeting_relay_swimmers_path, params: { relay_order: 1 }, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_meeting_relay_swimmers_path, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_meeting_relay_swimmers_path, params: { swimmer_id: -1 }, headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON list response'
+      it_behaves_like('an empty but successful JSON list response')
     end
   end
   #-- -------------------------------------------------------------------------

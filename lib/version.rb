@@ -3,7 +3,7 @@
 #
 # = Version module
 #
-#   - version:  7.066
+#   - version:  7.072
 #   - author:   Steve A.
 #
 #   Semantic Versioning implementation.
@@ -15,10 +15,10 @@ module Version
   MAJOR   = '7'
 
   # Minor version.
-  MINOR   = '067'
+  MINOR   = '072'
 
   # Current build version.
-  BUILD   = '20210122'
+  BUILD   = '20210127'
 
   # Full versioning for the current release.
   FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE})"
@@ -27,5 +27,5 @@ module Version
   COMPACT = "#{MAJOR.gsub('.', '')}#{MINOR}"
 
   # Current internal DB version (independent from migrations and framework release)
-  DB      = '1.60.01'
+  DB      = '1.70.01'
 end

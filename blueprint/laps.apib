@@ -9,7 +9,7 @@
             "lock_version": 0,
             "minutes": 0,
             "seconds": 13,
-            "hundreds": 9,
+            "hundredths": 9,
             "meeting_program_id": 161992,
             "length_in_meters": 25,
             "created_at": "2019-08-08T15:41:34.000Z",
@@ -17,14 +17,13 @@
             "reaction_time": "0.0",
             "stroke_cycles": null,
             "underwater_seconds": null,
-            "underwater_hundreds": null,
+            "underwater_hundredths": null,
             "underwater_kicks": null,
             "breath_cycles": null,
             "position": null,
             "minutes_from_start": 0,
             "seconds_from_start": 13,
-            "hundreds_from_start": 9,
-            "native_from_start": false,
+            "hundredths_from_start": 9,
             "meeting_individual_result_id": 835064,
             "meeting_entry_id": null,
             "swimmer_id": 1452,
@@ -153,10 +152,10 @@
                 "out_of_race": false,
                 "disqualified": false,
                 "standard_points": "818.45",
-                "meeting_individual_points": "818.45",
+                "meeting_points": "818.45",
                 "minutes": 0,
                 "seconds": 27,
-                "hundreds": 21,
+                "hundredths": 21,
                 "meeting_program_id": 161992,
                 "swimmer_id": 1452,
                 "team_id": 1,
@@ -338,14 +337,14 @@ All are optional (except `id`):
 | `reaction_time` | float | reaction time (when available; must be positive to be considered) |
 | `minutes` | integer | lap time, minutes |
 | `seconds` | integer | lap time, seconds |
-| `hundreds` | integer | lap time, hundredths of seconds |
+| `hundredths` | integer | lap time, hundredths of seconds |
 | `length_in_meters` | integer | lap length in meters |
 | `minutes_from_start` | integer | overall minutes from heat start |
 | `seconds_from_start` | integer | overall seconds from heat start |
-| `hundreds_from_start` | integer | overall hundredths of second from heat start |
+| `hundredths_from_start` | integer | overall hundredths of second from heat start |
 | `stroke_cycles` | integer | lap overall stroke cycles |
 | `underwater_seconds` | integer | time spent underwater on turn/start, seconds |
-| `underwater_hundreds` | integer | time spent underwater on turn/start, hundredths of a second |
+| `underwater_hundredths` | integer | time spent underwater on turn/start, hundredths of a second |
 | `underwater_kicks` | integer | underwater kicks after lap turn/start |
 | `breath_cycles` | integer | lap overall breath cycles |
 | `position` | integer | position in heat at the end of the lap |
@@ -367,7 +366,7 @@ All are optional (except `id`):
     ```bash
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            -d '{"position": 3, "minutes": 0, "seconds": 39, "hundreds": 65 }' \
+            -d '{"position": 3, "minutes": 0, "seconds": 39, "hundredths": 65 }' \
             "<API_HOST:PORT>/api/v3/lap/9976"
     ```
 
@@ -381,7 +380,7 @@ All are optional (except `id`):
                     position: 3,
                     minutes: 0,
                     seconds: 30,
-                    hundreds: 65
+                    hundredths: 65
                 },
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
@@ -400,7 +399,7 @@ All are optional (except `id`):
                 "position": 3,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 65
+                "hundredths": 65
             }
 
 + Response 200 (application/json)
@@ -422,7 +421,7 @@ All are optional (except `id`):
                 "position": 3,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 65
+                "hundredths": 65
             }
 
 + Response 200 (application/json)
@@ -444,7 +443,7 @@ All are optional (except `id`):
                 "position": 3,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 65
+                "hundredths": 65
             }
 
 + Response 401 (application/json)
@@ -464,7 +463,7 @@ All are optional (except `id`):
                 "position": 3,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 65
+                "hundredths": 65
             }
 
 + Response 401 (application/json)
@@ -484,7 +483,7 @@ All are optional (except `id`):
                 "position": 3,
                 "minutes": 0,
                 "seconds": 30,
-                "hundreds": 65
+                "hundredths": 65
             }
 
 + Response 401 (application/json)
@@ -524,14 +523,14 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | `reaction_time` | float | reaction time (when available; must be positive to be considered) |
 | `minutes` | integer | lap time, minutes |
 | `seconds` | integer | lap time, seconds |
-| `hundreds` | integer | lap time, hundredths of seconds |
+| `hundredths` | integer | lap time, hundredths of seconds |
 | `length_in_meters` | integer | lap length in meters |
 | `minutes_from_start` | integer | overall minutes from heat start |
 | `seconds_from_start` | integer | overall seconds from heat start |
-| `hundreds_from_start` | integer | overall hundredths of second from heat start |
+| `hundredths_from_start` | integer | overall hundredths of second from heat start |
 | `stroke_cycles` | integer | lap overall stroke cycles |
 | `underwater_seconds` | integer | time spent underwater on turn/start, seconds |
-| `underwater_hundreds` | integer | time spent underwater on turn/start, hundredths of a second |
+| `underwater_hundredths` | integer | time spent underwater on turn/start, hundredths of a second |
 | `underwater_kicks` | integer | underwater kicks after lap turn/start |
 | `breath_cycles` | integer | lap overall breath cycles |
 | `position` | integer | position in heat at the end of the lap |
@@ -548,14 +547,14 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + reaction_time (number, optional)
     + minutes: 1 (number, optional)
     + seconds: 15 (number, optional)
-    + hundreds: 97 (number, optional)
+    + hundredths: 97 (number, optional)
     + length_in_meters: 150 (number, optional)
     + minutes_from_start (number, optional)
     + seconds_from_start (number, optional)
-    + hundreds_from_start (number, optional)
+    + hundredths_from_start (number, optional)
     + stroke_cycles (number, optional)
     + underwater_seconds (number, optional)
-    + underwater_hundreds (number, optional)
+    + underwater_hundredths (number, optional)
     + underwater_kicks (number, optional)
     + breath_cycles (number, optional)
     + position (number, optional)
@@ -571,7 +570,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     $> curl -i -X POST -H "Content-Type: application/json" \
             -d '{"meeting_individual_result_id": 834879, "meeting_program_id": 168301, \
                  "team_id": 1, "swimmer_id": 23, "length_in_meters": 150, \
-                 "position": 5, "minutes": 1, "seconds": 15, "hundreds": 97}'
+                 "position": 5, "minutes": 1, "seconds": 15, "hundredths": 97}'
             "<API_HOST:PORT>/api/v3/lap"
     ```
 
@@ -588,7 +587,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "position": 5,
                 "minutes": 1,
                 "seconds": 15,
-                "hundreds": 97
+                "hundredths": 97
             } )
     => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
 
@@ -613,7 +612,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "position": 5,
                 "minutes": 1,
                 "seconds": 15,
-                "hundreds": 97
+                "hundredths": 97
             }
 
 + Response 200 (application/json)
@@ -643,7 +642,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "position": 5,
                 "minutes": 1,
                 "seconds": 15,
-                "hundreds": 97
+                "hundredths": 97
             }
 
 + Response 401 (application/json)
@@ -670,7 +669,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "position": 5,
                 "minutes": 1,
                 "seconds": 15,
-                "hundreds": 97
+                "hundredths": 97
             }
 
 + Response 401 (application/json)
@@ -701,7 +700,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 "position": 5,
                 "minutes": 1,
                 "seconds": 15,
-                "hundreds": 97
+                "hundredths": 97
             }
 
 + Response 401 (application/json)

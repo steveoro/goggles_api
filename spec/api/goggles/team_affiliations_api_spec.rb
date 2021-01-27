@@ -6,39 +6,34 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user)   { FactoryBot.create(:user) }
   let(:jwt_token)  { jwt_for_api_session(api_user) }
-  let(:fixture_ta) { FactoryBot.create(:affiliation_with_badges) }
+  let(:fixture_row) { FactoryBot.create(:affiliation_with_badges) }
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
   before(:each) do
-    expect(fixture_ta).to be_a(GogglesDb::TeamAffiliation).and be_valid
+    expect(fixture_row).to be_a(GogglesDb::TeamAffiliation).and be_valid
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
   end
 
   describe 'GET /api/v3/team_affiliation/:id' do
     context 'when using valid parameters,' do
-      before(:each) { get(api_v3_team_affiliation_path(id: fixture_ta.id), headers: fixture_headers) }
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'returns the selected user as JSON' do
-        expect(response.body).to eq(fixture_ta.to_json)
-      end
+      before(:each) { get(api_v3_team_affiliation_path(id: fixture_row.id), headers: fixture_headers) }
+      it_behaves_like('a successful JSON row response')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get api_v3_team_affiliation_path(id: fixture_ta.id), headers: { 'Authorization' => 'you wish!' } }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { get api_v3_team_affiliation_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) { get(api_v3_team_affiliation_path(id: -1), headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON response'
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -49,76 +44,50 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
   let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
 
   describe 'PUT /api/v3/team_affiliation/:id' do
+    let(:new_team)   { FactoryBot.create(:team) }
+    let(:new_season) { FactoryBot.create(:season) }
+    let(:new_name)   { new_team.editable_name.downcase.titleize }
+    let(:new_number) { format('%<number>08d', number: (rand * 100_000).to_i) }
+    let(:expected_changes) do
+      [
+        { team_id: new_team.id },
+        { season_id: new_season.id },
+        { name: new_name },
+        { number: new_number },
+        { compute_gogglecup: [true, false].sample }
+      ].sample
+    end
     before(:each) do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
+      expect(new_team).to be_a(GogglesDb::Team).and be_valid
+      expect(new_season).to be_a(GogglesDb::Season).and be_valid
+      expect(new_name).to be_present
+      expect(new_number).to be_present
+      expect(expected_changes).to be_an(Hash).and be_present
     end
-    context 'when using valid parameters,' do
-      let(:new_team)   { FactoryBot.create(:team) }
-      let(:new_season) { FactoryBot.create(:season) }
-      let(:new_name)   { new_team.editable_name.downcase.titleize }
-      let(:new_number) { format('%<number>08d', number: (rand * 100_000).to_i) }
-      let(:expected_changes) do
-        [
-          { team_id: new_team.id },
-          { season_id: new_season.id },
-          { name: new_name },
-          { number: new_number },
-          { compute_gogglecup: [true, false].sample }
-        ].sample
-      end
-      before(:each) do
-        expect(new_team).to be_a(GogglesDb::Team).and be_valid
-        expect(new_season).to be_a(GogglesDb::Season).and be_valid
-        expect(new_name).to be_present
-        expect(new_number).to be_present
-      end
 
+    context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
-        before(:each) do
-          put(api_v3_team_affiliation_path(id: fixture_ta.id), params: expected_changes, headers: crud_headers)
-        end
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns true' do
-          expect(response.body).to eq('true')
-          updated_row = fixture_ta.reload
-          expected_changes.each do |key, value|
-            expect(updated_row.send(key)).to eq(value)
-          end
-        end
+        before(:each) { put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        it_behaves_like('a successful JSON PUT response')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) do
-          put(api_v3_team_affiliation_path(id: fixture_ta.id), params: expected_changes, headers: fixture_headers)
-        end
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        before(:each) { put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        put(
-          api_v3_team_affiliation_path(id: fixture_ta.id),
-          params: { compute_gogglecup: true },
-          headers: { 'Authorization' => 'you wish!' }
-        )
-      end
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        put(
-          api_v3_team_affiliation_path(id: -1),
-          params: { compute_gogglecup: true },
-          headers: crud_headers
-        )
-      end
-      it_behaves_like 'an empty but successful JSON response'
+      before(:each) { put(api_v3_team_affiliation_path(id: -1), params: expected_changes, headers: crud_headers) }
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -132,49 +101,37 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
     let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
     let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
     before(:each) do
-      expect(new_team).to be_a(GogglesDb::Team).and be_valid
-      expect(new_season).to be_a(GogglesDb::Season).and be_valid
-      expect(built_row).to be_a(GogglesDb::TeamAffiliation).and be_valid
+      expect(crud_user).to be_a(GogglesDb::User).and be_valid
+      expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+      expect(crud_headers).to be_an(Hash).and have_key('Authorization')
       expect(admin_user).to be_a(GogglesDb::User).and be_valid
       expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(admin_headers).to be_an(Hash).and have_key('Authorization')
+      expect(new_team).to be_a(GogglesDb::Team).and be_valid
+      expect(new_season).to be_a(GogglesDb::Season).and be_valid
+      expect(built_row).to be_a(GogglesDb::TeamAffiliation).and be_valid
     end
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
         before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: admin_headers) }
-
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns the result msg and the new row as JSON' do
-          result = JSON.parse(response.body)
-          expect(result).to have_key('msg').and have_key('new')
-          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
-          attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
-          expect(attr_extractor.call(result['new'])).to eq(attr_extractor.call(built_row.attributes))
-        end
+        it_behaves_like('a successful JSON POST response')
       end
 
       context 'with an account having just CRUD grants,' do
-        before(:each) do
-          expect(crud_user).to be_a(GogglesDb::User).and be_valid
-          expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
-          expect(crud_headers).to be_an(Hash).and have_key('Authorization')
-          post(api_v3_team_affiliation_path, params: built_row.attributes, headers: crud_headers)
-        end
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: crud_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
 
       context 'with an account not having any grants,' do
         before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: fixture_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when using missing or invalid parameters,' do
@@ -211,15 +168,14 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
 
       context 'without any filters,' do
         before(:each) { get(api_v3_team_affiliations_path, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific season_id,' do
         before(:each) { get(api_v3_team_affiliations_path, params: { season_id: fixture_season_id }, headers: fixture_headers) }
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
+        it_behaves_like('a successful request that has positive usage stats')
+
         it 'returns a JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
@@ -231,13 +187,15 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
 
       context 'when filtering by a specific team_id,' do
         before(:each) { get(api_v3_team_affiliations_path, params: { team_id: fixture_team.id }, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a partial name,' do
         let(:fixture_name) { 'Ferrari' } # (This will surely have more than 'default_per_page' results)
         let(:expected_results) { GogglesDb::TeamAffiliation.where('name LIKE ?', "%#{fixture_name}%") }
         before(:each) { get(api_v3_team_affiliations_path, params: { name: fixture_name }, headers: fixture_headers) }
+
+        it_behaves_like('successful response with pagination links & values in headers')
 
         it 'returns a paginated JSON array of associated, filtered rows' do
           result_array = JSON.parse(response.body)
@@ -247,7 +205,6 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
           expected_team_id = expected_results.first.team_id
           expect(result_array.map { |arr| arr['team_id'] }).to all eq(expected_team_id)
         end
-        it_behaves_like 'successful response with pagination links & values in headers'
       end
 
       # Uses random fixtures, to have a quick 1-row result (no pagination, always):
@@ -256,29 +213,30 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
           get(
             api_v3_team_affiliations_path,
             params: {
-              season_id: fixture_ta.season_id,
-              team_id: fixture_ta.team_id,
-              compute_gogglecup: fixture_ta.compute_gogglecup
+              season_id: fixture_row.season_id,
+              team_id: fixture_row.team_id,
+              compute_gogglecup: fixture_row.compute_gogglecup
             },
             headers: fixture_headers
           )
         end
 
+        it_behaves_like('successful single response without pagination links in headers')
+
         it 'returns a JSON array containing the single associated row' do
-          expect(response.body).to eq([fixture_ta].to_json)
+          expect(response.body).to eq([fixture_row].to_json)
         end
-        it_behaves_like 'successful single response without pagination links in headers'
       end
     end
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_team_affiliations_path, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_team_affiliations_path, params: { season_id: -1 }, headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON list response'
+      it_behaves_like('an empty but successful JSON list response')
     end
   end
   #-- -------------------------------------------------------------------------

@@ -6,39 +6,34 @@ require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::SeasonsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
-  include ApiSessionHelpers
+  include APISessionHelpers
 
   let(:api_user)  { FactoryBot.create(:user) }
   let(:jwt_token) { jwt_for_api_session(api_user) }
-  let(:fixture_season) { FactoryBot.create(:season) }
+  let(:fixture_row) { FactoryBot.create(:season) }
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
   before(:each) do
-    expect(fixture_season).to be_a(GogglesDb::Season).and be_valid
+    expect(fixture_row).to be_a(GogglesDb::Season).and be_valid
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
   end
 
   describe 'GET /api/v3/season/:id' do
     context 'when using valid parameters,' do
-      before(:each) { get(api_v3_season_path(id: fixture_season.id), headers: fixture_headers) }
-      it 'is successful' do
-        expect(response).to be_successful
-      end
-      it 'returns the selected row as JSON' do
-        expect(response.body).to eq(fixture_season.to_json)
-      end
+      before(:each) { get(api_v3_season_path(id: fixture_row.id), headers: fixture_headers) }
+      it_behaves_like('a successful JSON row response')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_season_path(id: fixture_season.id), headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { get(api_v3_season_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
       before(:each) { get(api_v3_season_path(id: -1), headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON response'
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -68,49 +63,24 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
       before(:each) { expect(expected_changes).to be_an(Hash) }
 
       context 'with an account having CRUD grants,' do
-        before(:each) do
-          put(api_v3_season_path(id: fixture_season.id), params: expected_changes, headers: crud_headers)
-        end
-        it 'is successful' do
-          expect(response).to be_successful
-        end
-        it 'updates the row and returns true' do
-          expect(response.body).to eq('true')
-          updated_row = fixture_season.reload
-          expected_changes.each do |key, value|
-            expect(updated_row.send(key)).to eq(value)
-          end
-        end
+        before(:each) { put(api_v3_season_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        it_behaves_like('a successful JSON PUT response')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) do
-          put(api_v3_season_path(id: fixture_season.id), params: expected_changes, headers: fixture_headers)
-        end
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+        before(:each) { put(api_v3_season_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
-        put(
-          api_v3_season_path(id: fixture_season.id),
-          params: { description: 'FIXTURE Season' },
-          headers: { 'Authorization' => 'you wish!' }
-        )
-      end
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      before(:each) { put(api_v3_season_path(id: fixture_row.id), params: { description: 'FIXTURE Season' }, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
-        put(
-          api_v3_season_path(id: -1),
-          params: { description: 'FIXTURE Season' },
-          headers: crud_headers
-        )
-      end
-      it_behaves_like 'an empty but successful JSON response'
+      before(:each) { put(api_v3_season_path(id: -1), params: { description: 'FIXTURE Season' }, headers: crud_headers) }
+      it_behaves_like('an empty but successful JSON response')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -118,7 +88,7 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
 
   describe 'GET /api/v3/seasons/' do
     context 'when using a valid authentication' do
-      let(:fixture_season_type_id) { GogglesDb::SeasonType.send(%w[mas_fin mas_csi mas_uisp].sample).id } # Season types with >= default_per_page results
+      let(:fixture_row_type_id) { GogglesDb::SeasonType.send(%w[mas_fin mas_csi mas_uisp].sample).id } # Season types with >= default_per_page results
       let(:existing_season)        { GogglesDb::Season.find([171, 172, 181, 182, 191, 192].sample) }
       let(:header_year)            { existing_season.header_year }
       let(:begin_date)             { existing_season.begin_date }
@@ -130,15 +100,14 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
 
       context 'without any filters,' do
         before(:each) { get(api_v3_seasons_path, headers: fixture_headers) }
-        it_behaves_like 'successful response with pagination links & values in headers'
+        it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific season_type_id,' do
-        before(:each) { get(api_v3_seasons_path, params: { season_type_id: fixture_season_type_id }, headers: fixture_headers) }
+        before(:each) { get(api_v3_seasons_path, params: { season_type_id: fixture_row_type_id }, headers: fixture_headers) }
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
+        it_behaves_like('a successful request that has positive usage stats')
+
         it 'returns a paginated array of JSON rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
@@ -150,9 +119,8 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
       context 'when filtering by a specific header_year,' do
         before(:each) { get(api_v3_seasons_path, params: { header_year: header_year }, headers: fixture_headers) }
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
+        it_behaves_like('a successful request that has positive usage stats')
+
         it 'returns a paginated array of JSON rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
@@ -161,13 +129,10 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
       end
 
       context 'when filtering by a specific header_year,' do
-        before(:each) do
-          get(api_v3_seasons_path, params: { begin_date: begin_date, end_date: end_date }, headers: fixture_headers)
-        end
+        before(:each) { get(api_v3_seasons_path, params: { begin_date: begin_date, end_date: end_date }, headers: fixture_headers) }
 
-        it 'is successful' do
-          expect(response).to be_successful
-        end
+        it_behaves_like('a successful request that has positive usage stats')
+
         it 'returns a paginated array of JSON rows' do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
@@ -178,12 +143,12 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
 
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_seasons_path, headers: { 'Authorization' => 'you wish!' }) }
-      it_behaves_like 'a failed auth attempt due to invalid JWT'
+      it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
       before(:each) { get(api_v3_seasons_path, params: { header_year: '1969/1970' }, headers: fixture_headers) }
-      it_behaves_like 'an empty but successful JSON list response'
+      it_behaves_like('an empty but successful JSON list response')
     end
   end
   #-- -------------------------------------------------------------------------

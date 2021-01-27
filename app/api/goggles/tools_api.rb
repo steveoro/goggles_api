@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Tools API: EntryTime finder
   #
-  #   - version:  7.061
+  #   - version:  7.071
   #   - author:   Steve A.
-  #   - build:    20210119
+  #   - build:    20210126
   #
   class ToolsAPI < Grape::API
     helpers APIHelpers
@@ -36,12 +36,11 @@ module Goggles
       # On error returns just the zeroed label (signaling "no time") without the 'timing' instance part.
       #
       # == Sample structure:
-      # (Currently, for legacy reasons "hundreds" stands obviously for "hundredths")
       #
       #   {
       #     "label": "1'17\"47",
       #     "timing": {
-      #       "hundreds": 47, "seconds": 17, "minutes": 1, "hours": 0, "days": 0
+      #       "hundredths": 47, "seconds": 17, "minutes": 1, "hours": 0, "days": 0
       #     }
       #   }
       #
@@ -55,6 +54,7 @@ module Goggles
       end
       get :find_entry_time do
         check_jwt_session
+
         # Retrieve values:
         swimmer         = reject_unless_found(params['swimmer_id'], GogglesDb::Swimmer)
         meeting         = GogglesDb::Meeting.find_by_id(params['meeting_id'])

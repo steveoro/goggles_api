@@ -55,17 +55,17 @@ module Goggles
         optional :reaction_time, type: Float, desc: 'optional: reaction time'
         optional :minutes, type: Integer, desc: 'optional: lap time, minutes'
         optional :seconds, type: Integer, desc: 'optional: lap time, seconds'
-        optional :hundreds, type: Integer, desc: 'optional: lap time, hundredths of seconds'
+        optional :hundredths, type: Integer, desc: 'optional: lap time, hundredths of seconds'
         optional :length_in_meters, type: Integer, desc: 'optional: lap length in meters'
         optional :stroke_cycles, type: Integer, desc: 'optional: lap overall stroke cycles'
         optional :underwater_seconds, type: Integer, desc: 'optional: time spent underwater on turn/start, seconds'
-        optional :underwater_hundreds, type: Integer, desc: 'optional: time spent underwater on turn/start, hundredths of a second'
+        optional :underwater_hundredths, type: Integer, desc: 'optional: time spent underwater on turn/start, hundredths of a second'
         optional :underwater_kicks, type: Integer, desc: 'optional: underwater kicks after lap turn/start'
         optional :breath_cycles, type: Integer, desc: 'optional: lap overall breath cycles'
         optional :position, type: Integer, desc: 'optional: heat position at the end of the lap'
         optional :minutes_from_start, type: Integer, desc: 'optional: overall minutes from heat start'
         optional :seconds_from_start, type: Integer, desc: 'optional: overall seconds from heat start'
-        optional :hundreds_from_start, type: Integer, desc: 'optional: overall hundredths of second from heat start'
+        optional :hundredths_from_start, type: Integer, desc: 'optional: overall hundredths of second from heat start'
       end
       route_param :id do
         put do
@@ -91,8 +91,8 @@ module Goggles
       # the heat is over. Lap timing will be ignored on display if it's not positive.
       #
       # Timing can be set by either one of these tuples:
-      # - lap-relative:( [reaction_time] minutes seconds hundreds )
-      # - lap-absolute: ( [reaction_time] minutes_from_start seconds_from_start hundreds_from_start )
+      # - lap-relative:( [reaction_time] minutes seconds hundredths )
+      # - lap-absolute: ( [reaction_time] minutes_from_start seconds_from_start hundredths_from_start )
       #
       # == Returns:
       # A JSON Hash containing the result 'msg' and the newly created instance:
@@ -108,17 +108,17 @@ module Goggles
         optional :reaction_time, type: Float, desc: 'optional: reaction time'
         optional :minutes, type: Integer, desc: 'optional: lap time, minutes'
         optional :seconds, type: Integer, desc: 'optional: lap time, seconds'
-        optional :hundreds, type: Integer, desc: 'optional: lap time, hundredths of seconds'
+        optional :hundredths, type: Integer, desc: 'optional: lap time, hundredths of seconds'
         optional :length_in_meters, type: Integer, desc: 'optional: lap length in meters'
         optional :stroke_cycles, type: Integer, desc: 'optional: lap overall stroke cycles'
         optional :underwater_seconds, type: Integer, desc: 'optional: time spent underwater on turn/start, seconds'
-        optional :underwater_hundreds, type: Integer, desc: 'optional: time spent underwater on turn/start, hundredths of a second'
+        optional :underwater_hundredths, type: Integer, desc: 'optional: time spent underwater on turn/start, hundredths of a second'
         optional :underwater_kicks, type: Integer, desc: 'optional: underwater kicks after lap turn/start'
         optional :breath_cycles, type: Integer, desc: 'optional: lap overall breath cycles'
         optional :position, type: Integer, desc: 'optional: heat position at the end of the lap'
         optional :minutes_from_start, type: Integer, desc: 'optional: overall minutes from heat start'
         optional :seconds_from_start, type: Integer, desc: 'optional: overall seconds from heat start'
-        optional :hundreds_from_start, type: Integer, desc: 'optional: overall hundredths of second from heat start'
+        optional :hundredths_from_start, type: Integer, desc: 'optional: overall hundredths of second from heat start'
       end
       post do
         api_user = check_jwt_session

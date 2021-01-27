@@ -12,10 +12,10 @@
             "out_of_race": false,
             "disqualified": false,
             "standard_points": "0.0",
-            "meeting_individual_points": "0.0",
+            "meeting_points": "0.0",
             "minutes": 5,
             "seconds": 54,
-            "hundreds": 10,
+            "hundredths": 10,
             "meeting_program_id": 2913,
             "swimmer_id": 1409,
             "team_id": 35,
@@ -320,11 +320,11 @@ All are optional (except `id`):
 | `badge_id` | integer | associated Badge ID |
 | `minutes` | integer | result time minutes |
 | `seconds` | integer | result time seconds |
-| `hundreds` | integer | result time hundredths of seconds |
+| `hundredths` | integer | result time hundredths of seconds |
 | `play_off` | boolean | `true` if this result refers to a play-off at the end or after the end of a season (standard play otherwise) |
 | `rank` | integer | final heat rank (1+) for this result; usually 0 when disqualified |
 | `standard_points` | float | result score computed using standard rules of this Championship |
-| `meeting_individual_points` | float | result score computed with meeting-specific rules |
+| `meeting_points` | float | result score computed with meeting-specific rules |
 | `disqualified` | boolean | `true` if the swimmer has been disqualified; has precedence over `DisqualificationCodeType` |
 | `disqualification_code_type_id` | integer | GET `/lookup/disqualification_code_type` => list of supported values |
 | `goggle_cup_points` | float | score computed for any GoggleCup associated to this specific team |
@@ -351,7 +351,7 @@ All are optional (except `id`):
     ```bash
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            -d '{"rank": 4, "minutes": 5, "seconds": 45, "hundreds": 60 }' \
+            -d '{"rank": 4, "minutes": 5, "seconds": 45, "hundredths": 60 }' \
             "<API_HOST:PORT>/api/v3/meeting_individual_result/151"
     ```
 
@@ -365,7 +365,7 @@ All are optional (except `id`):
                     rank: 4,
                     minutes: 5,
                     seconds: 45,
-                    hundreds: 60
+                    hundredths: 60
                 },
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
@@ -384,7 +384,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 200 (application/json)
@@ -406,7 +406,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 200 (application/json)
@@ -428,7 +428,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 401 (application/json)
@@ -448,7 +448,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 401 (application/json)
@@ -468,7 +468,7 @@ All are optional (except `id`):
                 "rank": 4,
                 "minutes": 5,
                 "seconds": 45,
-                "hundreds": 60
+                "hundredths": 60
             }
 
 + Response 401 (application/json)
@@ -505,11 +505,11 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | `badge_id` | integer | associated Badge ID |
 | `minutes` | integer | result time minutes |
 | `seconds` | integer | result time seconds |
-| `hundreds` | integer | result time hundredths of seconds |
+| `hundredths` | integer | result time hundredths of seconds |
 | `play_off` | boolean | `true` if this result refers to a play-off at the end or after the end of a season (standard play otherwise) |
 | `rank` | integer | final heat rank (1+) for this result; usually 0 when disqualified |
 | `standard_points` | float | result score computed using standard rules of this Championship |
-| `meeting_individual_points` | float | result score computed with meeting-specific rules |
+| `meeting_points` | float | result score computed with meeting-specific rules |
 | `disqualified` | boolean | `true` if the swimmer has been disqualified; has precedence over `DisqualificationCodeType` |
 | `disqualification_code_type_id` | integer | GET `/lookup/disqualification_code_type` => list of supported values |
 | `goggle_cup_points` | float | score computed for any GoggleCup associated to this specific team |
@@ -531,11 +531,11 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + badge_id (number, optional) - associated badge_id ID
     + minutes (number, optional)
     + seconds (number, optional)
-    + hundreds (number, optional)
+    + hundredths (number, optional)
     + play_off (boolean, optional)
     + rank (number, optional)
     + standard_points (number, optional)
-    + meeting_individual_points (number, optional)
+    + meeting_points (number, optional)
     + disqualified (boolean, optional)
     + disqualification_code_type_id (number, optional)
     + goggle_cup_points (number, optional)
@@ -555,7 +555,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     ```bash
     $> curl -i -X POST -H "Content-Type: application/json" \
             -d '{"meeting_program_id": 2913, "team_affiliation_id": 197, "team_id": 35, \
-                 "swimmer_id": 142, "rank": 7, "minutes": 6, "seconds": 12, "hundreds": 10 \
+                 "swimmer_id": 142, "rank": 7, "minutes": 6, "seconds": 12, "hundredths": 10 \
                  "reaction_time": 0.85 }'
             "<API_HOST:PORT>/api/v3/meeting_individual_result"
     ```
@@ -572,7 +572,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 7,
                 'minutes': 6,
                 'seconds': 12,
-                'hundreds': 10,
+                'hundredths': 10,
                 'reaction_time': 0.85
             } )
     => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
@@ -597,7 +597,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 7,
                 'minutes': 6,
                 'seconds': 12,
-                'hundreds': 10,
+                'hundredths': 10,
                 'reaction_time': 0.85
             }
 
@@ -627,7 +627,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 7,
                 'minutes': 6,
                 'seconds': 12,
-                'hundreds': 10,
+                'hundredths': 10,
                 'reaction_time': 0.85
             }
 
@@ -654,7 +654,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 7,
                 'minutes': 6,
                 'seconds': 12,
-                'hundreds': 10,
+                'hundredths': 10,
                 'reaction_time': 0.85
             }
 
@@ -685,7 +685,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
                 'rank': 7,
                 'minutes': 6,
                 'seconds': 12,
-                'hundreds': 10,
+                'hundredths': 10,
                 'reaction_time': 0.85
             }
 
