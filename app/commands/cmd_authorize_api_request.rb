@@ -47,7 +47,7 @@ class CmdAuthorizeAPIRequest
   # Retrieves the JWT from the 'Authorization' header
   def jwt_from_auth_header
     return nil unless headers.is_a?(Hash)
-    return headers['Authorization'].split(' ').last if headers['Authorization'].present?
+    return headers['Authorization'].split.last if headers['Authorization'].present?
 
     # Add any errors to SimpleCommand internal list:
     errors.add(:msg, I18n.t('api.message.jwt.missing'))

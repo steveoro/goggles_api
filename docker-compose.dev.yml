@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: steveoro/goggles-api:dev-0.1.6
+    image: steveoro/goggles-api:dev-0.1.7
     depends_on:
       - goggles-db
     container_name: goggles-api.dev

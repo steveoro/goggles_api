@@ -1,48 +1,24 @@
 # frozen_string_literal: true
 
-# == SimpleCov: Test coverage report formatter setup ==
-#
+# == SimpleCov: Test coverage report formatter ==
 # [Steve A., 20201030]
-# SimpleCov is used as report formatter by the following services:
-# (the result is a static HTML report inside '/coverage')
+# SimpleCov prepares a static HTML code-coverage report inside '/coverage';
+# the formatter is used by both CodeClimate.com & CodeCov.io build configurations.
 #
-# - CodeClimate.com:
-#   ENV variable to be set *before* the test runs:
-#     $> export CODECLIMATE_REPO_TOKEN=YOUR_CODECLIMATE_REPO_TOKEN
-#   Then, after the test suite:
-#     $> bundle exec codeclimate-test-reporter
-#   (Works all the time, indipendently from which one of the other 2 is being run)
+# - CodeCov repot........: sent by its gem if the ENV variable CODECOV_TOKEN is set
+# - CodeClimate report...: sent by using its stand-alone 'cc-test-reporter' utility
+# - CoverAlls report.....: no longer maintained & gem dependancy removed
 #
-# - CoverAlls:
-#   ENV variable to be set *before* the test runs:
-#     $> export COVERALLS_REPO_TOKEN=YOUR_COVERALLS_REPO_TOKEN
-#   Coveralls.wear! will automatically post the results to the service.
-#   (Works only inside CI; enable either this or CodeCov.io)
-#
-# - CodeCov.io:
-#   ENV variable to be set *before* the test runs:
-#     $> export CODECOV_TOKEN=YOUR_CODECOV_REPO_TOKEN
-#   (Enable either this or CoverAlls: the last one defined & set will run)
-#   Step for manual execution (not needed if ENV is set):
-#     $> bash <(curl -s https://codecov.io/bash) -cF test_subgroupname
-#
-# => Run locally CodeCov.io by setting the ENV variable & just leave CoverAlls
-#    execution to the CI environment.
-#
+# See: https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-code_coverage_setup
+
 require 'simplecov'
 SimpleCov.start 'rails'
 puts 'SimpleCov required and started.'
 
-require 'coveralls'
-unless ENV['COVERALLS_REPO_TOKEN'].to_s.empty?
-  Coveralls.wear!
-  puts 'Coveralls started.'
-end
-
-require 'codecov'
 unless ENV['CODECOV_TOKEN'].to_s.empty?
+  require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
-  puts 'Setting CodeCov as SimpleCov formatter.'
+  puts 'CodeCov.io selected for reporting output.'
 end
 
 # Add DSL for "N+1 query" issues directly inside RSpec:
@@ -57,7 +33,7 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
-require 'devise' # note: require 'devise' after require 'rspec/rails' (this allows to use devise test helpers)
+require 'devise' # NOTE: require 'devise' after require 'rspec/rails' (this allows to use devise test helpers)
 require 'factory_bot_rails'
 
 # Add factories directly from core engine:

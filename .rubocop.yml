@@ -13,7 +13,7 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.6.3
+  TargetRubyVersion: 2.7.2
   Exclude:
     - 'db/schema.rb'
     - 'vendor/**/*'
@@ -35,7 +35,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
-  ExcludedMethods: ['describe', 'context', 'define']
+  IgnoredMethods: ['describe', 'context', 'define']
   Exclude:
     - 'app/api/goggles/*_api.rb'
 

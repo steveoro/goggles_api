@@ -170,7 +170,7 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
       end
 
       context 'when filtering by name,' do
-        let(:search_term) { GogglesDb::Team.select(:name).limit(50).sample.name.split(' ').first }
+        let(:search_term) { GogglesDb::Team.select(:name).limit(50).sample.name.split.first }
         let(:data_domain) { GogglesDb::Team.for_name(search_term) }
         let(:expected_team) { data_domain.first }
         let(:expected_row_count) { data_domain.count }

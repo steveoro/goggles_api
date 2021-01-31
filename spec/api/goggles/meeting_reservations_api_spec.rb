@@ -43,7 +43,7 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
   let(:crud_user) { FactoryBot.create(:user) }
   let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'MeetingReservation') }
   let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
-  let(:mer_1) { fixture_row.meeting_event_reservations.first }
+  let(:mer_first) { fixture_row.meeting_event_reservations.first }
   let(:mer_new) do
     mevent = FactoryBot.create(:meeting_event_individual, meeting_session: fixture_row.meeting.meeting_sessions.first)
     FactoryBot.create(:meeting_event_reservation, meeting_event: mevent, meeting_reservation: fixture_row)
@@ -58,7 +58,7 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
-      expect(mer_1).to be_a(GogglesDb::MeetingEventReservation).and be_valid
+      expect(mer_first).to be_a(GogglesDb::MeetingEventReservation).and be_valid
       expect(mer_new).to be_a(GogglesDb::MeetingEventReservation).and be_valid
       expect(mrr_new).to be_a(GogglesDb::MeetingRelayReservation).and be_valid
       expect(fixture_row.meeting_event_reservations.count).to be >= 2
@@ -74,8 +74,16 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
           { not_coming: [true, false].sample, confirmed: [true, false].sample, notes: FFaker::BaconIpsum.phrase },
           {
             events: [
-              { id: mer_1.id, minutes: [0, 1, 2, 3].sample, seconds: ((rand * 59) % 59).to_i, hundredths: ((rand * 59) % 59).to_i, accepted: [true, false].sample },
-              { id: mer_new.id, minutes: [0, 1, 2].sample, seconds: ((rand * 59) % 59).to_i, hundredths: ((rand * 59) % 59).to_i, accepted: [true, false].sample }
+              {
+                id: mer_first.id,
+                minutes: (0..3).to_a.sample, seconds: ((rand * 59) % 59).to_i, hundredths: ((rand * 59) % 59).to_i,
+                accepted: [true, false].sample
+              },
+              {
+                id: mer_new.id,
+                minutes: (0..2).to_a.sample, seconds: ((rand * 59) % 59).to_i, hundredths: ((rand * 59) % 59).to_i,
+                accepted: [true, false].sample
+              }
             ],
             relays: [
               { id: mrr_new.id, accepted: [true, false].sample, notes: FFaker::BaconIpsum.phrase[0..48] }

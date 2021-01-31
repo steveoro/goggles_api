@@ -115,7 +115,7 @@ RSpec.describe Goggles::MeetingIndividualResultsAPI, type: :request do
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
-    # Note: for legacy reasons MIR were supposed to be created even with a lot of invalid parameters
+    # NOTE: for legacy reasons MIR were supposed to be created even with a lot of invalid parameters
     #       (negative or null IDs), so for the moment we'll just check the "missing" outcome.
     context 'when calling with missing parameters,' do
       before(:each) do

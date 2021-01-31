@@ -37,7 +37,7 @@ config/database.yml
 /config/deploy/*
 # Other sensible files:
 .env
-compute_coverage.sh
+send_coverage.sh
 
 # Ignore node_modules
 /node_modules

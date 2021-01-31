@@ -74,11 +74,11 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
         end
         it "has the 'label' field equal to the default string representation of its 'timing' field" do
           timing = Timing.new(
-            result_hash['timing']['hundredths'],
-            result_hash['timing']['seconds'],
-            result_hash['timing']['minutes'],
-            result_hash['timing']['hours'],
-            result_hash['timing']['days']
+            hundredths: result_hash['timing']['hundredths'],
+            seconds: result_hash['timing']['seconds'],
+            minutes: result_hash['timing']['minutes'],
+            hours: result_hash['timing']['hours'],
+            days: result_hash['timing']['days']
           )
           expect(result_hash['label']).to eq(timing.to_s)
         end

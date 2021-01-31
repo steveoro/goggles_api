@@ -19,30 +19,31 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 
 ## Requires
 
-- Ruby 2.6+
-- Rails 6+
-- MariaDb 10.3.25+ or MySql equivalent version
+- Ruby 2.7.2
+- Rails 6.0.3
+- MariaDb 10.3.25+ or any other MySql equivalent version
 
 
 
 ## API documentation
 
-The official API documentation is in API Blueprint format and stored directly on this repository.
+The official API documentation is in API Blueprint format and stored directly on this repository, under `/blueprint`.
 
-Main index file is `api_main.apib` and all nested pages should be stored under `/blueprint` and included by the main file.
+The main index is `api_main.apib` stored in the project root while all its sibling pages are inside the aforementioned `/blueprint` folder.
 
-To easily browse the documents while working on them, we recommend the usage of Visual Studio Code with the API Blueprint Viewer extension installed, since generating a new single static document each time is cumbersome. See below.
+To easily browse the documents while working on them, we recommend the usage of Visual Studio Code with the API Blueprint Viewer extension installed, since generating a new single static document each time is definitely cumbersome.
 
 
 ### Suggested tools:
 
-*For editing & browsing API Blueprints:*
+*IDE:*
 
 - VisualStudio Code with at least the following extensions:
   - API Blueprint syntax highlighter
   - API Blueprint Viewer
   - any JSON prettyfier
-  - any other relevant & VSCode-suggested extension (Ruby, Rails, MariaDB/MySQL & Docker)
+  - `html2haml` gem together with its VSCode extension
+  - any other relevant & VSCode-suggested extension (Ruby, Rails, MariaDB/MySQL & Docker for once)
 
 - Hercule, for managing the API document split among multiple files. Install it globally with:
 
@@ -50,11 +51,14 @@ To easily browse the documents while working on them, we recommend the usage of 
      $> sudo npm install -g hercule
      ```
 
+Using Atom as favorite IDE may work too although, last time we checked, the available API Blueprint plugin was showing more issues than the one in VSCode.
+
+
 
 ## Source dependencies & how to update `GogglesDb`
 
 - [GogglesDb base engine](https://github.com/steveoro/goggles_db), core 7+
-- JWT for session handling
+- [JWT](https://github.com/jwt/ruby-jwt) for session handling
 - [Grape gem](https://github.com/ruby-grape/grape) for API definition
 
 You will need to install the GogglesDb gem disabling the download of the embedded test dump with:
@@ -63,13 +67,13 @@ You will need to install the GogglesDb gem disabling the download of the embedde
 $> GIT_LFS_SKIP_SMUDGE=1 bundle install
 ```
 
-Use the same parameter _when updating the gem_ with `bundle update goggles_db` or run the dedicated script:
+Use the same parameter _when updating the gem_ with `bundle update goggles_db` or just run the dedicated script:
 
 ```bash
 $> ./update_engine.sh
 ```
 
-To obtain a valid anonymized test DB dump image, clone [`goggles_db`](https://github.com/steveoro/goggles_db) on localhost by itself and run from the GogglesDb project root:
+To obtain a valid anonymized test DB dump image, clone [`goggles_db`](https://github.com/steveoro/goggles_db) repository on localhost by itself and run from the GogglesDb project root:
 
 ```bash
 $> RAILS_ENV=test rails app:db:rebuild
@@ -342,9 +346,9 @@ TODO
 
 
 ## Contributing
-1. Clone the project
-2. Make a pull request based on the branch most relevant to you
-3. Await the PR's review by the maintainers
+1. Clone the project.
+2. Make a pull request based on the branch most relevant to you; make sure your branch has a local build fully green (:green_heart:) before submitting the PR.
+3. Await the PR's review by the maintainers.
 
 
 ## License

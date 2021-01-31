@@ -115,7 +115,7 @@ RSpec.describe Goggles::MeetingRelayResultsAPI, type: :request do
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
-    # Note: for legacy reasons MRRs were supposed to be created even with a lot of invalid parameters
+    # NOTE: for legacy reasons MRRs were supposed to be created even with a lot of invalid parameters
     #       (negative or null IDs), so for the moment we'll just check the "missing" outcome.
     context 'when using missing parameters,' do
       before(:each) do

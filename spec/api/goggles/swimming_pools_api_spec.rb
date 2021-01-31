@@ -49,9 +49,6 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
   #++
 
   describe 'PUT /api/v3/swimming_pool/:id' do
-    before(:each) do
-    end
-
     context 'when using valid parameters' do
       let(:associated_user) { FactoryBot.create(:user) }
       let(:expected_changes) do
@@ -86,20 +83,20 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
       # Admin-only fields update check:
       context 'and editing the read_only attribute' do
         context 'with an account having ADMIN grants,' do
-          let(:fixture_pool_2) { FactoryBot.create(:swimming_pool, read_only: false) }
+          let(:fixture_pool2) { FactoryBot.create(:swimming_pool, read_only: false) }
           before(:each) do
-            expect(fixture_pool_2).to be_a(GogglesDb::SwimmingPool).and be_valid
+            expect(fixture_pool2).to be_a(GogglesDb::SwimmingPool).and be_valid
             expect(admin_user).to be_a(GogglesDb::User).and be_valid
             expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
             expect(admin_headers).to be_an(Hash).and have_key('Authorization')
           end
-          before(:each) { put(api_v3_swimming_pool_path(id: fixture_pool_2.id), params: { read_only: true }, headers: admin_headers) }
+          before(:each) { put(api_v3_swimming_pool_path(id: fixture_pool2.id), params: { read_only: true }, headers: admin_headers) }
 
           it_behaves_like('a successful request that has positive usage stats')
 
           it 'updates the row and returns true' do
             expect(response.body).to eq('true')
-            updated_row = fixture_pool_2.reload
+            updated_row = fixture_pool2.reload
             expect(updated_row.read_only).to be true
           end
         end
@@ -212,7 +209,7 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
       end
 
       context 'when filtering by a generic name search term,' do
-        let(:search_term) { fixture_row.name.split(' ').first }
+        let(:search_term) { fixture_row.name.split.first }
         let(:expected_row_count) { GogglesDb::SwimmingPool.for_name(search_term).count }
         before(:each) { get(api_v3_swimming_pools_path, params: { name: search_term }, headers: fixture_headers) }
 

@@ -57,7 +57,7 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
           { code: fixture_code, header_date: new_date, entry_deadline: (new_date - 15.days) },
           { code: fixture_code, timing_type_id: GogglesDb::TimingType.send(%w[manual semiauto automatic].sample).id },
           { edition_type_id: GogglesDb::EditionType.send(%w[ordinal roman none yearly seasonal].sample).id, edition: (rand * 20).to_i },
-          { warm_up_pool: [false, true].sample, allows_under_25: [false, true].sample, confirmed: [false, true].sample }
+          { warm_up_pool: [false, true].sample, allows_under25: [false, true].sample, confirmed: [false, true].sample }
         ].sample
       end
       before(:each) do
@@ -76,8 +76,8 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
         { read_only: [true, false].sample }
       ].each do |admin_changes|
         context "when editing the #{admin_changes.keys.first} attribute" do
-          let(:fixture_row_2) { FactoryBot.create(:meeting) }
-          before(:each) { expect(fixture_row_2).to be_a(GogglesDb::Meeting).and be_valid }
+          let(:fixture_row2) { FactoryBot.create(:meeting) }
+          before(:each) { expect(fixture_row2).to be_a(GogglesDb::Meeting).and be_valid }
 
           context 'with an account having ADMIN grants,' do
             let(:admin_user) { FactoryBot.create(:user) }
@@ -87,20 +87,20 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
               expect(admin_user).to be_a(GogglesDb::User).and be_valid
               expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
               expect(admin_headers).to be_an(Hash).and have_key('Authorization')
-              put(api_v3_meeting_path(id: fixture_row_2.id), params: admin_changes, headers: admin_headers)
+              put(api_v3_meeting_path(id: fixture_row2.id), params: admin_changes, headers: admin_headers)
             end
 
             it_behaves_like('a successful request that has positive usage stats')
 
             it 'updates the row and returns true' do
               expect(response.body).to eq('true')
-              updated_row = fixture_row_2.reload
+              updated_row = fixture_row2.reload
               expect(updated_row.send(admin_changes.keys.first) == admin_changes.values.first).to be true
             end
           end
 
           context 'with an account having just CRUD grants,' do
-            before(:each) { put(api_v3_meeting_path(id: fixture_row_2.id), params: admin_changes, headers: crud_headers) }
+            before(:each) { put(api_v3_meeting_path(id: fixture_row2.id), params: admin_changes, headers: crud_headers) }
             it_behaves_like('an empty but successful JSON response')
           end
         end

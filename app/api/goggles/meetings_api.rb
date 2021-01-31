@@ -50,7 +50,7 @@ module Goggles
         optional :description, type: String, desc: 'displayed Meeting description'
         optional :entry_deadline, type: String, desc: 'optional: entry deadline for registration, in ISO format (\'YYYY-MM-DD\')'
         optional :warm_up_pool, type: Boolean, desc: 'optional: true if a warm-up pool is available during the Meeting'
-        optional :allows_under_25, type: Boolean, desc: 'optional: true if under-25 can compete'
+        optional :allows_under25, type: Boolean, desc: 'optional: true if under-25 can compete'
         optional :reference_phone, type: String, desc: 'optional: contact or reference phone'
         optional :reference_e_mail, type: String, desc: 'optional: contact or reference e-mail'
         optional :reference_name, type: String, desc: 'optional: contact or reference name'

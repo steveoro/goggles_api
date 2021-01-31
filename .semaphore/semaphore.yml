@@ -26,10 +26,10 @@ global_job_config:
       - echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
       - echo $RAILS_MASTER_KEY > config/master.key
       - mkdir -pv tmp
-      # Make sure we are using Bundler 2.1.4:
+      # Make sure we are using Bundler 2+:
       - gem i bundler
       # Use GogglesDb::VERSION as master reference here, or force a minor version change to rebuild the cache:
-      - cache restore bundle-1.21-$(checksum Gemfile.lock)
+      - cache restore bundle-1.74-$(checksum Gemfile.lock)
 
 blocks:
   - name: Bundle cache store
@@ -37,7 +37,7 @@ blocks:
       jobs:
         - name: Bundle with cache store
           commands:
-            - sem-version ruby 2.6
+            - sem-version ruby 2.7
             # Bundler requires 'install' to run even though cache has been restored.
             # Installation will not actually run and command and will finish quickly if the cache has been hit:
             - bundle config set path 'vendor/bundle'
@@ -45,14 +45,14 @@ blocks:
             # Use this to log the actual bundle destination path for Semaphore 2.0 (currently uses Rbenv):
             # - bundle info rake --path
             # The cache will be updated with the new content just once for all blocks in the pipeline:
-            - cache store bundle-1.21-$(checksum Gemfile.lock) vendor/bundle
+            - cache store bundle-1.74-$(checksum Gemfile.lock) vendor/bundle
 
   - name: Code scanning
     task:
       jobs:
         - name: check style + security
           commands:
-            - sem-version ruby 2.6
+            - sem-version ruby 2.7
             - bundle config set path 'vendor/bundle'
             - GIT_LFS_SKIP_SMUDGE=1 bundle install
             - bundle exec rubocop
@@ -62,58 +62,49 @@ blocks:
     task:
       prologue:
         commands:
-          - sem-version ruby 2.6
+          - sem-version ruby 2.7
           - sem-service start mysql
           - bundle config set path 'vendor/bundle'
           - GIT_LFS_SKIP_SMUDGE=1 bundle install
+          - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          - chmod +x ./cc-test-reporter
           - cp config/database.semaphore_2.yml config/database.yml
           - 'curl -L -o db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"'
           - 'RAILS_ENV=test bin/rails db:rebuild from=test to=test'
           - 'RAILS_ENV=test bin/rails db:migrate'
+          - ./cc-test-reporter before-build
       jobs:
         - name: RSpec - commands
           commands:
             - 'bundle exec rspec -t type:command'
-            - bash <(curl -s https://codecov.io/bash) -cF command
-            - bundle exec codeclimate-test-reporter
+            - ./cc-test-reporter format-coverage -t simplecov
+            - ./cc-test-reporter upload-coverage
 
         - name: RSpec - API/requests
           commands:
             - 'bundle exec rspec -t type:request'
-            - bash <(curl -s https://codecov.io/bash) -cF request
-            - bundle exec codeclimate-test-reporter
+            - ./cc-test-reporter format-coverage -t simplecov
+            - ./cc-test-reporter upload-coverage
 
         # Not currently used:
         # - name: RSpec - models
         #   commands:
         #     - 'bundle exec rspec -t type:model'
-        #     - bash <(curl -s https://codecov.io/bash) -cF model
-        #     - bundle exec codeclimate-test-reporter
         # - name: RSpec - strategies
         #   commands:
         #     - 'bundle exec rspec -t type:strategy'
-        #     - bash <(curl -s https://codecov.io/bash) -cF strategy
-        #     - bundle exec codeclimate-test-reporter
         # - name: RSpec - validators
         #   commands:
         #     - 'bundle exec rspec -t type:validator'
-        #     - bash <(curl -s https://codecov.io/bash) -cF validator
-        #     - bundle exec codeclimate-test-reporter
         # - name: RSpec - decorators
         #   commands:
         #     - 'bundle exec rspec -t type:decorator'
-        #     - bash <(curl -s https://codecov.io/bash) -cF decorator
-        #     - bundle exec codeclimate-test-reporter
         # - name: RSpec - controllers
         #   commands:
         #     - 'bundle exec rspec -t type:controller'
-        #     - bash <(curl -s https://codecov.io/bash) -cF controller
-        #     - bundle exec codeclimate-test-reporter
         # - name: RSpec - views
         #   commands:
         #     - 'bundle exec rspec -t type:view'
-        #     - bash <(curl -s https://codecov.io/bash) -cF view
-        #     - bundle exec codeclimate-test-reporter
 
 promotions:
   - name: Docker images

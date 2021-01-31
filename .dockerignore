@@ -26,6 +26,14 @@ tmp
 test
 *.apib
 
+# Ignore local keys for decrypting credentials and more.
+/config/master.key
+/config/credentials/*.key
+config/database.yml
+/config/deploy.rb
+/config/deploy/*
+send_coverage.sh
+
 # Ignore DB dumps uploaded in development
 /db/dump/*.sql
 /db/dump/*.bz2
