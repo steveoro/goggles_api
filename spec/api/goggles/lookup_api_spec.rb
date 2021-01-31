@@ -24,7 +24,7 @@ RSpec.describe Goggles::LookupAPI, type: :request do
         gender_types heat_types stroke_types timing_types
       ].each do |entity_name|
         [nil, 'it', 'en'].each do |locale|
-          context "with a #{locale} locale," do
+          context "for #{entity_name} using a #{locale} locale," do
             let(:expected_row_count) { "GogglesDb::#{entity_name.singularize.camelize}".constantize.count }
             before(:each) do
               get(api_v3_lookup_path(entity_name: entity_name), params: { locale: locale }, headers: fixture_headers)

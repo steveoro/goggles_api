@@ -51,6 +51,10 @@ Metrics/CyclomaticComplexity:
 Metrics/MethodLength:
   Max: 35
 
+Metrics/ModuleLength:
+  Exclude:
+    - 'app/api/goggles/api_helpers.rb'
+
 Metrics/PerceivedComplexity:
   Exclude:
     - 'bin/bundle'

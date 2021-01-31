@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Lookup API for all subentities
   #
-  #   - version:  7.060
+  #   - version:  7.075
   #   - author:   Steve A.
-  #   - build:    20201209
+  #   - build:    20210131
   #
   class LookupAPI < Grape::API
     helpers APIHelpers
@@ -21,6 +21,24 @@ module Goggles
       # == Params:
       # - entity_name: (required) plural name of the lookup entity
       # - locale: locale string code to be enforced (defaults to 'it')
+      #
+      # === Supported values for +entity_name+:
+      # - `coach_level_types`
+      # - `day_part_types`
+      # - `disqualification_code_types`
+      # - `edition_types`
+      # - `entry_time_types`
+      # - `event_types`
+      # - `hair_dryer_types`
+      # - `heat_types`
+      # - `locker_cabinet_types`
+      # - `medal_types`
+      # - `pool_types`
+      # - `record_types`
+      # - `shower_types`
+      # - `stroke_types`
+      # - `swimmer_level_types`
+      # - `timing_types`
       #
       # == Returns:
       # The JSON list of possible lookup values.
@@ -45,11 +63,7 @@ module Goggles
         get do
           check_jwt_session
 
-          entity = begin
-            "GogglesDb::#{params['entity_name'].to_s.singularize.camelize}".constantize
-          rescue NameError
-            nil
-          end
+          entity = lookup_entity_class_for(params['entity_name'].to_s)
           return [] if entity.nil? || !entity&.new.is_a?(Localizable)
 
           entity.all.map { |row| row.lookup_attributes(params['locale'] || 'it') }

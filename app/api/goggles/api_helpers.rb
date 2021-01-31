@@ -127,6 +127,60 @@ module Goggles
     #-- -----------------------------------------------------------------------
     #++
 
+    # Returns the Class for the specified +table_name+, or +nil+ if the
+    # name is unsupported or not allowed.
+    #
+    # The method should include only siblings of GogglesDb::ApplicationLookupEntity.
+    #
+    # == Params
+    # - table_name: the string name of the lookup table
+    #
+    # == Returns
+    # The corresponding Model class or nil, if the name is unsupported.
+    #
+    # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+    def lookup_entity_class_for(table_name)
+      case table_name
+      when 'coach_level_types'
+        GogglesDb::CoachLevelType
+      when 'day_part_types'
+        GogglesDb::DayPartType
+      when 'disqualification_code_types'
+        GogglesDb::DisqualificationCodeType
+      when 'edition_types'
+        GogglesDb::EditionType
+      when 'entry_time_types'
+        GogglesDb::EntryTimeType
+      when 'event_types'
+        GogglesDb::EventType
+      when 'gender_types'
+        GogglesDb::GenderType
+      when 'hair_dryer_types'
+        GogglesDb::HairDryerType
+      when 'heat_types'
+        GogglesDb::HeatType
+      when 'locker_cabinet_types'
+        GogglesDb::LockerCabinetType
+      when 'medal_types'
+        GogglesDb::MedalType
+      when 'pool_types'
+        GogglesDb::PoolType
+      when 'record_types'
+        GogglesDb::RecordType
+      when 'shower_types'
+        GogglesDb::ShowerType
+      when 'stroke_types'
+        GogglesDb::StrokeType
+      when 'swimmer_level_types'
+        GogglesDb::SwimmerLevelType
+      when 'timing_types'
+        GogglesDb::TimingType
+      end
+    end
+    # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
+    #-- -----------------------------------------------------------------------
+    #++
+
     # Updates any existing sub-entity list of rows.
     #
     # The detail_key in the parent hash points to an array of detail parameters that
