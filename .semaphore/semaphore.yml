@@ -25,7 +25,7 @@ global_job_config:
       - checkout
       - echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
       - echo $RAILS_MASTER_KEY > config/master.key
-      - mkdir -pv tmp
+      - mkdir -pv tmp coverage
       # Make sure we are using Bundler 2+:
       - gem i bundler
       # Use GogglesDb::VERSION as master reference here, or force a minor version change to rebuild the cache:
@@ -77,14 +77,14 @@ blocks:
         - name: RSpec - commands
           commands:
             - 'bundle exec rspec -t type:command'
-            - ./cc-test-reporter format-coverage -t simplecov
-            - ./cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
+            - cache store coverage-$(checksum spec/**/{,**/}*.rb) coverage/*.json
 
         - name: RSpec - API/requests
           commands:
             - 'bundle exec rspec -t type:request'
-            - ./cc-test-reporter format-coverage -t simplecov
-            - ./cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-request.json
+            - cache store coverage-$(checksum spec/**/{,**/}*.rb) coverage/*.json
 
         # Not currently used:
         # - name: RSpec - models
@@ -107,6 +107,10 @@ blocks:
         #     - 'bundle exec rspec -t type:view'
 
 promotions:
+  - name: Code coverage
+    pipeline_file: semaphore_coverage_upload.yml
+    auto_promote:
+      when: branch = 'master' AND result = 'passed'
   - name: Docker images
     pipeline_file: semaphore_docker_build.yml
     auto_promote:
