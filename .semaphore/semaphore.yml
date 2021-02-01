@@ -77,14 +77,16 @@ blocks:
         - name: RSpec - commands
           commands:
             - 'bundle exec rspec -t type:command'
+            - cache delete cc-command-goggles_api
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
-            - cache store coverage-$(checksum spec/**/{,**/}*.rb) coverage/*.json
+            - cache store cc-command-goggles_api coverage/cc-command.json
 
         - name: RSpec - API/requests
           commands:
             - 'bundle exec rspec -t type:request'
+            - cache delete cc-request-goggles_api
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-request.json
-            - cache store coverage-$(checksum spec/**/{,**/}*.rb) coverage/*.json
+            - cache store cc-request-goggles_api coverage/cc-request.json
 
         # Not currently used:
         # - name: RSpec - models
