@@ -16,6 +16,16 @@ parsers:
       method: no
       macro: no
 
+flags:
+  command:
+    paths:
+      - app/commands/*
+    carryforward: true
+  request:
+    paths:
+      - app/api/*
+    carryforward: true
+
 comment:
   layout: "reach,diff,flags,files,footer"
   behavior: default

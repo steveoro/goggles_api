@@ -86,6 +86,7 @@ group :test do
   # (Bullet works best just on development). Do not use memoized values for testing.
   # Example:
   #          expect { get :index }.to perform_constant_number_of_queries"
+  gem 'simplecov', '= 0.13.0', require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
