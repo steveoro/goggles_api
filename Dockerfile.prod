@@ -1,7 +1,7 @@
-FROM ruby:2.6.3-alpine
-LABEL AUTHOR=steve.alloro@gmail.com version="0.1.7"
+FROM ruby:2.7.2-alpine
+LABEL AUTHOR=steve.alloro@gmail.com version="0.1.75"
 
-ENV BUNDLER_VERSION=2.1.4 \
+ENV BUNDLER_VERSION=2.2.7 \
     INSTALL_PATH=/app \
     RAILS_ENV=production \
     DATABASE_NAME=goggles \
