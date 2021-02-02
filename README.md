@@ -74,9 +74,10 @@ Use the same parameter _when updating the gem_ with `bundle update goggles_db` o
 $> ./update_engine.sh
 ```
 
-To obtain a valid anonymized test DB dump image, clone [`goggles_db`](https://github.com/steveoro/goggles_db) repository on localhost by itself and run from the GogglesDb project root:
+Obtain a valid anonymized test DB dump image by cloning [`goggles_db`](https://github.com/steveoro/goggles_db) repo on localhost and run from the its project root:
 
 ```bash
+$> cd goggles_db
 $> RAILS_ENV=test rails app:db:rebuild
 ```
 
@@ -114,14 +115,16 @@ In order to start development, you'll need to:
 
 ### *Composed Container* usage
 
-For usage as a composed Docker container service you won't need an actual installation of MySQL or MariaDB, although a client `mysql` installation is recommended in case you want to run SQL commands into the DB container from the localhost shell.
+For usage as a composed Docker container service you won't need an actual installation of MySQL or MariaDB at all, although a client `mysql` installation is recommended in case you want to run SQL commands into the DB container from the localhost shell.
 
-If you're using the orchestrated container, just choose a random password for the database in the `.env` file and follow the WiKi How-To:
+If you're using the orchestrated container service, just choose a random password for the database in the `.env` file before building the containers and follow the WiKi How-To:
 
-- [Docker & docker-compose setup & usage with GogglesAPI as reference example](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi.md)
+- [Docker usage with GogglesAPI as example](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi.md)
 
 
 ### *Mixed cases* usage
+
+Refer to: [Setup as individual Docker containers](#setup-as-individual-docker-containers)
 
 The `Dockerfile`s & `docker-compose` YML files work with some assumptions throughout the framework about published ports between containers and the host which is running Docker.
 
@@ -130,18 +133,21 @@ For instance, by changing just the current Database port in your customized `dat
 
 | Service | Default internal port | Default published port |
 |---|---|---|
-|  | _"inside" containers_ / `localhost` | _"outside" service_ => _to_ localhost |
-Database (MariaDB/MySQL) | 3306 | 33060
-Web app | 3000 | 8080
+|  | _"inside" containers_ | _"outside" service_ |
+Database (MariaDB/MySQL) | `localhost:3306` | `33060`
+Web app | `localhost:3000` | `8080`
 
-The current `staging` environment configuration is an example of the app running _locally_ while connecting to the `goggles-db` container service on localhost:33060. (See the dedicated paragraph below.)
+The current `staging` environment configuration is an example of the app running _locally_ while connecting to the `goggles-db` container service on `localhost:33060`. (See the dedicated paragraph below.)
 
 
 
 ## Audit log
 
-The API Audit log is stored inside `log/api_audit.log`.
+The API service stores an API Audit log inside `log/api_audit.log`.
+
 The Logger instance will split it and keep the latest 10 files of 1 MB each.
+
+At the same time, each API call will update a dedicated entry in the `api_daily_uses` table, which can be used to compute crude usage stats on a daily basis.
 
 
 
@@ -156,17 +162,17 @@ For local testing, just keep your friend [Guard](https://github.com/guard/guard)
 $> guard
 ```
 
-If you want to run the full test suite, just hit enter on the Guard console.
+If you want to run the full test suite, just hit enter on the Guard console. Refer to the official Guard docs for more info.
 
-As of Rails 6.0.3, most probably there are some issues with the combined usage of Guard & Spring together with the new memory management modes in Rails during the Brakeman checks. These prevent the `brakeman` plugin for Guard to actually notice changes in the source code: the checks get re-run, but the result doesn't change. Or maybe it's just a combined mis-configuration.
+As of Rails 6.0.3, most probably there are some issues with the combined usage of Guard & Spring when used together with the new memory management modes in Rails during the Brakeman checks. These prevent the `brakeman` plugin for Guard to actually notice changes in the source code:if you create a vulnerability and subsequently fix it, the checks get re-run by Guard but the result doesn't change.
 
-In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run the `brakeman` checks before pushing the changes to the repository with:
+Maybe it could be just a combined mis-configuration we haven't investigated thoroughly but, in any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run the `brakeman` checks before pushing the changes to the repository with:
 
 ```bash
 $> brakeman -c .brakeman.cfg
 ```
 
-If you don't have a local test DB setup, check out [Database setup](https://github.com/steveoro/goggles_db#database-setup).
+If you don't have a local test database setup, check out ["Database setup"](https://github.com/steveoro/goggles_db#database-setup).
 
 _Make sure you commit & push any changes only when the test suite is_ :green_heart:.
 
@@ -174,6 +180,8 @@ _Make sure you commit & push any changes only when the test suite is_ :green_hea
 ### B. Everything on _Docker containers_
 
 Although not optimized for testing, the `dev` composed service can be used to run RSpec, Rubocop or anything else, including Guard too.
+
+Refer to the [GogglesAPI: Docker usage](HOWTO-dev-docker_usage_for_GogglesApi) guide for more detailed instructions.
 
 Run the composed container in detached mode, then connect to its internal shell and run the tests:
 
@@ -201,7 +209,7 @@ Inside the container, remember to:
 
 ## Dev Workflow _(for contributors)_
 
-When you push a commit to the `master` branch, the build system will re-test everything you allegedly have already checked locally using Guard as described above.
+When you push a commit to the `master` branch, the build system will re-test everything you allegedly have already checked locally using [Guard](https://github.com/guard/guard) as described above.
 
 The project uses a _full CI pipeline_ setup on Semaphore 2.0 (currently for the `master` branch only) that will promote a successful build into the Docker `latest` production-only image on DockerHub.
 
@@ -222,7 +230,7 @@ Basically, remember to:
 
 ## Database setup
 
-See [GogglesDb setup](https://github.com/steveoro/goggles_db#database-setup).
+Refer to [GogglesDb setup](https://github.com/steveoro/goggles_db#database-setup).
 
 You'll need a proper DB for both the test suite and the local development.
 
@@ -243,63 +251,9 @@ $> RAILS_ENV=test bin/rails db:migrate
 (It will take some time, depending of the dump size: sit back and relax.)
 
 
-### B. Everything on _Docker containers_
+### B. Using _Docker containers_
 
-If the DB container for the test environment still needs to be created or it's new, the `test` database will be either newly created and empty or even missing at all.
-
-Start / build the DB container:
-
-```bash
-$> docker-compose -f docker-compose.dev.yml up goggles-db
-```
-
-WIP :construction:
-
-If a local `mysql` client is available, recreate `goggles_test` from localhost:
-
- *** MISSING CREATE DATABASE from mysql ***
-
-```bash
-$> bunzip2 -ck ./db/dump/test.sql.bz2 > ./db/dump/test.sql
-
-$> mysql --host=0.0.0.0 --port=33060 --user=root \
-         --password="My-Super-Secret-Pwd" \
-         --database=goggles_test < ./db/dump/test.sql
-
-$> rm ./db/dump/test.sql
-```
-
-WIP :construction:
-
-------------------------------- TODO
-
-Create & run a new container from the base image with:
-
-```bash
-$> docker run --name goggles-db -e MYSQL_DATABASE=goggles_temp \
-     -e MYSQL_ROOT_PASSWORD="My-Super-Secret-Pwd" \
-     -v ~/Projects/goggles_db.vol:/var/lib/mysql \
-     -p 127.0.0.1:33060:3306 mariadb:10.3.25 \
-     --character-set-server=utf8mb4 \
-     --collation-server=utf8mb4_unicode_ci
-```
-
-
-Connect to the container's DB with:
-
-```bash
-$> docker exec -it goggles-db sh -c 'mysql --password="My-Super-Secret-Pwd" --database=goggles_development'
-```
-
-
-Fill it with the seed dump with:
-
-TODO
-
-```bash
-$> ...
-$>
-```
+Refer to ["Getting started: setup and usage as a composed Docker service"](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi#getting-started-setup-and-usage-as-a-composed-docker-service) or to ["DB container setup & usage"](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi#db-container-setup--usage-low-level-approach) for in-depth details.
 
 
 * * *
@@ -338,7 +292,7 @@ $> rails c -e staging
 
 ## Deployment instructions
 
-TODO
+:construction: TODO :construction:
 
 
 

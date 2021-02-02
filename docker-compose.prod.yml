@@ -3,7 +3,7 @@ version: '3.7'
 services:
   goggles-db:
     image: mariadb:10.3.25
-    container_name: goggles-db
+    container_name: goggles-db.prod
     ports:
       - '33060:3306'
     env_file:
@@ -29,6 +29,9 @@ services:
       - '8080:8080'
     env_file:
       - .env
+    volumes:
+      - "~/Projects/goggles_api/db/dump:/app/db/dump"
+      - "~/Projects/goggles_api/config/master.key:/app/config/master.key"
 
 volumes:
   db_data:
