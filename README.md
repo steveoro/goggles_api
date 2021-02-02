@@ -15,7 +15,7 @@ The endpoints allow an authorized account to manage most DB entities as they are
 
 ## Wiki & HOW-TOs
 
-Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v. 7+)
+- [Official Framework Wiki :link:](https://github.com/steveoro/goggles_db/wiki) (v. 7+)
 
 
 ## Requires
@@ -35,7 +35,7 @@ The main index is `api_main.apib` stored in the project root while all its sibli
 To easily browse the documents while working on them, we recommend the usage of Visual Studio Code with the API Blueprint Viewer extension installed, since generating a new single static document each time is definitely cumbersome.
 
 
-### Suggested tools:
+### Suggested tools
 
 *IDE:*
 
@@ -119,12 +119,12 @@ For usage as a composed Docker container service you won't need an actual instal
 
 If you're using the orchestrated container service, just choose a random password for the database in the `.env` file before building the containers and follow the WiKi How-To:
 
-- [Docker usage with GogglesAPI as example](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi.md)
+- [Docker usage with GogglesAPI as reference example](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi)
 
 
 ### *Mixed cases* usage
 
-Refer to: [Setup as individual Docker containers](#setup-as-individual-docker-containers)
+Refer to: [Setup as individual Docker containers](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi#setup-as-individual-docker-containers)
 
 The `Dockerfile`s & `docker-compose` YML files work with some assumptions throughout the framework about published ports between containers and the host which is running Docker.
 
@@ -181,7 +181,7 @@ _Make sure you commit & push any changes only when the test suite is_ :green_hea
 
 Although not optimized for testing, the `dev` composed service can be used to run RSpec, Rubocop or anything else, including Guard too.
 
-Refer to the [GogglesAPI: Docker usage](HOWTO-dev-docker_usage_for_GogglesApi) guide for more detailed instructions.
+Refer to the ["GogglesAPI: Docker usage"](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi#getting-started-setup-and-usage-as-a-composed-docker-service) guide for more detailed instructions.
 
 Run the composed container in detached mode, then connect to its internal shell and run the tests:
 
@@ -295,9 +295,7 @@ $> rails c -e staging
 :construction: TODO :construction:
 
 
-
 * * *
-
 
 
 ## Contributing

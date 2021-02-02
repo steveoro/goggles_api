@@ -69,7 +69,6 @@ end
 group :development, :test do
   gem 'awesome_print' # color output formatter for Ruby objects
   gem 'brakeman'
-  # [20210128] Note: Bullet doesn't support yet ActiveRecord 6.1
   gem 'bullet'
   # gem 'byebug' # Uncomment and call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'letter_opener'

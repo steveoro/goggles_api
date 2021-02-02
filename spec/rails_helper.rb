@@ -34,9 +34,9 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 require 'devise' # NOTE: require 'devise' after require 'rspec/rails' (this allows to use devise test helpers)
-require 'factory_bot_rails'
 
 # Add factories directly from core engine:
+require 'factory_bot_rails'
 FactoryBot.definition_file_paths << "#{GogglesDb::Engine.root}/spec/factories"
 FactoryBot.reload
 
