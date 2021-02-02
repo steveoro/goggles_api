@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: d062bf10fee10cb994331ad1802c72d98f053e21
+  revision: 4d18a5bc1911a4ef0a10cc313934e7b90f325fa6
   specs:
-    goggles_db (0.1.75)
+    goggles_db (0.1.76)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -256,7 +256,7 @@ GEM
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
-    i18n (1.8.7)
+    i18n (1.8.8)
       concurrent-ruby (~> 1.0)
     i18n_data (0.10.0)
     image_processing (1.12.1)
