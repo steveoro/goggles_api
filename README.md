@@ -303,10 +303,8 @@ $> rails c -e staging
 2. Make a pull request based on the branch most relevant to you; make sure your branch has a local build fully green (:green_heart:) before submitting the PR.
 3. Await the PR's review by the maintainers.
 
-
 ## License
 The application is available as open source under the terms of the [LGPL-3.0 License](https://opensource.org/licenses/LGPL-3.0).
-
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_api.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_api?ref=badge_large)
 
