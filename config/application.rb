@@ -36,5 +36,14 @@ module GogglesApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # [Steve A.] GogglesDb includes Devise's OmniAuth2 strategy, which is a middleware
+    # that is dependent from the following 2 (it requires basic session storage):
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
+    # FUTUREDEV: we could create a custom selective middleware that intercepts each request
+    #            and toggles session storage (adding the required middlewares) only if the
+    #            request path doesn't start with 'api'. But this is probably overkill for the
+    #            time being.
   end
 end

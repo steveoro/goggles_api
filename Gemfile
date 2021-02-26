@@ -28,7 +28,8 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'rack-cors'
 
 gem 'api-pagination'
-gem 'devise'
+# [Steve A.] Force a specific version of Devise, supporting OAuth2: (even if we don't use it here)
+gem 'devise', github: 'heartcombo/devise', branch: 'ca-omniauth-2'
 gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
 gem 'grape'
 gem 'grape_logging'
