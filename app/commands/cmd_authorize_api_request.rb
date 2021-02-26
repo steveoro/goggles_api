@@ -37,6 +37,7 @@ class CmdAuthorizeAPIRequest
   # Returns a valid, authenticated +User+ instance or +nil+ otherwise.
   def authenticated_user
     @api_user ||= GogglesDb::User.find(decoded_jwt_data[:user_id]) if decoded_jwt_data
+    # (&&-ing with nil at the end will force nil as return value if @api_user is not set)
     @api_user || errors.add(:msg, I18n.t('api.message.jwt.invalid')) && nil
   end
 
