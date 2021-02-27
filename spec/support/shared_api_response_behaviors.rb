@@ -94,7 +94,9 @@ shared_examples_for 'a successful JSON PUT response' do
   it 'updates the row' do
     updated_row = fixture_row.reload
     expected_changes.each do |key, value|
-      expect(updated_row.send(key)).to eq(value)
+      # Adapt expected changes hash to the JSON-ified result which will store floats as strings so that the comparison is simpler:
+      # value = value.to_s if value.is_a?(BigDecimal) || value.is_a?(Float)
+      expect(updated_row.send(key).to_s).to eq(value.to_s)
     end
   end
 end
