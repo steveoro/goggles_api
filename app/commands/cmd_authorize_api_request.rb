@@ -5,12 +5,15 @@ require 'simple_command'
 #
 # = Authorize API Request command object
 #
+# Authorization command to be used after the API session has been established
+# (used by any endpoint except '/session')
+#
 # Retrieves the User authorized for a generic API request, given the JWT specified in
 # its headers Hash, using the internal API key for decoding it.
 #
-#   - file vers.: 1.02
+#   - file vers.: 1.80
 #   - author....: Steve A.
-#   - build.....: 20200923
+#   - build.....: 20210226
 #
 class CmdAuthorizeAPIRequest
   prepend SimpleCommand

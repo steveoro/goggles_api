@@ -48,6 +48,15 @@ RSpec.describe Goggles::LookupAPI, type: :request do
       end
     end
 
+    context 'when using valid parameters but during Maintenance mode,' do
+      before(:each) do
+        GogglesDb::AppParameter.maintenance = true
+        get(api_v3_lookup_path(entity_name: 'gender_types'), params: { locale: 'it' }, headers: fixture_headers)
+        GogglesDb::AppParameter.maintenance = false
+      end
+      it_behaves_like('a request refused during Maintenance (except for admins)')
+    end
+
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_lookup_path(entity_name: 'gender_types'), headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'

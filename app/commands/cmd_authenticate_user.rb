@@ -6,10 +6,11 @@ require 'simple_command'
 # = Authenticate User command object
 #
 # Creates a valid JWT if the User exists and has a matching password; +nil+ otherwise.
+# (Used by the '/session' endpoint)
 #
-#   - file vers.: 1.02
+#   - file vers.: 1.80
 #   - author....: Steve A.
-#   - build.....: 20200923
+#   - build.....: 20210226
 #
 class CmdAuthenticateUser
   prepend SimpleCommand

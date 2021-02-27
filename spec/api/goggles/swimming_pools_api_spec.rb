@@ -35,6 +35,15 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
       it_behaves_like('a successful JSON row response')
     end
 
+    context 'when using valid parameters but during Maintenance mode,' do
+      before(:each) do
+        GogglesDb::AppParameter.maintenance = true
+        get(api_v3_swimming_pool_path(id: fixture_row.id), headers: fixture_headers)
+        GogglesDb::AppParameter.maintenance = false
+      end
+      it_behaves_like('a request refused during Maintenance (except for admins)')
+    end
+
     context 'when using an invalid JWT,' do
       before(:each) { get(api_v3_swimming_pool_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like('a failed auth attempt due to invalid JWT')
@@ -78,6 +87,15 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
       context 'with an account having CRUD grants,' do
         before(:each) { put(api_v3_swimming_pool_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
         it_behaves_like('a successful JSON PUT response')
+      end
+
+      context 'and CRUD grants but during Maintenance mode,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          put(api_v3_swimming_pool_path(id: fixture_row.id), params: expected_changes, headers: crud_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       # Admin-only fields update check:
@@ -201,6 +219,15 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
       context 'without any filters,' do
         before(:each) { get(api_v3_swimming_pools_path, headers: fixture_headers) }
         it_behaves_like('successful response with pagination links & values in headers')
+      end
+
+      context 'but during Maintenance mode,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          get(api_v3_swimming_pools_path, headers: fixture_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'when filtering by a specific pool_type_id,' do

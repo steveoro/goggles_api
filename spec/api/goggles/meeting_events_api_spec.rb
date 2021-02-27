@@ -26,6 +26,15 @@ RSpec.describe Goggles::MeetingEventsAPI, type: :request do
       it_behaves_like('a successful JSON row response')
     end
 
+    context 'when using valid parameters but during Maintenance mode,' do
+      before(:each) do
+        GogglesDb::AppParameter.maintenance = true
+        get(api_v3_meeting_event_path(id: fixture_row.id), headers: fixture_headers)
+        GogglesDb::AppParameter.maintenance = false
+      end
+      it_behaves_like('a request refused during Maintenance (except for admins)')
+    end
+
     context 'when using an invalid JWT,' do
       before(:each) { get api_v3_meeting_event_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
       it_behaves_like('a failed auth attempt due to invalid JWT')
@@ -65,6 +74,15 @@ RSpec.describe Goggles::MeetingEventsAPI, type: :request do
           get(api_v3_meeting_events_path, params: { meeting_id: fixture_meeting.id }, headers: fixture_headers)
         end
         it_behaves_like('successful multiple row response either with OR without pagination links')
+      end
+
+      context 'but during Maintenance mode,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          get(api_v3_meeting_events_path, params: { meeting_id: fixture_meeting.id }, headers: fixture_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'when filtering by a specific meeting_session_id,' do

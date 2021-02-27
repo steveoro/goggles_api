@@ -6,7 +6,7 @@ Backend internal API for the Goggles Engine, core7.
 
     | _Framework_ | _API_ | _App version_ | _DB structure_ | _latest update_ |
     | --- | --- | --- | --- | --- |
-    | `core7` | `v3` | 7.075 | 1.70.03 | 20210131 |
+    | `core7` | `v3` | 7.81 | 1.80.0 | 20210227 |
 
 _Previous legacy versions are deprecated and subseeded by this._
 
@@ -47,6 +47,16 @@ the most fine-grained structure detail available. Whereas, when retrieving one o
 may be included as a sibling reference but yielding usually less details.
 (That is the case for example, for Swimmers or Laps: the list of results included in a MeetingProgram response
  contains less associations and details than those obtained by retrieving each result one by one.)
+
+
+## Note on Maintenance mode
+
+The app framework supports a "maintenance mode" that inhibits most HTTP & API requests and is triggered by a setting
+directly stored inside the database.
+
+When maintenance mode is on, new JWT sessions will be refused and any incoming API request
+will be rejected with a `"Maintenance mode is ON"` error message - unless the
+requesting user has admin grants.
 
 
 * * *

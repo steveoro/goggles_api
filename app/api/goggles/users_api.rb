@@ -3,9 +3,12 @@
 module Goggles
   # = Goggles API v3: User API Grape controller
   #
-  #   - version:  7.060
+  #   - version:  7.81
   #   - author:   Steve A.
-  #   - build:    20201006
+  #   - build:    20210227
+  #
+  # Users should read or update just their data and should *not* have any access to
+  # any other user row (unless authorized for CRUD on this entity).
   #
   class UsersAPI < Grape::API
     helpers APIHelpers
@@ -25,7 +28,8 @@ module Goggles
       end
       route_param :id do
         get do
-          check_jwt_session
+          api_user = check_jwt_session
+          reject_unless_authorized_for_crud_or_has_id(api_user, 'User', params['id'].to_i)
 
           GogglesDb::User.find_by_id(params['id'])
         end
@@ -50,7 +54,8 @@ module Goggles
       end
       route_param :id do
         put do
-          check_jwt_session
+          api_user = check_jwt_session
+          reject_unless_authorized_for_crud_or_has_id(api_user, 'User', params['id'].to_i)
 
           user = GogglesDb::User.find_by_id(params['id'])
           user&.update!(declared(params, include_missing: false))
@@ -62,6 +67,7 @@ module Goggles
       # GET /api/:version/users
       #
       # Given some optional filtering parameters, returns the paginated list of users found.
+      # (CRUD-only)
       #
       # == Returns:
       # The list of Users for the specified filtering parameters as an array of JSON objects.
@@ -91,7 +97,8 @@ module Goggles
       # paginate per_page: 25, max_per_page: nil, enforce_max_per_page: false
       paginate
       get do
-        check_jwt_session
+        api_user = check_jwt_session
+        reject_unless_authorized_for_crud(api_user, 'User')
 
         paginate GogglesDb::User.where(
           filtering_like_for(

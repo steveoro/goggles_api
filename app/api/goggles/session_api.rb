@@ -20,6 +20,7 @@ module Goggles
       # POST /api/:version/session
       #
       # Creates a new JWT for an API session if the given credentials are valid.
+      # This endpoint will refuse to create new JWT sessions if the server is in maintenance.
       #
       # == Params:
       # - e: User email
@@ -42,6 +43,9 @@ module Goggles
 
         cmd_authenticator = CmdAuthenticateUser.new(params['e'], params['p']).call
         error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => cmd_authenticator.errors[:msg].join('; ')) unless cmd_authenticator.success?
+
+        # New API session disable during maintenance (not even admins)
+        reject_during_maintenance
 
         { msg: I18n.t('api.message.generic_ok'), jwt: cmd_authenticator.result }
       end

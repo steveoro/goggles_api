@@ -1,5 +1,9 @@
 # Group Users
 
+Users should read or update just their data and should *not* have any access
+to any other user row (unless authorized for CRUD on this entity).
+
+
 ## User details [/api/v3/user/{id}]
 
 + Model (application/json)
@@ -24,7 +28,9 @@
 ### find [GET]
 The User instance matching the specified `id` returned as JSON.
 
-:key: `Authorization` request header => valid JWT **required**
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user can only request a matching ID or have at least specific **CRUD** grants
 
 
 * * *
@@ -115,7 +121,9 @@ Allows direct updates for some of the User fields given the `id` of the row.
 
 Returns `true` on success, an empty result when not found.
 
-:key: `Authorization` request header => valid JWT **required**
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user can only request a matching ID or have at least specific **CRUD** grants
 
 
 #### Body Attributes:
@@ -304,7 +312,10 @@ Optional pagination parameters for the request:
 - `page`: current/selected page cursor
 - `per_page`: total items per data page (default: 25)
 
-:key: `Authorization` request header => valid JWT **required**
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have at least specific **CRUD** grants
+
 
 ### Pagination
 

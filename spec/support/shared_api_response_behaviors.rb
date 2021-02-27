@@ -28,6 +28,19 @@ end
 #-- ---------------------------------------------------------------------------
 #++
 
+shared_examples_for 'a request refused during Maintenance (except for admins)' do
+  it 'is NOT successful' do
+    expect(response).not_to be_successful
+  end
+  it 'responds with the maintenance error message' do
+    result = JSON.parse(response.body)
+    expect(result).to have_key('error')
+    expect(result['error']).to eq(I18n.t('api.message.status.maintenance'))
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++
+
 shared_examples_for 'a successful request that has positive usage stats' do
   it 'is successful' do
     expect(response).to be_successful

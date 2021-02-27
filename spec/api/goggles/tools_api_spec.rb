@@ -84,6 +84,15 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
         end
       end
 
+      context 'when using valid parameters but during Maintenance mode,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          get(api_v3_tools_find_entry_time_path, params: api_request_params, headers: fixture_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a request refused during Maintenance (except for admins)')
+      end
+
       context 'with parameters that do not match existing entities' do
         let(:failing_request_params) do
           {

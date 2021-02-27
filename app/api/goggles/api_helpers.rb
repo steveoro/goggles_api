@@ -29,10 +29,17 @@ module Goggles
 
     # Yields the 'JWT invalid' error if the session token or the credentials are invalid.
     # On success, returns the authenticated *User* instance.
+    #
+    # Will reject the JWT session if the maintenance mode is on and the authorized user
+    # is not an admin.
+    #
     def check_jwt_session
       authorization = CmdAuthorizeAPIRequest.new(headers).call
       !authorization.success? &&
         error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.jwt.invalid'))
+
+      # API request disable during maintenance (probably overkill)
+      reject_during_maintenance(authorization.result)
 
       # Update stats using as key a path stripped of all IDs & return authorization result:
       # (Note: for some tests negative IDs may be used, so we consider those too)
@@ -41,10 +48,10 @@ module Goggles
     end
 
     # Helps to reject incoming requests when the maintenance status is toggled ON.
-    # (Only few endpoints may be deemed critical enough to include this helper; the majority should be designed
-    #  fault tolerant enough)
-    def reject_during_maintenance
-      return unless GogglesDb::AppParameter.maintenance?
+    def reject_during_maintenance(user = nil)
+      # Carry on only when not in maintenance or the authorized user is an admin
+      return if !GogglesDb::AppParameter.maintenance? ||
+                (user.is_a?(GogglesDb::User) && GogglesDb::GrantChecker.admin?(user))
 
       error!(I18n.t('api.message.status.maintenance'), 401, 'X-Error-Detail' => I18n.t('api.message.status.maintenance.maintenance_description'))
     end
@@ -61,6 +68,14 @@ module Goggles
     # on the specified entity.
     def reject_unless_authorized_for_crud(user, entity_name)
       !GogglesDb::GrantChecker.crud?(user, entity_name) &&
+        error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.invalid_user_grants'))
+    end
+
+    # Similarly to #reject_unless_authorized_for_crud, yields the same 'Unauthorized' error
+    # if the user does not have associated grants for CRUD operations on the specified entity
+    # and is not the owner (by matching user IDs) of the specific entity (row or rows).
+    def reject_unless_authorized_for_crud_or_has_id(user, entity_name, owner_user_id)
+      !GogglesDb::GrantChecker.crud?(user, entity_name) && (user.id != owner_user_id.to_i) &&
         error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.invalid_user_grants'))
     end
 

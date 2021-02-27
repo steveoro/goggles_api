@@ -1,0 +1,19 @@
+it:
+  api:
+    message:
+      unauthorized: 'Non autorizzato'
+      invalid_parameter: 'Parametro non valido'
+      generic_ok: 'OK'
+      creation_failure: 'ERRORE in fase di creazione'
+      generic_failure: 'ERRORE: fallimento generico inatteso'
+      invalid_token: 'Token statico API non valido'
+      invalid_credentials: 'Credenziali Utente non valide'
+      invalid_user_grants: 'Permessi Utente non validi'
+      unconfirmed_email: 'Email Utente non ancora confermata'
+      status:
+        ok: 'OK: in esecuzione'
+        maintenance: 'Manutenzione Server'
+        maintenance_description: 'Server in manutenzione: riprova più tardi'
+      jwt:
+        missing: 'Token JWT mancante'
+        invalid: 'Token JWT non valido'

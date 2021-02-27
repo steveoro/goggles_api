@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'support/api_session_helpers'
+require 'support/shared_api_response_behaviors'
 
 RSpec.describe Goggles::SessionAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
@@ -34,6 +35,15 @@ RSpec.describe Goggles::SessionAPI, type: :request do
         expect(decoded_jwt).to have_key('user_id')
         expect(decoded_jwt['user_id']).to eq(api_user.id)
       end
+    end
+
+    context 'when using valid parameters but during Maintenance mode,' do
+      before(:each) do
+        GogglesDb::AppParameter.maintenance = true
+        post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key })
+        GogglesDb::AppParameter.maintenance = false
+      end
+      it_behaves_like('a request refused during Maintenance (except for admins)')
     end
 
     context 'when using invalid user credentials,' do
