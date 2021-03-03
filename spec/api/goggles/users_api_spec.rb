@@ -166,8 +166,9 @@ RSpec.describe Goggles::UsersAPI, type: :request do
 
   describe 'GET /api/v3/users/' do
     context 'when using a valid authentication' do
-      let(:fixture_first_name) { GogglesDb::User.select(:first_name).limit(100).map(&:first_name).sample }
-      let(:fixture_last_name)  { GogglesDb::User.select(:last_name).limit(100).map(&:last_name).sample }
+      # [Steve A.] Note: if we don't select at least the 3 field below, user.associate_to_swimmer! will make the select fail
+      let(:fixture_first_name) { GogglesDb::User.select(:last_name, :first_name, :year_of_birth).limit(100).map(&:first_name).sample }
+      let(:fixture_last_name)  { GogglesDb::User.select(:last_name, :first_name, :year_of_birth).limit(100).map(&:last_name).sample }
       # Choose among the many existing rows in the seed w/ more than 25 rows per domain => pagination guaranteed)
       let(:fixture_email)    { '@fake.example.' }
       let(:default_per_page) { 25 }
