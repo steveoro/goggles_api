@@ -21,7 +21,7 @@ The endpoints allow an authorized account to manage most DB entities as they are
 ## Requires
 
 - Ruby 2.7.2
-- Rails 6.0.3
+- Rails 6.0.3.5
 - MariaDb 10.3.25+ or any other MySql equivalent version
 
 
@@ -135,7 +135,7 @@ For instance, by changing just the current Database port in your customized `dat
 |---|---|---|
 |  | _"inside" containers_ | _"outside" service_ |
 Database (MariaDB/MySQL) | `localhost:3306` | `33060`
-Web app | `localhost:3000` | `8080`
+Web app | `localhost:3000` | `8081`
 
 The current `staging` environment configuration is an example of the app running _locally_ while connecting to the `goggles-db` container service on `localhost:33060`. (See the dedicated paragraph below.)
 
@@ -277,7 +277,7 @@ $> RAILS_ENV=staging rails db:rebuild from=test to=staging
 Run the server on localhost with:
 
 ```bash
-$> rails s -p 8080 -e staging
+$> rails s -p 8081 -e staging
 ```
 
 ...Or the console with:

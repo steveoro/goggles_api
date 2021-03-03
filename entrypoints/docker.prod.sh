@@ -9,4 +9,4 @@ if [ -f tmp/pids/server.pid ]; then
 fi
 
 # Start our server:
-DISABLE_SPRING=true bundle exec rails s -b 0.0.0.0 -p 8080
+DISABLE_SPRING=true bundle exec rails s -b 0.0.0.0 -p 8081

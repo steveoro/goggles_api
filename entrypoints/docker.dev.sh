@@ -9,4 +9,4 @@ if [ -f tmp/pids/server.pid ]; then
 fi
 
 # Start our server:
-bundle exec rails s -b 0.0.0.0 -p 8080
+bundle exec rails s -b 0.0.0.0 -p 8081
