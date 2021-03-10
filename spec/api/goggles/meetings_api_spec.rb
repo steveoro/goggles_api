@@ -212,8 +212,9 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
+      let(:fixture_description) { %w[Riccione CSI].sample }
+
       context 'when filtering by name,' do
-        let(:fixture_description) { %w[Riccione CSI].sample }
         let(:expected_row_count) do
           GogglesDb::Meeting.joins(:meeting_sessions).includes(:meeting_sessions)
                             .for_name(fixture_description)
@@ -224,6 +225,19 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
           get(api_v3_meetings_path, params: { name: fixture_description }, headers: fixture_headers)
         end
         it_behaves_like('successful multiple row response either with OR without pagination links')
+      end
+
+      context 'when enabling custom Select2 output,' do
+        let(:expected_row_count) do
+          GogglesDb::Meeting.joins(:meeting_sessions).includes(:meeting_sessions)
+                            .for_name(fixture_description)
+                            .distinct.limit(100).count
+        end
+        before(:each) do
+          expect(expected_row_count).to be_positive
+          get(api_v3_meetings_path, params: { name: fixture_description, select2_format: true }, headers: fixture_headers)
+        end
+        it_behaves_like('successful response in Select2 bespoke format')
       end
     end
 

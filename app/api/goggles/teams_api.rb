@@ -3,15 +3,15 @@
 module Goggles
   # = Goggles API v3: Team API Grape controller
   #
-  #   - version:  7.053
+  #   - version:  7.85
   #   - author:   Steve A.
-  #   - build:    20201222
+  #   - build:    20210310
   #
   class TeamsAPI < Grape::API
     helpers APIHelpers
 
-    format        :json
-    content_type  :json, 'application/json'
+    format       :json
+    content_type :json, 'application/json'
 
     resource :team do
       # GET /api/:version/team/:id
@@ -114,6 +114,8 @@ module Goggles
       #
       # Given some optional filtering parameters, returns the paginated list of teams found.
       #
+      # *Supports the bespoke "Select2 option" output format*
+      #
       # == Returns:
       # The list of Teams for the specified filtering parameters as an array of JSON objects.
       # Returns exact matches for city_id; supports FULLTEXT search by the generic 'name' parameter
@@ -132,16 +134,21 @@ module Goggles
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT name search on name, editable_name & name_variations fields'
         optional :city_id, type: Integer, desc: 'optional: associated City ID'
+        optional :select2_format, type: Boolean, desc: 'optional: true to enable the simplified (id+text) Select2 output format'
         use :pagination
       end
       paginate
       get do
         check_jwt_session
 
-        paginate(
-          filtering_fulltext_search_for(GogglesDb::Team, params['name'])
-            .where(filtering_hash_for(params, %w[city_id]))
-        )
+        results = filtering_fulltext_search_for(GogglesDb::Team, params['name'])
+                  .where(filtering_hash_for(params, %w[city_id]))
+
+        if params['select2_format'] == true
+          select2_custom_format(results, ->(row) { "#{row.editable_name} (#{row.city&.name || '?'})" })
+        else
+          paginate(results)
+        end
       end
     end
   end

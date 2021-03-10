@@ -222,3 +222,19 @@ shared_examples_for 'successful multiple row response either with OR without pag
 end
 #-- ---------------------------------------------------------------------------
 #++
+
+# REQUIRES/ASSUMES:
+# - 1+ results, grouped under a single 'results' array, just 1 page (no pagination), max 100 items
+# - 'expected_row_count' to be already set (row count for expected result)
+shared_examples_for 'successful response in Select2 bespoke format' do
+  it_behaves_like('a successful request that has positive usage stats')
+
+  it 'returns a list of rows in Select2 bespoke format' do
+    result = JSON.parse(response.body)
+    expect(result).to have_key('results')
+    row_list = result['results']
+    expect(row_list).to be_an(Array)
+    expect(row_list.count).to eq(expected_row_count)
+    expect(row_list).to all have_key('id').and have_key('text')
+  end
+end

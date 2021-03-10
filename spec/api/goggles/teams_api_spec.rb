@@ -196,11 +196,12 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
         # (We can't really assert pagination links here, it's enough to test these in the context below)
       end
 
+      let(:search_term) { GogglesDb::Team.select(:name).limit(50).sample.name.split.first }
+
       context 'when filtering by name,' do
-        let(:search_term) { GogglesDb::Team.select(:name).limit(50).sample.name.split.first }
         let(:data_domain) { GogglesDb::Team.for_name(search_term) }
-        let(:expected_team) { data_domain.first }
         let(:expected_row_count) { data_domain.count }
+        let(:expected_team) { data_domain.first }
         before(:each) { get(api_v3_teams_path, params: { name: search_term }, headers: fixture_headers) }
 
         it 'includes the expected row in the result array' do
@@ -210,6 +211,13 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
         # Typically any results filtered by name will be just a single row fitting
         # in a single page (w/o pagination links), but with random names we can't be sure:
         it_behaves_like('successful multiple row response either with OR without pagination links')
+      end
+
+      context 'when enabling custom Select2 output,' do
+        let(:data_domain) { GogglesDb::Team.for_name(search_term).limit(100) }
+        let(:expected_row_count) { data_domain.count }
+        before(:each) { get(api_v3_teams_path, params: { name: search_term, select2_format: true }, headers: fixture_headers) }
+        it_behaves_like('successful response in Select2 bespoke format')
       end
     end
 

@@ -541,7 +541,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 
 
-# Team list [/api/v3/teams{?page,per_page,city_id,name,editable_name}]
+# Team list [/api/v3/teams{?page,per_page,city_id,name,select2_format}]
 
 + Model (application/json)
 
@@ -578,11 +578,9 @@ returned as JSON and optionally filtered by any or all from:
 
 - `city_id`
 - `name`
-- `editable_name`
 
-Returns exact matches for `city_id`, supports partial matches for the string names,
-but no fuzzy searches are performed: the matching rows for the name strings
-are selected using a simple "LIKE %?%" on the specified parameters.
+Returns exact matches for `city_id`; supports FULLTEXT search for the generic
+`name` parameter which acts on all name-related fields (`name`, `editable_name` & `name_variations`).
 
 Optional pagination parameters for the request:
 
@@ -601,13 +599,22 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
 
 
+### Support for Select2 bespoke format output
+
+Use the parameter `select2_format` => `true` to enable the simplified output
+format used for the Select2 HTML widget (a list of `{id: ..., text: ...}`
+rows under a single `results` node; see https://select2.org/data-sources/formats).
+
+When this is enabled, results are limited to a _maximum_ of **100** rows (pagination ignored).
+
+
 * * *
 
 
 + Parameters
     + city_id: 1 (number, optional) - associated City ID
-    + name: `CSI OBER FERRARI` (string, optional) - name of the Team (partial match supported)
-    + editable_name: `C.S.I. Ober Ferrari` (string, optional) - name of the Team, as edited by the Team Manager (partial match supported)
+    + name: `CSI OBER FERRARI` (string, optional) - generic FULLTEXT team name search on `name`, `editable_name` & `name_variations` fields
+    + select2_format: false (boolean, optional) - `true` to enable the bespoke Select2 simplified output format
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
@@ -652,6 +659,64 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 + Response 200
 
     [Team list][]
+
+
++ Request Select2 ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/teams?name=ober&select2_format=true"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/teams',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { name: 'ober', select2_format: true }
+                }
+            )
+    => <RestClient::Response 200 "{\"results\":[{\"id\":4,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    + Body
+
+            {
+                "results": [
+                    // Team details 1
+                    {
+                        "id": 1,
+                        "text": "CSI Nuoto Ober Ferrari (Reggio Emilia)"
+                    },
+
+                    // Team details 2
+                    {
+                        "id": 2,
+                        "text": ...
+                    },
+
+                    // [...]
+                ]
+            }
 
 
 + Request not found (application/json)

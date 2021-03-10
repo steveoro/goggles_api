@@ -581,7 +581,7 @@ A call to `/lookup/:entity_name_plural/` endpoint will list all available values
 
 
 
-# SwimmingPool list [/api/v3/swimming_pools{?page,per_page,name,address,nick_name,pool_type_id,city_id}]
+# SwimmingPool list [/api/v3/swimming_pools{?page,per_page,name,address,pool_type_id,city_id,select2_format}]
 
 + Model (application/json)
 
@@ -618,13 +618,13 @@ returned as JSON and optionally filtered by any or all from:
 
 - `name`
 - `address`
-- `nick_name`
 - `pool_type_id`
 - `city_id`
 
 Returns exact matches for `pool_type_id` & `city_id`;
-supports partial matches for the string names, but no fuzzy searches are performed:
-the matching rows for the name strings are selected using a simple "LIKE %?%" on the specified parameters.
+supports partial matches for the address field, plus a FULLTEXT search
+by the generic `name` parameter which acts on both the actual `name` &
+`nick_name` fields.
 
 Optional pagination parameters for the request:
 
@@ -643,15 +643,24 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
 
 
+### Support for Select2 bespoke format output
+
+Use the parameter `select2_format` => `true` to enable the simplified output
+format used for the Select2 HTML widget (a list of `{id: ..., text: ...}`
+rows under a single `results` node; see https://select2.org/data-sources/formats).
+
+When this is enabled, results are limited to a _maximum_ of **100** rows (pagination ignored).
+
+
 * * *
 
 
 + Parameters
     + name: `Ferrari` (string, optional) - official name of the venue
     + address: `Melato` (string, optional) - address of the venue
-    + nick_name: `reggiomelato25` (string, optional) - composed nickname (possibly unique)
     + pool_type_id: 1 (number, optional) - associated PoolType ID
     + city_id: 1 (number, optional) - associated CityType ID
+    + select2_format: false (boolean, optional) - `true` to enable the bespoke Select2 simplified output format
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
@@ -696,6 +705,64 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 + Response 200
 
     [SwimmingPool list][]
+
+
++ Request Select2 ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/swimming_pools?pool_type_id=1&select2_format=true"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/swimming_pools',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { pool_type_id: 1, select2_format: true }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    + Body
+
+            {
+                "results": [
+                    // SwimmingPool details 1
+                    {
+                        "id": 1,
+                        "text": "Comunale O.Ferrari (m.50, Reggio Emilia)"
+                    },
+
+                    // SwimmingPool details 2
+                    {
+                        "id": 2,
+                        "text": ...
+                    },
+
+                    // [...]
+                ]
+            }
 
 
 + Request not found (application/json)

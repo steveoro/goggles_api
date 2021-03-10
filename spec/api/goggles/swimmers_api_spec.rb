@@ -218,6 +218,13 @@ RSpec.describe Goggles::SwimmersAPI, type: :request do
         end
         it_behaves_like('successful single response without pagination links in headers')
       end
+
+      context 'when enabling custom Select2 output,' do
+        let(:fixture_last_name) { %w[John White Rowe Smith].sample }
+        let(:expected_row_count) { GogglesDb::Swimmer.where('last_name LIKE ?', "%#{fixture_last_name}%").limit(100).count }
+        before(:each) { get(api_v3_swimmers_path, params: { last_name: fixture_last_name, select2_format: true }, headers: fixture_headers) }
+        it_behaves_like('successful response in Select2 bespoke format')
+      end
     end
 
     context 'when using an invalid JWT,' do

@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Swimmer API Grape controller
   #
-  #   - version:  7.053
+  #   - version:  7.85
   #   - author:   Steve A.
-  #   - build:    20201222
+  #   - build:    20210310
   #
   class SwimmersAPI < Grape::API
     helpers APIHelpers
@@ -110,6 +110,8 @@ module Goggles
       #
       # Given some optional filtering parameters, returns the paginated list of swimmers found.
       #
+      # *Supports the bespoke "Select2 option" output format*
+      #
       # == Returns:
       # The list of Swimmers for the specified filtering parameters as an array of JSON objects.
       # Returns exact matches for gender_type_id, year_of_birth, & year_guessed; supports partial matches
@@ -131,8 +133,9 @@ module Goggles
         optional :last_name, type: String, desc: 'optional: last name (partial match supported)'
         optional :complete_name, type: String, desc: 'optional: complete name (partial match supported)'
         optional :gender_type_id, type: Integer, desc: 'optional: associated GenderType ID'
-        optional :year_of_birth, type: Integer, desc: 'optional: year of birth'
-        optional :year_guessed, type: Integer, desc: 'optional: true when year of birth has been deduced from other data'
+        optional :year_of_birth, type: Integer, desc: 'optional: year of birth value'
+        optional :year_guessed, type: Integer, desc: 'optional: true to search for data having only "guessed" year of birth values'
+        optional :select2_format, type: Boolean, desc: 'optional: true to enable the simplified (id+text) Select2 output format'
         use :pagination
       end
       # Enforcing 'max_per_page' will add the allowed range to the swagger docs and
@@ -143,11 +146,15 @@ module Goggles
       get do
         check_jwt_session
 
-        paginate(
-          filtering_fulltext_search_for(GogglesDb::Swimmer, params['name'])
-            .where(filtering_hash_for(params, %w[gender_type_id year_of_birth year_guessed]))
-            .where(filtering_like_for(params, %w[first_name last_name complete_name]))
-        )
+        results = filtering_fulltext_search_for(GogglesDb::Swimmer, params['name'])
+                  .where(filtering_hash_for(params, %w[gender_type_id year_of_birth year_guessed]))
+                  .where(filtering_like_for(params, %w[first_name last_name complete_name]))
+
+        if params['select2_format'] == true
+          select2_custom_format(results, ->(row) { "#{row.complete_name} (#{row.year_of_birth})" })
+        else
+          paginate(results)
+        end
       end
     end
   end

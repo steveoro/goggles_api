@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Meeting API Grape controller
   #
-  #   - version:  7.051
+  #   - version:  7.85
   #   - author:   Steve A.
-  #   - build:    20201218
+  #   - build:    20210310
   #
   class MeetingsAPI < Grape::API
     helpers APIHelpers
@@ -104,6 +104,8 @@ module Goggles
       #
       # Given some optional filtering parameters, returns the paginated list of meetings found.
       #
+      # *Supports the bespoke "Select2 option" output format*
+      #
       # == Returns:
       # The list of Meetings for the specified filtering parameters as an array of JSON objects.
       # Supports a FULLTEXT search by the generic 'name' parameter on the 'description' & 'code' fields.
@@ -123,21 +125,25 @@ module Goggles
         optional :season_id, type: Integer, desc: 'optional: associated Season ID'
         optional :pool_type_id, type: Integer, desc: 'optional: associated meeting_sessions.pool_type ID'
         optional :date, type: String, desc: 'optional: header_date or scheduled_date in ISO format (YYYY-MM-DD)'
+        optional :select2_format, type: Boolean, desc: 'optional: true to enable the simplified (id+text) Select2 output format'
         use :pagination
       end
       paginate
       get do
         check_jwt_session
 
-        # .where(filtering_like_for_single_parameter('meetings.description LIKE ?', params, 'description'))
-        paginate(
-          filtering_fulltext_search_for(GogglesDb::Meeting, params['name'])
-            .joins(meeting_sessions: :swimming_pool).includes(meeting_sessions: :swimming_pool)
-              .where(filtering_hash_for(params, ['season_id']))
-              .where(filtering_for_single_parameter('(header_date = ?) OR (meeting_sessions.scheduled_date = ?)', params, 'date'))
-              .where(filtering_for_single_parameter('swimming_pools.pool_type_id = ?', params, 'pool_type_id'))
-              .distinct
-        )
+        results = filtering_fulltext_search_for(GogglesDb::Meeting, params['name'])
+                  .joins(meeting_sessions: :swimming_pool).includes(meeting_sessions: :swimming_pool)
+                  .where(filtering_hash_for(params, ['season_id']))
+                  .where(filtering_for_single_parameter('(header_date = ?) OR (meeting_sessions.scheduled_date = ?)', params, 'date'))
+                  .where(filtering_for_single_parameter('swimming_pools.pool_type_id = ?', params, 'pool_type_id'))
+                  .distinct
+
+        if params['select2_format'] == true
+          select2_custom_format(results, ->(row) { "#{row.description} (#{row.header_date})" })
+        else
+          paginate(results)
+        end
       end
     end
   end

@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  7.072
+  #   - version:  7.085
   #   - author:   Steve A.
-  #   - build:    20210126
+  #   - build:    20210310
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -219,6 +219,46 @@ module Goggles
         detail_row = detail_class.find_by_id(detail_values['id'])
         detail_row&.update!(detail_values.reject { |key, _v| key == 'id' })
       end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    # Custom Select2 output format helper.
+    #
+    # The Select2 widget needs a bespoke format for any HTML select options ("{results: [{id, text}, ...]}").
+    # This will produce such format, limiting the paginated output to a single-page
+    # of a maximum of 100 results, not too encumber too much the overall user experience.
+    #
+    # == Params
+    # - records: any list of model objects; supports pagination, with the above limits.
+    # - lambda_for_text: a lambda called upon each record row to compute a text label for it.
+    #
+    # == Returns
+    # An Hash obtained from the specified +records+ list, having the format:
+    #
+    #   {
+    #     results: [
+    #       {
+    #         id: record_1.id,
+    #         text: lambda_for_text.call(record_1)
+    #       },
+    #       {
+    #         id: record_2.id,
+    #         text: lambda_for_text.call(record_2)
+    #       },
+    #       // (...)
+    #     ]
+    #   }
+    #
+    def select2_custom_format(records, lambda_for_text)
+      {
+        results: Kaminari.paginate_array(
+          records.map do |record|
+            { id: record.id, text: lambda_for_text.call(record) }
+          end
+        ).page(1).per(100)
+        # "100 should be enough for everybody" (Let's try not to have actual "infinite lists", please)
+      }
     end
   end
 end

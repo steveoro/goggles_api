@@ -517,7 +517,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 
 
-# Swimmer list [/api/v3/swimmers{?page,per_page,name,first_name,last_name,complete_name,gender_type_id,year_of_birth,year_guessed}]
+# Swimmer list [/api/v3/swimmers{?page,per_page,name,first_name,last_name,complete_name,gender_type_id,year_of_birth,year_guessed,select2_format}]
 
 + Model (application/json)
 
@@ -547,6 +547,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
             ]
 
 
+
 ## list [GET]
 
 The list of Swimmers for the specified filtering parameters, returned as an array of JSON objects.
@@ -560,6 +561,7 @@ Additional (optional) pagination parameters for the request:
 
 :key: `Authorization` request header => valid JWT **required**
 
+
 ### Pagination
 
 Pagination links will be returned in the `Link` _response header_, for all arrays with
@@ -568,6 +570,15 @@ more than 25 results.
 Typical `Link` header format (single String, separated by COMMA+BLANK):
 
     "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+### Support for Select2 bespoke format output
+
+Use the parameter `select2_format` => `true` to enable the simplified output
+format used for the Select2 HTML widget (a list of `{id: ..., text: ...}`
+rows under a single `results` node; see https://select2.org/data-sources/formats).
+
+When this is enabled, results are limited to a _maximum_ of **100** rows (pagination ignored).
 
 
 * * *
@@ -580,7 +591,8 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     + complete_name: `ALLORO STEFANO` (string, optional) - complete name, as it appears from the public rankings (italian ordering: last name first; partial match supported)
     + gender_type_id: 1 (number, optional) - associated GenderType ID
     + year_of_birth: 1969 (number, optional) - year of birth
-    + year_guessed: false (boolean, optional) - `true` when year of birth has been deduced from other data
+    + year_guessed: false (boolean, optional) - `true` to search for data having only "guessed" year of birth values
+    + select2_format: false (boolean, optional) - `true` to enable the bespoke Select2 simplified output format
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
@@ -625,6 +637,64 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 + Response 200
 
     [Swimmer list][]
+
+
++ Request Select2 ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/swimmers?last_name=smith&select2_format=true"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/swimmers',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { last_name: 'smith', select2_format: true }
+                }
+            )
+    => <RestClient::Response 200 "{\"results\":[{\"id\":4,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    + Body
+
+            {
+                "results": [
+                    // Swimmer details 1
+                    {
+                        "id": 4,
+                        "text": "Smith John (1971)"
+                    },
+
+                    // Swimmer details 2
+                    {
+                        "id": 5,
+                        "text": "Smith Paul (1956)"
+                    },
+
+                    // [...]
+                ]
+            }
 
 
 + Request not found (application/json)

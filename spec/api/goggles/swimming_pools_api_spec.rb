@@ -274,6 +274,13 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
         end
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
+
+      context 'when enabling custom Select2 output,' do
+        let(:search_term) { fixture_row.name.split.first }
+        let(:expected_row_count) { GogglesDb::SwimmingPool.for_name(search_term).limit(100).count }
+        before(:each) { get(api_v3_swimming_pools_path, params: { name: search_term, select2_format: true }, headers: fixture_headers) }
+        it_behaves_like('successful response in Select2 bespoke format')
+      end
     end
 
     context 'when using an invalid JWT,' do

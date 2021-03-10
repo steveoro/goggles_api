@@ -572,7 +572,7 @@ All are optional (except `id`):
             { "msg": "Unauthorized" }
 
 
-# Meeting list [/api/v3/meetings{?page,per_page,name,date,season_id,pool_type_id}]
+# Meeting list [/api/v3/meetings{?page,per_page,name,date,season_id,pool_type_id,select2_format}]
 
 + Model (application/json)
 
@@ -629,6 +629,15 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
 
 
+### Support for Select2 bespoke format output
+
+Use the parameter `select2_format` => `true` to enable the simplified output
+format used for the Select2 HTML widget (a list of `{id: ..., text: ...}`
+rows under a single `results` node; see https://select2.org/data-sources/formats).
+
+When this is enabled, results are limited to a _maximum_ of **100** rows (pagination ignored).
+
+
 * * *
 
 
@@ -637,6 +646,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     + date: `2005-11-23` (string, optional) - filter by `header_date` or Meeting session's `scheduled_date` in ISO format (`YYYY-MM-DD`)
     + season_id: 1 (number, optional) - associated Season ID
     + pool_type_id: 1 (number, optional) - associated PoolType ID, from any associated Meeting session
+    + select2_format: false (boolean, optional) - `true` to enable the bespoke Select2 simplified output format
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
@@ -681,6 +691,64 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 + Response 200
 
     [Meeting list][]
+
+
++ Request Select2 ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meetings?season_id=1&select2_format=true"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meetings',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { season_id: 1, select2_format: true }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    + Body
+
+            {
+                "results": [
+                    // Meeting details 1
+                    {
+                        "id": 1,
+                        "text": "I Prova CSI (2018-11-23)"
+                    },
+
+                    // Meeting details 2
+                    {
+                        "id": 2,
+                        "text": ...
+                    },
+
+                    // [...]
+                ]
+            }
 
 
 + Request not found (application/json)

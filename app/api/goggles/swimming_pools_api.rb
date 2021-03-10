@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: SwimmingPool API Grape controller
   #
-  #   - version:  7.053
+  #   - version:  7.85
   #   - author:   Steve A.
-  #   - build:    20201222
+  #   - build:    20210310
   #
   class SwimmingPoolsAPI < Grape::API
     helpers APIHelpers
@@ -137,6 +137,8 @@ module Goggles
       #
       # Given some optional filtering parameters, returns the paginated list of SwimmingPools found.
       #
+      # *Supports the bespoke "Select2 option" output format*
+      #
       # == Returns:
       # The list of SwimmingPools for the specified filtering parameters as an array of JSON objects.
       # Returns exact matches given the specified optional filters; supports partial matches
@@ -158,17 +160,22 @@ module Goggles
         optional :address, type: String, desc: 'optional: address (partial match supported)'
         optional :pool_type_id, type: Integer, desc: 'optional: associated PoolType ID'
         optional :city_id, type: Integer, desc: 'optional: associated City ID'
+        optional :select2_format, type: Boolean, desc: 'optional: true to enable the simplified (id+text) Select2 output format'
         use :pagination
       end
       paginate
       get do
         check_jwt_session
 
-        paginate(
-          filtering_fulltext_search_for(GogglesDb::SwimmingPool, params['name'])
-            .where(filtering_hash_for(params, %w[pool_type_id city_id]))
-            .where(filtering_like_for(params, %w[address]))
-        )
+        results = filtering_fulltext_search_for(GogglesDb::SwimmingPool, params['name'])
+                  .where(filtering_hash_for(params, %w[pool_type_id city_id]))
+                  .where(filtering_like_for(params, %w[address]))
+
+        if params['select2_format'] == true
+          select2_custom_format(results, ->(row) { "#{row.name} (m.#{row.pool_type.code}, #{row.city&.name || '?'})" })
+        else
+          paginate(results)
+        end
       end
     end
   end
