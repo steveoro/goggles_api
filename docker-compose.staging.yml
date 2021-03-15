@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.staging
-    image: steveoro/goggles-api:staging-0.1.86
+    image: steveoro/goggles-api:staging-0.1.87
     depends_on:
       - goggles-db
     container_name: goggles-api.staging
