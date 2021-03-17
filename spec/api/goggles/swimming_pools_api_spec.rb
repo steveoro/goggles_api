@@ -253,10 +253,15 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
-      context 'when filtering by a specific name & address of an existing single data row,' do
+      context 'when filtering by a specific name & address of an existing data row,' do
         let(:expected_row_count) do
           GogglesDb::SwimmingPool.for_name(fixture_row.name)
-                                 .where(city_id: fixture_row.city_id, address: fixture_row.address)
+                                 .where(city_id: fixture_row.city_id)
+                                 .where(
+                                   ActiveRecord::Base.sanitize_sql_for_conditions(
+                                     "address like '%#{fixture_row.address}%'"
+                                   )
+                                 )
                                  .count
         end
         before(:each) do
