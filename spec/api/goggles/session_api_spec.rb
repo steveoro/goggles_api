@@ -30,7 +30,7 @@ RSpec.describe Goggles::SessionAPI, type: :request do
       end
       it 'returns a new valid JWT' do
         result = JSON.parse(response.body)
-        decoded_jwt = GogglesDb::JwtManager.decode(result['jwt'], Rails.application.credentials.api_static_key)
+        decoded_jwt = GogglesDb::JWTManager.decode(result['jwt'], Rails.application.credentials.api_static_key)
         expect(decoded_jwt).to be_present
         expect(decoded_jwt).to have_key('user_id')
         expect(decoded_jwt['user_id']).to eq(api_user.id)

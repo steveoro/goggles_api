@@ -29,7 +29,7 @@ RSpec.describe CmdAuthenticateUser, type: :command do
       it 'has a valid JWT string #result' do
         expect(result_jwt).to be_a(String).and be_present
         # Back-to-back test with JWT decoding:
-        decoded_jwt = GogglesDb::JwtManager.decode(result_jwt, Rails.application.credentials.api_static_key)
+        decoded_jwt = GogglesDb::JWTManager.decode(result_jwt, Rails.application.credentials.api_static_key)
         expect(decoded_jwt).to have_key('user_id')
         expect(decoded_jwt['user_id']).to eq(fixture_user.id)
       end

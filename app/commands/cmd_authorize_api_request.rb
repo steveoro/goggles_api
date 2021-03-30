@@ -45,7 +45,7 @@ class CmdAuthorizeAPIRequest
   end
 
   def decoded_jwt_data
-    @decoded_jwt_data ||= GogglesDb::JwtManager.decode(jwt_from_auth_header, Rails.application.credentials.api_static_key)
+    @decoded_jwt_data ||= GogglesDb::JWTManager.decode(jwt_from_auth_header, Rails.application.credentials.api_static_key)
   end
 
   # Retrieves the JWT from the 'Authorization' header
