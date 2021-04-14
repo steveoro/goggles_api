@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.staging
-    image: "steveoro/goggles-api:staging-${TAG}"
+    image: "steveoro/goggles-api:latest"
     depends_on:
       - goggles-db.staging
     container_name: goggles-api.staging
@@ -28,6 +28,7 @@ services:
     volumes:
       - "~/Projects/goggles_deploy/db.staging:/var/lib/mysql"
       - "~/Projects/goggles_deploy/backups:/app/db/dump"
+      - "~/Projects/goggles_deploy/log.staging/api:/app/log"
       - "~/Projects/goggles_deploy/master-api.key:/app/config/master.key"
 
 networks:
