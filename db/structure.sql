@@ -57,31 +57,37 @@ CREATE TABLE `achievements` (
   UNIQUE KEY `index_achievements_on_code` (`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `admins`;
+DROP TABLE IF EXISTS `admin_grants`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `admins` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) DEFAULT '',
-  `encrypted_password` varchar(255) DEFAULT '',
-  `sign_in_count` int(11) DEFAULT 0,
-  `current_sign_in_at` datetime DEFAULT NULL,
-  `last_sign_in_at` datetime DEFAULT NULL,
-  `current_sign_in_ip` varchar(255) DEFAULT NULL,
-  `last_sign_in_ip` varchar(255) DEFAULT NULL,
-  `failed_attempts` int(11) DEFAULT 0,
-  `unlock_token` varchar(255) DEFAULT NULL,
-  `locked_at` datetime DEFAULT NULL,
+CREATE TABLE `admin_grants` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `lock_version` int(11) DEFAULT 0,
-  `name` varchar(255) DEFAULT NULL,
-  `description` varchar(50) DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
+  `entity` varchar(150) DEFAULT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_admins_on_name` (`name`),
-  UNIQUE KEY `index_admins_on_email` (`email`),
-  UNIQUE KEY `index_admins_on_unlock_token` (`unlock_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `index_admin_grants_on_user_id_and_entity` (`user_id`,`entity`),
+  KEY `index_admin_grants_on_user_id` (`user_id`),
+  KEY `index_admin_grants_on_entity` (`entity`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `api_daily_uses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `api_daily_uses` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `lock_version` int(11) DEFAULT 0,
+  `route` varchar(255) NOT NULL,
+  `day` date NOT NULL,
+  `count` bigint(20) DEFAULT 0,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_api_daily_uses_on_route_and_day` (`route`,`day`),
+  KEY `index_api_daily_uses_on_route` (`route`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `app_parameters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -220,7 +226,6 @@ CREATE TABLE `badges` (
   `swimmer_id` int(11) DEFAULT NULL,
   `team_id` int(11) DEFAULT NULL,
   `category_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `entry_time_type_id` int(11) DEFAULT NULL,
@@ -237,8 +242,7 @@ CREATE TABLE `badges` (
   KEY `fk_badges_teams` (`team_id`),
   KEY `fk_badges_category_types` (`category_type_id`),
   KEY `fk_badges_entry_time_types` (`entry_time_type_id`),
-  KEY `fk_badges_team_affiliations` (`team_affiliation_id`),
-  KEY `idx_badges_user` (`user_id`)
+  KEY `fk_badges_team_affiliations` (`team_affiliation_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=126577 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `base_movements`;
@@ -257,13 +261,11 @@ CREATE TABLE `base_movements` (
   `movement_type_id` int(11) DEFAULT NULL,
   `stroke_type_id` int(11) DEFAULT NULL,
   `movement_scope_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_base_movements_on_code` (`code`),
   KEY `fk_base_movements_movement_types` (`movement_type_id`),
   KEY `fk_base_movements_stroke_types` (`stroke_type_id`),
-  KEY `fk_base_movements_movement_scope_types` (`movement_scope_type_id`),
-  KEY `idx_base_movements_user` (`user_id`)
+  KEY `fk_base_movements_movement_scope_types` (`movement_scope_type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `category_types`;
@@ -305,9 +307,11 @@ CREATE TABLE `cities` (
   `updated_at` datetime DEFAULT NULL,
   `latitude` varchar(50) DEFAULT NULL,
   `longitude` varchar(50) DEFAULT NULL,
+  `plus_code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_cities_on_country_code_and_area_and_name` (`country_code`,`area`,`name`),
-  KEY `index_cities_on_name` (`name`)
+  KEY `index_cities_on_name` (`name`),
+  FULLTEXT KEY `city_name` (`name`,`area`)
 ) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `coach_level_types`;
@@ -379,7 +383,6 @@ CREATE TABLE `data_import_badges` (
   `team_id` int(11) DEFAULT NULL,
   `season_id` int(11) DEFAULT NULL,
   `category_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `entry_time_type_id` int(11) DEFAULT NULL,
   `team_affiliation_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -392,7 +395,6 @@ CREATE TABLE `data_import_badges` (
   KEY `idx_di_badges_team` (`team_id`),
   KEY `idx_di_badges_season` (`season_id`),
   KEY `idx_di_badges_category_type` (`category_type_id`),
-  KEY `idx_di_badges_user` (`user_id`),
   KEY `idx_di_badges_entry_time_type` (`entry_time_type_id`),
   KEY `idx_di_badges_team_affiliation` (`team_affiliation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -413,12 +415,10 @@ CREATE TABLE `data_import_cities` (
   `area` varchar(50) DEFAULT NULL,
   `country` varchar(50) DEFAULT NULL,
   `country_code` varchar(10) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_data_import_cities_on_name` (`name`),
   KEY `index_data_import_cities_on_zip` (`zip`),
-  KEY `idx_di_cities_di_session` (`data_import_session_id`),
-  KEY `idx_di_cities_user` (`user_id`)
+  KEY `idx_di_cities_di_session` (`data_import_session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_laps`;
@@ -457,7 +457,6 @@ CREATE TABLE `data_import_laps` (
   `meeting_entry_id` int(11) DEFAULT NULL,
   `swimmer_id` int(11) DEFAULT NULL,
   `team_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_di_passages_di_session` (`data_import_session_id`),
   KEY `idx_di_passages_di_meeting_program` (`data_import_meeting_program_id`),
@@ -470,7 +469,6 @@ CREATE TABLE `data_import_laps` (
   KEY `idx_di_passages_meeting_entry` (`meeting_entry_id`),
   KEY `idx_di_passages_swimmer` (`swimmer_id`),
   KEY `idx_di_passages_team` (`team_id`),
-  KEY `idx_di_passages_user` (`user_id`),
   KEY `index_data_import_laps_on_length_in_meters` (`length_in_meters`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -508,7 +506,6 @@ CREATE TABLE `data_import_meeting_entries` (
   `team_affiliation_id` int(11) DEFAULT NULL,
   `badge_id` int(11) DEFAULT NULL,
   `entry_time_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_di_meeting_entries_di_session` (`data_import_session_id`),
   KEY `idx_di_meeting_entries_di_meeting_program` (`data_import_meeting_program_id`),
@@ -520,8 +517,7 @@ CREATE TABLE `data_import_meeting_entries` (
   KEY `idx_di_meeting_entries_team` (`team_id`),
   KEY `idx_di_meeting_entries_team_affiliation` (`team_affiliation_id`),
   KEY `idx_di_meeting_entries_badge` (`badge_id`),
-  KEY `idx_di_meeting_entries_entry_time_type` (`entry_time_type_id`),
-  KEY `idx_di_meeting_entries_user` (`user_id`)
+  KEY `idx_di_meeting_entries_entry_time_type` (`entry_time_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_meeting_individual_results`;
@@ -557,7 +553,6 @@ CREATE TABLE `data_import_meeting_individual_results` (
   `swimmer_id` int(11) DEFAULT NULL,
   `team_id` int(11) DEFAULT NULL,
   `badge_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `disqualification_code_type_id` int(11) DEFAULT NULL,
   `goggle_cup_points` decimal(10,2) DEFAULT 0.00,
   `reaction_time` decimal(5,2) DEFAULT 0.00,
@@ -573,7 +568,6 @@ CREATE TABLE `data_import_meeting_individual_results` (
   KEY `idx_di_mir_swimmer` (`swimmer_id`),
   KEY `idx_di_mir_team` (`team_id`),
   KEY `idx_di_mir_badge` (`badge_id`),
-  KEY `idx_di_mir_user` (`user_id`),
   KEY `idx_di_mir_disqualification_code_type` (`disqualification_code_type_id`),
   KEY `idx_di_mir_team_affiliation` (`team_affiliation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -596,7 +590,6 @@ CREATE TABLE `data_import_meeting_programs` (
   `event_type_id` int(11) DEFAULT NULL,
   `category_type_id` int(11) DEFAULT NULL,
   `gender_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `minutes` mediumint(9) DEFAULT 0,
   `seconds` smallint(6) DEFAULT 0,
   `hundreds` smallint(6) DEFAULT 0,
@@ -610,7 +603,6 @@ CREATE TABLE `data_import_meeting_programs` (
   KEY `meeting_order` (`meeting_session_id`,`event_order`),
   KEY `idx_di_meeting_programs_di_session` (`data_import_session_id`),
   KEY `idx_di_meeting_programs_di_meeting_session` (`data_import_meeting_session_id`),
-  KEY `idx_di_meeting_programs_user` (`user_id`),
   KEY `idx_di_meeting_programs_heat_type` (`heat_type_id`),
   KEY `idx_di_meeting_programs_time_standard` (`time_standard_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -637,7 +629,6 @@ CREATE TABLE `data_import_meeting_relay_results` (
   `hundreds` smallint(6) DEFAULT 0,
   `data_import_team_id` int(11) DEFAULT NULL,
   `team_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `data_import_meeting_program_id` int(11) DEFAULT NULL,
   `meeting_program_id` int(11) DEFAULT NULL,
   `disqualification_code_type_id` int(11) DEFAULT NULL,
@@ -652,7 +643,6 @@ CREATE TABLE `data_import_meeting_relay_results` (
   KEY `idx_di_mrr_di_session` (`data_import_session_id`),
   KEY `idx_di_mrr_di_team` (`data_import_team_id`),
   KEY `idx_di_mrr_team` (`team_id`),
-  KEY `idx_di_mrr_user` (`user_id`),
   KEY `idx_di_mrr_di_meeting_program` (`data_import_meeting_program_id`),
   KEY `idx_di_mrr_meeting_program` (`meeting_program_id`),
   KEY `idx_di_mrr_disqualification_code_type` (`disqualification_code_type_id`),
@@ -683,7 +673,6 @@ CREATE TABLE `data_import_meeting_relay_swimmers` (
   `badge_id` int(11) DEFAULT NULL,
   `stroke_type_id` int(11) DEFAULT NULL,
   `meeting_relay_result_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `data_import_meeting_relay_result_id` int(11) DEFAULT NULL,
   `team_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -695,7 +684,6 @@ CREATE TABLE `data_import_meeting_relay_swimmers` (
   KEY `idx_di_meeting_relay_swimmers_badge` (`badge_id`),
   KEY `idx_di_meeting_relay_swimmers_stroke_type` (`stroke_type_id`),
   KEY `idx_di_meeting_relay_swimmers_meeting_relay_result` (`meeting_relay_result_id`),
-  KEY `idx_di_meeting_relay_swimmers_user` (`user_id`),
   KEY `idx_di_meeting_relay_swimmers_di_meeting_relay_result` (`data_import_meeting_relay_result_id`),
   KEY `idx_di_meeting_relay_swimmers_team` (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -719,7 +707,6 @@ CREATE TABLE `data_import_meeting_sessions` (
   `data_import_meeting_id` int(11) DEFAULT NULL,
   `meeting_id` int(11) DEFAULT NULL,
   `swimming_pool_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
   `day_part_type_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -728,7 +715,6 @@ CREATE TABLE `data_import_meeting_sessions` (
   KEY `idx_di_meeting_sessions_di_meeting` (`data_import_meeting_id`),
   KEY `idx_di_meeting_sessions_meeting` (`meeting_id`),
   KEY `idx_di_meeting_sessions_swimming_pool` (`swimming_pool_id`),
-  KEY `idx_di_meeting_sessions_user` (`user_id`),
   KEY `idx_di_meeting_sessions_day_part_type` (`day_part_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -750,7 +736,6 @@ CREATE TABLE `data_import_meeting_team_scores` (
   `team_id` int(11) DEFAULT NULL,
   `meeting_id` int(11) DEFAULT NULL,
   `rank` int(11) DEFAULT 0,
-  `user_id` int(11) DEFAULT NULL,
   `sum_team_points` decimal(10,2) DEFAULT 0.00,
   `meeting_individual_points` decimal(10,2) DEFAULT 0.00,
   `meeting_relay_points` decimal(10,2) DEFAULT 0.00,
@@ -766,7 +751,6 @@ CREATE TABLE `data_import_meeting_team_scores` (
   KEY `idx_di_meeting_team_scores_di_meeting` (`data_import_meeting_id`),
   KEY `idx_di_meeting_team_scores_team` (`team_id`),
   KEY `idx_di_meeting_team_scores_meeting` (`meeting_id`),
-  KEY `idx_di_meeting_team_scores_user` (`user_id`),
   KEY `idx_di_meeting_team_scores_season` (`season_id`),
   KEY `idx_di_meeting_team_scores_team_affiliation` (`team_affiliation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -799,7 +783,6 @@ CREATE TABLE `data_import_meetings` (
   `edition` mediumint(9) DEFAULT 0,
   `data_import_season_id` int(11) DEFAULT NULL,
   `season_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `header_date` date DEFAULT NULL,
   `code` varchar(50) DEFAULT NULL,
   `header_year` varchar(9) DEFAULT NULL,
@@ -818,7 +801,6 @@ CREATE TABLE `data_import_meetings` (
   KEY `idx_di_meetings_di_session` (`data_import_session_id`),
   KEY `idx_di_meetings_di_season` (`data_import_season_id`),
   KEY `idx_di_meetings_season` (`season_id`),
-  KEY `idx_di_meetings_user` (`user_id`),
   KEY `idx_di_meetings_edition_type` (`edition_type_id`),
   KEY `idx_di_meetings_timing_type` (`timing_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -932,14 +914,12 @@ CREATE TABLE `data_import_swimmers` (
   `first_name` varchar(255) DEFAULT NULL,
   `year_of_birth` int(11) DEFAULT 1900,
   `gender_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `complete_name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `full_name` (`last_name`,`first_name`),
   KEY `index_data_import_swimmers_on_complete_name` (`complete_name`),
   KEY `idx_di_swimmers_di_session` (`data_import_session_id`),
-  KEY `idx_di_swimmers_gender_type` (`gender_type_id`),
-  KEY `idx_di_swimmers_user` (`user_id`)
+  KEY `idx_di_swimmers_gender_type` (`gender_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_team_aliases`;
@@ -993,13 +973,11 @@ CREATE TABLE `data_import_teams` (
   `badge_number` varchar(40) DEFAULT NULL,
   `data_import_city_id` int(11) DEFAULT NULL,
   `city_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_data_import_teams_on_name` (`name`),
   KEY `city_id` (`city_id`),
   KEY `data_import_city_id` (`data_import_city_id`),
-  KEY `idx_di_teams_di_session` (`data_import_session_id`),
-  KEY `idx_di_teams_user` (`user_id`)
+  KEY `idx_di_teams_di_session` (`data_import_session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `day_part_types`;
@@ -1047,7 +1025,7 @@ CREATE TABLE `delayed_jobs` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `delayed_jobs_priority` (`priority`,`run_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=5145 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5146 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `disqualification_code_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1177,11 +1155,9 @@ CREATE TABLE `exercises` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `code` varchar(6) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `training_step_type_codes` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_exercises_on_code` (`code`),
-  KEY `idx_exercises_user` (`user_id`)
+  UNIQUE KEY `index_exercises_on_code` (`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=312 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `federation_types`;
@@ -1213,7 +1189,6 @@ CREATE TABLE `fin_calendars` (
   `fin_results_code` varchar(255) DEFAULT NULL,
   `goggles_meeting_code` varchar(255) DEFAULT NULL,
   `season_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `calendar_year` varchar(4) DEFAULT NULL,
@@ -1231,7 +1206,6 @@ CREATE TABLE `fin_calendars` (
   `do_not_update` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `index_fin_calendars_on_season_id` (`season_id`),
-  KEY `index_fin_calendars_on_user_id` (`user_id`),
   KEY `index_fin_calendars_on_goggles_meeting_code` (`goggles_meeting_code`),
   KEY `index_fin_calendars_on_meeting_id` (`meeting_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=829 DEFAULT CHARSET=utf8;
@@ -1288,7 +1262,7 @@ CREATE TABLE `goggle_cup_standards` (
   `lock_version` int(11) DEFAULT 0,
   `minutes` mediumint(9) DEFAULT 0,
   `seconds` smallint(6) DEFAULT 0,
-  `hundreds` smallint(6) DEFAULT 0,
+  `hundredths` smallint(6) DEFAULT 0,
   `event_type_id` int(11) DEFAULT NULL,
   `pool_type_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
@@ -1316,7 +1290,6 @@ CREATE TABLE `goggle_cups` (
   `team_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `max_performance` smallint(6) DEFAULT 5,
   `limited_to_existing_season_types` tinyint(1) NOT NULL DEFAULT 0,
   `end_date` date DEFAULT NULL,
@@ -1333,8 +1306,7 @@ CREATE TABLE `goggle_cups` (
   `career_bonus` decimal(10,2) DEFAULT 0.00,
   PRIMARY KEY (`id`),
   KEY `idx_season_year` (`season_year`),
-  KEY `fk_goggle_cups_teams` (`team_id`),
-  KEY `idx_goggle_cups_user` (`user_id`)
+  KEY `fk_goggle_cups_teams` (`team_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `hair_dryer_types`;
@@ -1364,6 +1336,29 @@ CREATE TABLE `heat_types` (
   UNIQUE KEY `idx_heat_types_code` (`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `import_queues`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `import_queues` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `lock_version` int(11) DEFAULT 0,
+  `user_id` bigint(20) NOT NULL,
+  `processed_depth` int(11) DEFAULT 0,
+  `requested_depth` int(11) DEFAULT 0,
+  `solvable_depth` int(11) DEFAULT 0,
+  `request_data` text NOT NULL,
+  `solved_data` text NOT NULL,
+  `done` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_import_queues_on_user_id` (`user_id`),
+  KEY `index_import_queues_on_processed_depth` (`processed_depth`),
+  KEY `index_import_queues_on_requested_depth` (`requested_depth`),
+  KEY `index_import_queues_on_solvable_depth` (`solvable_depth`),
+  KEY `index_import_queues_on_done` (`done`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `individual_records`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -1378,7 +1373,7 @@ CREATE TABLE `individual_records` (
   `gender_type_id` int(11) DEFAULT NULL,
   `minutes` mediumint(9) DEFAULT 0,
   `seconds` smallint(6) DEFAULT 0,
-  `hundreds` smallint(6) DEFAULT 0,
+  `hundredths` smallint(6) DEFAULT 0,
   `team_record` tinyint(1) DEFAULT 0,
   `swimmer_id` int(11) DEFAULT NULL,
   `team_id` int(11) DEFAULT NULL,
@@ -1407,32 +1402,27 @@ CREATE TABLE `laps` (
   `lock_version` int(11) DEFAULT 0,
   `minutes` mediumint(9) DEFAULT 0,
   `seconds` smallint(6) DEFAULT 0,
-  `hundreds` smallint(6) DEFAULT 0,
+  `hundredths` smallint(6) DEFAULT 0,
   `meeting_program_id` int(11) DEFAULT NULL,
   `length_in_meters` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `reaction_time` decimal(5,2) DEFAULT NULL,
   `stroke_cycles` mediumint(9) DEFAULT NULL,
   `underwater_seconds` smallint(6) DEFAULT NULL,
-  `underwater_hundreds` smallint(6) DEFAULT NULL,
+  `underwater_hundredths` smallint(6) DEFAULT NULL,
   `underwater_kicks` smallint(6) DEFAULT NULL,
   `breath_cycles` mediumint(9) DEFAULT NULL,
   `position` mediumint(9) DEFAULT NULL,
   `minutes_from_start` mediumint(9) DEFAULT NULL,
   `seconds_from_start` smallint(6) DEFAULT NULL,
-  `hundreds_from_start` smallint(6) DEFAULT NULL,
-  `native_from_start` tinyint(1) DEFAULT 0,
+  `hundredths_from_start` smallint(6) DEFAULT NULL,
   `meeting_individual_result_id` int(11) DEFAULT NULL,
-  `meeting_entry_id` int(11) DEFAULT NULL,
   `swimmer_id` int(11) DEFAULT NULL,
   `team_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `passages_x_badges` (`meeting_program_id`),
-  KEY `idx_passages_user` (`user_id`),
   KEY `idx_passages_meeting_individual_result` (`meeting_individual_result_id`),
-  KEY `idx_passages_meeting_entry` (`meeting_entry_id`),
   KEY `idx_passages_swimmer` (`swimmer_id`),
   KEY `idx_passages_team` (`team_id`),
   KEY `index_laps_on_length_in_meters` (`length_in_meters`)
@@ -1501,10 +1491,9 @@ CREATE TABLE `meeting_entries` (
   `team_affiliation_id` int(11) DEFAULT NULL,
   `badge_id` int(11) DEFAULT NULL,
   `entry_time_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `minutes` mediumint(9) DEFAULT NULL,
   `seconds` smallint(6) DEFAULT NULL,
-  `hundreds` smallint(6) DEFAULT NULL,
+  `hundredths` smallint(6) DEFAULT NULL,
   `no_time` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `idx_meeting_entries_meeting_program` (`meeting_program_id`),
@@ -1512,8 +1501,7 @@ CREATE TABLE `meeting_entries` (
   KEY `idx_meeting_entries_team` (`team_id`),
   KEY `idx_meeting_entries_team_affiliation` (`team_affiliation_id`),
   KEY `idx_meeting_entries_badge` (`badge_id`),
-  KEY `idx_meeting_entries_entry_time_type` (`entry_time_type_id`),
-  KEY `idx_meeting_entries_user` (`user_id`)
+  KEY `idx_meeting_entries_entry_time_type` (`entry_time_type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12742 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_event_reservations`;
@@ -1526,24 +1514,24 @@ CREATE TABLE `meeting_event_reservations` (
   `swimmer_id` int(11) DEFAULT NULL,
   `badge_id` int(11) DEFAULT NULL,
   `meeting_event_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `minutes` mediumint(9) DEFAULT NULL,
   `seconds` smallint(6) DEFAULT NULL,
-  `hundreds` smallint(6) DEFAULT NULL,
+  `hundredths` smallint(6) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `accepted` tinyint(1) NOT NULL DEFAULT 0,
+  `meeting_reservation_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_unique_event_reservation` (`meeting_id`,`badge_id`,`team_id`,`swimmer_id`,`meeting_event_id`),
   KEY `index_meeting_event_reservations_on_meeting_id` (`meeting_id`),
   KEY `index_meeting_event_reservations_on_team_id` (`team_id`),
   KEY `index_meeting_event_reservations_on_swimmer_id` (`swimmer_id`),
   KEY `index_meeting_event_reservations_on_badge_id` (`badge_id`),
   KEY `index_meeting_event_reservations_on_meeting_event_id` (`meeting_event_id`),
-  KEY `index_meeting_event_reservations_on_user_id` (`user_id`),
+  KEY `index_meeting_event_reservations_on_meeting_reservation_id` (`meeting_reservation_id`),
   CONSTRAINT `fk_rails_0af8d54bdb` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`id`),
   CONSTRAINT `fk_rails_322431943b` FOREIGN KEY (`swimmer_id`) REFERENCES `swimmers` (`id`),
   CONSTRAINT `fk_rails_6cc7a28bdd` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`),
-  CONSTRAINT `fk_rails_c051a7f1bb` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `fk_rails_e8541cd824` FOREIGN KEY (`meeting_event_id`) REFERENCES `meeting_events` (`id`),
   CONSTRAINT `fk_rails_f9b61694b4` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19638 DEFAULT CHARSET=latin1;
@@ -1564,14 +1552,12 @@ CREATE TABLE `meeting_events` (
   `meeting_session_id` int(11) DEFAULT NULL,
   `event_type_id` int(11) DEFAULT NULL,
   `heat_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `split_gender_start_list` tinyint(1) DEFAULT 1,
   `split_category_start_list` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `fk_meeting_events_meeting_sessions` (`meeting_session_id`),
   KEY `fk_meeting_events_event_types` (`event_type_id`),
-  KEY `fk_meeting_events_heat_types` (`heat_type_id`),
-  KEY `idx_meeting_events_user` (`user_id`)
+  KEY `fk_meeting_events_heat_types` (`heat_type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20130 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_individual_results`;
@@ -1585,15 +1571,14 @@ CREATE TABLE `meeting_individual_results` (
   `out_of_race` tinyint(1) DEFAULT 0,
   `disqualified` tinyint(1) DEFAULT 0,
   `standard_points` decimal(10,2) DEFAULT 0.00,
-  `meeting_individual_points` decimal(10,2) DEFAULT 0.00,
+  `meeting_points` decimal(10,2) DEFAULT 0.00,
   `minutes` mediumint(9) DEFAULT 0,
   `seconds` smallint(6) DEFAULT 0,
-  `hundreds` smallint(6) DEFAULT 0,
+  `hundredths` smallint(6) DEFAULT 0,
   `meeting_program_id` int(11) DEFAULT NULL,
   `swimmer_id` int(11) DEFAULT NULL,
   `team_id` int(11) DEFAULT NULL,
   `badge_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `disqualification_code_type_id` int(11) DEFAULT NULL,
@@ -1609,7 +1594,6 @@ CREATE TABLE `meeting_individual_results` (
   KEY `fk_meeting_individual_results_teams` (`team_id`),
   KEY `fk_meeting_individual_results_badges` (`badge_id`),
   KEY `fk_meeting_individual_results_team_affiliations` (`team_affiliation_id`),
-  KEY `idx_mir_user` (`user_id`),
   KEY `idx_mir_disqualification_code_type` (`disqualification_code_type_id`),
   KEY `idx_meeting_individual_results_updated_at` (`updated_at`),
   KEY `index_meeting_individual_results_on_out_of_race` (`out_of_race`),
@@ -1627,7 +1611,6 @@ CREATE TABLE `meeting_programs` (
   `event_order` mediumint(9) DEFAULT 0,
   `category_type_id` int(11) DEFAULT NULL,
   `gender_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `autofilled` tinyint(1) DEFAULT 0,
@@ -1642,8 +1625,7 @@ CREATE TABLE `meeting_programs` (
   KEY `meeting_order` (`event_order`),
   KEY `fk_meeting_programs_meeting_events` (`meeting_event_id`),
   KEY `fk_meeting_programs_pool_types` (`pool_type_id`),
-  KEY `fk_meeting_programs_time_standards` (`time_standard_id`),
-  KEY `idx_meeting_programs_user` (`user_id`)
+  KEY `fk_meeting_programs_time_standards` (`time_standard_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=164400 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_relay_reservations`;
@@ -1652,7 +1634,6 @@ DROP TABLE IF EXISTS `meeting_relay_reservations`;
 CREATE TABLE `meeting_relay_reservations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `meeting_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `team_id` int(11) DEFAULT NULL,
   `swimmer_id` int(11) DEFAULT NULL,
   `badge_id` int(11) DEFAULT NULL,
@@ -1661,16 +1642,17 @@ CREATE TABLE `meeting_relay_reservations` (
   `accepted` tinyint(1) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
+  `meeting_reservation_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_unique_relay_reservation` (`meeting_id`,`badge_id`,`team_id`,`swimmer_id`,`meeting_event_id`),
   KEY `index_meeting_relay_reservations_on_meeting_id` (`meeting_id`),
-  KEY `index_meeting_relay_reservations_on_user_id` (`user_id`),
   KEY `index_meeting_relay_reservations_on_team_id` (`team_id`),
   KEY `index_meeting_relay_reservations_on_swimmer_id` (`swimmer_id`),
   KEY `index_meeting_relay_reservations_on_badge_id` (`badge_id`),
   KEY `index_meeting_relay_reservations_on_meeting_event_id` (`meeting_event_id`),
+  KEY `index_meeting_relay_reservations_on_meeting_reservation_id` (`meeting_reservation_id`),
   CONSTRAINT `fk_rails_04ccf0080e` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`),
   CONSTRAINT `fk_rails_2d3860ae23` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`),
-  CONSTRAINT `fk_rails_46cb5618de` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `fk_rails_a15976fb75` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`id`),
   CONSTRAINT `fk_rails_adf945379a` FOREIGN KEY (`swimmer_id`) REFERENCES `swimmers` (`id`),
   CONSTRAINT `fk_rails_bd2a0aa40d` FOREIGN KEY (`meeting_event_id`) REFERENCES `meeting_events` (`id`)
@@ -1692,16 +1674,15 @@ CREATE TABLE `meeting_relay_results` (
   `meeting_points` decimal(10,2) DEFAULT 0.00,
   `minutes` mediumint(9) DEFAULT 0,
   `seconds` smallint(6) DEFAULT 0,
-  `hundreds` smallint(6) DEFAULT 0,
+  `hundredths` smallint(6) DEFAULT 0,
   `team_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `meeting_program_id` int(11) DEFAULT NULL,
   `disqualification_code_type_id` int(11) DEFAULT NULL,
-  `relay_header` varchar(60) DEFAULT '',
+  `relay_code` varchar(60) DEFAULT '',
   `reaction_time` decimal(5,2) DEFAULT 0.00,
   `entry_minutes` mediumint(9) DEFAULT NULL,
   `entry_seconds` smallint(6) DEFAULT NULL,
-  `entry_hundreds` smallint(6) DEFAULT NULL,
+  `entry_hundredths` smallint(6) DEFAULT NULL,
   `team_affiliation_id` int(11) DEFAULT NULL,
   `entry_time_type_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -1709,7 +1690,6 @@ CREATE TABLE `meeting_relay_results` (
   KEY `results_x_relay` (`meeting_program_id`,`rank`),
   KEY `fk_meeting_relay_results_team_affiliations` (`team_affiliation_id`),
   KEY `fk_meeting_relay_results_entry_time_types` (`entry_time_type_id`),
-  KEY `idx_mrr_user` (`user_id`),
   KEY `idx_mrr_disqualification_code_type` (`disqualification_code_type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=38000 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1725,19 +1705,17 @@ CREATE TABLE `meeting_relay_swimmers` (
   `swimmer_id` int(11) DEFAULT NULL,
   `badge_id` int(11) DEFAULT NULL,
   `stroke_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `reaction_time` decimal(5,2) DEFAULT 0.00,
   `minutes` mediumint(9) DEFAULT 0,
   `seconds` smallint(6) DEFAULT 0,
-  `hundreds` smallint(6) DEFAULT 0,
+  `hundredths` smallint(6) DEFAULT 0,
   `meeting_relay_result_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_meeting_relay_swimmers_swimmers` (`swimmer_id`),
   KEY `fk_meeting_relay_swimmers_badges` (`badge_id`),
   KEY `fk_meeting_relay_swimmers_stroke_types` (`stroke_type_id`),
   KEY `relay_order` (`relay_order`),
-  KEY `fk_meeting_relay_swimmers_meeting_relay_results` (`meeting_relay_result_id`),
-  KEY `idx_meeting_relay_swimmers_user` (`user_id`)
+  KEY `fk_meeting_relay_swimmers_meeting_relay_results` (`meeting_relay_result_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2330 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_reservations`;
@@ -1756,6 +1734,7 @@ CREATE TABLE `meeting_reservations` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_unique_reservation` (`meeting_id`,`badge_id`),
   KEY `index_meeting_reservations_on_meeting_id` (`meeting_id`),
   KEY `index_meeting_reservations_on_user_id` (`user_id`),
   KEY `index_meeting_reservations_on_team_id` (`team_id`),
@@ -1781,7 +1760,6 @@ CREATE TABLE `meeting_sessions` (
   `notes` text DEFAULT NULL,
   `meeting_id` int(11) DEFAULT NULL,
   `swimming_pool_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
@@ -1791,8 +1769,7 @@ CREATE TABLE `meeting_sessions` (
   KEY `index_meeting_sessions_on_scheduled_date` (`scheduled_date`),
   KEY `fk_meeting_sessions_meetings` (`meeting_id`),
   KEY `fk_meeting_sessions_swimming_pools` (`swimming_pool_id`),
-  KEY `fk_meeting_sessions_day_part_types` (`day_part_type_id`),
-  KEY `idx_meeting_sessions_user` (`user_id`)
+  KEY `fk_meeting_sessions_day_part_types` (`day_part_type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3313 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_team_scores`;
@@ -1808,12 +1785,11 @@ CREATE TABLE `meeting_team_scores` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `rank` int(11) DEFAULT 0,
-  `user_id` int(11) DEFAULT NULL,
   `sum_team_points` decimal(10,2) DEFAULT 0.00,
-  `meeting_individual_points` decimal(10,2) DEFAULT 0.00,
+  `meeting_points` decimal(10,2) DEFAULT 0.00,
   `meeting_relay_points` decimal(10,2) DEFAULT 0.00,
   `meeting_team_points` decimal(10,2) DEFAULT 0.00,
-  `season_individual_points` decimal(10,2) DEFAULT 0.00,
+  `season_points` decimal(10,2) DEFAULT 0.00,
   `season_relay_points` decimal(10,2) DEFAULT 0.00,
   `season_team_points` decimal(10,2) DEFAULT 0.00,
   `season_id` int(11) DEFAULT NULL,
@@ -1822,8 +1798,7 @@ CREATE TABLE `meeting_team_scores` (
   KEY `teams_x_meeting` (`meeting_id`,`team_id`),
   KEY `fk_meeting_team_scores_teams` (`team_id`),
   KEY `fk_meeting_team_scores_seasons` (`season_id`),
-  KEY `fk_meeting_team_scores_team_affiliations` (`team_affiliation_id`),
-  KEY `idx_meeting_team_scores_user` (`user_id`)
+  KEY `fk_meeting_team_scores_team_affiliations` (`team_affiliation_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=36228 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meetings`;
@@ -1835,7 +1810,7 @@ CREATE TABLE `meetings` (
   `description` varchar(100) DEFAULT NULL,
   `entry_deadline` date DEFAULT NULL,
   `warm_up_pool` tinyint(1) DEFAULT 0,
-  `allows_under_25` tinyint(1) DEFAULT 0,
+  `allows_under25` tinyint(1) DEFAULT 0,
   `reference_phone` varchar(40) DEFAULT NULL,
   `reference_e_mail` varchar(50) DEFAULT NULL,
   `reference_name` varchar(50) DEFAULT NULL,
@@ -1847,7 +1822,6 @@ CREATE TABLE `meetings` (
   `configuration_file` varchar(255) DEFAULT NULL,
   `edition` mediumint(9) DEFAULT 0,
   `season_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `autofilled` tinyint(1) DEFAULT 0,
@@ -1868,7 +1842,7 @@ CREATE TABLE `meetings` (
   `posted` tinyint(1) DEFAULT 0,
   `cancelled` tinyint(1) DEFAULT 0,
   `pb_acquired` tinyint(1) DEFAULT 0,
-  `organization_team_id` bigint(20) DEFAULT NULL,
+  `home_team_id` bigint(20) DEFAULT NULL,
   `read_only` tinyint(1) NOT NULL DEFAULT 0,
   `meeting_fee` decimal(10,2) DEFAULT NULL,
   `event_fee` decimal(10,2) DEFAULT NULL,
@@ -1884,8 +1858,8 @@ CREATE TABLE `meetings` (
   KEY `fk_meetings_score_relay_score_computation_types` (`relay_score_computation_type_id`),
   KEY `fk_meetings_score_team_score_computation_types` (`team_score_computation_type_id`),
   KEY `fk_meetings_score_meeting_score_computation_types` (`meeting_score_computation_type_id`),
-  KEY `idx_meetings_user` (`user_id`),
-  KEY `index_meetings_on_organization_team_id` (`organization_team_id`)
+  KEY `index_meetings_on_home_team_id` (`home_team_id`),
+  FULLTEXT KEY `meeting_name` (`description`,`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19318 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `movement_scope_types`;
@@ -1997,7 +1971,7 @@ DROP TABLE IF EXISTS `schema_migrations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `schema_migrations` (
-  `version` varchar(255) DEFAULT NULL,
+  `version` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   UNIQUE KEY `unique_schema_migrations` (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2071,7 +2045,7 @@ CREATE TABLE `season_personal_standards` (
   `lock_version` int(11) DEFAULT 0,
   `minutes` mediumint(9) NOT NULL DEFAULT 0,
   `seconds` smallint(6) NOT NULL DEFAULT 0,
-  `hundreds` smallint(6) NOT NULL DEFAULT 0,
+  `hundredths` smallint(6) NOT NULL DEFAULT 0,
   `season_id` int(11) DEFAULT NULL,
   `swimmer_id` int(11) DEFAULT NULL,
   `event_type_id` int(11) DEFAULT NULL,
@@ -2132,7 +2106,7 @@ DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sessions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `session_id` varchar(255) DEFAULT NULL,
+  `session_id` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   `data` text DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -2145,14 +2119,17 @@ DROP TABLE IF EXISTS `settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `settings` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `var` varchar(255) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `var` varchar(255) CHARACTER SET latin1 NOT NULL,
   `value` text DEFAULT NULL,
-  `created_at` datetime(6) NOT NULL,
-  `updated_at` datetime(6) NOT NULL,
+  `target_type` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `target_id` int(11) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_settings_on_var` (`var`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  UNIQUE KEY `index_settings_on_target_type_and_target_id_and_var` (`target_type`,`target_id`,`var`),
+  KEY `index_settings_on_target_type_and_target_id` (`target_type`,`target_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `shower_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2193,7 +2170,7 @@ CREATE TABLE `standard_timings` (
   `lock_version` int(11) DEFAULT 0,
   `minutes` mediumint(9) DEFAULT 0,
   `seconds` smallint(6) DEFAULT 0,
-  `hundreds` smallint(6) DEFAULT 0,
+  `hundredths` smallint(6) DEFAULT 0,
   `season_id` int(11) DEFAULT NULL,
   `gender_type_id` int(11) DEFAULT NULL,
   `pool_type_id` int(11) DEFAULT NULL,
@@ -2250,19 +2227,16 @@ CREATE TABLE `swimmer_season_scores` (
   `badge_id` int(11) DEFAULT NULL,
   `meeting_individual_result_id` int(11) DEFAULT NULL,
   `event_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_swimmer_season_scores_on_badge_id` (`badge_id`),
   KEY `index_swimmer_season_scores_on_meeting_individual_result_id` (`meeting_individual_result_id`),
   KEY `index_swimmer_season_scores_on_event_type_id` (`event_type_id`),
-  KEY `index_swimmer_season_scores_on_user_id` (`user_id`),
   KEY `swimmer_season_scores_badge_event` (`badge_id`,`event_type_id`),
   KEY `swimmer_season_scores_badge_score` (`badge_id`,`score`),
   CONSTRAINT `fk_rails_1432a7d1c3` FOREIGN KEY (`event_type_id`) REFERENCES `event_types` (`id`),
   CONSTRAINT `fk_rails_a56323b1df` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`id`),
-  CONSTRAINT `fk_rails_cf50f33b35` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `fk_rails_da93d4e994` FOREIGN KEY (`meeting_individual_result_id`) REFERENCES `meeting_individual_results` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2281,7 +2255,6 @@ CREATE TABLE `swimmers` (
   `nickname` varchar(25) DEFAULT '',
   `associated_user_id` bigint(20) DEFAULT NULL,
   `gender_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `complete_name` varchar(100) DEFAULT NULL,
@@ -2293,7 +2266,10 @@ CREATE TABLE `swimmers` (
   KEY `index_swimmers_on_associated_user_id` (`associated_user_id`),
   KEY `fk_swimmers_gender_types` (`gender_type_id`),
   KEY `index_swimmers_on_complete_name` (`complete_name`),
-  KEY `idx_swimmers_user` (`user_id`)
+  FULLTEXT KEY `swimmer_name` (`last_name`,`first_name`,`complete_name`),
+  FULLTEXT KEY `swimmer_first_name` (`first_name`),
+  FULLTEXT KEY `swimmer_last_name` (`last_name`),
+  FULLTEXT KEY `swimmer_complete_name` (`complete_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=40699 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `swimming_pool_reviews`;
@@ -2342,10 +2318,12 @@ CREATE TABLE `swimming_pools` (
   `shower_type_id` int(11) DEFAULT NULL,
   `hair_dryer_type_id` int(11) DEFAULT NULL,
   `locker_cabinet_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `read_only` tinyint(1) NOT NULL DEFAULT 0,
+  `latitude` varchar(50) DEFAULT NULL,
+  `longitude` varchar(50) DEFAULT NULL,
+  `plus_code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_swimming_pools_on_nick_name` (`nick_name`),
   KEY `index_swimming_pools_on_name` (`name`),
@@ -2354,7 +2332,7 @@ CREATE TABLE `swimming_pools` (
   KEY `fk_swimming_pools_shower_types` (`shower_type_id`),
   KEY `fk_swimming_pools_hair_dryer_types` (`hair_dryer_type_id`),
   KEY `fk_swimming_pools_locker_cabinet_types` (`locker_cabinet_type_id`),
-  KEY `idx_swimming_pools_user` (`user_id`)
+  FULLTEXT KEY `swimming_pool_name` (`name`,`nick_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=241 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `taggings`;
@@ -2403,7 +2381,6 @@ CREATE TABLE `team_affiliations` (
   `compute_gogglecup` tinyint(1) DEFAULT 0,
   `team_id` int(11) DEFAULT NULL,
   `season_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `autofilled` tinyint(1) DEFAULT 0,
@@ -2412,7 +2389,7 @@ CREATE TABLE `team_affiliations` (
   KEY `index_team_affiliations_on_name` (`name`),
   KEY `fk_team_affiliations_teams` (`team_id`),
   KEY `index_team_affiliations_on_number` (`number`),
-  KEY `idx_team_affiliations_user` (`user_id`)
+  FULLTEXT KEY `team_affiliation_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5826 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `team_lap_templates`;
@@ -2432,14 +2409,12 @@ CREATE TABLE `team_lap_templates` (
   `event_type_id` int(11) DEFAULT NULL,
   `pool_type_id` int(11) DEFAULT NULL,
   `length_in_meters` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_team_passage_templates_team` (`team_id`),
   KEY `idx_team_passage_templates_event_type` (`event_type_id`),
   KEY `idx_team_passage_templates_pool_type` (`pool_type_id`),
-  KEY `idx_team_passage_templates_user` (`user_id`),
   KEY `index_team_lap_templates_on_length_in_meters` (`length_in_meters`)
 ) ENGINE=InnoDB AUTO_INCREMENT=209 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2461,7 +2436,6 @@ CREATE TABLE `teams` (
   `notes` text DEFAULT NULL,
   `name_variations` text DEFAULT NULL,
   `city_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `home_page_url` varchar(150) DEFAULT NULL,
@@ -2469,7 +2443,7 @@ CREATE TABLE `teams` (
   KEY `index_teams_on_name` (`name`),
   KEY `index_teams_on_editable_name` (`editable_name`),
   KEY `fk_teams_cities` (`city_id`),
-  KEY `idx_teams_user` (`user_id`)
+  FULLTEXT KEY `team_name` (`name`,`editable_name`,`name_variations`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1322 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `timing_types`;
@@ -2558,12 +2532,10 @@ CREATE TABLE `trainings` (
   `updated_at` datetime DEFAULT NULL,
   `title` varchar(100) DEFAULT '',
   `description` text DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `min_swimmer_level` mediumint(9) DEFAULT 0,
   `max_swimmer_level` mediumint(9) DEFAULT 0,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_trainings_on_title` (`title`),
-  KEY `idx_trainings_user` (`user_id`)
+  UNIQUE KEY `index_trainings_on_title` (`title`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_achievements`;
@@ -2592,7 +2564,7 @@ CREATE TABLE `user_results` (
   `disqualified` tinyint(1) DEFAULT 0,
   `minutes` mediumint(9) DEFAULT 0,
   `seconds` smallint(6) DEFAULT 0,
-  `hundreds` smallint(6) DEFAULT 0,
+  `hundredths` smallint(6) DEFAULT 0,
   `swimmer_id` int(11) DEFAULT NULL,
   `category_type_id` int(11) DEFAULT NULL,
   `pool_type_id` int(11) DEFAULT NULL,
@@ -2708,12 +2680,12 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lock_version` int(11) DEFAULT 0,
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(190) NOT NULL,
   `description` varchar(100) DEFAULT NULL,
   `swimmer_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `email` varchar(255) DEFAULT '',
+  `email` varchar(190) NOT NULL,
   `encrypted_password` varchar(255) DEFAULT '',
   `reset_password_token` varchar(255) DEFAULT NULL,
   `reset_password_sent_at` datetime DEFAULT NULL,
@@ -2730,34 +2702,29 @@ CREATE TABLE `users` (
   `failed_attempts` int(11) DEFAULT 0,
   `unlock_token` varchar(255) DEFAULT NULL,
   `locked_at` datetime DEFAULT NULL,
-  `use_email_data_updates_notify` tinyint(1) DEFAULT 0,
-  `use_email_achievements_notify` tinyint(1) DEFAULT 0,
-  `use_email_newsletter_notify` tinyint(1) DEFAULT 0,
-  `use_email_community_notify` tinyint(1) DEFAULT 0,
-  `avatar_resource_filename` varchar(250) DEFAULT NULL,
+  `avatar_url` text DEFAULT NULL,
   `swimmer_level_type_id` int(11) DEFAULT NULL,
   `coach_level_type_id` int(11) DEFAULT NULL,
-  `authentication_token` varchar(255) DEFAULT NULL,
+  `jwt` varchar(255) DEFAULT NULL,
   `outstanding_goggle_score_bias` int(11) DEFAULT 800,
   `outstanding_standard_score_bias` int(11) DEFAULT 800,
   `last_name` varchar(50) DEFAULT NULL,
   `first_name` varchar(50) DEFAULT NULL,
   `year_of_birth` int(11) DEFAULT 1900,
-  `facebook_uid` bigint(20) DEFAULT NULL,
-  `goggle_uid` bigint(20) DEFAULT NULL,
-  `twitter_uid` bigint(20) DEFAULT NULL,
+  `provider` varchar(255) DEFAULT NULL,
+  `uid` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_users_on_name` (`name`),
   UNIQUE KEY `index_users_on_email` (`email`),
   UNIQUE KEY `index_users_on_reset_password_token` (`reset_password_token`),
   UNIQUE KEY `index_users_on_confirmation_token` (`confirmation_token`),
   UNIQUE KEY `index_users_on_unlock_token` (`unlock_token`),
-  UNIQUE KEY `index_users_on_authentication_token` (`authentication_token`),
+  UNIQUE KEY `index_users_on_jwt` (`jwt`),
   KEY `full_name` (`last_name`,`first_name`,`year_of_birth`),
   KEY `idx_users_swimmer` (`swimmer_id`),
   KEY `idx_users_swimmer_level_type` (`swimmer_level_type_id`),
   KEY `idx_users_coach_level_type` (`coach_level_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=750 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=753 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2765,11 +2732,11 @@ DROP TABLE IF EXISTS `votes`;
 CREATE TABLE `votes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `votable_id` int(11) DEFAULT NULL,
-  `votable_type` varchar(255) DEFAULT NULL,
+  `votable_type` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   `voter_id` int(11) DEFAULT NULL,
-  `voter_type` varchar(255) DEFAULT NULL,
+  `voter_type` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   `vote_flag` tinyint(1) DEFAULT NULL,
-  `vote_scope` varchar(255) DEFAULT NULL,
+  `vote_scope` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   `vote_weight` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -3133,6 +3100,43 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20201126172240'),
 ('20201126180504'),
 ('20201127124922'),
-('20201127184636');
+('20201127184636'),
+('20201203173509'),
+('20201203174057'),
+('20201203180147'),
+('20201211174336'),
+('20201216124312'),
+('20201216133048'),
+('20201216134025'),
+('20201216172430'),
+('20201217101006'),
+('20201217114100'),
+('20210104113305'),
+('20210104165000'),
+('20210104165001'),
+('20210104183700'),
+('20210107181622'),
+('20210125091407'),
+('20210125091507'),
+('20210125091539'),
+('20210125092624'),
+('20210125094839'),
+('20210125100402'),
+('20210125102743'),
+('20210125103953'),
+('20210125112038'),
+('20210125123953'),
+('20210130163013'),
+('20210130164719'),
+('20210224152208'),
+('20210224155119'),
+('20210224170621'),
+('20210225084758'),
+('20210225122838'),
+('20210225130846'),
+('20210302125701'),
+('20210302170844'),
+('20210315110522'),
+('20210429155847');
 
 
