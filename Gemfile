@@ -29,7 +29,8 @@ gem 'rack-cors'
 
 gem 'api-pagination'
 # [Steve A.] Force a specific version of Devise, supporting OAuth2: (even if we don't use it here)
-gem 'devise', github: 'heartcombo/devise', branch: 'ca-omniauth-2'
+# gem 'devise', github: 'heartcombo/devise', branch: 'ca-omniauth-2'
+gem 'devise'
 gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
 gem 'grape'
 gem 'grape_logging'
