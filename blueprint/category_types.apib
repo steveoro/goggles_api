@@ -1,0 +1,753 @@
+# Group CategoryTypes
+
+## CategoryType details [/api/v3/category_type/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 4,
+            "lock_version": 0,
+            "code": "M25",
+            "federation_code": "3",
+            "description": "MASTER 25",
+            "short_name": "M25",
+            "group_name": "MASTER",
+            "age_begin": 25,
+            "age_end": 29,
+            "relay": false,
+            "created_at": "2014-10-19T00:00:00.000Z",
+            "updated_at": "2014-10-19T00:00:00.000Z",
+            "season_id": 1,
+            "out_of_race": false,
+            "undivided": false
+        }
+
+
+### find [GET]
+The CategoryType instance matching the specified `id` returned as JSON.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 4 (number, required) - CategoryType ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/category_type/4"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/category_type/4',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":4, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [CategoryType details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the CategoryType fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `federation_code` | string | federation code for this category |
+| `description` | string | category description |
+| `short_name` | string | short category name |
+| `group_name` | string | category group name |
+| `age_begin` | integer | age group start |
+| `age_end` | integer | age group end |
+| `relay` | boolean | `true` for relay categories |
+| `out_of_race` | boolean | `true` if this category does not concur in the overall ranking |
+| `undivided` | boolean | `true` for categories that do not use gender splitting |
+
+
+* * *
+
+
++ Parameters
+    + id: 4 (number, required) - CategoryType ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"federation_code": "3", "description": "MASTER-25" }' \
+            "<API_HOST:PORT>/api/v3/category_type/4"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/category_type/4',
+                payload: {
+                    "federation_code": "3",
+                    "description": "MASTER-25"
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "federation_code": "3",
+                "description": "MASTER-25"
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "federation_code": "3",
+                "description": "MASTER-25"
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "federation_code": "3",
+                "description": "MASTER-25"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "federation_code": "3",
+                "description": "MASTER-25"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "federation_code": "3",
+                "description": "MASTER-25"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new CategoryType, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| *`code` | string | internal code |
+| *`season_id` | string | associated Season ID |
+| `federation_code` | string | federation code for this category |
+| `description` | string | category description |
+| *`short_name` | string | short category name |
+| *`group_name` | string | category group name |
+| *`age_begin` | integer | age group start |
+| *`age_end` | integer | age group end |
+| `relay` | boolean | `true` for relay categories |
+| `out_of_race` | boolean | `true` if this category does not concur in the overall ranking |
+| `undivided` | boolean | `true` for categories that do not use gender splitting |
+
+
+* * *
+
+
++ Attributes
+    + code (string, required) - associated MeetingProgram ID
+    + season_id (number, required) - associated Season ID
+    + short_name (string, required) - short category name
+    + group_name (string, required) - category group name
+    + age_begin (number, required) - age group start
+    + age_end (number, required) - age group end
+    + federation_code (string, optional) - federation code for this category
+    + description (string, optional) - category description
+    + relay (boolean, optional) - `true` for relay categories
+    + out_of_race (boolean, optional) - `true` if this category does not concur in the overall ranking
+    + undivided (boolean, optional) - `true` for categories that do not use gender splitting
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"code": "M25", "season_id": 192, "description": "MASTER 25", \
+                 "short_name": "M25", "group_name": "MASTER", "age_begin": 25, "age_end": 29 }'
+            "<API_HOST:PORT>/api/v3/category_type"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/category_type',
+            {
+                "code": "M25",
+                "season_id": 192,
+                "description": "MASTER 25",
+                "short_name": "M25",
+                "group_name": "MASTER",
+                "age_begin": 25,
+                "age_end": 29
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "code": "M25",
+                "season_id": 192,
+                "description": "MASTER 25",
+                "short_name": "M25",
+                "group_name": "MASTER",
+                "age_begin": 25,
+                "age_end": 29
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "code": "M25",
+                "season_id": 192,
+                "description": "MASTER 25",
+                "short_name": "M25",
+                "group_name": "MASTER",
+                "age_begin": 25,
+                "age_end": 29
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "code": "M25",
+                "season_id": 192,
+                "description": "MASTER 25",
+                "short_name": "M25",
+                "group_name": "MASTER",
+                "age_begin": 25,
+                "age_end": 29
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "code": "M25",
+                "season_id": 192,
+                "description": "MASTER 25",
+                "short_name": "M25",
+                "group_name": "MASTER",
+                "age_begin": 25,
+                "age_end": 29
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 4 (number, required) - CategoryType ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/category_type/4"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/category_type/4',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# CategoryType list [/api/v3/category_types{?page,per_page,code,season_id,short_name,group_name,age_begin,age_end,federation_code,description,relay,out_of_race,undivided,select2_format}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/category_types?page=2&code=M25>; rel=\"last\", <http://localhost:3000/api/v3/category_types?page=2&code=M25>; rel=\"next\""
+            Total: 46
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // CategoryType details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // CategoryType details 2
+                {
+                    "id": 15,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of CategoryTypes associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `code`
+- `season_id`
+- `short_name`
+- `group_name`
+- `age_begin`
+- `age_end`
+- `federation_code`
+- `description`
+- `relay`
+- `out_of_race`
+- `undivided`
+- `select2_format`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+### Support for Select2 bespoke format output
+
+Use the parameter `select2_format` => `true` to enable the simplified output
+format used for the Select2 HTML widget (a list of `{id: ..., text: ...}`
+rows under a single `results` node; see https://select2.org/data-sources/formats).
+
+When this is enabled, results are limited to a _maximum_ of **100** rows (pagination ignored).
+
+
+* * *
+
+
++ Parameters
+    + code: "M25" (string, optional) - internal code
+    + season_id: 192 (number, optional) - associated Season ID
+    + short_name: "M25" (string, optional) - short category name
+    + group_name: "MASTER" (string, optional) - category group name
+    + age_begin: 25 (number, optional) - age group start
+    + age_end: 29 (number, optional) - age group end
+    + federation_code: "4" (string, optional) - federation code for this category
+    + description: "MASTER 25 (string, optional) - category description
+    + relay: false (boolean, optional) - `true` for relay categories
+    + out_of_race: false (boolean, optional) - `true` if this category does not concur in the overall ranking
+    + undivided: false (boolean, optional) - `true` for categories that do not use gender splitting
+    + select2_format: false (boolean, optional) - `true` to enable the simplified (id+text) Select2 output format
+
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/category_types?code=M25"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/category_types',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { code: "M25" }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [CategoryType list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Lookup API for all subentities
   #
-  #   - version:  7.075
+  #   - version:  7.02.18
   #   - author:   Steve A.
-  #   - build:    20210131
+  #   - build:    20210518
   #
   class LookupAPI < Grape::API
     helpers APIHelpers
@@ -20,6 +20,10 @@ module Goggles
       #
       # == Params:
       # - entity_name: (required) plural name of the lookup entity
+      #
+      # - name: filtering parameter on the 'long_label' field of an entity; will return just the
+      #         rows matching the specified value for the field (with case ignored)
+      #
       # - locale: locale string code to be enforced (defaults to 'it')
       #
       # === Supported values for +entity_name+:
@@ -41,7 +45,9 @@ module Goggles
       # - `timing_types`
       #
       # == Returns:
-      # The JSON list of possible lookup values.
+      # The JSON list of possible lookup values; the list can be filtered with the 'name' search parameter
+      # for a quick look-up search based just on the 'long_label' value of each row.
+      #
       # Returns an empty list on error or on invalid entity name. (Entities must be of the 'Localizable' kind.)
       #
       # *No* pagination is performed on the results (lookup entities are supposed to have limited rows).
@@ -57,6 +63,7 @@ module Goggles
       desc 'List lookup entity'
       params do
         requires :entity_name, type: String, desc: 'Entity name (plural)'
+        optional :name, type: String, desc: 'optional: filtering query substring for \'long_label\', matched ignoring case (no fuzzy search)'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :entity_name do
@@ -66,7 +73,11 @@ module Goggles
           entity = lookup_entity_class_for(params['entity_name'].to_s)
           return [] if entity.nil? || !entity&.new.is_a?(Localizable)
 
-          entity.all.map { |row| row.lookup_attributes(params['locale'] || 'it') }
+          entity_rows = entity.all.map { |row| row.lookup_attributes(params['locale'] || 'it') }
+          return entity_rows unless params['name'].present?
+
+          # Filter out results if a query parameter was specified:
+          entity_rows.select { |row| row['long_label'] =~ Regexp.new(params['name'], Regexp::IGNORECASE) }
         end
       end
     end

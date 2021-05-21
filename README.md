@@ -21,7 +21,7 @@ The endpoints allow an authorized account to manage most DB entities as they are
 ## Requires
 
 - Ruby 2.7.2
-- Rails 6.0.3.5
+- Rails 6.0.3.7
 - MariaDb 10.3.25+ or any other MySql equivalent version
 
 

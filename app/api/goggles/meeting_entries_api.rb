@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingEntry API Grape controller
   #
-  #   - version:  7.062
+  #   - version:  7.02.18
   #   - author:   Steve A.
-  #   - build:    20210119
+  #   - build:    20210518
   #
   class MeetingEntriesAPI < Grape::API
     helpers APIHelpers
@@ -78,7 +78,7 @@ module Goggles
       # - entry_time_type_id
       # - minutes
       # - seconds
-      # - hundredths => TODO: refactor this into a proper "hundredths" field name
+      # - hundredths
       # - no_time (boolean): true for an unspecified entry timing
       #
       # == Returns:
@@ -107,7 +107,7 @@ module Goggles
         unless new_row.valid?
           error!(
             I18n.t('api.message.creation_failure'),
-            500,
+            422,
             'X-Error-Detail' => GogglesDb::ValidationErrorTools.recursive_error_for(new_row)
           )
         end

@@ -43,6 +43,7 @@ Metrics/ClassLength:
   Max: 120
   Exclude:
     - 'app/api/goggles/meeting_reservations_api.rb'
+    - 'app/api/goggles/user_results_api.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:

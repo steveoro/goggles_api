@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  7.085
+  #   - version:  7.02.18
   #   - author:   Steve A.
-  #   - build:    20210310
+  #   - build:    20210518
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -145,7 +145,7 @@ module Goggles
     # Returns the Class for the specified +table_name+, or +nil+ if the
     # name is unsupported or not allowed.
     #
-    # The method should include only siblings of GogglesDb::ApplicationLookupEntity.
+    # The method should include only siblings of GogglesDb::AbstractLookupEntity.
     #
     # == Params
     # - table_name: the string name of the lookup table

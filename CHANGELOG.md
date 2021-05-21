@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.2.18** [Steve A.] upgraded gem set due to security fixes; added 'name' filtering parameter to /lookup endpoint; added endpoints, blueprints & specs for UserWorkshop, UserResult, UserLap, CategoryType, ImportQueue & APIDailyUsage
 - **0.2.05** [Steve A.] bump versioning according to main application
 - **0.1.93** [Steve A.] revised Docker builds & continuous deployment procedure
 - **0.1.82** [Steve A.] default container port is now 8081

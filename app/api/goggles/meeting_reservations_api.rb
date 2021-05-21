@@ -105,7 +105,7 @@ module Goggles
           GogglesDb::Meeting.find_by_id(params['meeting_id']),
           api_user
         )
-        error!(I18n.t('api.message.creation_failure'), 500, 'X-Error-Detail' => cmd.errors[:msg]) unless cmd.success?
+        error!(I18n.t('api.message.creation_failure'), 422, 'X-Error-Detail' => cmd.errors[:msg]) unless cmd.success?
 
         { msg: I18n.t('api.message.generic_ok'), new: cmd.result }
       end

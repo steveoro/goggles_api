@@ -6,7 +6,7 @@ Backend internal API for the Goggles Engine, core7.
 
     | _Framework_ | _API_ | _App version_ | _DB structure_ | _latest update_ |
     | --- | --- | --- | --- | --- |
-    | `core7` | `v3` | 7.90 | 1.90.0 | 20210329 |
+    | `core7` | `v3` | 7.02.18 | 1.90.0 | 20210521 |
 
 _Previous legacy versions are deprecated and subseeded by this._
 
@@ -51,12 +51,16 @@ may be included as a sibling reference but yielding usually less details.
 
 ## Note on Maintenance mode
 
-The app framework supports a "maintenance mode" that inhibits most HTTP & API requests and is triggered by a setting
-directly stored inside the database.
+The app framework supports two different "maintenance" modes to inhibit most HTTP & API requests:
+"soft" (or logic) maintenance & "hard" maintenance modes.
 
-When maintenance mode is on, new JWT sessions will be refused and any incoming API request
+During _"soft" maintenenace_, a flag on the database will be set, new JWT sessions will be refused and any incoming API request
 will be rejected with a `"Maintenance mode is ON"` error message - unless the
 requesting user has admin grants.
+
+Conversely, _"hard"  mainentenance_ mode disables the app running on the host with a static site and does not
+change the database. API sessions may still be available during "hard" maintenance mode, given that the
+API endpoints are also served from a different container.
 
 
 * * *
@@ -64,7 +68,11 @@ requesting user has admin grants.
 
 <!-- include(blueprint/session.apib) -->
 
+<!-- include(blueprint/api_daily_uses.apib) -->
+<!-- include(blueprint/badges.apib) -->
+<!-- include(blueprint/category_types.apib) -->
 <!-- include(blueprint/cities.apib) -->
+<!-- include(blueprint/import_queues.apib) -->
 <!-- include(blueprint/laps.apib) -->
 <!-- include(blueprint/lookup.apib) -->
 <!-- include(blueprint/meeting_entries.apib) -->
@@ -82,4 +90,7 @@ requesting user has admin grants.
 <!-- include(blueprint/team_managers.apib) -->
 <!-- include(blueprint/teams.apib) -->
 <!-- include(blueprint/tools.apib) -->
+<!-- include(blueprint/user_laps.apib) -->
+<!-- include(blueprint/user_results.apib) -->
+<!-- include(blueprint/user_workshops.apib) -->
 <!-- include(blueprint/users.apib) -->

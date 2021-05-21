@@ -9,16 +9,18 @@ RSpec.describe Goggles::SessionAPI, type: :request do
   include APISessionHelpers
 
   let(:api_user) { FactoryBot.create(:user) }
+  let(:admin_user)  { FactoryBot.create(:user) }
+  let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
 
   # Enforce domain context creation
   before(:each) do
     expect(api_user).to be_a(GogglesDb::User).and be_valid
+    expect(admin_user).to be_a(GogglesDb::User).and be_valid
+    expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
   end
 
   describe 'POST /api/:version/session' do
-    context 'when using valid parameters,' do
-      before(:each) { post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key }) }
-
+    shared_examples_for 'a successful new API session creation request' do
       it 'is successful' do
         expect(response).to be_successful
       end
@@ -28,12 +30,33 @@ RSpec.describe Goggles::SessionAPI, type: :request do
         expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
         expect(result['jwt']).to be_a(String).and be_present
       end
-      it 'returns a new valid JWT' do
+    end
+
+    context 'when using valid parameters,' do
+      before(:each) { post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key }) }
+      it_behaves_like('a successful new API session creation request')
+      it 'returns a new valid JWT for the API user' do
         result = JSON.parse(response.body)
         decoded_jwt = GogglesDb::JWTManager.decode(result['jwt'], Rails.application.credentials.api_static_key)
         expect(decoded_jwt).to be_present
         expect(decoded_jwt).to have_key('user_id')
         expect(decoded_jwt['user_id']).to eq(api_user.id)
+      end
+    end
+
+    context 'when using an *admin* user during Maintenance mode,' do
+      before(:each) do
+        GogglesDb::AppParameter.maintenance = true
+        post(api_v3_session_path, params: { e: admin_user.email, p: admin_user.password, t: Rails.application.credentials.api_static_key })
+        GogglesDb::AppParameter.maintenance = false
+      end
+      it_behaves_like('a successful new API session creation request')
+      it 'returns a new valid JWT for the API user' do
+        result = JSON.parse(response.body)
+        decoded_jwt = GogglesDb::JWTManager.decode(result['jwt'], Rails.application.credentials.api_static_key)
+        expect(decoded_jwt).to be_present
+        expect(decoded_jwt).to have_key('user_id')
+        expect(decoded_jwt['user_id']).to eq(admin_user.id)
       end
     end
 

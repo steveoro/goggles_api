@@ -4,14 +4,21 @@ require 'version'
 require 'audit_formatter'
 require 'grape_logging'
 
+# = Goggles main API v3 Grape controller
+#
+# Mounts all required API modules
+#
+#   - version:  7.02.18
+#   - author:   Steve A.
+#   - build:    20210521
+#
 module Goggles
-  # = Goggles main API v3 Grape controller
+  # = Goggles::API
   #
-  # Mounts all required API modules
+  # Master API container.
   #
-  #   - version:  7.067
-  #   - author:   Steve A.
-  #   - build:    20210122
+  # Configures the API logger, implements the status endpoint
+  # and mounts all API subclasses.
   #
   class API < Grape::API
     helpers APIHelpers
@@ -53,8 +60,11 @@ module Goggles
       end
     end
 
+    mount APIDailyUsesAPI
     mount BadgesAPI
+    mount CategoryTypesAPI
     mount CitiesAPI
+    mount ImportQueuesAPI
     mount LapsAPI
     mount LookupAPI
     mount MeetingsAPI
@@ -73,6 +83,9 @@ module Goggles
     mount TeamManagersAPI
     mount TeamsAPI
     mount ToolsAPI
+    mount UserLapsAPI
+    mount UserResultsAPI
+    mount UserWorkshopsAPI
     mount UsersAPI
   end
 end

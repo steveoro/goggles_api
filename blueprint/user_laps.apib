@@ -1,0 +1,823 @@
+# Group UserLaps
+
+## UserLap details [/api/v3/user_lap/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 6116,
+            "user_result_id": 3434,
+            "swimmer_id": 186112,
+            "reaction_time": "0.54",
+            "minutes": 0,
+            "seconds": 39,
+            "hundredths": 41,
+            "length_in_meters": 800,
+            "position": 3,
+            "minutes_from_start": 1,
+            "seconds_from_start": 39,
+            "hundredths_from_start": 41,
+            "created_at": "2021-05-21T16:18:16.649Z",
+            "updated_at": "2021-05-21T16:18:16.649Z",
+            "timing": "0'39\"41",
+            "timing_from_start": "1'39\"41",
+
+            "swimmer": {
+                "id": 186112,
+                "complete_name": "Beier Jodi 91609",
+                "last_name": "Beier",
+                "first_name": "Jodi",
+                "year_of_birth": 1977,
+                "year_guessed": false
+            },
+
+            "user_workshop": {
+                "id": 7078,
+                "code": "workshop-1",
+                "header_year": "2021/2022",
+                "edition_label": "2021/2022"
+            },
+
+            "user_result": {
+                "id": 3434,
+                "standard_points": "666.0",
+                "meeting_points": "666.0",
+                "rank": 13,
+                "disqualified": true,
+                "minutes": 0,
+                "seconds": 14,
+                "hundredths": 42,
+                "swimmer_id": 186112,
+                "category_type_id": 376,
+                "pool_type_id": 2,
+                "user_id": 179875,
+                "disqualification_code_type_id": 48,
+                "description": "",
+                "event_date": null,
+                "reaction_time": "0.77",
+                "event_type_id": 2,
+                "user_workshop_id": 7078,
+                "swimming_pool_id": null,
+                "timing": "0'14\"42",
+                "swimmer": {
+                    "id": 186112,
+                    "complete_name": "Beier Jodi 91609",
+                    "last_name": "Beier",
+                    "first_name": "Jodi",
+                    "year_of_birth": 1977,
+                    "year_guessed": false
+                },
+                "disqualification_code_type": {
+                    "id": 48,
+                    "code": "IMB",
+                    "relay": false,
+                    "stroke_type_id": 5,
+                    "label": "Wrong style order",
+                    "long_label": "Styles not swam in the right order",
+                    "alt_label": "Wrong style order"
+                },
+                "swimming_pool": null
+            },
+
+            "event_type": {
+                "id": 2,
+                "code": "50SL",
+                "length_in_meters": 50,
+                "relay": false,
+                "stroke_type_id": 1,
+                "style_order": 2,
+                "mixed_gender": false,
+                "partecipants": 1,
+                "phases": 1,
+                "phase_length_in_meters": 50,
+                "label": "50 FS",
+                "long_label": "50 FREESTYLE",
+                "alt_label": "50 FS"
+            },
+
+            "pool_type": {
+                "id": 2,
+                "code": "50",
+                "length_in_meters": 50,
+                "eventable": true,
+                "label": "50 M",
+                "long_label": "50 METERS",
+                "alt_label": "50 M"
+            }
+        }
+
+
+### find [GET]
+The UserLap instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities (some with minimal attributes):
+- `UserWorkshop`
+- `UserResult`
+- `Swimmer`
+- `CategoryType`
+- `EventType`
+- `PoolType`
+- `DisqualificationCodeType`
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 6116 (number, required) - UserLap ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/user_lap/6116"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/user_lap/6116',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":6116, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [UserLap details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the UserLap fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'UserLap' or have generic admin grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `user_result_id` | integer | associated UserResult ID |
+| `swimmer_id` | integer | associated Swimmer ID |
+| `reaction_time` | float | reaction time (when available; must be positive to be considered) |
+| `minutes` | integer | lap time, minutes |
+| `seconds` | integer | lap time, seconds |
+| `hundredths` | integer | lap time, hundredths of seconds |
+| `length_in_meters` | integer | lap length in meters |
+| `position` | integer | position in heat at the end of the lap |
+| `minutes_from_start` | integer | overall minutes from heat start |
+| `seconds_from_start` | integer | overall seconds from heat start |
+| `hundredths_from_start` | integer | overall hundredths of second from heat start |
+
+
+* * *
+
+
++ Parameters
+    + id: 6116 (number, required) - UserLap ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"length_in_meters": 50, "minutes": 0, "seconds": 36}' \
+            "<API_HOST:PORT>/api/v3/user_lap/6116"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/user_lap/6116',
+                payload: {
+                    length_in_meters: 50,
+                    minutes: 0,
+                    seconds: 36
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "length_in_meters": 50,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "length_in_meters": 50,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "length_in_meters": 50,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "length_in_meters": 50,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "length_in_meters": 50,
+                "minutes": 0,
+                "seconds": 36
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new UserLap, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'UserLap' or have generic admin grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `user_result_id` | integer | **required**, associated UserResult ID |
+| `swimmer_id` | integer | **required**, associated Swimmer ID |
+| `reaction_time` | float | reaction time (when available; must be positive to be considered) |
+| `minutes` | integer | lap time, minutes |
+| `seconds` | integer | lap time, seconds |
+| `hundredths` | integer | lap time, hundredths of seconds |
+| `length_in_meters` | integer | lap length in meters |
+| `position` | integer | position in heat at the end of the lap |
+| `minutes_from_start` | integer | overall minutes from heat start |
+| `seconds_from_start` | integer | overall seconds from heat start |
+| `hundredths_from_start` | integer | overall hundredths of second from heat start |
+
+
+* * *
+
+
++ Attributes
+    + user_result_id (number, required) - associated UserResult ID
+    + swimmer_id: 23 (number, required) - associated Swimmer ID
+    + reaction_time (number, optional)
+    + minutes: 1 (number, optional)
+    + seconds: 15 (number, optional)
+    + hundredths: 97 (number, optional)
+    + length_in_meters: 150 (number, optional)
+    + position (number, optional)
+    + minutes_from_start (number, optional)
+    + seconds_from_start (number, optional)
+    + hundredths_from_start (number, optional)
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"user_result_id": 3434, "swimmer_id": 142, "reaction_time": "0.54", \
+                "minutes": 2, "seconds": 45, "hundredths": 41, "length_in_meters": 200 }' \
+            "<API_HOST:PORT>/api/v3/user_lap"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/user_lap',
+            {
+                "user_result_id": 3434,
+                "swimmer_id": 142,
+                "reaction_time": "0.54",
+                "minutes": 2,
+                "seconds": 45,
+                "hundredths": 41,
+                "length_in_meters": 200
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "user_result_id": 3434,
+                "swimmer_id": 142,
+                "reaction_time": "0.54",
+                "minutes": 2,
+                "seconds": 45,
+                "hundredths": 41,
+                "length_in_meters": 200
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "user_result_id": 3434,
+                "swimmer_id": 142,
+                "reaction_time": "0.54",
+                "minutes": 2,
+                "seconds": 45,
+                "hundredths": 41,
+                "length_in_meters": 200
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "user_result_id": 3434,
+                "swimmer_id": 142,
+                "reaction_time": "0.54",
+                "minutes": 2,
+                "seconds": 45,
+                "hundredths": 41,
+                "length_in_meters": 200
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "user_result_id": 3434,
+                "swimmer_id": 142,
+                "reaction_time": "0.54",
+                "minutes": 2,
+                "seconds": 45,
+                "hundredths": 41,
+                "length_in_meters": 200
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'UserLap' or have generic admin grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 1 (number, required) - UserLap ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/user_lap/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/user_lap/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# UserLap list [/api/v3/user_laps{?page,per_page,user_result_id,swimmer_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/user_laps?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/user_laps?page=2&team_id=1>; rel=\"next\""
+            Total: 46
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // UserLap details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // UserLap details 2
+                {
+                    "id": 15,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of UserLaps associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `user_result_id`
+- `swimmer_id`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + user_result_id: 3434 (number, optional) - associated UserResult ID
+    + swimmer_id: 142 (number, optional) - associated Swimmer ID
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/user_laps?user_result_id=3434"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/user_laps',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { user_result_id: 3434 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [UserLap list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

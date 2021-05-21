@@ -1,0 +1,561 @@
+# Group APIDailyUses
+
+_**Admin-only group**_
+
+
+## APIDailyUse details [/api/v3/api_daily_use/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 1,
+            "lock_version": 1,
+            "route": "GET /api/v3/swimmers",
+            "day": "2021-03-02",
+            "count": 1,
+            "created_at": "2021-03-02T09:53:10.863Z",
+            "updated_at": "2021-03-02T09:53:10.863Z"
+        }
+
+
+### find [GET]
+The APIDailyUse instance matching the specified `id` returned as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number, required) - APIDailyUse ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/api_daily_use/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/api_daily_use/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":1, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [APIDailyUse details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the APIDailyUse fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `day` | date | ISO date for the daily usage counter |
+| `route` | string | new base route/endpoint for the API call counter |
+| `count` | integer | request counter for the specified base API |
+
+
+* * *
+
+
++ Parameters
+    + id: 1 (number, required) - APIDailyUse ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"route": "GET /api/v3/swimmers", "day": "2021-03-02", "count": 0}' \
+            "<API_HOST:PORT>/api/v3/api_daily_use/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/api_daily_use/1',
+                payload: {
+                    route: "GET /api/v3/swimmers",
+                    day: "2021-03-02",
+                    count: 0
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "route": "GET /api/v3/swimmers",
+                "day": "2021-03-02",
+                "count": 0
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "route": "GET /api/v3/swimmers",
+                "day": "2021-03-02",
+                "count": 0
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "route": "GET /api/v3/swimmers",
+                "day": "2021-03-02",
+                "count": 0
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "route": "GET /api/v3/swimmers",
+                "day": "2021-03-02",
+                "count": 0
+            }
+
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "route": "GET /api/v3/swimmers",
+                "day": "2021-03-02",
+                "count": 0
+            }
+
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 1 (number, required) - APIDailyUse ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/api_daily_use/1"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/api_daily_use/1',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# APIDailyUse list [/api/v3/api_daily_uses{?page,per_page,day,route}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/api_daily_uses?page=2>; rel=\"last\", <http://localhost:3000/api/v3/api_daily_uses?page=2>; rel=\"next\""
+            Total: 46
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // APIDailyUse details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // APIDailyUse details 2
+                {
+                    "id": 15,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of APIDailyUses associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `day`
+- `route`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + day: "2021-03-02" (string, optional) - filtering date in ISO format (`YYYY-MM-DD`)
+    + route: "GET /api/v3/swimmers" (string, optional) - base route
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/api_daily_uses?day=2021-03-02"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/api_daily_uses',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { day: "2021-03-02" }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [APIDailyUse list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }

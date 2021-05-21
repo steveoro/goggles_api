@@ -44,7 +44,7 @@ module Goggles
         unless new_row.valid?
           error!(
             I18n.t('api.message.creation_failure'),
-            500,
+            422,
             'X-Error-Detail' => GogglesDb::ValidationErrorTools.recursive_error_for(new_row)
           )
         end

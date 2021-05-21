@@ -572,6 +572,129 @@ All are optional (except `id`):
             { "msg": "Unauthorized" }
 
 
+
+# Meeting clone [/api/v3/meetings/clone/{id}]
+
+## clone [POST]
+
+Clones the event & program structure from the specified Meeting id, into a new one,
+updating the header date to the present year, increasing the edition number and clearing out
+most of the internal status columns. (The resulting meeting won't be confirmed.)
+
+Returns `true` on success with the new Meeting details as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'Swimmer' or have generic admin grants
+
+
+* * *
+
+
++ Parameters
+    + id: 12345 (number, required) - _source_ Meeting ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting/clone/12345"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :post,
+                url: '<API_HOST:PORT>/api/v3/meeting/clone/12345',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 422 (application/json)
+
+        { "msg": "Invalid constructor parameters" }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+
 # Meeting list [/api/v3/meetings{?page,per_page,name,date,season_id,pool_type_id,select2_format}]
 
 + Model (application/json)

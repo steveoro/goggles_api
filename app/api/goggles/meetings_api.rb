@@ -97,6 +97,35 @@ module Goggles
           result&.update!(declared(params, include_missing: false)) unless params.keys.size == 1
         end
       end
+
+      # POST /api/:version/meeting/clone/:id
+      #
+      # Given a source Meeting ID clones its structure (sessions, events & programs)
+      # into a new one with a subsequent edition number.
+      # Requires Admin grants for the requesting user.
+      #
+      # See GogglesDb::CmdCloneMeetingStructure
+      #
+      # == Returns:
+      # The resulting cloned Meeting instance as JSON; an empty result when the source Meeting is not found.
+      # In case of error during the cloning process the error list from the command execution is returned.
+      # See GogglesDb::Meeting#to_json for structure details.
+      #
+      desc 'Clone Meeting structure'
+      params do
+        requires :id, type: Integer, desc: 'Source Meeting ID'
+      end
+      namespace :clone do
+        route_param :id do
+          post do
+            reject_unless_authorized_admin(check_jwt_session)
+
+            src_meeting = GogglesDb::Meeting.find_by_id(params['id'])
+            cmd = GogglesDb::CmdCloneMeetingStructure.call(src_meeting)
+            cmd.success? ? { msg: I18n.t('api.message.generic_ok'), new: cmd.result } : error!(cmd.errors, 422)
+          end
+        end
+      end
     end
 
     resource :meetings do

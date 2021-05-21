@@ -6,11 +6,11 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.7.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '= 6.0.3.5'
+gem 'rails', '>= 6.0.3.7', '< 6.1.0'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.4.4'
 # Use Puma as the app server
-gem 'puma', '~> 4.1'
+gem 'puma', '>= 5.3.1'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
@@ -28,8 +28,6 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'rack-cors'
 
 gem 'api-pagination'
-# [Steve A.] Force a specific version of Devise, supporting OAuth2: (even if we don't use it here)
-# gem 'devise', github: 'heartcombo/devise', branch: 'ca-omniauth-2'
 gem 'devise'
 gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
 gem 'grape'
@@ -58,7 +56,7 @@ group :development do
   gem 'haml_lint', require: false
   gem 'inch', require: false # grades source documentation
   gem 'listen', '~> 3.2'
-  # [20210128] Rubocop 1.9.0 seems to have several issues currently
+  # [20210128] Rubocop 1.9.0 seems to have several issues with the current stack
   gem 'rubocop', '= 1.8.1', require: false
   gem 'rubocop-rails'
   gem 'rubocop-rspec'

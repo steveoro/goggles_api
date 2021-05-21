@@ -8,16 +8,32 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
-  let(:api_user)  { FactoryBot.create(:user) }
-  let(:jwt_token) { jwt_for_api_session(api_user) }
   let(:fixture_row) { FactoryBot.create(:meeting) }
+  # Admin:
+  let(:admin_user)  { FactoryBot.create(:user) }
+  let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
+  let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
+  # CRUD user (must result as unauthorized):
+  let(:crud_user)       { FactoryBot.create(:user) }
+  let(:crud_grant)      { FactoryBot.create(:admin_grant, user: crud_user, entity: 'Meeting') }
+  let(:crud_headers)    { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+  # Standard user (no grants whatsoever):
+  let(:api_user)    { FactoryBot.create(:user) }
+  let(:jwt_token)   { jwt_for_api_session(api_user) }
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
   before(:each) do
     expect(fixture_row).to be_a(GogglesDb::Meeting).and be_valid
+    expect(admin_user).to be_a(GogglesDb::User).and be_valid
+    expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+    expect(admin_headers).to be_an(Hash).and have_key('Authorization')
+    expect(crud_user).to be_a(GogglesDb::User).and be_valid
+    expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+    expect(crud_headers).to be_an(Hash).and have_key('Authorization')
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
+    expect(fixture_headers).to be_an(Hash).and have_key('Authorization')
   end
 
   describe 'GET /api/v3/meeting/:id' do
@@ -143,6 +159,83 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
   #-- -------------------------------------------------------------------------
   #++
 
+  describe 'POST /api/v3/meeting/clone/:id' do
+    shared_examples_for('a successful JSON cloned Meeting response') do
+      it_behaves_like('a successful request that has positive usage stats')
+      it 'returns an OK message and the new row as a JSON object with some fields cleared out' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('msg').and have_key('new')
+        expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
+        resulting_hash = result['new']
+        expect(resulting_hash['id'].to_i).to be_positive
+        expect(resulting_hash['header_date']).to be_present
+        expect(resulting_hash['header_year']).to be_present
+        # Edition must be increased:
+        expect(resulting_hash['edition'].to_i).to eq(fixture_row.edition + 1)
+        # Misc columns that must be cleared out:
+        expect(
+          %w[entry_deadline manifest_body].all? { |key| resulting_hash[key].nil? }
+        ).to be true
+        expect(
+          %w[manifest startlist autofilled confirmed tweeted
+             posted cancelled pb_acquired read_only].all? { |key| resulting_hash[key] == false }
+        ).to be true
+      end
+    end
+
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before(:each) { post(api_v3_meeting_clone_path(id: fixture_row.id), headers: admin_headers) }
+        it_behaves_like('a successful JSON cloned Meeting response')
+      end
+      context 'with an account having just CRUD grants,' do
+        before(:each) { post(api_v3_meeting_clone_path(id: fixture_row.id), headers: crud_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
+      end
+      context 'with an account not having any grants,' do
+        before(:each) { post(api_v3_meeting_clone_path(id: fixture_row.id), headers: fixture_headers) }
+        it_behaves_like('a failed auth attempt due to unauthorized credentials')
+      end
+    end
+
+    context 'when using valid parameters but during Maintenance mode,' do
+      context 'with an account having ADMIN grants,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          post(api_v3_meeting_clone_path(id: fixture_row.id), headers: admin_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a successful JSON cloned Meeting response')
+      end
+      context 'with an account having lesser grants,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          post(api_v3_meeting_clone_path(id: fixture_row.id), headers: crud_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a request refused during Maintenance (except for admins)')
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before(:each) { post(api_v3_meeting_clone_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+    context 'when requesting a non-existing ID,' do
+      before(:each) { post(api_v3_meeting_clone_path(id: -1), headers: admin_headers) }
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+      it 'responds with an error message' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('msg')
+        expect(result['msg']).to eq('Invalid constructor parameters')
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   describe 'GET /api/v3/meetings/' do
     context 'when using a valid authentication' do
       # actual Meeting count x recent Seasons: 141=6, 142=143, 151=6, 152=141, 161=6, 162=147, 171=5, 172=144, 181=4, 182=88, 191=3, 192=16
@@ -161,21 +254,29 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
-      context 'but during Maintenance mode,' do
+      context 'during Maintenance mode with an account having ADMIN grants,' do
         before(:each) do
           GogglesDb::AppParameter.maintenance = true
-          get(api_v3_meetings_path, headers: fixture_headers)
+          get(api_v3_meetings_path, headers: admin_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('successful response with pagination links & values in headers')
+      end
+      context 'during Maintenance mode with an account having lesser grants,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          get(api_v3_meetings_path, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
-      context 'when filtering by a specific season (yielding > 25 meetings),' do
+      context 'and filtering by a specific season (yielding > 25 meetings),' do
         before(:each) { get(api_v3_meetings_path, params: { season_id: many_pages_season_id }, headers: fixture_headers) }
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
-      context 'when filtering by a specific season (yielding <= 25 meetings),' do
+      context 'and filtering by a specific season (yielding <= 25 meetings),' do
         let(:expected_row_count) { GogglesDb::Meeting.select(:id).where(season_id: single_page_season_id).count }
         before(:each) do
           expect(expected_row_count).to be_positive
@@ -184,7 +285,7 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
-      context 'when filtering by a specific date and season,' do
+      context 'and filtering by a specific date and season,' do
         let(:meetings_in_domain) { GogglesDb::Meeting.joins(:meeting_sessions).includes(:meeting_sessions).where(season_id: many_pages_season_id) }
         let(:sample_date) { meetings_in_domain.sample.header_date }
         let(:expected_row_count) do
@@ -198,7 +299,7 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
-      context 'when filtering by a specific pool_type and season,' do
+      context 'and filtering by a specific pool_type and season,' do
         let(:fixture_pool_type_id) { GogglesDb::PoolType.all_eventable.sample.id }
         let(:expected_row_count) do
           GogglesDb::Meeting.joins(meeting_sessions: :swimming_pool).includes(meeting_sessions: :swimming_pool)
@@ -214,7 +315,7 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
 
       let(:fixture_description) { %w[Riccione CSI].sample }
 
-      context 'when filtering by name,' do
+      context 'and filtering by name,' do
         let(:expected_row_count) do
           GogglesDb::Meeting.joins(:meeting_sessions).includes(:meeting_sessions)
                             .for_name(fixture_description)
@@ -246,7 +347,7 @@ RSpec.describe Goggles::MeetingsAPI, type: :request do
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
-    context 'when filtering by a non-existing value,' do
+    context 'and filtering by a non-existing value,' do
       before(:each) { get(api_v3_meetings_path, params: { date: '1986-01-01' }, headers: fixture_headers) }
       it_behaves_like('an empty but successful JSON list response')
     end

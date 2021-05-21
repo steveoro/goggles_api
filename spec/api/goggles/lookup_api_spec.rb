@@ -48,6 +48,26 @@ RSpec.describe Goggles::LookupAPI, type: :request do
       end
     end
 
+    context 'when using a valid authentication and filtering by a partial value,' do
+      %w[
+        event_types
+      ].each do |entity_name|
+        context "for #{entity_name}," do
+          before(:each) do
+            get(api_v3_lookup_path(entity_name: entity_name), params: { name: 'rana', locale: 'it' }, headers: fixture_headers)
+          end
+
+          it_behaves_like('a successful request that has positive usage stats')
+
+          it 'returns a non-empty list of JSON rows' do
+            result_array = JSON.parse(response.body)
+            expect(result_array).to be_an(Array)
+            expect(result_array.count).to be_positive
+          end
+        end
+      end
+    end
+
     context 'when using valid parameters but during Maintenance mode,' do
       before(:each) do
         GogglesDb::AppParameter.maintenance = true
