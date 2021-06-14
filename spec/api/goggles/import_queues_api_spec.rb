@@ -89,9 +89,7 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
         { user_id: GogglesDb::User.first(100).sample.id },
         { request_data: { team: { name: "FFaker::Address.city} Swimming Club #{1990 + (30 * rand).to_i}" } }.to_json },
         { solved_data: { swimmer_id: GogglesDb::Swimmer.first(100).sample.id }.to_json },
-        { processed_depth: (rand * 10).to_i },
-        { requested_depth: (rand * 10).to_i },
-        { solvable_depth: (rand * 10).to_i },
+        { process_runs: (rand * 10).to_i },
         { done: [true, false].sample },
         { uid: FFaker::Guid.guid }
       ].sample

@@ -1046,7 +1046,7 @@ ActiveRecord::Schema.define(version: 2021_04_29_155847) do
   create_table "import_queues", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.bigint "user_id", null: false
-    t.integer "processed_depth", default: 0
+    t.integer "process_runs", default: 0
     t.integer "requested_depth", default: 0
     t.integer "solvable_depth", default: 0
     t.text "request_data", null: false
@@ -1055,7 +1055,7 @@ ActiveRecord::Schema.define(version: 2021_04_29_155847) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["done"], name: "index_import_queues_on_done"
-    t.index ["processed_depth"], name: "index_import_queues_on_processed_depth"
+    t.index ["process_runs"], name: "index_import_queues_on_process_runs"
     t.index ["requested_depth"], name: "index_import_queues_on_requested_depth"
     t.index ["solvable_depth"], name: "index_import_queues_on_solvable_depth"
     t.index ["user_id"], name: "index_import_queues_on_user_id"

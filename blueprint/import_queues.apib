@@ -11,15 +11,17 @@ _**Admin-only group**_
             "id": 12174,
             "lock_version": 1,
             "user_id": 179297,
-            "processed_depth": 0,
-            "requested_depth": 0,
-            "solvable_depth": 0,
+            "process_runs": 0,
             "request_data": "{\"swimmer_id\":142}",
             "solved_data": "{}",
             "done": false,
             "created_at": "2021-05-21T15:37:13.210Z",
             "updated_at": "2021-05-21T15:38:09.863Z",
-            "uid": "6D733BDB-2786-E4A5-55B7-090061B22ACD"
+            "uid": "6D733BDB-2786-E4A5-55B7-090061B22ACD",
+            "bindings_left_count": 0,
+            "bindings_left_list": null,
+            "error_messages": null,
+            "import_queue_id": null # Parent queue ID, if any
         }
 
 
@@ -135,9 +137,7 @@ All are optional (except `id`):
 |  Field name  | Data type |  description |
 | --- | --- | --- |
 | `user_id` | integer | associated User ID |
-| `processed_depth` | integer | current processed depth |
-| `requested_depth` | integer | current requested depth |
-| `solvable_depth` | integer | current solvable depth |
+| `process_runs` | integer | current processed depth |
 | `request_data` | integer | parsable JSON containing the requested entities and thei current state |
 | `solved_data` | integer | parsable JSON containing all associated entities with their IDs that have been "solved" |
 | `done` | boolean | `true` if this request is deletable (both processed & solved completely) |
@@ -303,9 +303,6 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | --- | --- | --- |
 | *`user_id` | integer | associated User ID |
 | *`request_data` | string | parsable JSON containing the requested entities and thei current state |
-| `processed_depth` | integer | current processed depth |
-| `requested_depth` | integer | current requested depth |
-| `solvable_depth` | integer | current solvable depth |
 | `solved_data` | string | parsable JSON containing all associated entities with their IDs that have been "solved" |
 | `done` | boolean | `true` if this request is deletable (both processed & solved completely) |
 | `uid` | string | queue UID (useful for grouping queues) |
@@ -318,9 +315,6 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + user_id (number, required) - associated User ID
     + request_data (string, required) - parsable JSON containing the requested entities and thei current state
 
-    + processed_depth (number, optional) - current processed depth
-    + requested_depth (number, optional) - current requested depth
-    + solvable_depth (number, optional) - current solvable depth
     + solved_data (string, optional) - parsable JSON containing all associated entities with their IDs that have been "solved"
     + done (boolean, optional) - `true` if this request is deletable (both processed & solved completely)
     + uid (number, optional) - queue UID (useful for grouping queues)
@@ -554,7 +548,7 @@ Returns `true` on success, an empty body when not found.
 
 
 
-# ImportQueue list [/api/v3/import_queues{?page,per_page,user_id,uid,processed_depth,requested_depth,solvable_depth,done}]
+# ImportQueue list [/api/v3/import_queues{?page,per_page,user_id,uid,process_runs,requested_depth,solvable_depth,done}]
 
 + Model (application/json)
 
@@ -591,7 +585,7 @@ returned as JSON and optionally filtered by any or all from:
 
 - `user_id`
 - `uid`
-- `processed_depth`
+- `process_runs`
 - `requested_depth`
 - `solvable_depth`
 - `done`
@@ -624,7 +618,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 + Parameters
     + user_id: 1 (number, optional) - associated User ID
     + uid: "6D733BDB2786E4A" (string, optional) - queue UID
-    + processed_depth: 1 (number, optional) - current processed depth
+    + process_runs: 1 (number, optional) - current processed depth
     + requested_depth: 2 (number, optional) - current requested depth
     + solvable_depth: 2 (number, optional) - current solvable depth
     + done: false (boolean, optional) - `true` if this request is deletable (both processed & solved completely)

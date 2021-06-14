@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: ImportQueue API Grape controller
   #
-  #   - version:  7.02.18
+  #   - version:  7.03.01
   #   - author:   Steve A.
   #   - build:    20210519
   #
@@ -46,9 +46,7 @@ module Goggles
       params do
         requires :id, type: Integer, desc: 'ImportQueue ID'
         optional :user_id, type: Integer, desc: 'optional: associated User ID'
-        optional :processed_depth, type: Integer, desc: 'optional: current processed depth'
-        optional :requested_depth, type: Integer, desc: 'optional: current requested depth'
-        optional :solvable_depth, type: Integer, desc: 'optional: current solvable depth'
+        optional :process_runs, type: Integer, desc: 'optional: current processed depth'
         optional :request_data, type: String, desc: 'optional: parsable JSON containing the requested entities and their current state'
         optional :solved_data, type: String, desc: 'optional: parsable JSON containing all associated entities with their IDs that have been \"solved\"'
         optional :done, type: Boolean, desc: 'optional: true if this request is deletable (both processed & solved completely)'
@@ -71,12 +69,9 @@ module Goggles
       # == Params:
       # - user_id (required)
       # - request_data (required)
-      # - uid
-      # - processed_depth
-      # - requested_depth
-      # - solvable_depth
       # - solved_data
       # - done
+      # - uid
       #
       # == Returns:
       # A JSON Hash containing the result 'msg' and the newly created instance:
@@ -87,12 +82,9 @@ module Goggles
       params do
         requires :user_id, type: Integer, desc: 'associated User ID'
         requires :request_data, type: String, desc: 'parsable JSON containing the requested entities and thei current state'
-        optional :uid, type: String, desc: 'optional: queue UID'
-        optional :processed_depth, type: Integer, desc: 'optional: current processed depth'
-        optional :requested_depth, type: Integer, desc: 'optional: current requested depth'
-        optional :solvable_depth, type: Integer, desc: 'optional: current solvable depth'
         optional :solved_data, type: String, desc: 'optional: parsable JSON containing all associated entities with their IDs that have been \"solved\"'
         optional :done, type: Boolean, desc: 'optional: true if this request is deletable (both processed & solved completely)'
+        optional :uid, type: String, desc: 'optional: queue UID'
       end
       post do
         reject_unless_authorized_admin(check_jwt_session)
@@ -155,7 +147,7 @@ module Goggles
       params do
         optional :user_id, type: Integer, desc: 'optional: associated User ID'
         optional :uid, type: String, desc: 'optional: queue UID'
-        optional :processed_depth, type: Integer, desc: 'optional: current processed depth'
+        optional :process_runs, type: Integer, desc: 'optional: current processed depth'
         optional :requested_depth, type: Integer, desc: 'optional: current requested depth'
         optional :solvable_depth, type: Integer, desc: 'optional: current solvable depth'
         optional :done, type: Boolean, desc: 'optional: true if this request is deletable (both processed & solved completely)'
@@ -167,7 +159,7 @@ module Goggles
 
         paginate(
           GogglesDb::ImportQueue.where(
-            filtering_hash_for(params, %w[user_id uid processed_depth requested_depth solvable_depth done])
+            filtering_hash_for(params, %w[user_id uid process_runs requested_depth solvable_depth done])
           )
         )
       end
