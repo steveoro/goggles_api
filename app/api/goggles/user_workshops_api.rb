@@ -53,7 +53,7 @@ module Goggles
         optional :timing_type_id, type: Integer, desc: 'optional: TimingType ID'
 
         optional :user_id, type: Integer, desc: 'optional: User registering this information'
-        optional :team_id, type: Integer, desc: 'optional: Organizing Team ID or default Team ID for this Workshop'
+        optional :team_id, type: Integer, desc: 'optional: Organizing Home Team ID or default Team ID for this Workshop'
         optional :season_id, type: Integer, desc: 'optional: Season ID for the Workshop (Admin only)'
         optional :swimming_pool_id, type: Integer, desc: 'optional: Swimming Pool ID (venue or location) for this Workshop'
 

@@ -146,6 +146,7 @@ RSpec.describe Goggles::UserResultsAPI, type: :request do
         user_id: GogglesDb::User.first(50).sample.id,
         user_workshop_id: FactoryBot.create(:user_workshop).id,
         swimmer_id: GogglesDb::Swimmer.first(150).sample.id,
+        swimming_pool_id: GogglesDb::SwimmingPool.first(150).sample.id,
         category_type_id: GogglesDb::CategoryType.eventable.individuals.sample.id,
         pool_type_id: GogglesDb::PoolType.all_eventable.sample.id,
         event_type_id: GogglesDb::EventsByPoolType.eventable.individuals.sample.event_type_id

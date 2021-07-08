@@ -53,7 +53,15 @@ RSpec.describe Goggles::LapsAPI, type: :request do
   let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
 
   describe 'PUT /api/v3/lap/:id' do
-    let(:new_lap) { FactoryBot.build(:lap) }
+    let(:new_lap) do
+      mir = FactoryBot.create(:meeting_individual_result)
+      FactoryBot.build(
+        :lap,
+        meeting_individual_result_id: mir.id,
+        swimmer_id: mir.swimmer_id,
+        team_id: mir.team_id
+      )
+    end
     let(:expected_changes) do
       [
         { meeting_program_id: new_lap.meeting_program_id, meeting_individual_result_id: nil },
@@ -106,7 +114,15 @@ RSpec.describe Goggles::LapsAPI, type: :request do
   #++
 
   describe 'POST /api/v3/lap' do
-    let(:built_row) { FactoryBot.build(:lap) }
+    let(:built_row) do
+      mir = FactoryBot.create(:meeting_individual_result)
+      FactoryBot.build(
+        :lap,
+        meeting_individual_result_id: mir.id,
+        swimmer_id: mir.swimmer_id,
+        team_id: mir.team_id
+      )
+    end
     before(:each) do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
