@@ -3,7 +3,7 @@
 #
 # == Versioning codes
 #
-#   - version:  7-0.3.05
+#   - version:  7-0.3.06
 #   - author:   Steve A.
 #
 # Framework version number usually differs from core engine versioning number.

@@ -57,6 +57,7 @@ RSpec.describe Goggles::LapsAPI, type: :request do
       mir = FactoryBot.create(:meeting_individual_result)
       FactoryBot.build(
         :lap,
+        meeting_program_id: mir.meeting_program_id,
         meeting_individual_result_id: mir.id,
         swimmer_id: mir.swimmer_id,
         team_id: mir.team_id
@@ -64,7 +65,8 @@ RSpec.describe Goggles::LapsAPI, type: :request do
     end
     let(:expected_changes) do
       [
-        { meeting_program_id: new_lap.meeting_program_id, meeting_individual_result_id: nil },
+        { meeting_program_id: new_lap.meeting_program_id },
+        { meeting_individual_result_id: new_lap.meeting_individual_result_id },
         { team_id: new_lap.team_id, swimmer_id: new_lap.swimmer_id },
         { minutes: 0, seconds: ((rand * 59) % 59).to_i, hundredths: ((rand * 100) % 100).to_i },
         { minutes_from_start: ((rand * 4) % 4).to_i, seconds_from_start: ((rand * 59) % 59).to_i, hundredths_from_start: ((rand * 100) % 100).to_i },
