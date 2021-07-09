@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: 6eec58d53bd2963e77cdfe6a63d9c5f4499bce5f
+  revision: 8ca29dcc2d38807122b51f6809efc0bcb401d3f3
   specs:
-    goggles_db (0.3.06)
+    goggles_db (0.3.07)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -417,7 +417,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.20.3, < 2.0)
     rainbow (3.0.0)
-    rake (13.0.4)
+    rake (13.0.6)
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
