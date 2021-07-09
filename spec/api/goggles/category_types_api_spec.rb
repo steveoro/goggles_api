@@ -74,7 +74,7 @@ RSpec.describe Goggles::CategoryTypesAPI, type: :request do
   #++
 
   describe 'PUT /api/v3/category_type/:id' do
-    let(:built_row) { FactoryBot.build(:category_type) }
+    let(:built_row) { FactoryBot.build(:category_type, season_id: FactoryBot.create('season').id) }
     let(:expected_changes) do
       [
         { age_begin: built_row.age_begin },
@@ -139,7 +139,7 @@ RSpec.describe Goggles::CategoryTypesAPI, type: :request do
 
   describe 'POST /api/v3/category_type' do
     # Make sure parameters for the POST include all required attributes:
-    let(:built_row) { FactoryBot.build(:category_type, season_id: GogglesDb::Season.last(15).sample.id) }
+    let(:built_row) { FactoryBot.build(:category_type, season_id: FactoryBot.create('season').id) }
     before(:each) do
       expect(built_row).to be_a(GogglesDb::CategoryType).and be_valid
     end

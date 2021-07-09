@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: City API Grape controller
   #
-  #   - version:  7.051
+  #   - version:  7.3.07
   #   - author:   Steve A.
-  #   - build:    20201217
+  #   - build:    20210709
   #
   class CitiesAPI < Grape::API
     helpers APIHelpers
@@ -66,10 +66,12 @@ module Goggles
       #
       # Creates a new City given the specified parameters.
       #
-      # == Params:
-      # - name: City name
-      # - country_code: Country code (2 chars)
-      # - country: Country name
+      # == Required Params:
+      # * name: City name
+      # * country_code: Country code (2 chars)
+      # * country: Country name
+      #
+      # == Optional Params:
       # - area: Area or Region/Division name
       # - zip: IP/CAP or Postal code
       # - latitude: City latitude
@@ -84,7 +86,7 @@ module Goggles
       params do
         requires :name, type: String, desc: 'City name'
         requires :country_code, type: String, desc: 'Country code (2 chars)'
-        optional :country, type: String, desc: 'optional: Country name'
+        requires :country, type: String, desc: 'Country name'
         optional :area, type: String, desc: 'optional: Area or Region/Division name'
         optional :zip, type: String, desc: 'optional: ZIP/CAP or Postal code override'
         optional :latitude, type: String, desc: 'optional: City latitude'

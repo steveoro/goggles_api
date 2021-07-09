@@ -285,6 +285,19 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 _Same supported attributes as `PUT /edit`_
 
 
+* * *
+
+
++ Attributes
+    + name: 'Reggio' (string, required) - common name of the City
+    + country_code: 'IT' (string, required) - Country code as 2-char ISO code
+    + country: 'Italy' (string, required) - Country/Nation name
+    + area: 'Reggio nell Emilia' (string, optional) - extended Provice/Area name
+    + zip: '42100' (string, optional) - ZIP/CAP code as string
+    + latitude: '10.44' (string, optional) - geo latitude as text
+    + longitude: '34.54' (string, optional) - geo longitude as text
+
+
 + Request ok (application/json)
 
     #### Examples

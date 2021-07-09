@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.3.07** [Steve A.] POST new city now requires both country & country_code to avoid invalid data with default 'IT'
 - **0.3.06** [Steve A.] swimming_pool association in UserResult is no longer optional; minor refactorings
 - **0.3.01** [Steve A.] improved structure for import_queues & helpers; data migrations & misc fixes
 - **0.2.18** [Steve A.] upgraded gem set due to security fixes; added 'name' filtering parameter to /lookup endpoint; added endpoints, blueprints & specs for UserWorkshop, UserResult, UserLap, CategoryType, ImportQueue & APIDailyUsage
