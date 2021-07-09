@@ -192,7 +192,7 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
       end
 
       context 'when filtering by a specific country_code,' do
-        before(:each) { get(api_v3_cities_path, params: { country_code: 'IT' }, headers: fixture_headers) }
+        before(:each) { get(api_v3_cities_path, params: { country: 'Italy' }, headers: fixture_headers) }
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
@@ -251,7 +251,7 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
             expect(result_city_finder).to be_successful
             get(
               api_v3_cities_search_path,
-              params: { name: fixture_name, country_code: 'IT' },
+              params: { name: fixture_name, country: 'Italy' },
               headers: fixture_headers
             )
           end
@@ -268,7 +268,7 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
       context 'and with valid parameters but during Maintenance mode,' do
         before(:each) do
           GogglesDb::AppParameter.maintenance = true
-          get(api_v3_cities_search_path, params: { name: 'reggio', country_code: 'IT' }, headers: fixture_headers)
+          get(api_v3_cities_search_path, params: { name: 'reggio', country: 'Italy' }, headers: fixture_headers)
           GogglesDb::AppParameter.maintenance = false
         end
         it_behaves_like('a request refused during Maintenance (except for admins)')
@@ -276,12 +276,12 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_cities_search_path, params: { name: 'Roma', country_code: 'IT' }, headers: { 'Authorization' => 'you wish!' }) }
+      before(:each) { get(api_v3_cities_search_path, params: { name: 'Roma', country: 'Italy' }, headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) { get(api_v3_cities_search_path, params: { name: '?@No-City!', country_code: 'IT' }, headers: fixture_headers) }
+      before(:each) { get(api_v3_cities_search_path, params: { name: '?@No-City!', country: 'Italy' }, headers: fixture_headers) }
       it_behaves_like('an empty but successful JSON list response')
     end
   end
