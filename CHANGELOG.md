@@ -2,6 +2,8 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.3.20** [Steve A.] re-synch w/ DB structure 1.92.3 (data clean-up)
+- **0.3.11** [Steve A.] data fixes for laps; DB structure 1.92.0
 - **0.3.07** [Steve A.] POST new city now requires both country & country_code to avoid invalid data with default 'IT'
 - **0.3.06** [Steve A.] swimming_pool association in UserResult is no longer optional; minor refactorings
 - **0.3.01** [Steve A.] improved structure for import_queues & helpers; data migrations & misc fixes
