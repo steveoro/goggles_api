@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  7.02.18
+  #   - version:  7-0.3.25
   #   - author:   Steve A.
-  #   - build:    20210518
+  #   - build:    20210810
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -259,6 +259,39 @@ module Goggles
         ).page(1).per(100)
         # "100 should be enough for everybody" (Let's try not to have actual "infinite lists", please)
       }
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    # Returns the proper model instance holding the specified settings group.
+    # Yield an error in case of invalid parameters.
+    # (-> Admin-only <-)
+    #
+    # == Params
+    # - user      => current API user; must be an Admin.
+    # - group_key => valid Settings group name or 'prefs' for accessing User preferences.
+    #
+    def retrieve_settings_row(user, group_key)
+      !GogglesDb::GrantChecker.admin?(user) &&
+        error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.invalid_user_grants'))
+
+      !(GogglesDb::AppParameter::SETTINGS_GROUPS + [:prefs]).include?(group_key.to_sym) &&
+        error!(I18n.t('api.message.invalid_setting_group_key'), 404)
+
+      return GogglesDb::User.includes(:setting_objects).find(user.id) if group_key.to_sym == :prefs
+
+      GogglesDb::AppParameter.config
+    end
+
+    # Setter for the specified settings group, key pair.
+    #
+    # == Params
+    # - ussettings_group => Settings group
+    # - key => key inside the group that has to be updated
+    # - value => new value for the key
+    #
+    def settings_group_value_setter(settings_group, key, value)
+      settings_group.send("#{key}=", value)
     end
   end
 end

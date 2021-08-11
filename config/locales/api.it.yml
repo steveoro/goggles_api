@@ -10,6 +10,7 @@ it:
       invalid_credentials: 'Credenziali Utente non valide'
       invalid_user_grants: 'Permessi Utente non validi'
       unconfirmed_email: 'Email Utente non ancora confermata'
+      invalid_setting_group_key: 'Invalid setting group key'
       status:
         ok: 'OK: in esecuzione'
         maintenance: 'Manutenzione Server'

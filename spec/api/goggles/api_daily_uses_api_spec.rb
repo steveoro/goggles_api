@@ -257,4 +257,83 @@ RSpec.describe Goggles::APIDailyUsesAPI, type: :request do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  describe 'DELETE /api/v3/api_v3_api_daily_uses' do
+    let(:min_row_count) { 5 }
+    let(:fixture_day) { Time.zone.today - 1.month }
+    let(:deletable_rows) { FactoryBot.create_list(:api_daily_use, min_row_count, day: fixture_day - 1.day, count: (rand * 20).to_i) }
+    before(:each) { expect(deletable_rows).to all be_a(GogglesDb::APIDailyUse).and be_valid }
+
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before(:each) do
+          delete(api_v3_api_daily_uses_path, params: { day: fixture_day }, headers: admin_headers)
+        end
+
+        it_behaves_like('a successful request that has positive usage stats')
+        it 'returns the number of deleted rows' do
+          row_count = response.body.to_i
+          # There may be a limited number of pre-existing seeds for this one, so we can't be sure of the exact number:
+          expect(row_count).to be >= min_row_count
+        end
+        it 'deletes all rows older than the specified date' do
+          expect(GogglesDb::APIDailyUse.where('day < ?', fixture_day).exists?).to be false
+        end
+      end
+
+      context 'with an account having just CRUD grants,' do
+        before(:each) { delete(api_v3_api_daily_uses_path, params: { day: fixture_day }, headers: crud_headers) }
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+      context 'with an account not having any grants,' do
+        before(:each) { delete(api_v3_api_daily_uses_path, params: { day: fixture_day }, headers: fixture_headers) }
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
+
+    context 'when using valid parameters but during Maintenance mode,' do
+      context 'with an account having ADMIN grants,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          delete(api_v3_api_daily_uses_path, params: { day: fixture_day }, headers: admin_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a successful request that has positive usage stats')
+        it 'returns the number of deleted rows' do
+          row_count = response.body.to_i
+          expect(row_count).to be >= min_row_count
+        end
+        it 'deletes all rows older than the specified date' do
+          expect(GogglesDb::APIDailyUse.where('day < ?', fixture_day).exists?).to be false
+        end
+      end
+      context 'with an account having lesser grants,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          delete(api_v3_api_daily_uses_path, params: { day: fixture_day }, headers: crud_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a request refused during Maintenance (except for admins)')
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before(:each) { delete(api_v3_api_daily_uses_path, params: { day: fixture_day }, headers: { 'Authorization' => 'you wish!' }) }
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+
+    context 'when requesting an invalid date,' do
+      before(:each) { delete(api_v3_api_daily_uses_path, params: { day: 0 }, headers: admin_headers) }
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+      it 'returns the error response in the body' do
+        msg = JSON.parse(response.body)
+        expect(msg).to have_key('error')
+        expect(msg['error']).to eq('day is invalid')
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

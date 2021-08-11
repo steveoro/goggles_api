@@ -38,6 +38,7 @@ Metrics/BlockLength:
   IgnoredMethods: ['describe', 'context', 'define']
   Exclude:
     - 'app/api/goggles/*_api.rb'
+    - 'spec/api/goggles/*_api_spec.rb'
 
 Metrics/ClassLength:
   Max: 120

@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
+# = Goggles API v3
+#
+#   - version:  7-0.3.25
+#   - author:   Steve A.
+#   - build:    20210810
+#
 module Goggles
-  # = Goggles API v3: APIDailyUse API Grape controller
+  # = APIDailyUses API Grape controller
   #
-  #   - version:  7.02.18
-  #   - author:   Steve A.
-  #   - build:    20210519
+  # Provides access & management to internal usage stats
   #
   class APIDailyUsesAPI < Grape::API
     helpers APIHelpers
@@ -65,7 +69,7 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a APIDailyUse'
+      desc 'Deletes a single APIDailyUse row'
       params do
         requires :id, type: Integer, desc: 'APIDailyUse ID'
       end
@@ -113,6 +117,27 @@ module Goggles
             .where(filtering_hash_for(params, %w[day]))
             .where(filtering_like_for(params, %w[route]))
         )
+      end
+
+      # DELETE /api/:version/api_daily_uses
+      #
+      # Allows to delete several rows older than a specified given date.
+      # Requires Admin grants for the requesting user.
+      #
+      # == Returns:
+      # the number of deleted rows when successful; a +nil+ result (empty body) when not found.
+      #
+      desc 'Deletes several rows older than a specified given date'
+      params do
+        requires :day, type: Date, desc: 'date (day) limit: any row older than (<) this specified day will be erased forever'
+      end
+      delete do
+        reject_unless_authorized_admin(check_jwt_session)
+
+        return unless GogglesDb::APIDailyUse.where('day < ?', params['day']).exists?
+
+        # We don't care about #destroy callbacks here:
+        GogglesDb::APIDailyUse.where('day < ?', params['day']).delete_all
       end
     end
   end

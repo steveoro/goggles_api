@@ -10,6 +10,7 @@ en:
       invalid_credentials: 'Invalid User credentials'
       invalid_user_grants: 'Invalid User grants'
       unconfirmed_email: 'Unconfirmed User email'
+      invalid_setting_group_key: 'Invalid setting group key'
       status:
         ok: 'OK: reachable and running'
         maintenance: 'Maintenance mode is ON'
