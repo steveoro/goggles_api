@@ -171,7 +171,7 @@ RSpec.describe Goggles::SettingsAPI, type: :request do
       before(:each) { put(api_v3_setting_path(group_key: group_key), params: params, headers: { 'Authorization' => 'you wish!' }) }
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
-    context 'when requesting a non-existing ID,' do
+    context 'when requesting a non-existing group key,' do
       before(:each) { put(api_v3_setting_path(group_key: 'NON-existing'), params: params, headers: admin_headers) }
       it 'is NOT successful' do
         expect(response).not_to be_successful
@@ -186,53 +186,107 @@ RSpec.describe Goggles::SettingsAPI, type: :request do
   #-- -------------------------------------------------------------------------
   #++
 
-  # describe 'DELETE /api/v3/setting/:id' do
-  #   let(:deletable_row) { FactoryBot.create(:setting) }
-  #   before(:each) { expect(deletable_row).to be_a(GogglesDb::APIDailyUse).and be_valid }
+  describe 'DELETE /api/v3/setting/:id' do
+    let(:expected_changes) do
+      [ # group_key => { key: key name }
+        { framework_emails: { key: 'contact' } },
+        { framework_urls: { key: 'chrono' } },
+        { social_urls: { key: 'linkedin' } },
+        { prefs: { key: 'hide_search_help' } }
+      ].sample
+    end
+    let(:group_key) { expected_changes.keys.first }
+    let(:key) { expected_changes.values.first[:key] }
+    before(:each) do
+      expect(expected_changes).to be_an(Hash).and be_present
+    end
 
-  #   context 'when using valid parameters,' do
-  #     context 'with an account having ADMIN grants,' do
-  #       before(:each) { delete(api_v3_setting_path(id: deletable_row.id), headers: admin_headers) }
-  #       it_behaves_like('a successful JSON DELETE response')
-  #     end
-  #     context 'with an account having just CRUD grants,' do
-  #       before(:each) { delete(api_v3_setting_path(id: deletable_row.id), headers: crud_headers) }
-  #       it_behaves_like 'a failed auth attempt due to unauthorized credentials'
-  #     end
-  #     context 'with an account not having any grants,' do
-  #       before(:each) { delete(api_v3_setting_path(id: deletable_row.id), headers: fixture_headers) }
-  #       it_behaves_like 'a failed auth attempt due to unauthorized credentials'
-  #     end
-  #   end
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before(:each) do
+          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: admin_headers)
+        end
+        it_behaves_like('a successful request that has positive usage stats')
+        it 'returns true' do
+          expect(response.body).to eq('true')
+        end
+        it 'clears the specified setting' do
+          cfg_row = if group_key == :prefs
+                      GogglesDb::User.includes(:setting_objects).find(admin_user.id)
+                    else
+                      GogglesDb::AppParameter.config
+                    end
+          expect(cfg_row.settings(group_key).send(key)).to be nil
+        end
+      end
+      context 'with an account having just CRUD grants,' do
+        before(:each) do
+          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: crud_headers)
+        end
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+      context 'with an account not having any grants,' do
+        before(:each) do
+          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: fixture_headers)
+        end
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
 
-  #   context 'when using valid parameters but during Maintenance mode,' do
-  #     context 'with an account having ADMIN grants,' do
-  #       before(:each) do
-  #         GogglesDb::AppParameter.maintenance = true
-  #         delete(api_v3_setting_path(id: deletable_row.id), headers: admin_headers)
-  #         GogglesDb::AppParameter.maintenance = false
-  #       end
-  #       it_behaves_like('a successful JSON DELETE response')
-  #     end
-  #     context 'with an account having lesser grants,' do
-  #       before(:each) do
-  #         GogglesDb::AppParameter.maintenance = true
-  #         delete(api_v3_setting_path(id: deletable_row.id), headers: crud_headers)
-  #         GogglesDb::AppParameter.maintenance = false
-  #       end
-  #       it_behaves_like('a request refused during Maintenance (except for admins)')
-  #     end
-  #   end
+    context 'when using valid parameters but during Maintenance mode,' do
+      context 'with an account having ADMIN grants,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: admin_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a successful request that has positive usage stats')
+        it 'returns true' do
+          expect(response.body).to eq('true')
+        end
+        it 'clears the specified setting' do
+          cfg_row = if group_key == :prefs
+                      GogglesDb::User.includes(:setting_objects).find(admin_user.id)
+                    else
+                      GogglesDb::AppParameter.config
+                    end
+          expect(cfg_row.settings(group_key).send(key)).to be nil
+        end
+      end
+      context 'with an account having lesser grants,' do
+        before(:each) do
+          GogglesDb::AppParameter.maintenance = true
+          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: crud_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+        it_behaves_like('a request refused during Maintenance (except for admins)')
+      end
+    end
 
-  #   context 'when using an invalid JWT,' do
-  #     before(:each) { delete(api_v3_setting_path(group_key: group_key), headers: { 'Authorization' => 'you wish!' }) }
-  #     it_behaves_like('a failed auth attempt due to invalid JWT')
-  #   end
-  #   context 'when requesting a non-existing ID,' do
-  #     before(:each) { delete(api_v3_setting_path(id: -1), headers: admin_headers) }
-  #     it_behaves_like('a successful response with an empty body')
-  #   end
-  # end
+    context 'when using an invalid JWT,' do
+      before(:each) do
+        delete(
+          api_v3_setting_path(group_key: group_key),
+          params: { key: key },
+          headers: { 'Authorization' => 'you wish!' }
+        )
+      end
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+    context 'when requesting a non-existing group key,' do
+      before(:each) do
+        delete(api_v3_setting_path(group_key: 'NON-existing'), params: { key: 'dummy' }, headers: admin_headers)
+      end
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+      it 'responds with the maintenance error message' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('error')
+        expect(result['error']).to eq(I18n.t('api.message.invalid_setting_group_key'))
+      end
+    end
+  end
   #-- -------------------------------------------------------------------------
   #++
 end
