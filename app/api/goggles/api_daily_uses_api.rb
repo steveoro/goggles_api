@@ -33,7 +33,7 @@ module Goggles
         get do
           reject_unless_authorized_admin(check_jwt_session)
 
-          GogglesDb::APIDailyUse.find_by_id(params['id'])
+          GogglesDb::APIDailyUse.find_by(id: params['id'])
         end
       end
 
@@ -56,7 +56,7 @@ module Goggles
         put do
           reject_unless_authorized_admin(check_jwt_session)
 
-          api_daily_use = GogglesDb::APIDailyUse.find_by_id(params['id'])
+          api_daily_use = GogglesDb::APIDailyUse.find_by(id: params['id'])
           api_daily_use&.update!(declared(params, include_missing: false))
         end
       end
@@ -134,7 +134,7 @@ module Goggles
       delete do
         reject_unless_authorized_admin(check_jwt_session)
 
-        return unless GogglesDb::APIDailyUse.where('day < ?', params['day']).exists?
+        return unless GogglesDb::APIDailyUse.exists?(['day < ?', params['day']])
 
         # We don't care about #destroy callbacks here:
         GogglesDb::APIDailyUse.where('day < ?', params['day']).delete_all

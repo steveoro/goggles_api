@@ -28,7 +28,7 @@ module Goggles
         get do
           check_jwt_session
 
-          GogglesDb::MeetingReservation.find_by_id(params['id'])
+          GogglesDb::MeetingReservation.find_by(id: params['id'])
         end
       end
 
@@ -71,7 +71,7 @@ module Goggles
 
           # Update parent reservation:
           parent_updates = params.reject { |key, _v| %w[events relays].include?(key) }
-          meeting_reservation = GogglesDb::MeetingReservation.find_by_id(params['id'])
+          meeting_reservation = GogglesDb::MeetingReservation.find_by(id: params['id'])
           meeting_reservation&.update!(user_id: api_user.id) # set latests changes' user ID
           meeting_reservation&.update!(declared(parent_updates, include_missing: false))
         end
@@ -101,8 +101,8 @@ module Goggles
         reject_unless_authorized_for_crud(api_user, 'MeetingReservation')
 
         cmd = GogglesDb::CmdCreateReservation.call(
-          GogglesDb::Badge.find_by_id(params['badge_id']),
-          GogglesDb::Meeting.find_by_id(params['meeting_id']),
+          GogglesDb::Badge.find_by(id: params['badge_id']),
+          GogglesDb::Meeting.find_by(id: params['meeting_id']),
           api_user
         )
         error!(I18n.t('api.message.creation_failure'), 422, 'X-Error-Detail' => cmd.errors[:msg]) unless cmd.success?

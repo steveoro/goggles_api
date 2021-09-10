@@ -4,6 +4,7 @@ shared_examples_for 'a failed auth attempt due to invalid JWT' do
   it 'is NOT successful' do
     expect(response).not_to be_successful
   end
+
   it 'responds with a generic error message and its details in the header' do
     result = JSON.parse(response.body)
     expect(result).to have_key('error')
@@ -17,6 +18,7 @@ shared_examples_for 'a failed auth attempt due to unauthorized credentials' do
   it 'is NOT successful' do
     expect(response).not_to be_successful
   end
+
   it 'responds with a generic error message and its details in the header' do
     result = JSON.parse(response.body)
     expect(result).to have_key('error')
@@ -32,6 +34,7 @@ shared_examples_for 'a request refused during Maintenance (except for admins)' d
   it 'is NOT successful' do
     expect(response).not_to be_successful
   end
+
   it 'responds with the maintenance error message' do
     result = JSON.parse(response.body)
     expect(result).to have_key('error')
@@ -45,6 +48,7 @@ shared_examples_for 'a successful request that has positive usage stats' do
   it 'is successful' do
     expect(response).to be_successful
   end
+
   it 'has a positive usage statistics' do
     route_key = "#{response.request.env['REQUEST_METHOD']} #{response.request.path.gsub(%r{/-?\d+}, '/:id')}"
     usage_row = GogglesDb::APIDailyUse.find_by(route: route_key, day: Date.today)
@@ -91,6 +95,7 @@ shared_examples_for 'a successful JSON PUT response' do
   it 'returns true' do
     expect(response.body).to eq('true')
   end
+
   it 'updates the row' do
     updated_row = fixture_row.reload
     expected_changes.each do |key, value|
@@ -108,6 +113,7 @@ shared_examples_for 'a successful JSON DELETE response' do
   it 'returns true' do
     expect(response.body).to eq('true')
   end
+
   it 'deletes the specified row' do
     expect { deletable_row.reload }.to raise_error(ActiveRecord::RecordNotFound)
   end

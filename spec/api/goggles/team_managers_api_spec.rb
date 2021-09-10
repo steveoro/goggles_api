@@ -13,7 +13,7 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
-  before(:each) do
+  before do
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
   end
@@ -25,7 +25,8 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
     let(:admin_user) { FactoryBot.create(:user) }
     let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
     let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
-    before(:each) do
+
+    before do
       expect(new_manager).to be_a(GogglesDb::User).and be_valid
       expect(new_affiliation).to be_a(GogglesDb::TeamAffiliation).and be_valid
       expect(built_row).to be_a(GogglesDb::ManagedAffiliation).and be_valid
@@ -36,7 +37,8 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { post(api_v3_team_manager_path, params: built_row.attributes, headers: admin_headers) }
+        before { post(api_v3_team_manager_path, params: built_row.attributes, headers: admin_headers) }
+
         it_behaves_like('a successful JSON POST response')
       end
 
@@ -44,32 +46,37 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
         let(:crud_user) { FactoryBot.create(:user) }
         let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
         let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
-        before(:each) do
+
+        before do
           expect(crud_user).to be_a(GogglesDb::User).and be_valid
           expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
           expect(crud_headers).to be_an(Hash).and have_key('Authorization')
           post(api_v3_team_manager_path, params: built_row.attributes, headers: crud_headers)
         end
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
 
       context 'with an account not having any grants,' do
-        before(:each) { post(api_v3_team_manager_path, params: built_row.attributes, headers: fixture_headers) }
+        before { post(api_v3_team_manager_path, params: built_row.attributes, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { post(api_v3_team_manager_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+      before { post(api_v3_team_manager_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when using missing or invalid parameters,' do
-      before(:each) { post(api_v3_team_manager_path, params: { user_id: built_row.user_id, team_affiliation_id: -1 }, headers: admin_headers) }
+      before { post(api_v3_team_manager_path, params: { user_id: built_row.user_id, team_affiliation_id: -1 }, headers: admin_headers) }
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a generic error message and its details in the header' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')

@@ -28,7 +28,7 @@ module Goggles
         get do
           check_jwt_session
 
-          GogglesDb::UserWorkshop.find_by_id(params['id'])
+          GogglesDb::UserWorkshop.find_by(id: params['id'])
         end
       end
 
@@ -69,7 +69,7 @@ module Goggles
           api_user = check_jwt_session
           reject_unless_authorized_for_crud(api_user, 'UserWorkshop')
 
-          result = GogglesDb::UserWorkshop.find_by_id(params['id'])
+          result = GogglesDb::UserWorkshop.find_by(id: params['id'])
           # Reject altering admin-only attributes unless user has admin grants:
           params.delete_if { |key, _value| %w[read_only season_id].include?(key) } unless GogglesDb::GrantChecker.admin?(api_user)
           # Don't do anything if we're left with no editing parameters:

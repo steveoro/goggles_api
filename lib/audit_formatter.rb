@@ -48,14 +48,14 @@ class AuditFormatter
 
   # Specific output for the request params
   def format_params(data)
-    return unless data[:params].present?
+    return if data[:params].blank?
 
     "    Params:\r\n#{data[:params].keys.sort.map { |key| "    - #{key}: #{data[:params][key]}" }.join("\r\n")}\r\n"
   end
 
   # Specific output for the request headers
   def format_headers(data)
-    return unless data[:headers].present?
+    return if data[:headers].blank?
 
     "    Headers:\r\n#{data[:headers].keys.sort.map { |key| "    - #{key} = #{data[:headers][key]}" }.join("\r\n")}\r\n"
   end

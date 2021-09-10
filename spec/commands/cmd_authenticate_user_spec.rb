@@ -14,18 +14,22 @@ RSpec.describe CmdAuthenticateUser, type: :command do
     let(:fixture_pwd)   { fixture_user.password }
 
     describe '#call' do
-      subject { CmdAuthenticateUser.new(fixture_email, fixture_pwd).call }
+      subject { described_class.new(fixture_email, fixture_pwd).call }
+
       let(:result_jwt) { subject.result }
 
       it 'returns itself' do
-        expect(subject).to be_a(CmdAuthenticateUser)
+        expect(subject).to be_a(described_class)
       end
+
       it 'is successful' do
         expect(subject).to be_successful
       end
+
       it 'has a blank #errors list' do
         expect(subject.errors).to be_blank
       end
+
       it 'has a valid JWT string #result' do
         expect(result_jwt).to be_a(String).and be_present
         # Back-to-back test with JWT decoding:
@@ -44,17 +48,20 @@ RSpec.describe CmdAuthenticateUser, type: :command do
       let(:fixture_pwd)   { wrong_param == :password ? '' : fixture_user.password }
 
       describe '#call' do
-        subject { CmdAuthenticateUser.new(fixture_email, fixture_pwd).call }
+        subject { described_class.new(fixture_email, fixture_pwd).call }
 
         it 'returns itself' do
-          expect(subject).to be_a(CmdAuthenticateUser)
+          expect(subject).to be_a(described_class)
         end
+
         it 'fails' do
           expect(subject).to be_a_failure
         end
+
         it 'has a non-empty #errors list' do
           expect(subject.errors).to be_present
         end
+
         it 'has a nil #result' do
           expect(subject.result).to be nil
         end

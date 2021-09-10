@@ -59,7 +59,7 @@ module Goggles
     # Yields a parameter error if the specified +entity_id+ is not found among +entity_class+ rows.
     # Returns the entity row when found.
     def reject_unless_found(entity_id, entity_class)
-      result_row = entity_class.find_by_id(entity_id)
+      result_row = entity_class.find_by(id: entity_id)
       error!(I18n.t('api.message.invalid_parameter'), 401, 'X-Error-Detail' => "#{entity_class}, ID: #{entity_id}") unless result_row
       result_row
     end
@@ -115,7 +115,7 @@ module Goggles
     # +sql_condition+ must be an SQL string based on a single parameter using'?' as
     # placeholders for any value. Multiple occurrences of the same value are supported.
     def filtering_for_single_parameter(sql_condition, params, field_name)
-      return nil unless params[field_name].present?
+      return nil if params[field_name].blank?
 
       ActiveRecord::Base.sanitize_sql_array(
         [sql_condition, [params[field_name]] * sql_condition.count('?')].flatten
@@ -127,7 +127,7 @@ module Goggles
     # +sql_condition+ must be an SQL string based on a single parameter using'?' as
     # placeholders for any value. Multiple occurrences of the same value are supported.
     def filtering_like_for_single_parameter(sql_condition, params, field_name)
-      return nil unless params[field_name].present?
+      return nil if params[field_name].blank?
 
       ActiveRecord::Base.sanitize_sql_array(
         [sql_condition, ["%#{params[field_name]}%"] * sql_condition.count('?')].flatten
@@ -216,7 +216,7 @@ module Goggles
     # ]
     def update_subentity_details(params, detail_key, detail_class)
       params.select { |key, _v| key == detail_key }.fetch(detail_key, []).each do |detail_values|
-        detail_row = detail_class.find_by_id(detail_values['id'])
+        detail_row = detail_class.find_by(id: detail_values['id'])
         detail_row&.update!(detail_values.reject { |key, _v| key == 'id' })
       end
     end
@@ -275,7 +275,7 @@ module Goggles
       !GogglesDb::GrantChecker.admin?(user) &&
         error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.invalid_user_grants'))
 
-      !(GogglesDb::AppParameter::SETTINGS_GROUPS + [:prefs]).include?(group_key.to_sym) &&
+      (GogglesDb::AppParameter::SETTINGS_GROUPS + [:prefs]).exclude?(group_key.to_sym) &&
         error!(I18n.t('api.message.invalid_setting_group_key'), 404)
 
       return GogglesDb::User.includes(:setting_objects).find(user.id) if group_key.to_sym == :prefs

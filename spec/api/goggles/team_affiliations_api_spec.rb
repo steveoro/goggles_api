@@ -8,13 +8,25 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
-  let(:api_user)   { FactoryBot.create(:user) }
-  let(:jwt_token)  { jwt_for_api_session(api_user) }
+  let(:api_user) { FactoryBot.create(:user) }
+  let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+  let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
+  #-- -------------------------------------------------------------------------
+  #++
+
+  let(:crud_user) { FactoryBot.create(:user) }
+  #-- -------------------------------------------------------------------------
+  #++
+
+  let(:crud_user) { FactoryBot.create(:user) }
+  let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
+  let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+  let(:jwt_token) { jwt_for_api_session(api_user) }
   let(:fixture_row) { FactoryBot.create(:affiliation_with_badges) }
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
-  before(:each) do
+  before do
     expect(fixture_row).to be_a(GogglesDb::TeamAffiliation).and be_valid
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
@@ -22,35 +34,33 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
 
   describe 'GET /api/v3/team_affiliation/:id' do
     context 'when using valid parameters,' do
-      before(:each) { get(api_v3_team_affiliation_path(id: fixture_row.id), headers: fixture_headers) }
+      before { get(api_v3_team_affiliation_path(id: fixture_row.id), headers: fixture_headers) }
+
       it_behaves_like('a successful JSON row response')
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
-      before(:each) do
+      before do
         GogglesDb::AppParameter.maintenance = true
         get(api_v3_team_affiliation_path(id: fixture_row.id), headers: fixture_headers)
         GogglesDb::AppParameter.maintenance = false
       end
+
       it_behaves_like('a request refused during Maintenance (except for admins)')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get api_v3_team_affiliation_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
+      before { get api_v3_team_affiliation_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { get(api_v3_team_affiliation_path(id: -1), headers: fixture_headers) }
+      before { get(api_v3_team_affiliation_path(id: -1), headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  let(:crud_user) { FactoryBot.create(:user) }
-  let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
-  let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
 
   describe 'PUT /api/v3/team_affiliation/:id' do
     let(:new_team)   { FactoryBot.create(:team) }
@@ -66,7 +76,8 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
         { compute_gogglecup: [true, false].sample }
       ].sample
     end
-    before(:each) do
+
+    before do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
@@ -79,32 +90,37 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
 
     context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
-        before(:each) { put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        before { put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+
         it_behaves_like('a successful JSON PUT response')
       end
 
       context 'and CRUD grants but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        before { put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+      before { put(api_v3_team_affiliation_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { put(api_v3_team_affiliation_path(id: -1), params: expected_changes, headers: crud_headers) }
+      before { put(api_v3_team_affiliation_path(id: -1), params: expected_changes, headers: crud_headers) }
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -118,7 +134,8 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
     let(:admin_user) { FactoryBot.create(:user) }
     let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
     let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
-    before(:each) do
+
+    before do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
@@ -132,32 +149,37 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: admin_headers) }
+        before { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: admin_headers) }
+
         it_behaves_like('a successful JSON POST response')
       end
 
       context 'with an account having just CRUD grants,' do
-        before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: crud_headers) }
+        before { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: crud_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
 
       context 'with an account not having any grants,' do
-        before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: fixture_headers) }
+        before { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+      before { post(api_v3_team_affiliation_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when using missing or invalid parameters,' do
-      before(:each) { post(api_v3_team_affiliation_path, params: { team_id: built_row.team_id, season_id: -1 }, headers: admin_headers) }
+      before { post(api_v3_team_affiliation_path, params: { team_id: built_row.team_id, season_id: -1 }, headers: admin_headers) }
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a generic error message and its details in the header' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')
@@ -177,7 +199,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
       let(:default_per_page)  { 25 }
 
       # Make sure the Domain contains the expected seeds:
-      before(:each) do
+      before do
         expect(fixture_season_id).to be_positive
         expect(fixture_team).to be_a(GogglesDb::Team).and be_valid
         expect(GogglesDb::TeamAffiliation.where(season_id: fixture_season_id).count).to be_positive
@@ -185,21 +207,23 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
       end
 
       context 'without any filters,' do
-        before(:each) { get(api_v3_team_affiliations_path, headers: fixture_headers) }
+        before { get(api_v3_team_affiliations_path, headers: fixture_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_team_affiliations_path, headers: fixture_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'when filtering by a specific season_id,' do
-        before(:each) { get(api_v3_team_affiliations_path, params: { season_id: fixture_season_id }, headers: fixture_headers) }
+        before { get(api_v3_team_affiliations_path, params: { season_id: fixture_season_id }, headers: fixture_headers) }
 
         it_behaves_like('a successful request that has positive usage stats')
 
@@ -213,14 +237,16 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
       end
 
       context 'when filtering by a specific team_id,' do
-        before(:each) { get(api_v3_team_affiliations_path, params: { team_id: fixture_team.id }, headers: fixture_headers) }
+        before { get(api_v3_team_affiliations_path, params: { team_id: fixture_team.id }, headers: fixture_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a partial name,' do
         let(:fixture_name) { 'Ferrari' } # (This will surely have more than 'default_per_page' results)
         let(:expected_results) { GogglesDb::TeamAffiliation.where('name LIKE ?', "%#{fixture_name}%") }
-        before(:each) { get(api_v3_team_affiliations_path, params: { name: fixture_name }, headers: fixture_headers) }
+
+        before { get(api_v3_team_affiliations_path, params: { name: fixture_name }, headers: fixture_headers) }
 
         it_behaves_like('successful response with pagination links & values in headers')
 
@@ -236,7 +262,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
 
       # Uses random fixtures, to have a quick 1-row result (no pagination, always):
       context 'when filtering by a specific single random fixture,' do
-        before(:each) do
+        before do
           get(
             api_v3_team_affiliations_path,
             params: {
@@ -257,12 +283,14 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_team_affiliations_path, headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_team_affiliations_path, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) { get(api_v3_team_affiliations_path, params: { season_id: -1 }, headers: fixture_headers) }
+      before { get(api_v3_team_affiliations_path, params: { season_id: -1 }, headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON list response')
     end
   end

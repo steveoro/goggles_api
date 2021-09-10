@@ -28,7 +28,7 @@ module Goggles
         get do
           check_jwt_session
 
-          GogglesDb::CategoryType.find_by_id(params['id'])
+          GogglesDb::CategoryType.find_by(id: params['id'])
         end
       end
 
@@ -58,7 +58,7 @@ module Goggles
         put do
           reject_unless_authorized_admin(check_jwt_session)
 
-          category_type = GogglesDb::CategoryType.find_by_id(params['id'])
+          category_type = GogglesDb::CategoryType.find_by(id: params['id'])
           category_type&.update!(declared(params, include_missing: false))
         end
       end

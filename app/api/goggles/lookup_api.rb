@@ -74,7 +74,7 @@ module Goggles
           return [] if entity.nil? || !entity&.new.is_a?(Localizable)
 
           entity_rows = entity.all.map { |row| row.lookup_attributes(params['locale'] || 'it') }
-          return entity_rows unless params['name'].present?
+          return entity_rows if params['name'].blank?
 
           # Filter out results if a query parameter was specified:
           entity_rows.select { |row| row['long_label'] =~ Regexp.new(params['name'], Regexp::IGNORECASE) }

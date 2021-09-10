@@ -31,7 +31,7 @@ module Goggles
           api_user = check_jwt_session
           reject_unless_authorized_for_crud_or_has_id(api_user, 'User', params['id'].to_i)
 
-          GogglesDb::User.find_by_id(params['id'])
+          GogglesDb::User.find_by(id: params['id'])
         end
       end
 
@@ -57,8 +57,32 @@ module Goggles
           api_user = check_jwt_session
           reject_unless_authorized_for_crud_or_has_id(api_user, 'User', params['id'].to_i)
 
-          user = GogglesDb::User.find_by_id(params['id'])
+          user = GogglesDb::User.find_by(id: params['id'])
           user&.update!(declared(params, include_missing: false))
+        end
+      end
+
+      # DELETE /api/:version/user/:id
+      #
+      # Allows to delete a specific row given its ID.
+      # Requires Admin grants for the requesting user.
+      #
+      # == Returns:
+      # 'true' when successful; a +nil+ result (empty body) when not found.
+      #
+      desc 'Delete a User'
+      params do
+        requires :id, type: Integer, desc: 'User ID'
+      end
+      route_param :id do
+        delete do
+          reject_unless_authorized_admin(check_jwt_session)
+
+          return unless GogglesDb::User.exists?(params['id'])
+
+          error!(I18n.t('api.message.invalid_parameter'), 401, 'X-Error-Detail' => 'The first 4 users are required.') if params['id'].to_i < 5
+
+          GogglesDb::User.destroy(params['id']).destroyed?
         end
       end
     end

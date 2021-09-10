@@ -23,7 +23,7 @@ RSpec.describe Goggles::UserLapsAPI, type: :request do
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
-  before(:each) do
+  before do
     expect(fixture_row).to be_a(GogglesDb::UserLap).and be_valid
     expect(admin_user).to be_a(GogglesDb::User).and be_valid
     expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
@@ -38,36 +38,42 @@ RSpec.describe Goggles::UserLapsAPI, type: :request do
 
   describe 'GET /api/v3/user_lap/:id' do
     context 'when using valid parameters,' do
-      before(:each) { get(api_v3_user_lap_path(id: fixture_row.id), headers: fixture_headers) }
+      before { get(api_v3_user_lap_path(id: fixture_row.id), headers: fixture_headers) }
+
       it_behaves_like('a successful JSON row response')
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_user_lap_path(id: fixture_row.id), headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON row response')
       end
+
       context 'with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_user_lap_path(id: fixture_row.id), headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get api_v3_user_lap_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
+      before { get api_v3_user_lap_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { get(api_v3_user_lap_path(id: -1), headers: fixture_headers) }
+      before { get(api_v3_user_lap_path(id: -1), headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -90,51 +96,55 @@ RSpec.describe Goggles::UserLapsAPI, type: :request do
         { position: (rand * 10).to_i, reaction_time: (rand + 0.07).round(2) }
       ].sample
     end
-    before(:each) do
+
+    before do
       expect(built_row).to be_a(GogglesDb::UserLap).and be_valid
       expect(expected_changes).to be_an(Hash).and be_present
     end
 
     context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
-        before(:each) { put(api_v3_user_lap_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        before { put(api_v3_user_lap_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+
         it_behaves_like('a successful JSON PUT response')
       end
+
       context 'with an account not having any grants,' do
-        before(:each) { put(api_v3_user_lap_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        before { put(api_v3_user_lap_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
 
       context 'and ADMIN grants during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_user_lap_path(id: fixture_row.id), params: expected_changes, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON PUT response')
       end
+
       context 'and lesser grants during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_user_lap_path(id: fixture_row.id), params: expected_changes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
-        it_behaves_like('a request refused during Maintenance (except for admins)')
-      end
 
-      context 'with an account not having the proper grants,' do
-        before(:each) { put(api_v3_user_lap_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
-        it_behaves_like('a failed auth attempt due to unauthorized credentials')
+        it_behaves_like('a request refused during Maintenance (except for admins)')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { put(api_v3_user_lap_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+      before { put(api_v3_user_lap_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { put(api_v3_user_lap_path(id: -1), params: expected_changes, headers: crud_headers) }
+      before { put(api_v3_user_lap_path(id: -1), params: expected_changes, headers: crud_headers) }
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -149,55 +159,64 @@ RSpec.describe Goggles::UserLapsAPI, type: :request do
         swimmer_id: GogglesDb::Swimmer.first(150).sample.id
       )
     end
-    before(:each) do
+
+    before do
       expect(built_row).to be_a(GogglesDb::UserLap).and be_valid
     end
 
     context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
-        before(:each) { post(api_v3_user_lap_path, params: built_row.attributes, headers: crud_headers) }
+        before { post(api_v3_user_lap_path, params: built_row.attributes, headers: crud_headers) }
+
         it_behaves_like('a successful JSON POST response')
       end
 
       context 'and ADMIN grants during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           post(api_v3_user_lap_path, params: built_row.attributes, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON POST response')
       end
+
       context 'and lesser grants during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           post(api_v3_user_lap_path, params: built_row.attributes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'with an account not having any grants,' do
-        before(:each) { post(api_v3_user_lap_path, params: built_row.attributes, headers: fixture_headers) }
+        before { post(api_v3_user_lap_path, params: built_row.attributes, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { post(api_v3_user_lap_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+      before { post(api_v3_user_lap_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when calling with missing parameters,' do
-      before(:each) do
+      before do
         post(
           api_v3_user_lap_path,
           params: built_row.attributes.reject { |key, _val| key == 'swimmer_id' },
           headers: crud_headers
         )
       end
+
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a specific error message' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')
@@ -211,43 +230,51 @@ RSpec.describe Goggles::UserLapsAPI, type: :request do
   describe 'DELETE /api/v3/user_lap/:id' do
     context 'when using valid parameters,' do
       let(:deletable_row) { FactoryBot.create(:user_lap) }
-      before(:each) { expect(deletable_row).to be_a(GogglesDb::UserLap).and be_valid }
+
+      before { expect(deletable_row).to be_a(GogglesDb::UserLap).and be_valid }
 
       context 'with an account having CRUD grants,' do
-        before(:each) { delete(api_v3_user_lap_path(id: deletable_row.id), headers: crud_headers) }
+        before { delete(api_v3_user_lap_path(id: deletable_row.id), headers: crud_headers) }
+
         it_behaves_like('a successful JSON DELETE response')
       end
 
       context 'and ADMIN grants during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           delete(api_v3_user_lap_path(id: deletable_row.id), headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON DELETE response')
       end
+
       context 'and lesser grants during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           delete(api_v3_user_lap_path(id: deletable_row.id), headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { delete(api_v3_user_lap_path(id: fixture_row.id), headers: fixture_headers) }
+        before { delete(api_v3_user_lap_path(id: fixture_row.id), headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { delete(api_v3_user_lap_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      before { delete(api_v3_user_lap_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { delete(api_v3_user_lap_path(id: -1), headers: crud_headers) }
+      before { delete(api_v3_user_lap_path(id: -1), headers: crud_headers) }
+
       it_behaves_like('a successful response with an empty body')
     end
   end
@@ -268,7 +295,8 @@ RSpec.describe Goggles::UserLapsAPI, type: :request do
 
     let(:default_per_page) { 25 }
     # Make sure the Domain contains the expected seeds:
-    before(:each) do
+
+    before do
       expect(GogglesDb::UserWorkshop.count).to be >= 10
       expect(GogglesDb::UserResult.count).to be >= 40
       expect(GogglesDb::UserLap.count).to be >= 80
@@ -276,24 +304,28 @@ RSpec.describe Goggles::UserLapsAPI, type: :request do
 
     context 'when using a valid authentication' do
       context 'without any filters,' do
-        before(:each) { get(api_v3_user_laps_path, headers: fixture_headers) }
+        before { get(api_v3_user_laps_path, headers: fixture_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'during Maintenance mode with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_user_laps_path, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
+
       context 'during Maintenance mode with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_user_laps_path, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
@@ -302,23 +334,27 @@ RSpec.describe Goggles::UserLapsAPI, type: :request do
           let(:filter_id) { GogglesDb::UserLap.all.limit(200).sample.send(filter_sym) }
           let(:expected_row_count) { GogglesDb::UserLap.where(filter_sym => filter_id).count }
           # Make sure the Domain contains the expected seeds:
-          before(:each) do
+
+          before do
             expect(filter_id).to be_positive
             expect(expected_row_count).to be_positive
             get(api_v3_user_laps_path, params: { filter_sym => filter_id }, headers: fixture_headers)
           end
+
           it_behaves_like('successful multiple row response either with OR without pagination links')
         end
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_user_laps_path, headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_user_laps_path, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) { get(api_v3_user_laps_path, params: { swimmer_id: -1 }, headers: fixture_headers) }
+      before { get(api_v3_user_laps_path, params: { swimmer_id: -1 }, headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON list response')
     end
   end

@@ -28,7 +28,7 @@ module Goggles
         get do
           check_jwt_session
 
-          GogglesDb::MeetingProgram.find_by_id(params['id'])
+          GogglesDb::MeetingProgram.find_by(id: params['id'])
         end
       end
     end

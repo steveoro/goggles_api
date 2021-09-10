@@ -57,10 +57,10 @@ module Goggles
 
         # Retrieve values:
         swimmer         = reject_unless_found(params['swimmer_id'], GogglesDb::Swimmer)
-        meeting         = GogglesDb::Meeting.find_by_id(params['meeting_id'])
+        meeting         = GogglesDb::Meeting.find_by(id: params['meeting_id'])
         event_type      = reject_unless_found(params['event_type_id'], GogglesDb::EventType)
         pool_type       = reject_unless_found(params['pool_type_id'], GogglesDb::PoolType)
-        entry_time_type = GogglesDb::EntryTimeType.find_by_id(params['entry_time_type_id'])
+        entry_time_type = GogglesDb::EntryTimeType.find_by(id: params['entry_time_type_id'])
 
         command = if entry_time_type
                     GogglesDb::CmdFindEntryTime.call(swimmer, meeting, event_type, pool_type, entry_time_type)

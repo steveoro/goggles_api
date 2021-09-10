@@ -28,7 +28,7 @@ module Goggles
         get do
           check_jwt_session
 
-          GogglesDb::Badge.find_by_id(params['id'])
+          GogglesDb::Badge.find_by(id: params['id'])
         end
       end
 
@@ -55,7 +55,7 @@ module Goggles
           api_user = check_jwt_session
           reject_unless_authorized_for_crud(api_user, 'Badge')
 
-          badge = GogglesDb::Badge.find_by_id(params['id'])
+          badge = GogglesDb::Badge.find_by(id: params['id'])
           badge&.update!(declared(params, include_missing: false))
         end
       end
@@ -106,6 +106,28 @@ module Goggles
         end
 
         { msg: I18n.t('api.message.generic_ok'), new: new_row }
+      end
+
+      # DELETE /api/:version/badge/:id
+      #
+      # Allows to delete a specific row given its ID.
+      # Requires Admin grants for the requesting user.
+      #
+      # == Returns:
+      # 'true' when successful; a +nil+ result (empty body) when not found.
+      #
+      desc 'Delete a Badge'
+      params do
+        requires :id, type: Integer, desc: 'Badge ID'
+      end
+      route_param :id do
+        delete do
+          reject_unless_authorized_admin(check_jwt_session)
+
+          return unless GogglesDb::Badge.exists?(params['id'])
+
+          GogglesDb::Badge.destroy(params['id']).destroyed?
+        end
       end
     end
 

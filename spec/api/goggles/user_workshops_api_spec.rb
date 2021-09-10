@@ -23,7 +23,7 @@ RSpec.describe Goggles::UserWorkshopsAPI, type: :request do
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
-  before(:each) do
+  before do
     expect(fixture_row).to be_a(GogglesDb::UserWorkshop).and be_valid
     expect(admin_user).to be_a(GogglesDb::User).and be_valid
     expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
@@ -38,26 +38,30 @@ RSpec.describe Goggles::UserWorkshopsAPI, type: :request do
 
   describe 'GET /api/v3/user_workshop/:id' do
     context 'when using valid parameters,' do
-      before(:each) { get(api_v3_user_workshop_path(id: fixture_row.id), headers: fixture_headers) }
+      before { get(api_v3_user_workshop_path(id: fixture_row.id), headers: fixture_headers) }
+
       it_behaves_like('a successful JSON row response')
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
-      before(:each) do
+      before do
         GogglesDb::AppParameter.maintenance = true
         get(api_v3_user_workshop_path(id: fixture_row.id), headers: fixture_headers)
         GogglesDb::AppParameter.maintenance = false
       end
+
       it_behaves_like('a request refused during Maintenance (except for admins)')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_user_workshop_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_user_workshop_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { get(api_v3_user_workshop_path(id: -1), headers: fixture_headers) }
+      before { get(api_v3_user_workshop_path(id: -1), headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -77,34 +81,35 @@ RSpec.describe Goggles::UserWorkshopsAPI, type: :request do
           { confirmed: [false, true].sample, pb_acquired: [false, true].sample, cancelled: [false, true].sample }
         ].sample
       end
-      before(:each) do
+
+      before do
         expect(fixture_code).to be_a(String).and be_present
         expect(expected_changes).to be_an(Hash)
       end
 
       context 'with an account having CRUD grants,' do
-        before(:each) { put(api_v3_user_workshop_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        before { put(api_v3_user_workshop_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+
         it_behaves_like('a successful JSON PUT response')
-      end
-      context 'with an account not having any grants,' do
-        before(:each) { put(api_v3_user_workshop_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
-        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
 
       context 'and ADMIN grants during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_user_workshop_path(id: fixture_row.id), params: expected_changes, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON PUT response')
       end
+
       context 'and lesser grants during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_user_workshop_path(id: fixture_row.id), params: expected_changes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
@@ -115,12 +120,14 @@ RSpec.describe Goggles::UserWorkshopsAPI, type: :request do
       ].each do |admin_changes|
         context "when editing the #{admin_changes.keys.first} attribute" do
           let(:fixture_row2) { FactoryBot.create(:user_workshop) }
-          before(:each) { expect(fixture_row2).to be_a(GogglesDb::UserWorkshop).and be_valid }
+
+          before { expect(fixture_row2).to be_a(GogglesDb::UserWorkshop).and be_valid }
 
           context 'with an account having ADMIN grants,' do
-            before(:each) do
+            before do
               put(api_v3_user_workshop_path(id: fixture_row2.id), params: admin_changes, headers: admin_headers)
             end
+
             it_behaves_like('a successful request that has positive usage stats')
             it 'updates the row and returns true' do
               expect(response.body).to eq('true')
@@ -130,24 +137,29 @@ RSpec.describe Goggles::UserWorkshopsAPI, type: :request do
           end
 
           context 'with an account having just CRUD grants,' do
-            before(:each) { put(api_v3_user_workshop_path(id: fixture_row2.id), params: admin_changes, headers: crud_headers) }
+            before { put(api_v3_user_workshop_path(id: fixture_row2.id), params: admin_changes, headers: crud_headers) }
+
             it_behaves_like('an empty but successful JSON response')
           end
         end
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { put(api_v3_user_workshop_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        before { put(api_v3_user_workshop_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { put(api_v3_user_workshop_path(id: fixture_row.id), params: { code: fixture_code }, headers: { 'Authorization' => 'you wish!' }) }
+      before { put(api_v3_user_workshop_path(id: fixture_row.id), params: { code: fixture_code }, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
+
     context 'when requesting a non-existing ID,' do
-      before(:each) { put(api_v3_user_workshop_path(id: -1), params: { code: fixture_code }, headers: crud_headers) }
+      before { put(api_v3_user_workshop_path(id: -1), params: { code: fixture_code }, headers: crud_headers) }
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -166,59 +178,72 @@ RSpec.describe Goggles::UserWorkshopsAPI, type: :request do
         timing_type_id: GogglesDb::TimingType::MANUAL_ID
       )
     end
-    before(:each) do
+
+    before do
       expect(built_row).to be_a(GogglesDb::UserWorkshop).and be_valid
     end
+
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { post(api_v3_user_workshop_path, params: built_row.attributes, headers: admin_headers) }
+        before { post(api_v3_user_workshop_path, params: built_row.attributes, headers: admin_headers) }
+
         it_behaves_like('a successful JSON POST response')
       end
+
       context 'with an account having just CRUD grants,' do
-        before(:each) { post(api_v3_user_workshop_path, params: built_row.attributes, headers: crud_headers) }
+        before { post(api_v3_user_workshop_path, params: built_row.attributes, headers: crud_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
+
       context 'with an account not having any grants,' do
-        before(:each) { post(api_v3_user_workshop_path, params: built_row.attributes, headers: fixture_headers) }
+        before { post(api_v3_user_workshop_path, params: built_row.attributes, headers: fixture_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           post(api_v3_user_workshop_path, params: built_row.attributes, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON POST response')
       end
+
       context 'with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           post(api_v3_user_workshop_path, params: built_row.attributes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { post(api_v3_user_workshop_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+      before { post(api_v3_user_workshop_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when using missing or invalid parameters,' do
-      before(:each) do
+      before do
         post(
           api_v3_user_workshop_path,
           params: built_row.attributes.merge(season_id: -1),
           headers: admin_headers
         )
       end
+
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a generic error message and its details in the header' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')
@@ -233,48 +258,60 @@ RSpec.describe Goggles::UserWorkshopsAPI, type: :request do
 
   describe 'DELETE /api/v3/user_workshop/:id' do
     let(:deletable_row) { FactoryBot.create(:user_workshop) }
-    before(:each) { expect(deletable_row).to be_a(GogglesDb::UserWorkshop).and be_valid }
+
+    before { expect(deletable_row).to be_a(GogglesDb::UserWorkshop).and be_valid }
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { delete(api_v3_user_workshop_path(id: deletable_row.id), headers: admin_headers) }
+        before { delete(api_v3_user_workshop_path(id: deletable_row.id), headers: admin_headers) }
+
         it_behaves_like('a successful JSON DELETE response')
       end
+
       context 'with an account having just CRUD grants,' do
-        before(:each) { delete(api_v3_user_workshop_path(id: deletable_row.id), headers: crud_headers) }
+        before { delete(api_v3_user_workshop_path(id: deletable_row.id), headers: crud_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
+
       context 'with an account not having any grants,' do
-        before(:each) { delete(api_v3_user_workshop_path(id: deletable_row.id), headers: fixture_headers) }
+        before { delete(api_v3_user_workshop_path(id: deletable_row.id), headers: fixture_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           delete(api_v3_user_workshop_path(id: deletable_row.id), headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON DELETE response')
       end
+
       context 'with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           delete(api_v3_user_workshop_path(id: deletable_row.id), headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { delete(api_v3_user_workshop_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      before { delete(api_v3_user_workshop_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
+
     context 'when requesting a non-existing ID,' do
-      before(:each) { delete(api_v3_user_workshop_path(id: -1), headers: admin_headers) }
+      before { delete(api_v3_user_workshop_path(id: -1), headers: admin_headers) }
+
       it_behaves_like('a successful response with an empty body')
     end
   end
@@ -289,6 +326,7 @@ RSpec.describe Goggles::UserWorkshopsAPI, type: :request do
       FactoryBot.create_list(:user_workshop, 5, user_id: @fixture_user_id)
       FactoryBot.create_list(:user_workshop, 26, team_id: @fixture_team_id)
     end
+
     after(:all) do
       GogglesDb::UserWorkshop.where(user_id: @fixture_user_id).delete_all
       GogglesDb::UserWorkshop.where(team_id: @fixture_team_id).delete_all
@@ -296,89 +334,105 @@ RSpec.describe Goggles::UserWorkshopsAPI, type: :request do
 
     let(:default_per_page) { 25 }
     # Make sure the Domain contains the expected seeds:
-    before(:each) { expect(GogglesDb::UserWorkshop.count).to be >= 31 }
+
+    before { expect(GogglesDb::UserWorkshop.count).to be >= 31 }
 
     context 'when using valid authentication' do
+      let(:fixture_description) { workshops_in_domain.sample.description }
+      let(:workshops_in_domain) { GogglesDb::UserWorkshop.all.limit(50) }
+
       context 'without any filters,' do
-        before(:each) { get(api_v3_user_workshops_path, headers: fixture_headers) }
+        before { get(api_v3_user_workshops_path, headers: fixture_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'during Maintenance mode with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_user_workshops_path, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
+
       context 'during Maintenance mode with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_user_workshops_path, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'and filtering by a specific team (yielding > 25 rows),' do
         let(:expected_row_count) { GogglesDb::UserWorkshop.where(team_id: @fixture_team_id).count }
-        before(:each) do
+
+        before do
           expect(expected_row_count).to be_positive
           get(api_v3_user_workshops_path, params: { team_id: @fixture_team_id }, headers: fixture_headers)
         end
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'and filtering by a specific user (yielding <= 25 rows),' do
         let(:expected_row_count) { GogglesDb::UserWorkshop.where(user_id: @fixture_user_id).count }
-        before(:each) do
+
+        before do
           expect(expected_row_count).to be_positive
           get(api_v3_user_workshops_path, params: { user_id: @fixture_user_id }, headers: fixture_headers)
         end
+
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
-
-      let(:workshops_in_domain) { GogglesDb::UserWorkshop.all.limit(50) }
 
       context 'and filtering by a specific date,' do
         let(:sample_date) { workshops_in_domain.sample.header_date }
         let(:expected_row_count) { workshops_in_domain.where(header_date: sample_date).distinct.count }
-        before(:each) do
+
+        before do
           expect(expected_row_count).to be_positive
           get(api_v3_user_workshops_path, params: { date: sample_date }, headers: fixture_headers)
         end
+
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
-      let(:fixture_description) { workshops_in_domain.sample.description }
-
       context 'and filtering by name,' do
         let(:expected_row_count) { GogglesDb::UserWorkshop.for_name(fixture_description).distinct.count }
-        before(:each) do
+
+        before do
           expect(expected_row_count).to be_positive
           get(api_v3_user_workshops_path, params: { name: fixture_description }, headers: fixture_headers)
         end
+
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'and enabling custom Select2 output,' do
         let(:expected_row_count) { GogglesDb::UserWorkshop.for_name(fixture_description).distinct.limit(100).count }
-        before(:each) do
+
+        before do
           expect(expected_row_count).to be_positive
           get(api_v3_user_workshops_path, params: { name: fixture_description, select2_format: true }, headers: fixture_headers)
         end
+
         it_behaves_like('successful response in Select2 bespoke format')
       end
     end
 
     context 'with an invalid JWT,' do
-      before(:each) { get(api_v3_user_workshops_path, headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_user_workshops_path, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'and filtering by a non-existing value,' do
-      before(:each) { get(api_v3_user_workshops_path, params: { date: '1986-01-01' }, headers: fixture_headers) }
+      before { get(api_v3_user_workshops_path, params: { date: '1986-01-01' }, headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON list response')
     end
   end

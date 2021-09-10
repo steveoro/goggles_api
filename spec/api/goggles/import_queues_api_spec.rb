@@ -23,7 +23,7 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
-  before(:each) do
+  before do
     expect(fixture_row).to be_a(GogglesDb::ImportQueue).and be_valid
     expect(admin_user).to be_a(GogglesDb::User).and be_valid
     expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
@@ -39,44 +39,55 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
   describe 'GET /api/v3/import_queue/:id' do
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { get(api_v3_import_queue_path(id: fixture_row.id), headers: admin_headers) }
+        before { get(api_v3_import_queue_path(id: fixture_row.id), headers: admin_headers) }
+
         it_behaves_like('a successful JSON row response')
       end
+
       context 'with an account having just CRUD grants,' do
-        before(:each) { get(api_v3_import_queue_path(id: fixture_row.id), headers: crud_headers) }
+        before { get(api_v3_import_queue_path(id: fixture_row.id), headers: crud_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
+
       context 'with an account not having any grants,' do
-        before(:each) { get(api_v3_import_queue_path(id: fixture_row.id), headers: fixture_headers) }
+        before { get(api_v3_import_queue_path(id: fixture_row.id), headers: fixture_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_import_queue_path(id: fixture_row.id), headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON row response')
       end
+
       context 'with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_import_queue_path(id: fixture_row.id), headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get api_v3_import_queue_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
+      before { get api_v3_import_queue_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
+
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
+
     context 'when requesting a non-existing ID,' do
-      before(:each) { get(api_v3_import_queue_path(id: -1), headers: admin_headers) }
+      before { get(api_v3_import_queue_path(id: -1), headers: admin_headers) }
+
       it_behaves_like 'an empty but successful JSON response'
     end
   end
@@ -94,49 +105,62 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
         { uid: FFaker::Guid.guid }
       ].sample
     end
-    before(:each) do
+
+    before do
       expect(expected_changes).to be_an(Hash).and be_present
     end
+
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: admin_headers) }
+        before { put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: admin_headers) }
+
         it_behaves_like('a successful JSON PUT response')
       end
+
       context 'with an account having just CRUD grants,' do
-        before(:each) { put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        before { put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
+
       context 'with an account not having any grants,' do
-        before(:each) { put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        before { put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON PUT response')
       end
+
       context 'with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+      before { put(api_v3_import_queue_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
+
     context 'when requesting a non-existing ID,' do
-      before(:each) { put(api_v3_import_queue_path(id: -1), params: expected_changes, headers: admin_headers) }
+      before { put(api_v3_import_queue_path(id: -1), params: expected_changes, headers: admin_headers) }
+
       it_behaves_like 'an empty but successful JSON response'
     end
   end
@@ -146,50 +170,61 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
   describe 'POST /api/v3/import_queue' do
     # Make sure parameters for the POST include all required attributes:
     let(:built_row) { FactoryBot.build(:import_queue_existing_team, user_id: GogglesDb::User.first(100).sample.id) }
-    before(:each) do
+
+    before do
       expect(built_row).to be_a(GogglesDb::ImportQueue).and be_valid
     end
+
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { post(api_v3_import_queue_path, params: built_row.attributes, headers: admin_headers) }
+        before { post(api_v3_import_queue_path, params: built_row.attributes, headers: admin_headers) }
+
         it_behaves_like('a successful JSON POST response')
       end
+
       context 'with an account having just CRUD grants,' do
-        before(:each) { post(api_v3_import_queue_path, params: built_row.attributes, headers: crud_headers) }
+        before { post(api_v3_import_queue_path, params: built_row.attributes, headers: crud_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
+
       context 'with an account not having any grants,' do
-        before(:each) { post(api_v3_import_queue_path, params: built_row.attributes, headers: fixture_headers) }
+        before { post(api_v3_import_queue_path, params: built_row.attributes, headers: fixture_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           post(api_v3_import_queue_path, params: built_row.attributes, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON POST response')
       end
+
       context 'with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           post(api_v3_import_queue_path, params: built_row.attributes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { post(api_v3_import_queue_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+      before { post(api_v3_import_queue_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when using missing or invalid parameters,' do
-      before(:each) do
+      before do
         post(
           api_v3_import_queue_path,
           params: {
@@ -204,6 +239,7 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a generic error message and its details in the header' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')
@@ -218,48 +254,60 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
 
   describe 'DELETE /api/v3/import_queue/:id' do
     let(:deletable_row) { FactoryBot.create(:import_queue) }
-    before(:each) { expect(deletable_row).to be_a(GogglesDb::ImportQueue).and be_valid }
+
+    before { expect(deletable_row).to be_a(GogglesDb::ImportQueue).and be_valid }
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { delete(api_v3_import_queue_path(id: deletable_row.id), headers: admin_headers) }
+        before { delete(api_v3_import_queue_path(id: deletable_row.id), headers: admin_headers) }
+
         it_behaves_like('a successful JSON DELETE response')
       end
+
       context 'with an account having just CRUD grants,' do
-        before(:each) { delete(api_v3_import_queue_path(id: deletable_row.id), headers: crud_headers) }
+        before { delete(api_v3_import_queue_path(id: deletable_row.id), headers: crud_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
+
       context 'with an account not having any grants,' do
-        before(:each) { delete(api_v3_import_queue_path(id: deletable_row.id), headers: fixture_headers) }
+        before { delete(api_v3_import_queue_path(id: deletable_row.id), headers: fixture_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           delete(api_v3_import_queue_path(id: deletable_row.id), headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a successful JSON DELETE response')
       end
+
       context 'with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           delete(api_v3_import_queue_path(id: deletable_row.id), headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { delete(api_v3_import_queue_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      before { delete(api_v3_import_queue_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
+
     context 'when requesting a non-existing ID,' do
-      before(:each) { delete(api_v3_import_queue_path(id: -1), headers: admin_headers) }
+      before { delete(api_v3_import_queue_path(id: -1), headers: admin_headers) }
+
       it_behaves_like('a successful response with an empty body')
     end
   end
@@ -272,7 +320,8 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
     let(:expected_row_count) { GogglesDb::ImportQueue.where(uid: fixture_uid).count }
     let(:default_per_page) { 25 }
     # Make sure the Domain contains the expected seeds:
-    before(:each) do
+
+    before do
       FactoryBot.create_list(:import_queue_existing_team, 26, user_id: fixture_user_id)
       FactoryBot.create_list(:import_queue_existing_swimmer, 5, uid: fixture_uid)
       expect(GogglesDb::ImportQueue.count).to be >= 31
@@ -281,53 +330,67 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
 
     context 'without any filters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { get(api_v3_import_queues_path, headers: admin_headers) }
+        before { get(api_v3_import_queues_path, headers: admin_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
+
       context 'with an account having just CRUD grants,' do
-        before(:each) { get(api_v3_import_queues_path, headers: crud_headers) }
+        before { get(api_v3_import_queues_path, headers: crud_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
+
       context 'with an account not having any grants,' do
-        before(:each) { get(api_v3_import_queues_path, headers: fixture_headers) }
+        before { get(api_v3_import_queues_path, headers: fixture_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
     context 'without any filters but during Maintenance mode,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_import_queues_path, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
+
       context 'with an account having lesser grants,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_import_queues_path, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
     end
 
     context 'when filtering by a specific route,' do
-      before(:each) { get(api_v3_import_queues_path, params: { uid: fixture_uid }, headers: admin_headers) }
+      before { get(api_v3_import_queues_path, params: { uid: fixture_uid }, headers: admin_headers) }
+
       it_behaves_like('successful multiple row response either with OR without pagination links')
     end
+
     context 'when filtering by a specific day,' do
-      before(:each) { get(api_v3_import_queues_path, params: { user_id: fixture_user_id }, headers: admin_headers) }
+      before { get(api_v3_import_queues_path, params: { user_id: fixture_user_id }, headers: admin_headers) }
+
       it_behaves_like('successful response with pagination links & values in headers')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_import_queues_path, headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_import_queues_path, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
+
     context 'when filtering by a non-existing value,' do
-      before(:each) { get(api_v3_import_queues_path, params: { user_id: -1 }, headers: admin_headers) }
+      before { get(api_v3_import_queues_path, params: { user_id: -1 }, headers: admin_headers) }
+
       it_behaves_like('an empty but successful JSON list response')
     end
   end

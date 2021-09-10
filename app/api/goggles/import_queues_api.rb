@@ -7,6 +7,8 @@ module Goggles
   #   - author:   Steve A.
   #   - build:    20210519
   #
+  # Implements full CRUD interface for ImportQueue.
+  #
   class ImportQueuesAPI < Grape::API
     helpers APIHelpers
 
@@ -30,7 +32,7 @@ module Goggles
         get do
           reject_unless_authorized_admin(check_jwt_session)
 
-          GogglesDb::ImportQueue.find_by_id(params['id'])
+          GogglesDb::ImportQueue.find_by(id: params['id'])
         end
       end
 
@@ -56,7 +58,7 @@ module Goggles
         put do
           reject_unless_authorized_admin(check_jwt_session)
 
-          import_queue = GogglesDb::ImportQueue.find_by_id(params['id'])
+          import_queue = GogglesDb::ImportQueue.find_by(id: params['id'])
           import_queue&.update!(declared(params, include_missing: false))
         end
       end

@@ -9,43 +9,21 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
   include APISessionHelpers
 
   let(:api_user) { FactoryBot.create(:user) }
-  let(:jwt_token) { jwt_for_api_session(api_user) }
-  let(:fixture_row) { FactoryBot.create(:meeting_event_reservation).meeting_reservation }
-  let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
-
-  # Enforce domain context creation
-  before(:each) do
-    expect(fixture_row).to be_a(GogglesDb::MeetingReservation).and be_valid
-    expect(fixture_row.meeting_event_reservations).not_to be_empty
-    expect(api_user).to be_a(GogglesDb::User).and be_valid
-    expect(jwt_token).to be_a(String).and be_present
+  let(:mrr_new) do
+    mevent = FactoryBot.create(:meeting_event_relay, meeting_session: fixture_row.meeting.meeting_sessions.first)
+    FactoryBot.create(:meeting_relay_reservation, meeting_event: mevent, meeting_reservation: fixture_row)
   end
-
-  describe 'GET /api/v3/meeting_reservation/:id' do
-    context 'when using valid parameters,' do
-      before(:each) { get(api_v3_meeting_reservation_path(id: fixture_row.id), headers: fixture_headers) }
-      it_behaves_like('a successful JSON row response')
-    end
-
-    context 'when using valid parameters but during Maintenance mode,' do
-      before(:each) do
-        GogglesDb::AppParameter.maintenance = true
-        get(api_v3_meeting_reservation_path(id: fixture_row.id), headers: fixture_headers)
-        GogglesDb::AppParameter.maintenance = false
-      end
-      it_behaves_like('a request refused during Maintenance (except for admins)')
-    end
-
-    context 'when using an invalid JWT,' do
-      before(:each) { get api_v3_meeting_reservation_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
-      it_behaves_like('a failed auth attempt due to invalid JWT')
-    end
-
-    context 'when requesting a non-existing ID,' do
-      before(:each) { get(api_v3_meeting_reservation_path(id: -1), headers: fixture_headers) }
-      it_behaves_like('an empty but successful JSON response')
-    end
+  let(:mer_new) do
+    mevent = FactoryBot.create(:meeting_event_individual, meeting_session: fixture_row.meeting.meeting_sessions.first)
+    FactoryBot.create(:meeting_event_reservation, meeting_event: mevent, meeting_reservation: fixture_row)
   end
+  let(:mer_first) { fixture_row.meeting_event_reservations.first }
+  let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+  let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'MeetingReservation') }
+  #-- -------------------------------------------------------------------------
+  #++
+
+  let(:crud_user) { FactoryBot.create(:user) }
   #-- -------------------------------------------------------------------------
   #++
 
@@ -61,9 +39,50 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
     mevent = FactoryBot.create(:meeting_event_relay, meeting_session: fixture_row.meeting.meeting_sessions.first)
     FactoryBot.create(:meeting_relay_reservation, meeting_event: mevent, meeting_reservation: fixture_row)
   end
+  let(:jwt_token) { jwt_for_api_session(api_user) }
+  let(:fixture_row) { FactoryBot.create(:meeting_event_reservation).meeting_reservation }
+  let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
+
+  # Enforce domain context creation
+  before do
+    expect(fixture_row).to be_a(GogglesDb::MeetingReservation).and be_valid
+    expect(fixture_row.meeting_event_reservations).not_to be_empty
+    expect(api_user).to be_a(GogglesDb::User).and be_valid
+    expect(jwt_token).to be_a(String).and be_present
+  end
+
+  describe 'GET /api/v3/meeting_reservation/:id' do
+    context 'when using valid parameters,' do
+      before { get(api_v3_meeting_reservation_path(id: fixture_row.id), headers: fixture_headers) }
+
+      it_behaves_like('a successful JSON row response')
+    end
+
+    context 'when using valid parameters but during Maintenance mode,' do
+      before do
+        GogglesDb::AppParameter.maintenance = true
+        get(api_v3_meeting_reservation_path(id: fixture_row.id), headers: fixture_headers)
+        GogglesDb::AppParameter.maintenance = false
+      end
+
+      it_behaves_like('a request refused during Maintenance (except for admins)')
+    end
+
+    context 'when using an invalid JWT,' do
+      before { get api_v3_meeting_reservation_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' } }
+
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+
+    context 'when requesting a non-existing ID,' do
+      before { get(api_v3_meeting_reservation_path(id: -1), headers: fixture_headers) }
+
+      it_behaves_like('an empty but successful JSON response')
+    end
+  end
 
   describe 'PUT /api/v3/meeting_reservation/:id' do
-    before(:each) do
+    before do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
@@ -74,6 +93,7 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
       # 1 relay reservation is enough for the purpose of this context:
       expect(fixture_row.meeting_relay_reservations.count).to be_positive
     end
+
     context 'when using valid parameters,' do
       # For this context, having to deal with associated sub-entities updates, we'll
       # keep the sub-entities changes in separate cases, so that the checking logic is
@@ -100,17 +120,18 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
           }
         ].sample
       end
-      before(:each) { expect(expected_changes).to be_an(Hash).and be_present }
+
+      before { expect(expected_changes).to be_an(Hash).and be_present }
 
       context 'with an account having CRUD grants' do
-        before(:each) { put(api_v3_meeting_reservation_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        before { put(api_v3_meeting_reservation_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
 
         # Private helper for this test to simplify checking logic
         def check_expected_subentity_changes_in(updated_row, sub_sym_key, sub_klass)
           return unless expected_changes.key?(sub_sym_key)
 
           expected_changes[sub_sym_key].each do |expected_sub_changes|
-            updated_sub_row = updated_row.send("meeting_#{sub_sym_key.to_s.singularize}_reservations").find_by_id(expected_sub_changes[:id])
+            updated_sub_row = updated_row.send("meeting_#{sub_sym_key.to_s.singularize}_reservations").find_by(id: expected_sub_changes[:id])
             expect(updated_sub_row).to be_a(sub_klass).and be_valid
             expected_sub_changes.each do |key, value|
               expect(updated_sub_row.send(key)).to eq(value)
@@ -141,16 +162,18 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
       end
 
       context 'and CRUD grants but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_meeting_reservation_path(id: fixture_row.id), params: expected_changes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { put(api_v3_meeting_reservation_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        before { put(api_v3_meeting_reservation_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
@@ -174,10 +197,11 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
           }
         ].sample
       end
-      before(:each) { expect(expected_changes).to be_an(Hash).and be_present }
+
+      before { expect(expected_changes).to be_an(Hash).and be_present }
 
       context 'with an account having CRUD grants' do
-        before(:each) { put(api_v3_meeting_reservation_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        before { put(api_v3_meeting_reservation_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
 
         # (This is successful because incorrect children IDs are just ignored)
         it_behaves_like('a successful request that has positive usage stats')
@@ -190,24 +214,26 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
+      before do
         put(
           api_v3_meeting_reservation_path(id: fixture_row.id),
           params: { confirmed: true },
           headers: { 'Authorization' => 'you wish!' }
         )
       end
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
+      before do
         put(
           api_v3_meeting_reservation_path(id: -1),
           params: { confirmed: true },
           headers: crud_headers
         )
       end
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -239,7 +265,7 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
     let(:valid_parameters) { { badge_id: fixture_badge.id, meeting_id: fixture_meeting.id } }
 
     # Make sure domain is coherent with expected context:
-    before(:each) do
+    before do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
@@ -256,7 +282,8 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
 
     context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
-        before(:each) { post(api_v3_meeting_reservation_path, params: valid_parameters, headers: crud_headers) }
+        before { post(api_v3_meeting_reservation_path, params: valid_parameters, headers: crud_headers) }
+
         it_behaves_like('a successful request that has positive usage stats')
 
         # Custom check due the specific structure of the returned object:
@@ -271,31 +298,35 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
       end
 
       context 'and CRUD grants but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           post(api_v3_meeting_reservation_path, params: valid_parameters, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'with an account not having any grants,' do
-        before(:each) { post(api_v3_meeting_reservation_path, params: valid_parameters, headers: fixture_headers) }
+        before { post(api_v3_meeting_reservation_path, params: valid_parameters, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { post(api_v3_meeting_reservation_path, params: valid_parameters, headers: { 'Authorization' => 'you wish!' }) }
+      before { post(api_v3_meeting_reservation_path, params: valid_parameters, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when using missing or invalid parameters,' do
-      before(:each) { post(api_v3_meeting_reservation_path, params: { badge_id: -1, meeting_id: fixture_meeting.id }, headers: crud_headers) }
+      before { post(api_v3_meeting_reservation_path, params: { badge_id: -1, meeting_id: fixture_meeting.id }, headers: crud_headers) }
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a generic error message and its details in the header' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')
@@ -309,42 +340,49 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
   #++
 
   describe 'DELETE /api/v3/meeting_reservation/:id' do
-    before(:each) do
+    before do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
     end
+
     context 'when using valid parameters,' do
       let(:deletable_row) { FactoryBot.create(:meeting_reservation) }
-      before(:each) { expect(deletable_row).to be_a(GogglesDb::MeetingReservation).and be_valid }
+
+      before { expect(deletable_row).to be_a(GogglesDb::MeetingReservation).and be_valid }
 
       context 'with an account having CRUD grants,' do
-        before(:each) { delete(api_v3_meeting_reservation_path(id: deletable_row.id), headers: crud_headers) }
+        before { delete(api_v3_meeting_reservation_path(id: deletable_row.id), headers: crud_headers) }
+
         it_behaves_like('a successful JSON DELETE response')
       end
 
       context 'and CRUD grants but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           delete(api_v3_meeting_reservation_path(id: deletable_row.id), headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { delete(api_v3_meeting_reservation_path(id: fixture_row.id), headers: fixture_headers) }
+        before { delete(api_v3_meeting_reservation_path(id: fixture_row.id), headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { delete(api_v3_meeting_reservation_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      before { delete(api_v3_meeting_reservation_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { delete(api_v3_meeting_reservation_path(id: -1), headers: crud_headers) }
+      before { delete(api_v3_meeting_reservation_path(id: -1), headers: crud_headers) }
+
       it_behaves_like('a successful response with an empty body')
     end
   end
@@ -355,66 +393,78 @@ RSpec.describe Goggles::MeetingReservationsAPI, type: :request do
     context 'when using a valid authentication' do
       let(:fixture_sample) { GogglesDb::MeetingReservation.limit(200).sample } # (more than 3K+ M.Reservations should be available in the test DB)
       let(:default_per_page) { 25 }
-      before(:each) do
+
+      before do
         expect(fixture_sample).to be_a(GogglesDb::MeetingReservation).and be_valid
         expect(fixture_sample.meeting_event_reservations.count).to be_positive
       end
 
       context 'without any filters,' do
-        before(:each) { get(api_v3_meeting_reservations_path, headers: fixture_headers) }
+        before { get(api_v3_meeting_reservations_path, headers: fixture_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_meeting_reservations_path, headers: fixture_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'when filtering by a specific meeting_id,' do
         let(:expected_row_count) { GogglesDb::MeetingReservation.where(meeting_id: fixture_sample.meeting_id).count }
-        before(:each) do
+
+        before do
           expect(expected_row_count).to be_positive
           get(api_v3_meeting_reservations_path, params: { meeting_id: fixture_sample.meeting_id }, headers: fixture_headers)
         end
+
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when filtering by a specific team_id,' do
         # (Team ID 1 is expected to have more than 2K swimmer reservations in the test database)
-        before(:each) { get(api_v3_meeting_reservations_path, params: { team_id: 1 }, headers: fixture_headers) }
+        before { get(api_v3_meeting_reservations_path, params: { team_id: 1 }, headers: fixture_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a specific swimmer_id,' do
         let(:expected_row_count) { GogglesDb::MeetingReservation.where(swimmer_id: fixture_sample.swimmer_id).count }
-        before(:each) do
+
+        before do
           expect(expected_row_count).to be_positive
           get(api_v3_meeting_reservations_path, params: { swimmer_id: fixture_sample.swimmer_id }, headers: fixture_headers)
         end
+
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when filtering by a specific badge_id,' do
         let(:expected_row_count) { GogglesDb::MeetingReservation.where(badge_id: fixture_sample.badge_id).count }
-        before(:each) do
+
+        before do
           expect(expected_row_count).to be_positive
           get(api_v3_meeting_reservations_path, params: { badge_id: fixture_sample.badge_id }, headers: fixture_headers)
         end
+
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_meeting_reservations_path, headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_meeting_reservations_path, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) { get(api_v3_meeting_reservations_path, params: { swimmer_id: -1 }, headers: fixture_headers) }
+      before { get(api_v3_meeting_reservations_path, params: { swimmer_id: -1 }, headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON list response')
     end
   end

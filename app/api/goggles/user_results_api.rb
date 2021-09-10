@@ -35,7 +35,7 @@ module Goggles
         get do
           check_jwt_session
 
-          GogglesDb::UserResult.find_by_id(params['id'])
+          GogglesDb::UserResult.find_by(id: params['id'])
         end
       end
 
@@ -75,7 +75,7 @@ module Goggles
           api_user = check_jwt_session
           reject_unless_authorized_for_crud(api_user, 'UserResult')
 
-          user_result = GogglesDb::UserResult.find_by_id(params['id'])
+          user_result = GogglesDb::UserResult.find_by(id: params['id'])
           user_result&.update!(declared(params, include_missing: false))
         end
       end

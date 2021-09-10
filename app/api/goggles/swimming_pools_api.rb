@@ -28,7 +28,7 @@ module Goggles
         get do
           check_jwt_session
 
-          GogglesDb::SwimmingPool.find_by_id(params['id'])
+          GogglesDb::SwimmingPool.find_by(id: params['id'])
         end
       end
 
@@ -70,7 +70,7 @@ module Goggles
           api_user = check_jwt_session
           reject_unless_authorized_for_crud(api_user, 'SwimmingPool')
 
-          result = GogglesDb::SwimmingPool.find_by_id(params['id'])
+          result = GogglesDb::SwimmingPool.find_by(id: params['id'])
           # Reject altering read_only attribute unless user has admin grants:
           params.delete('read_only') unless GogglesDb::GrantChecker.admin?(api_user)
           # Don't do anything if we're left with no editing parameters:

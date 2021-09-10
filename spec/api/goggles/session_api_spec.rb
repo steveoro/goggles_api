@@ -13,7 +13,7 @@ RSpec.describe Goggles::SessionAPI, type: :request do
   let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
 
   # Enforce domain context creation
-  before(:each) do
+  before do
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(admin_user).to be_a(GogglesDb::User).and be_valid
     expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
@@ -24,6 +24,7 @@ RSpec.describe Goggles::SessionAPI, type: :request do
       it 'is successful' do
         expect(response).to be_successful
       end
+
       it 'responds with a message and the new value for the JWT' do
         result = JSON.parse(response.body)
         expect(result.keys).to match_array(%w[msg jwt])
@@ -33,7 +34,8 @@ RSpec.describe Goggles::SessionAPI, type: :request do
     end
 
     context 'when using valid parameters,' do
-      before(:each) { post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key }) }
+      before { post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key }) }
+
       it_behaves_like('a successful new API session creation request')
       it 'returns a new valid JWT for the API user' do
         result = JSON.parse(response.body)
@@ -45,11 +47,12 @@ RSpec.describe Goggles::SessionAPI, type: :request do
     end
 
     context 'when using an *admin* user during Maintenance mode,' do
-      before(:each) do
+      before do
         GogglesDb::AppParameter.maintenance = true
         post(api_v3_session_path, params: { e: admin_user.email, p: admin_user.password, t: Rails.application.credentials.api_static_key })
         GogglesDb::AppParameter.maintenance = false
       end
+
       it_behaves_like('a successful new API session creation request')
       it 'returns a new valid JWT for the API user' do
         result = JSON.parse(response.body)
@@ -61,20 +64,22 @@ RSpec.describe Goggles::SessionAPI, type: :request do
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
-      before(:each) do
+      before do
         GogglesDb::AppParameter.maintenance = true
         post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key })
         GogglesDb::AppParameter.maintenance = false
       end
+
       it_behaves_like('a request refused during Maintenance (except for admins)')
     end
 
     context 'when using invalid user credentials,' do
-      before(:each) { post(api_v3_session_path, params: { e: 'non.existing.user@example.com', p: 'password', t: Rails.application.credentials.api_static_key }) }
+      before { post(api_v3_session_path, params: { e: 'non.existing.user@example.com', p: 'password', t: Rails.application.credentials.api_static_key }) }
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a generic error message and its details in the header' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')
@@ -85,11 +90,12 @@ RSpec.describe Goggles::SessionAPI, type: :request do
     end
 
     context 'when using an invalid static token,' do
-      before(:each) { post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: 'NOT-the-correct-token-for-sure' }) }
+      before { post(api_v3_session_path, params: { e: api_user.email, p: api_user.password, t: 'NOT-the-correct-token-for-sure' }) }
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a generic error message and its details in the header' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')

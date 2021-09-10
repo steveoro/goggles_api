@@ -12,7 +12,7 @@ RSpec.describe Goggles::LookupAPI, type: :request do
   let(:jwt_token) { jwt_for_api_session(api_user) }
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
-  before(:each) do
+  before do
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
   end
@@ -26,7 +26,8 @@ RSpec.describe Goggles::LookupAPI, type: :request do
         [nil, 'it', 'en'].each do |locale|
           context "for #{entity_name} using a #{locale} locale," do
             let(:expected_row_count) { "GogglesDb::#{entity_name.singularize.camelize}".constantize.count }
-            before(:each) do
+
+            before do
               get(api_v3_lookup_path(entity_name: entity_name), params: { locale: locale }, headers: fixture_headers)
             end
 
@@ -37,6 +38,7 @@ RSpec.describe Goggles::LookupAPI, type: :request do
               expect(result_array).to be_an(Array)
               expect(result_array.count).to eq(expected_row_count).and be_positive
             end
+
             it 'does not contain the pagination values or links in the response headers' do
               expect(response.headers['Page']).to be nil
               expect(response.headers['Link']).to be nil
@@ -53,7 +55,7 @@ RSpec.describe Goggles::LookupAPI, type: :request do
         event_types
       ].each do |entity_name|
         context "for #{entity_name}," do
-          before(:each) do
+          before do
             get(api_v3_lookup_path(entity_name: entity_name), params: { name: 'rana', locale: 'it' }, headers: fixture_headers)
           end
 
@@ -69,21 +71,24 @@ RSpec.describe Goggles::LookupAPI, type: :request do
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
-      before(:each) do
+      before do
         GogglesDb::AppParameter.maintenance = true
         get(api_v3_lookup_path(entity_name: 'gender_types'), params: { locale: 'it' }, headers: fixture_headers)
         GogglesDb::AppParameter.maintenance = false
       end
+
       it_behaves_like('a request refused during Maintenance (except for admins)')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_lookup_path(entity_name: 'gender_types'), headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_lookup_path(entity_name: 'gender_types'), headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when using an invalid entity name,' do
-      before(:each) { get(api_v3_lookup_path(entity_name: 'non_existing_table_rows'), headers: fixture_headers) }
+      before { get(api_v3_lookup_path(entity_name: 'non_existing_table_rows'), headers: fixture_headers) }
+
       it_behaves_like 'an empty but successful JSON list response'
     end
   end

@@ -39,7 +39,7 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
     }
   end
 
-  before(:each) do
+  before do
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
     expect(fixture_pool_type).to be_a(GogglesDb::PoolType).and be_valid
@@ -52,7 +52,8 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
   describe 'GET /api/v3/Tools/:entity_name' do
     context 'when using a valid authentication' do
       context 'with valid parameters (corresponding to existing entities)' do
-        before(:each) { get(api_v3_tools_find_entry_time_path, params: api_request_params, headers: fixture_headers) }
+        before { get(api_v3_tools_find_entry_time_path, params: api_request_params, headers: fixture_headers) }
+
         let(:result_hash) { JSON.parse(response.body) }
 
         it_behaves_like('a successful request that has positive usage stats')
@@ -60,11 +61,13 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
         it 'returns a valid JSON hash' do
           expect(result_hash).to be_a(Hash)
         end
+
         it "returns a non-empty 'label' field text, with format <nn'nn\"nn>" do
           expect(result_hash).to have_key('label')
           expect(result_hash['label']).to be_present
           expect(result_hash['label']).to match(/\d{1,2}'\d{1,2}"\d{1,2}/)
         end
+
         it "returns a non-empty 'timing' hash" do
           expect(result_hash).to have_key('timing')
           expect(result_hash['timing']).to be_a(Hash)
@@ -72,6 +75,7 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
           expect(result_hash['timing']).to have_key('seconds')
           expect(result_hash['timing']).to have_key('hundredths') # (sic: "hundredths")
         end
+
         it "has the 'label' field equal to the default string representation of its 'timing' field" do
           timing = Timing.new(
             hundredths: result_hash['timing']['hundredths'],
@@ -85,11 +89,12 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
       end
 
       context 'when using valid parameters but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_tools_find_entry_time_path, params: api_request_params, headers: fixture_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
@@ -101,11 +106,13 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
             pool_type_id: fixture_pool_type.id
           }
         end
-        before(:each) { get(api_v3_tools_find_entry_time_path, params: failing_request_params, headers: fixture_headers) }
+
+        before { get(api_v3_tools_find_entry_time_path, params: failing_request_params, headers: fixture_headers) }
 
         it 'is NOT successful' do
           expect(response).not_to be_successful
         end
+
         it 'responds with a generic parameter error message and the details about the class and the ID in the header' do
           result = JSON.parse(response.body)
           expect(result).to have_key('error')
@@ -117,7 +124,8 @@ RSpec.describe Goggles::ToolsAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_tools_find_entry_time_path, params: api_request_params, headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_tools_find_entry_time_path, params: api_request_params, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
   end

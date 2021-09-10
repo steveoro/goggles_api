@@ -20,7 +20,7 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
   let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
 
   # Enforce domain context creation
-  before(:each) do
+  before do
     expect(fixture_row).to be_a(GogglesDb::SwimmingPool).and be_valid
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
@@ -31,26 +31,30 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
 
   describe 'GET /api/v3/swimming_pool/:id' do
     context 'when using valid parameters,' do
-      before(:each) { get(api_v3_swimming_pool_path(id: fixture_row.id), headers: fixture_headers) }
+      before { get(api_v3_swimming_pool_path(id: fixture_row.id), headers: fixture_headers) }
+
       it_behaves_like('a successful JSON row response')
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
-      before(:each) do
+      before do
         GogglesDb::AppParameter.maintenance = true
         get(api_v3_swimming_pool_path(id: fixture_row.id), headers: fixture_headers)
         GogglesDb::AppParameter.maintenance = false
       end
+
       it_behaves_like('a request refused during Maintenance (except for admins)')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_swimming_pool_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_swimming_pool_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { get(api_v3_swimming_pool_path(id: -1), headers: fixture_headers) }
+      before { get(api_v3_swimming_pool_path(id: -1), headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -82,19 +86,22 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
           { notes: FFaker::Lorem.sentence }
         ].sample
       end
-      before(:each) { expect(expected_changes).to be_an(Hash) }
+
+      before { expect(expected_changes).to be_an(Hash) }
 
       context 'with an account having CRUD grants,' do
-        before(:each) { put(api_v3_swimming_pool_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        before { put(api_v3_swimming_pool_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+
         it_behaves_like('a successful JSON PUT response')
       end
 
       context 'and CRUD grants but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_swimming_pool_path(id: fixture_row.id), params: expected_changes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
@@ -102,13 +109,15 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
       context 'and editing the read_only attribute' do
         context 'with an account having ADMIN grants,' do
           let(:fixture_pool2) { FactoryBot.create(:swimming_pool, read_only: false) }
-          before(:each) do
+
+          before do
             expect(fixture_pool2).to be_a(GogglesDb::SwimmingPool).and be_valid
             expect(admin_user).to be_a(GogglesDb::User).and be_valid
             expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
             expect(admin_headers).to be_an(Hash).and have_key('Authorization')
+
+            put(api_v3_swimming_pool_path(id: fixture_pool2.id), params: { read_only: true }, headers: admin_headers)
           end
-          before(:each) { put(api_v3_swimming_pool_path(id: fixture_pool2.id), params: { read_only: true }, headers: admin_headers) }
 
           it_behaves_like('a successful request that has positive usage stats')
 
@@ -120,36 +129,40 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
         end
 
         context 'with an account having just CRUD grants,' do
-          before(:each) { put(api_v3_swimming_pool_path(id: fixture_row.id), params: { read_only: true }, headers: crud_headers) }
+          before { put(api_v3_swimming_pool_path(id: fixture_row.id), params: { read_only: true }, headers: crud_headers) }
+
           it_behaves_like('an empty but successful JSON response')
         end
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { put(api_v3_swimming_pool_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        before { put(api_v3_swimming_pool_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) do
+      before do
         put(
           api_v3_swimming_pool_path(id: fixture_row.id),
           params: { pool_type_id: GogglesDb::PoolType::MT_25_ID },
           headers: { 'Authorization' => 'you wish!' }
         )
       end
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) do
+      before do
         put(
           api_v3_swimming_pool_path(id: -1),
           params: { pool_type_id: GogglesDb::PoolType::MT_25_ID },
           headers: crud_headers
         )
       end
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -158,7 +171,8 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
 
   describe 'POST /api/v3/swimming_pool' do
     let(:built_row) { FactoryBot.build(:swimming_pool, city: GogglesDb::City.limit(50).sample) }
-    before(:each) do
+
+    before do
       expect(admin_user).to be_a(GogglesDb::User).and be_valid
       expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(admin_headers).to be_an(Hash).and have_key('Authorization')
@@ -167,32 +181,37 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { post(api_v3_swimming_pool_path, params: built_row.attributes, headers: admin_headers) }
+        before { post(api_v3_swimming_pool_path, params: built_row.attributes, headers: admin_headers) }
+
         it_behaves_like('a successful JSON POST response')
       end
 
       context 'with an account having just CRUD grants,' do
-        before(:each) { post(api_v3_swimming_pool_path, params: built_row.attributes, headers: crud_headers) }
+        before { post(api_v3_swimming_pool_path, params: built_row.attributes, headers: crud_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
 
       context 'with an account not having any grants,' do
-        before(:each) { post(api_v3_swimming_pool_path, params: built_row.attributes, headers: fixture_headers) }
+        before { post(api_v3_swimming_pool_path, params: built_row.attributes, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { post(api_v3_swimming_pool_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+      before { post(api_v3_swimming_pool_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when using invalid parameters,' do
-      before(:each) { post(api_v3_swimming_pool_path, params: built_row.attributes.merge(pool_type_id: -1), headers: admin_headers) }
+      before { post(api_v3_swimming_pool_path, params: built_row.attributes.merge(pool_type_id: -1), headers: admin_headers) }
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a generic error message and its details in the header' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')
@@ -211,34 +230,39 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
       let(:fixture_pool_type_id) { fixture_row.pool_type_id }
       let(:default_per_page) { 25 }
       # Make sure the Domain contains the expected seeds:
-      before(:each) do
+
+      before do
         expect(fixture_row).to be_a(GogglesDb::SwimmingPool).and be_valid
         expect(fixture_pool_type_id).to be_positive
       end
 
       context 'without any filters,' do
-        before(:each) { get(api_v3_swimming_pools_path, headers: fixture_headers) }
+        before { get(api_v3_swimming_pools_path, headers: fixture_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_swimming_pools_path, headers: fixture_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'when filtering by a specific pool_type_id,' do
-        before(:each) { get(api_v3_swimming_pools_path, params: { pool_type_id: fixture_pool_type_id }, headers: fixture_headers) }
+        before { get(api_v3_swimming_pools_path, params: { pool_type_id: fixture_pool_type_id }, headers: fixture_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when filtering by a generic name search term,' do
         let(:search_term) { fixture_row.name.split.first }
         let(:expected_row_count) { GogglesDb::SwimmingPool.for_name(search_term).count }
-        before(:each) { get(api_v3_swimming_pools_path, params: { name: search_term }, headers: fixture_headers) }
+
+        before { get(api_v3_swimming_pools_path, params: { name: search_term }, headers: fixture_headers) }
 
         # [Steve, 20210111]
         # We cannot assert the inclusion of the fixture_row.id inside the returned_ids
@@ -264,7 +288,8 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
                                  )
                                  .count
         end
-        before(:each) do
+
+        before do
           get(
             api_v3_swimming_pools_path,
             params: { name: fixture_row.name, city_id: fixture_row.city_id, address: fixture_row.address },
@@ -273,28 +298,34 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
         end
         # Several cities have more than 1 pool at the same address, with also similar name and just an
         # added prefix ('Comunale'), so a single row result here is not guaranteed:
+
         it 'returns a JSON array including the existing row' do
           returned_ids = JSON.parse(response.body).map { |row| row['id'] }
           expect(returned_ids).to include(fixture_row.id)
         end
+
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       context 'when enabling custom Select2 output,' do
         let(:search_term) { fixture_row.name.split.first }
         let(:expected_row_count) { GogglesDb::SwimmingPool.for_name(search_term).limit(100).count }
-        before(:each) { get(api_v3_swimming_pools_path, params: { name: search_term, select2_format: true }, headers: fixture_headers) }
+
+        before { get(api_v3_swimming_pools_path, params: { name: search_term, select2_format: true }, headers: fixture_headers) }
+
         it_behaves_like('successful response in Select2 bespoke format')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_swimming_pools_path, headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_swimming_pools_path, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) { get(api_v3_swimming_pools_path, params: { pool_type_id: -1 }, headers: fixture_headers) }
+      before { get(api_v3_swimming_pools_path, params: { pool_type_id: -1 }, headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON list response')
     end
   end

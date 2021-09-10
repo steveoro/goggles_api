@@ -47,7 +47,7 @@ module Goggles
         # New API session should be disabled during maintenance (only admin users can continue).
         # Retrieve the API user and check the grants:
         decoded_jwt_data = GogglesDb::JWTManager.decode(cmd_authenticator.result, Rails.application.credentials.api_static_key)
-        api_user = GogglesDb::User.find_by_id(decoded_jwt_data[:user_id]) if decoded_jwt_data
+        api_user = GogglesDb::User.find_by(id: decoded_jwt_data[:user_id]) if decoded_jwt_data
         reject_during_maintenance(api_user)
 
         # Update stats using as key a path stripped of all IDs & return authorization result:

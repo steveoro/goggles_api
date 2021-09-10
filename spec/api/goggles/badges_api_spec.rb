@@ -17,7 +17,7 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
   let(:crud_headers)    { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
 
   # Enforce domain context creation
-  before(:each) do
+  before do
     expect(fixture_row).to be_a(GogglesDb::Badge).and be_valid
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
@@ -25,26 +25,30 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
 
   describe 'GET /api/v3/badge/:id' do
     context 'when using valid parameters,' do
-      before(:each) { get(api_v3_badge_path(id: fixture_row.id), headers: fixture_headers) }
+      before { get(api_v3_badge_path(id: fixture_row.id), headers: fixture_headers) }
+
       it_behaves_like('a successful JSON row response')
     end
 
     context 'when using valid parameters but during Maintenance mode,' do
-      before(:each) do
+      before do
         GogglesDb::AppParameter.maintenance = true
         get(api_v3_badge_path(id: fixture_row.id), headers: fixture_headers)
         GogglesDb::AppParameter.maintenance = false
       end
+
       it_behaves_like('a request refused during Maintenance (except for admins)')
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_badge_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_badge_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { get(api_v3_badge_path(id: -1), headers: fixture_headers) }
+      before { get(api_v3_badge_path(id: -1), headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -60,7 +64,8 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
         { number: 'TEST_CODE', relays_due: true, badge_due: [false, true].sample }
       ].sample
     end
-    before(:each) do
+
+    before do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
@@ -69,32 +74,37 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
 
     context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
-        before(:each) { put(api_v3_badge_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+        before { put(api_v3_badge_path(id: fixture_row.id), params: expected_changes, headers: crud_headers) }
+
         it_behaves_like('a successful JSON PUT response')
       end
 
       context 'when using valid parameters but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           put(api_v3_badge_path(id: fixture_row.id), params: expected_changes, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'with an account not having the proper grants,' do
-        before(:each) { put(api_v3_badge_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+        before { put(api_v3_badge_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
+
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { put(api_v3_badge_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+      before { put(api_v3_badge_path(id: fixture_row.id), params: expected_changes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when requesting a non-existing ID,' do
-      before(:each) { put(api_v3_badge_path(id: -1), params: expected_changes, headers: crud_headers) }
+      before { put(api_v3_badge_path(id: -1), params: expected_changes, headers: crud_headers) }
+
       it_behaves_like('an empty but successful JSON response')
     end
   end
@@ -118,7 +128,8 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
     let(:admin_user)  { FactoryBot.create(:user) }
     let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
     let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
-    before(:each) do
+
+    before do
       expect(crud_user).to be_a(GogglesDb::User).and be_valid
       expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
       expect(crud_headers).to be_an(Hash).and have_key('Authorization')
@@ -133,28 +144,32 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
 
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
-        before(:each) { post(api_v3_badge_path, params: built_row.attributes, headers: admin_headers) }
+        before { post(api_v3_badge_path, params: built_row.attributes, headers: admin_headers) }
+
         it_behaves_like('a successful JSON POST response')
       end
 
       context 'with an account having just CRUD grants,' do
-        before(:each) { post(api_v3_badge_path, params: built_row.attributes, headers: crud_headers) }
+        before { post(api_v3_badge_path, params: built_row.attributes, headers: crud_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
 
       context 'with an account not having any grants,' do
-        before(:each) { post(api_v3_badge_path, params: built_row.attributes, headers: fixture_headers) }
+        before { post(api_v3_badge_path, params: built_row.attributes, headers: fixture_headers) }
+
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
       end
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { post(api_v3_badge_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+      before { post(api_v3_badge_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when using invalid parameters,' do
-      before(:each) do
+      before do
         post(
           api_v3_badge_path,
           params: built_row.attributes.merge(team_id: -1),
@@ -165,6 +180,7 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
       it 'is NOT successful' do
         expect(response).not_to be_successful
       end
+
       it 'responds with a generic error message and its details in the header' do
         result = JSON.parse(response.body)
         expect(result).to have_key('error')
@@ -184,7 +200,7 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
       let(:default_per_page)  { 25 }
 
       # Make sure the Domain contains the expected seeds:
-      before(:each) do
+      before do
         expect(fixture_team).to be_a(GogglesDb::Team).and be_valid
         expect(fixture_team.badges.count).to be > 1400
         # Team ID 1 => actual Badges x Seasons: 171=80, 172=32, 181=75, 182=37, 191=75, 192=35
@@ -192,38 +208,44 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
       end
 
       context 'without any filters,' do
-        before(:each) { get(api_v3_badges_path, headers: fixture_headers) }
+        before { get(api_v3_badges_path, headers: fixture_headers) }
+
         it_behaves_like('successful response with pagination links & values in headers')
       end
 
       context 'when using valid parameters but during Maintenance mode,' do
-        before(:each) do
+        before do
           GogglesDb::AppParameter.maintenance = true
           get(api_v3_badges_path, headers: fixture_headers)
           GogglesDb::AppParameter.maintenance = false
         end
+
         it_behaves_like('a request refused during Maintenance (except for admins)')
       end
 
       context 'when filtering by a specific team_id & season_id,' do
-        before(:each) { get(api_v3_badges_path, params: { team_id: fixture_team.id, season_id: fixture_season_id }, headers: fixture_headers) }
+        before { get(api_v3_badges_path, params: { team_id: fixture_team.id, season_id: fixture_season_id }, headers: fixture_headers) }
+
         it_behaves_like 'successful response with pagination links & values in headers'
       end
 
       context 'when filtering by a specific swimmer_id,' do
         let(:fixture_swimmer) { fixture_team.badges.where(season_id: fixture_season_id).sample.swimmer }
         let(:expected_row_count) { GogglesDb::Badge.where(swimmer_id: fixture_swimmer.id).count }
-        before(:each) do
+
+        before do
           expect(fixture_swimmer).to be_a(GogglesDb::Swimmer).and be_valid
           expect(expected_row_count).to be_positive
           get(api_v3_badges_path, params: { swimmer_id: fixture_swimmer.id }, headers: fixture_headers)
         end
+
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
       # Uses random fixtures to have a quick 1-row result (no pagination, always):
       context 'when filtering by a specific team_affiliation_id for a random single fixture,' do
-        before(:each) { get(api_v3_badges_path, params: { team_affiliation_id: fixture_row.team_affiliation_id }, headers: fixture_headers) }
+        before { get(api_v3_badges_path, params: { team_affiliation_id: fixture_row.team_affiliation_id }, headers: fixture_headers) }
+
         it_behaves_like('successful single response without pagination links in headers')
 
         it 'returns a JSON array containing the single associated row' do
@@ -233,12 +255,14 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
     end
 
     context 'when using an invalid JWT,' do
-      before(:each) { get(api_v3_badges_path, headers: { 'Authorization' => 'you wish!' }) }
+      before { get(api_v3_badges_path, headers: { 'Authorization' => 'you wish!' }) }
+
       it_behaves_like('a failed auth attempt due to invalid JWT')
     end
 
     context 'when filtering by a non-existing value,' do
-      before(:each) { get(api_v3_badges_path, params: { team_id: -1 }, headers: fixture_headers) }
+      before { get(api_v3_badges_path, params: { team_id: -1 }, headers: fixture_headers) }
+
       it_behaves_like('an empty but successful JSON list response')
     end
   end
