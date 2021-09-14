@@ -345,6 +345,170 @@ The returned result includes these other 1st-level linked entities (some with mi
             { "msg": "Unauthorized" }
 
 
+## edit [PUT]
+
+Allows direct updates for most of the MeetingProgram fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `event_order` | Integer | ordinal number of this program |
+| `category_type_id` | Integer | link to CategoryType |
+| `gender_type_id` | Integer | link to GenderType |
+| `begin_time` | String | begin time for this program (parsed with Time.zone, based on year 2000) |
+| `autofilled` | Boolean | true if the fields have been filled-in by the data-import procedure (may need revision) |
+| `out_of_race` | Boolean | true if this program does not concur in the overall rankings or scores |
+| `meeting_event_id` | Integer | link to MeetingEvent |
+| `pool_type_id` | Integer | link to PoolType |
+
+
+* * *
+
+
++ Parameters
+    + id: 10 (number, required) - MeetingProgram ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"event_order": 5, "day": "out_of_race": false}' \
+            "<API_HOST:PORT>/api/v3/meeting_program/10"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/meeting_program/10',
+                payload: {
+                    event_order: 5,
+                    out_of_race: false
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "event_order": 5,
+                "out_of_race": false
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "event_order": 5,
+                "out_of_race": false
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "event_order": 5,
+                "out_of_race": false
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "event_order": 5,
+                "out_of_race": false
+            }
+
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "event_order": 5,
+                "out_of_race": false
+            }
+
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
 
 # MeetingProgram list [/api/v3/meeting_programs{?page,per_page,meeting_id,meeting_session_id,meeting_event_id,category_type_id,gender_type_id}]
 

@@ -8,19 +8,32 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
-  let(:api_user)    { FactoryBot.create(:user) }
-  let(:jwt_token)   { jwt_for_api_session(api_user) }
   let(:fixture_row) { FactoryBot.create(:badge) }
-  let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
+  # Admin:
+  let(:admin_user)  { FactoryBot.create(:user) }
+  let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
+  let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
+  # CRUD user:
   let(:crud_user)       { FactoryBot.create(:user) }
   let(:crud_grant)      { FactoryBot.create(:admin_grant, user: crud_user, entity: 'Badge') }
   let(:crud_headers)    { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+  # Standard user (no grants whatsoever):
+  let(:api_user)    { FactoryBot.create(:user) }
+  let(:jwt_token)   { jwt_for_api_session(api_user) }
+  let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
   before do
     expect(fixture_row).to be_a(GogglesDb::Badge).and be_valid
+    expect(admin_user).to be_a(GogglesDb::User).and be_valid
+    expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+    expect(admin_headers).to be_an(Hash).and have_key('Authorization')
+    expect(crud_user).to be_a(GogglesDb::User).and be_valid
+    expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+    expect(crud_headers).to be_an(Hash).and have_key('Authorization')
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
+    expect(fixture_headers).to be_an(Hash).and have_key('Authorization')
   end
 
   describe 'GET /api/v3/badge/:id' do
@@ -65,12 +78,7 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
       ].sample
     end
 
-    before do
-      expect(crud_user).to be_a(GogglesDb::User).and be_valid
-      expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
-      expect(crud_headers).to be_an(Hash).and have_key('Authorization')
-      expect(expected_changes).to be_an(Hash).and be_present
-    end
+    before { expect(expected_changes).to be_an(Hash).and be_present }
 
     context 'when using valid parameters,' do
       context 'with an account having CRUD grants,' do
@@ -125,17 +133,8 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
         team: new_team_affiliation.team
       )
     end
-    let(:admin_user)  { FactoryBot.create(:user) }
-    let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
-    let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
 
     before do
-      expect(crud_user).to be_a(GogglesDb::User).and be_valid
-      expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
-      expect(crud_headers).to be_an(Hash).and have_key('Authorization')
-      expect(admin_user).to be_a(GogglesDb::User).and be_valid
-      expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
-      expect(admin_headers).to be_an(Hash).and have_key('Authorization')
       expect(new_swimmer).to be_a(GogglesDb::Swimmer).and be_valid
       expect(new_category_type).to be_a(GogglesDb::CategoryType).and be_valid
       expect(new_team_affiliation).to be_a(GogglesDb::TeamAffiliation).and be_valid
@@ -188,6 +187,68 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
         expect(response.headers).to have_key('X-Error-Detail')
         expect(response.headers['X-Error-Detail']).to be_present
       end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe 'DELETE /api/v3/badge/:id' do
+    let(:deletable_row) { FactoryBot.create(:badge) }
+
+    before { expect(deletable_row).to be_a(GogglesDb::Badge).and be_valid }
+
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before { delete(api_v3_badge_path(id: deletable_row.id), headers: admin_headers) }
+
+        it_behaves_like('a successful JSON DELETE response')
+      end
+
+      context 'with an account having just CRUD grants,' do
+        before { delete(api_v3_badge_path(id: deletable_row.id), headers: crud_headers) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+
+      context 'with an account not having any grants,' do
+        before { delete(api_v3_badge_path(id: deletable_row.id), headers: fixture_headers) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
+
+    context 'when using valid parameters but during Maintenance mode,' do
+      context 'with an account having ADMIN grants,' do
+        before do
+          GogglesDb::AppParameter.maintenance = true
+          delete(api_v3_badge_path(id: deletable_row.id), headers: admin_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+
+        it_behaves_like('a successful JSON DELETE response')
+      end
+
+      context 'with an account having lesser grants,' do
+        before do
+          GogglesDb::AppParameter.maintenance = true
+          delete(api_v3_badge_path(id: deletable_row.id), headers: crud_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+
+        it_behaves_like('a request refused during Maintenance (except for admins)')
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before { delete(api_v3_badge_path(id: fixture_row.id), headers: { 'Authorization' => 'you wish!' }) }
+
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+
+    context 'when requesting a non-existing ID,' do
+      before { delete(api_v3_badge_path(id: -1), headers: admin_headers) }
+
+      it_behaves_like('a successful response with an empty body')
     end
   end
   #-- -------------------------------------------------------------------------

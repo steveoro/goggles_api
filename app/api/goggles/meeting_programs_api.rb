@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingProgram API Grape controller
   #
-  #   - version:  7.060
+  #   - version:  7.0.3.30
   #   - author:   Steve A.
-  #   - build:    20210111
+  #   - build:    20210914
   #
   class MeetingProgramsAPI < Grape::API
     helpers APIHelpers
@@ -29,6 +29,37 @@ module Goggles
           check_jwt_session
 
           GogglesDb::MeetingProgram.find_by(id: params['id'])
+        end
+      end
+
+      # PUT /api/:version/meeting_program/:id
+      #
+      # Allows direct update for most of the MeetingProgram fields.
+      # Requires Admin grants for the requesting user.
+      #
+      # == Returns:
+      # 'true' when successful; an empty result when not found.
+      #
+      desc 'Update MeetingProgram details'
+      params do
+        requires :id, type: Integer, desc: 'MeetingProgram ID'
+        optional :event_order, type: Integer, desc: 'optional: ordinal number of this program'
+        optional :category_type_id, type: Integer, desc: 'optional: link to CategoryType'
+        optional :gender_type_id, type: Integer, desc: 'optional: link to GenderType'
+        optional :autofilled, type: Boolean, desc: 'optional: true if the fields have been filled-in by the data-import procedure (may need revision)'
+        optional :out_of_race, type: Boolean, desc: 'optional: true if this program does not concur in the overall rankings or scores'
+        optional :begin_time, type: String, desc: 'optional: begin time for this program (parsed with Time.zone, based on year 2000)'
+        optional :meeting_event_id, type: Integer, desc: 'optional: link to MeetingEvent'
+        optional :pool_type_id, type: Integer, desc: 'optional: link to PoolType'
+        # TODO: add the following after the next GogglesDb life cycle (w/ standard_timing migration fix)
+        # optional :standard_timing_id, type: Integer, desc: 'optional: link to TimeStandard'
+      end
+      route_param :id do
+        put do
+          reject_unless_authorized_admin(check_jwt_session)
+
+          meeting_program = GogglesDb::MeetingProgram.find_by(id: params['id'])
+          meeting_program&.update!(declared(params, include_missing: false))
         end
       end
     end
@@ -71,10 +102,10 @@ module Goggles
 
         paginate(
           GogglesDb::MeetingProgram.joins(:meeting, :meeting_session)
-                                 .includes(:meeting, :meeting_session)
-                                 .where(
-                                   ActiveRecord::Base.sanitize_sql_for_conditions(filtering_conditions)
-                                 )
+                                   .includes(:meeting, :meeting_session)
+                                   .where(
+                                     ActiveRecord::Base.sanitize_sql_for_conditions(filtering_conditions)
+                                   )
         )
       end
     end

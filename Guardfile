@@ -32,7 +32,7 @@ end
 
 # == Rubocop ==
 rubocop_options = {
-  cmd: 'bin/rubocop',
+  cmd: 'rubocop',
   cli: '-f fu'
 }
 guard :rubocop, rubocop_options do

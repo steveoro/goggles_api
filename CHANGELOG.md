@@ -2,6 +2,8 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.3.30** [Steve A.] added several missing endpoints: DELETE /user, GET+PUT+DELETE+LIST /team_managers, DELETE /badge, GET /admin_grants,
+PUT /meeting_event, PUT /meeting_program
 - **0.3.29** [Steve A.] upgrade to Rails 6.0.4.1 due to security fixes
 - **0.3.25** [Steve A.] added /setting endpoints
 - **0.3.20** [Steve A.] re-synch w/ DB structure 1.92.3 (data clean-up)

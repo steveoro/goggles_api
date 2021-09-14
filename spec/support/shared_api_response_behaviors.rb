@@ -51,7 +51,7 @@ shared_examples_for 'a successful request that has positive usage stats' do
 
   it 'has a positive usage statistics' do
     route_key = "#{response.request.env['REQUEST_METHOD']} #{response.request.path.gsub(%r{/-?\d+}, '/:id')}"
-    usage_row = GogglesDb::APIDailyUse.find_by(route: route_key, day: Date.today)
+    usage_row = GogglesDb::APIDailyUse.find_by(route: route_key, day: Time.zone.today)
     expect(usage_row).to be_a(GogglesDb::APIDailyUse).and be_valid
     expect(usage_row.count).to be_positive
   end

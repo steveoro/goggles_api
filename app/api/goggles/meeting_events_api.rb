@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingEvent API Grape controller
   #
-  #   - version:  7.060
+  #   - version:  7.0.3.30
   #   - author:   Steve A.
-  #   - build:    20210111
+  #   - build:    20210914
   #
   class MeetingEventsAPI < Grape::API
     helpers APIHelpers
@@ -29,6 +29,37 @@ module Goggles
           check_jwt_session
 
           GogglesDb::MeetingEvent.find_by(id: params['id'])
+        end
+      end
+
+      # PUT /api/:version/meeting_event/:id
+      #
+      # Allows direct update for most of the MeetingEvent fields.
+      # Requires Admin grants for the requesting user.
+      #
+      # == Returns:
+      # 'true' when successful; an empty result when not found.
+      #
+      desc 'Update MeetingEvent details'
+      params do
+        requires :id, type: Integer, desc: 'MeetingEvent ID'
+        optional :event_order, type: Integer, desc: 'optional: ordinal number of this event'
+        optional :begin_time, type: String, desc: 'optional: begin time for this event (parsed with Time.zone, based on year 2000)'
+        optional :out_of_race, type: Boolean, desc: 'optional: true if this event does not concur in the overall rankings or scores'
+        optional :autofilled, type: Boolean, desc: 'optional: true if the fields have been filled-in by the data-import procedure (may need revision)'
+        optional :notes, type: String, desc: 'optional: free notes about this event'
+        optional :meeting_session_id, type: Integer, desc: 'optional: link to MeetingSession'
+        optional :event_type_id, type: Integer, desc: 'optional: link to EventType'
+        optional :heat_type_id, type: Integer, desc: 'optional: link to HeatType'
+        optional :split_gender_start_list, type: Boolean, desc: 'optional: true if this event splits gender'
+        optional :split_category_start_list, type: Boolean, desc: 'optional: true if this event splits category'
+      end
+      route_param :id do
+        put do
+          reject_unless_authorized_admin(check_jwt_session)
+
+          meeting_event = GogglesDb::MeetingEvent.find_by(id: params['id'])
+          meeting_event&.update!(declared(params, include_missing: false))
         end
       end
     end
