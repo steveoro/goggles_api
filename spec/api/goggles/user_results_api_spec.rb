@@ -294,6 +294,8 @@ RSpec.describe Goggles::UserResultsAPI, type: :request do
 
   describe 'GET /api/v3/user_results/' do
     # Add some fixtures to the test Domain once, only if missing:
+    # (These are supposed to remain there, and this is why an "after(:all)" clearing block
+    # is totally missing here)
     before(:all) do
       if (GogglesDb::UserWorkshop.count < 10) || (GogglesDb::UserResult.count < 40) ||
          (GogglesDb::UserLap.count < 80)

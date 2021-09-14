@@ -1,3 +1,7 @@
+require:
+  - rubocop-rspec
+  - rubocop-rails
+
 inherit_from: .rubocop_todo.yml
 
 # The behavior of RuboCop can be controlled via the .rubocop.yml
@@ -63,30 +67,30 @@ Metrics/PerceivedComplexity:
 
 # Configuration parameters: EnforcedStyle, AllowToTime.
 # SupportedStyles: strict, flexible
-# Rails/Date:
-#   Exclude:
-#     - 'spec/support/shared_api_response_behaviors.rb'
+Rails/Date:
+  Exclude:
+    - 'spec/support/shared_api_response_behaviors.rb'
 
-# RSpec/ExpectInHook:
-#   Enabled: false
+RSpec/ExpectInHook:
+  Enabled: false
 
-# RSpec/ExampleLength:
-#   Max: 20
+RSpec/ExampleLength:
+  Max: 20
 
 # Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
 # Include: **/*_spec*rb*, **/spec/**/*
-# RSpec/FilePath:
-#   Exclude:
-#     - 'spec/performances/swimmers_api_spec.rb'
+RSpec/FilePath:
+  Exclude:
+    - 'spec/performances/swimmers_api_spec.rb'
 
-# RSpec/MultipleExpectations:
-#   Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
 
-# RSpec/MultipleMemoizedHelpers:
-#   Max: 18
+RSpec/MultipleMemoizedHelpers:
+  Max: 18
 
-# RSpec/NestedGroups:
-#   Max: 5
+RSpec/NestedGroups:
+  Max: 5
 
 Style/ClassAndModuleChildren:
   Exclude:

@@ -283,7 +283,7 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
                                  .where(city_id: fixture_row.city_id)
                                  .where(
                                    ActiveRecord::Base.sanitize_sql_for_conditions(
-                                     "address like '%#{fixture_row.address}%'"
+                                     ['address LIKE ?', "%#{fixture_row.address}%"]
                                    )
                                  )
                                  .count
