@@ -244,12 +244,15 @@ RSpec.describe Goggles::SettingsAPI, type: :request do
         end
 
         it 'clears the specified setting' do
-          cfg_row = if group_key == :prefs
-                      GogglesDb::User.includes(:setting_objects).find(admin_user.id)
-                    else
-                      GogglesDb::AppParameter.config
-                    end
-          expect(cfg_row.settings(group_key).send(key)).to be nil
+          # [Steve A.] Currently all :prefs keys store boolean values, so the returned result will
+          # be a "false" default instead of a nil (default for a String):
+          if group_key == :prefs
+            cfg_row = GogglesDb::User.includes(:setting_objects).find(admin_user.id)
+            expect(cfg_row.settings(group_key).send(key)).to be false
+          else
+            cfg_row = GogglesDb::AppParameter.config
+            expect(cfg_row.settings(group_key).send(key)).to be nil
+          end
         end
       end
 
@@ -284,12 +287,15 @@ RSpec.describe Goggles::SettingsAPI, type: :request do
         end
 
         it 'clears the specified setting' do
-          cfg_row = if group_key == :prefs
-                      GogglesDb::User.includes(:setting_objects).find(admin_user.id)
-                    else
-                      GogglesDb::AppParameter.config
-                    end
-          expect(cfg_row.settings(group_key).send(key)).to be nil
+          # [Steve A.] Currently all :prefs keys store boolean values, so the returned result will
+          # be a "false" default instead of a nil (default for a String):
+          if group_key == :prefs
+            cfg_row = GogglesDb::User.includes(:setting_objects).find(admin_user.id)
+            expect(cfg_row.settings(group_key).send(key)).to be false
+          else
+            cfg_row = GogglesDb::AppParameter.config
+            expect(cfg_row.settings(group_key).send(key)).to be nil
+          end
         end
       end
 
