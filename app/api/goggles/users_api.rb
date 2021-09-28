@@ -91,7 +91,7 @@ module Goggles
       # GET /api/:version/users
       #
       # Given some optional filtering parameters, returns the paginated list of users found.
-      # (CRUD-only)
+      # (CRUD grant only)
       #
       # == Returns:
       # The list of Users for the specified filtering parameters as an array of JSON objects.
