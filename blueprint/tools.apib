@@ -148,3 +148,232 @@ The `timing` result hash will be missing only in the event of errors.
     + Body
 
             { "msg": "Unauthorized" }
+
+
+# compute score|time [/api/v3/tools/compute_score{?pool_type_id,event_type_id,minutes,seconds,hundredths,score,standard_points,badge_id,season_id,gender_type_id,category_type_id}]
+
++ Model (application/json)
+
+    + Body
+
+            {
+                // Result or target score (depending on the parameters supplied):
+                "score": 845.65,
+
+                // Result or target timing (as above):
+                "timing_label": "2'05\"47",
+                "timing": {
+                    "hundredths": 47,
+                    "seconds": 5,
+                    "minutes": 2,
+                    "hours": 0,
+                    "days": 0
+                },
+
+                "standard_points": 1000.0,
+
+                // These can all be nil, unless the StandardTiming has been found:
+                "display_label": "MS 4x50 SL [25 M] - 200-239, FIN MASTER 2019/2020, MIX",
+                "short_label": "MS 4x50 SL [25 M] - 200-239 MIX",
+                "standard_timing_label": "1'48\"79",
+                "standard_timing": {
+                    "id": 16509,
+                    "minutes": 1,
+                    "seconds": 48,
+                    "hundredths": 79,
+                    "season_id": 192,
+                    "gender_type_id": 3,
+                    "pool_type_id": 1,
+                    "event_type_id": 32,
+                    "category_type_id": 1309,
+                    // [...]
+                }
+            }
+
+
+## compute score|time [GET]
+
+Computes either the resulting score given a specific timing or the target
+timing itself given the resulting score, depending on which parameter is supplied.
+
+To compute the target timing, the `score` parameter is required.
+
+To compute the resulting score, all the `timing`-related parameters are required.
+
+**Sub-entities values:**
+
+- `PoolType`
+    | _id_ | _code_ | _length_in_meters_ |
+    | --- | --- | --- |
+    | 1 | `25` | 25 |
+    | 2 | `33` | 33 |
+    | 3 | `50` | 50 |
+- `GenderType`
+    | _id_ | _code_ | _description_ |
+    | --- | --- | --- |
+    | 1 | `M` | male |
+    | 2 | `F` | female |
+    | 3 | `X` | intermixed/unknown |
+
+For more entities & sub-entities details, refer to:
+- `GET lookup/event_types`
+- `GET /category_types`
+- `GET /seasons`
+- `GET /badges`
+
+
+The field keys `display_label`, `short_label`, `standard_timing_label` & `standard_timing` will all be
+present but with an empty value, unless a corresponding StandardTiming has been found.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + pool_type_id: 3 (number, required) - PoolType ID associated with the event
+    + event_type_id: 11 (number, required) - EventType ID associated with the event
+
+    + minutes: 2 (number, optional) - target or result time minutes (required when the target score has to be computed)
+    + seconds: 5 (number, optional) - target or result time seconds (required when the target score has to be computed)
+    + hundredths: 47 (number, optional) - target or result time hundredths of seconds (required to compute the target score)
+    + score: 845 (number, optional) - target score (required when the target timing is desired)
+    + standard_points: 1000 (number, optional) - standard base points override; default: 1000
+
+    + badge_id: 5849 (number, optional) - Badge ID (as alternative instead of Season + Gender + Category)
+    + season_id: 192 (number, optional) - Season ID for the event (as alternative instead of Badge)
+    + gender_type_id: 3 (number, optional) - GenderType ID for the event (as alternative instead of Badge)
+    + category_type_id: 1309 (number, optional) - CategoryType ID for the event (as alternative instead of Badge)
+
+
++ Request ok:score (application/json)
+
+    ### Case
+
+    _Compute **result score** given a target timing_
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/tools/compute_score?minutes=2&\
+            seconds=5&hundredths=47&season_id=192&gender_type_id=3&\
+            pool_type_id=1&event_type_id=32&category_type_id=1309"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/tools/compute_score',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: {
+                        minutes: 2, seconds: 5, hundredths: 47,
+                        season_id: 192, gender_type_id: 3, pool_type_id: 1,
+                        event_type_id: 32, category_type_id: 1309
+                    }
+                }
+            )
+    => <RestClient::Response 200 "{\"score\": 845.65,\"timing_label\":\"2'05\\"47\",\"timing\":{\"hundredths\":47,\"seconds\":5,\"minutes\":2, ...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [compute score|time][]
+
+
++ Request ok:time (application/json)
+
+    ### Case
+
+    _Compute **target time** given a result score_
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/tools/compute_score?score=845&\
+            season_id=192&gender_type_id=3&pool_type_id=1&\
+            event_type_id=32&category_type_id=1309"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/tools/compute_score',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: {
+                        score: 845,
+                        season_id: 192, gender_type_id: 3, pool_type_id: 1,
+                        event_type_id: 32, category_type_id: 1309
+                    }
+                }
+            )
+    => <RestClient::Response 200 "{\"score\": 845.65,\"timing_label\":\"2'05\\"47\",\"timing\":{\"hundredths\":47,\"seconds\":5,\"minutes\":2, ...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [compute score|time][]
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
