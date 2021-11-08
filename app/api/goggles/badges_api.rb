@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Badge API Grape controller
   #
-  #   - version:  7.053
+  #   - version:  7-0.3.37
   #   - author:   Steve A.
-  #   - build:    20201222
+  #   - build:    20211108
   #
   class BadgesAPI < Grape::API
     helpers APIHelpers
@@ -155,6 +155,10 @@ module Goggles
         optional :team_affiliation_id, type: Integer, desc: 'associated TeamAffiliation ID'
         optional :season_id, type: Integer, desc: 'associated Season ID'
         optional :swimmer_id, type: Integer, desc: 'associated Swimmer ID'
+        optional :off_gogglecup, type: Boolean, desc: 'true if GoogleCups are disabled for the associated athlete'
+        optional :fees_due, type: Boolean, desc: 'true if the meeting registration fees are still due for the associated athlete'
+        optional :badge_due, type: Boolean, desc: 'true if the badge fees are still due for the associated athlete'
+        optional :relays_due, type: Boolean, desc: 'true if the relay fees are still due for the associated athlete'
         use :pagination
       end
       # Enforcing 'max_per_page' will add the allowed range to the swagger docs and
@@ -168,7 +172,7 @@ module Goggles
         paginate GogglesDb::Badge.where(
           filtering_hash_for(
             params,
-            %w[team_id team_affiliation_id season_id swimmer_id]
+            %w[team_id team_affiliation_id season_id swimmer_id off_gogglecup fees_due badge_due relays_due]
           )
         )
       end

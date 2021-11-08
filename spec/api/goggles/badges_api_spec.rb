@@ -303,6 +303,20 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
+      %i[off_gogglecup fees_due badge_due relays_due].each do |bool_filter|
+        context "when filtering by #{bool_filter}," do
+          let(:expected_row_count) { GogglesDb::Badge.where(bool_filter => true).count }
+
+          before do
+            FactoryBot.create_list(:badge, 5, bool_filter => true) if expected_row_count < 1
+            expect(expected_row_count).to be_positive
+            get(api_v3_badges_path, params: { bool_filter => true }, headers: fixture_headers)
+          end
+
+          it_behaves_like('successful multiple row response either with OR without pagination links')
+        end
+      end
+
       # Uses random fixtures to have a quick 1-row result (no pagination, always):
       context 'when filtering by a specific team_affiliation_id for a random single fixture,' do
         before { get(api_v3_badges_path, params: { team_affiliation_id: fixture_row.team_affiliation_id }, headers: fixture_headers) }

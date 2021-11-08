@@ -267,6 +267,7 @@ All are optional (except `id` & `number`):
 | | 3 | `G`: GoggleCup |
 | | 4 | `A`: preceding year |
 | | 5 | `U`: last race |
+| `off_gogglecup` | boolean | `true`, the swimmer does not run for the bespoke GoggleCup |
 | `fees_due` | boolean | `true`, the swimmer has to pay additional meeting fees for the Championship; `false`, the team provides |
 | `badge_due` | boolean | `true`, the swimmer has to pay the badge registration; `false`, the team provides |
 | `relays_due` | boolean | `true`, the swimmer has to pay any relay event in the Championship; `false`, the team provides |
@@ -724,7 +725,7 @@ Returns `true` on success, an empty body when not found.
             { "msg": "Unauthorized" }
 
 
-# Badge list [/api/v3/badges{?page,per_page,team_id,team_affiliation_id,season_id,swimmer_id}]
+# Badge list [/api/v3/badges{?page,per_page,team_id,team_affiliation_id,season_id,swimmer_id,off_gogglecup,fees_due,badge_due,relays_due}]
 
 + Model (application/json)
 
@@ -763,6 +764,10 @@ returned as JSON and optionally filtered by any or all from:
 - `team_affiliation_id`
 - `season_id`
 - `swimmer_id`
+- `off_gogglecup`
+- `fees_due`
+- `badge_due`
+- `relays_due`
 
 Optional pagination parameters for the request:
 
@@ -786,9 +791,13 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 + Parameters
     + team_id: 1 (number, optional) - associated Badge ID
-    + swimmer_id: 142 (number, optional) - associated Swimmer ID
     + team_affiliation_id: 5727 (number, optional) - associated TeamAffiliation ID
     + season_id: 1 (number, optional) - associated Season ID
+    + swimmer_id: 142 (number, optional) - associated Swimmer ID
+    + off_gogglecup (boolean, optional) - `true` when the customized GoggleCup has to be computed
+    + fees_due (boolean, optional) - `true` when the swimmer has to pay additional meeting fees for the Championship
+    + badge_due (boolean, optional) - `true` when the swimmer has to pay the badge registration
+    + relays_due (boolean, optional) - `true` when the swimmer has to pay any relay event in the Championship
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page

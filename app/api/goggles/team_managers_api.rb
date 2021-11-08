@@ -5,7 +5,7 @@ module Goggles
   #
   #   - version:  7-0.3.37
   #   - author:   Steve A.
-  #   - build:    20211104
+  #   - build:    20211108
   #
   # Implements full CRUD interface for ManagedAffiliation.
   #

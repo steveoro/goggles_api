@@ -363,7 +363,6 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
         expect(expected_row_count).to be_positive
         get(api_v3_team_managers_path, params: { user_id: fixture_user_id }, headers: admin_headers)
       end
-      before { get(api_v3_team_managers_path, params: { user_id: fixture_user_id }, headers: admin_headers) }
 
       it_behaves_like('successful response with pagination links & values in headers')
     end
@@ -387,7 +386,7 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
 
     context 'when filtering by the team name,' do
       # This is needed due to anonymized data:
-      let(:fixture_row_name) { "%#{GogglesDb::Team.first.name.split(' ').first}%" }
+      let(:fixture_row_name) { "%#{GogglesDb::Team.first.name.split.first}%" }
       let(:data_domain) do
         team_affiliation_ids = GogglesDb::TeamAffiliation.where(team_id: GogglesDb::Team.first.id).first(15).map(&:id)
         team_affiliation_ids.each { |ta_id| FactoryBot.create(:managed_affiliation, team_affiliation_id: ta_id) }
