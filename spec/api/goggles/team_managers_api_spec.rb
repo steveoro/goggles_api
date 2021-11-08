@@ -291,20 +291,15 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
   #++
 
   describe 'GET /api/v3/team_managers/' do
-    let(:fixture_user_id) { GogglesDb::ManagedAffiliation.first(150).sample.user_id }
-    let(:fixture_ta_id) { GogglesDb::ManagedAffiliation.first(150).sample.team_affiliation_id }
-    let(:expected_row_count) { GogglesDb::ManagedAffiliation.where(user_id: fixture_user_id).count }
     let(:default_per_page) { 25 }
-    # Make sure the Domain contains the expected seeds:
-
-    before do
-      FactoryBot.create_list(:managed_affiliation, 26, user_id: fixture_user_id)
-      FactoryBot.create_list(:managed_affiliation, 10, team_affiliation_id: fixture_ta_id)
-      expect(GogglesDb::ManagedAffiliation.count).to be >= 36
-      expect(expected_row_count).to be_positive
-    end
 
     context 'without any filters,' do
+      let(:expected_row_count) { GogglesDb::ManagedAffiliation.count }
+      before do
+        expect(GogglesDb::ManagedAffiliation.count).to be_positive
+        expect(expected_row_count).to be_positive
+      end
+
       context 'with an account having ADMIN grants,' do
         before { get(api_v3_team_managers_path, headers: admin_headers) }
 
@@ -347,8 +342,11 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
     end
 
     context 'when filtering by a specific team_affiliation_id,' do
+      let(:fixture_ta_id) { GogglesDb::ManagedAffiliation.first(150).sample.team_affiliation_id }
       let(:expected_row_count) { GogglesDb::ManagedAffiliation.where(team_affiliation_id: fixture_ta_id).count }
       before do
+        FactoryBot.create_list(:managed_affiliation, 10, team_affiliation_id: fixture_ta_id)
+        expect(GogglesDb::ManagedAffiliation.count).to be_positive
         expect(expected_row_count).to be_positive
         get(api_v3_team_managers_path, params: { team_affiliation_id: fixture_ta_id }, headers: admin_headers)
       end
@@ -357,9 +355,75 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
     end
 
     context 'when filtering by a specific user_id,' do
+      let(:fixture_user_id) { GogglesDb::ManagedAffiliation.first(150).sample.user_id }
+      let(:expected_row_count) { GogglesDb::ManagedAffiliation.where(user_id: fixture_user_id).count }
+      before do
+        FactoryBot.create_list(:managed_affiliation, 26, user_id: fixture_user_id)
+        expect(GogglesDb::ManagedAffiliation.count).to be_positive
+        expect(expected_row_count).to be_positive
+        get(api_v3_team_managers_path, params: { user_id: fixture_user_id }, headers: admin_headers)
+      end
       before { get(api_v3_team_managers_path, params: { user_id: fixture_user_id }, headers: admin_headers) }
 
       it_behaves_like('successful response with pagination links & values in headers')
+    end
+
+    context 'when filtering by the manager name,' do
+      let(:fixture_row_name) { '%leega%' }
+      let(:data_domain) do
+        GogglesDb::ManagedAffiliation.joins(:manager)
+                                     .includes(:manager)
+                                     .where('users.name LIKE ?', fixture_row_name)
+      end
+      let(:expected_row_count) { data_domain.count }
+
+      before do
+        expect(expected_row_count).to be_positive
+        get(api_v3_team_managers_path, params: { manager_name: fixture_row_name }, headers: admin_headers)
+      end
+
+      it_behaves_like('successful multiple row response either with OR without pagination links')
+    end
+
+    context 'when filtering by the team name,' do
+      # This is needed due to anonymized data:
+      let(:fixture_row_name) { "%#{GogglesDb::Team.first.name.split(' ').first}%" }
+      let(:data_domain) do
+        team_affiliation_ids = GogglesDb::TeamAffiliation.where(team_id: GogglesDb::Team.first.id).first(15).map(&:id)
+        team_affiliation_ids.each { |ta_id| FactoryBot.create(:managed_affiliation, team_affiliation_id: ta_id) }
+        domain = GogglesDb::ManagedAffiliation.joins(:team)
+                                              .includes(:team)
+                                              .where('teams.name LIKE ?', fixture_row_name)
+        expect(domain.count).to be_positive
+        domain
+      end
+      let(:expected_row_count) { data_domain.count }
+
+      before do
+        expect(expected_row_count).to be_positive
+        get(api_v3_team_managers_path, params: { team_name: fixture_row_name }, headers: admin_headers)
+      end
+
+      it_behaves_like('successful multiple row response either with OR without pagination links')
+    end
+
+    context 'when filtering by the season description,' do
+      let(:fixture_row_name) { %w[%fin% %csi%].sample }
+      let(:data_domain) do
+        domain = GogglesDb::ManagedAffiliation.joins(:season)
+                                              .includes(:season)
+                                              .where('seasons.description LIKE ?', fixture_row_name)
+        expect(domain.count).to be_positive
+        domain
+      end
+      let(:expected_row_count) { data_domain.count }
+
+      before do
+        expect(expected_row_count).to be_positive
+        get(api_v3_team_managers_path, params: { season_description: fixture_row_name }, headers: admin_headers)
+      end
+
+      it_behaves_like('successful multiple row response either with OR without pagination links')
     end
 
     context 'when using an invalid JWT,' do

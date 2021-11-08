@@ -527,7 +527,7 @@ Returns `true` on success, an empty body when not found.
 
 
 
-# Team Manager list [/api/v3/team_managers{?page,per_page,user_id,team_affiliation_id}]
+# Team Manager list [/api/v3/team_managers{?page,per_page,user_id,team_affiliation_id,manager_name,team_name,season_description}]
 
 + Model (application/json)
 
@@ -564,8 +564,11 @@ returned as JSON and optionally filtered by any or all from:
 
 - `user_id`
 - `team_affiliation_id`
+- `manager_name`
+- `team_name`
+- `season_description`
 
-Returns exact matches for all the parameters.
+Returns exact matches for the first 2 parameters, matches any "like"-text for the remaining 3 fields.
 
 Optional pagination parameters for the request:
 
@@ -593,6 +596,9 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 + Parameters
     + user_id: 1 (number, optional) - associated User ID
     + team_affiliation_id: 18 (number, optional) - associated TeamAffiliation ID
+    + manager_name: 1 (string, optional) - associated Manager (User) name; matches any "like"-text
+    + team_name: 1 (string, optional) - associated Team name; matches any "like"-text
+    + season_description: 1 (string, optional) - associated Season description; matches any "like"-text
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page

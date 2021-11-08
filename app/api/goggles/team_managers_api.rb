@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: ManagedAffiliation (team/manager) API
   #
-  #   - version:  7.0.3.29
+  #   - version:  7-0.3.37
   #   - author:   Steve A.
-  #   - build:    20210910
+  #   - build:    20211104
   #
   # Implements full CRUD interface for ManagedAffiliation.
   #
@@ -141,19 +141,40 @@ module Goggles
       #
       desc 'List ManagedAffiliations'
       params do
-        optional :user_id, type: Integer, desc: 'optional: associated User ID (new Manager)'
+        optional :user_id, type: Integer, desc: 'optional: associated User (Manager) ID'
         optional :team_affiliation_id, type: Integer, desc: 'optional: associated TeamAffiliation ID'
+
+        optional :manager_name, type: String, desc: 'optional: filter by user/manager name (LIKE supported)'
+        optional :team_name, type: String, desc: 'optional: filter by team name (LIKE supported)'
+        optional :season_description, type: String, desc: 'optional: filter by season description (LIKE supported)'
         use :pagination
       end
       paginate
       get do
         reject_unless_authorized_admin(check_jwt_session)
 
-        paginate(
-          GogglesDb::ManagedAffiliation.where(
-            filtering_hash_for(params, %w[user_id team_affiliation_id])
-          )
-        )
+        # Use explicit table mappings in like condition due to joins:
+        joined_tables_mappings = {
+          'manager_name' => 'users.name',
+          'team_name' => 'teams.name',
+          'season_description' => 'seasons.description'
+        }.keep_if { |field_name, _name_in_table| params.key?(field_name) }
+                                 .map { |_field_name, name_in_table| "(#{name_in_table} LIKE ?)" }.join(' AND ')
+
+        field_values = params.dup
+                             .keep_if { |key, _v| %w[manager_name team_name season_description].include?(key) }
+                             .values.map { |value| "%#{value}%" }
+        like_condition = ActiveRecord::Base.sanitize_sql_array([joined_tables_mappings, field_values].flatten) unless field_values.empty?
+
+        results = GogglesDb::ManagedAffiliation.joins(:season, :team, :manager)
+                                               .includes(:season, :team, :manager)
+                                               .where(
+                                                 filtering_hash_for(params, %w[user_id team_affiliation_id])
+                                               )
+                                               .where(
+                                                 like_condition
+                                               )
+        paginate(results)
       end
     end
   end
