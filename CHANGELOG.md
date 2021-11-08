@@ -2,7 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
-- **0.3.37** [Steve A.] added /tools/compute_score (& time); more filtering options for /team_managers & /badges;
+- **0.3.37** [Steve A.] added /tools/compute_score (& time); more filtering options for /team_managers, /badges & /lookup
 - **0.3.30** [Steve A.] added several missing endpoints: DELETE /user, GET+PUT+DELETE+LIST /team_managers, DELETE /badge, GET /admin_grants,
 PUT /meeting_event, PUT /meeting_program
 - **0.3.29** [Steve A.] upgrade to Rails 6.0.4.1 due to security fixes

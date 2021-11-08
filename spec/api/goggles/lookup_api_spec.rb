@@ -50,6 +50,37 @@ RSpec.describe Goggles::LookupAPI, type: :request do
       end
     end
 
+    context 'when filtering by name value,' do
+      let(:search_param) { %w[do sl ra fa].sample }
+      let(:data_domain) do
+        # Search is actually implemented on the localizations, so we need to replicate it here:
+        # (default locale is 'it')
+        entity_rows = GogglesDb::EventType.all.map { |row| row.lookup_attributes('it') }
+        entity_rows.select { |row| row['long_label'] =~ Regexp.new(search_param, Regexp::IGNORECASE) }
+      end
+      let(:expected_row_count) { data_domain.count }
+
+      before do
+        expect(expected_row_count).to be_positive
+        get(api_v3_lookup_path(entity_name: 'event_types'), params: { name: search_param }, headers: fixture_headers)
+      end
+
+      it_behaves_like('a successful request that has positive usage stats')
+
+      it 'returns a non-empty list of JSON rows' do
+        result_array = JSON.parse(response.body)
+        expect(result_array).to be_an(Array)
+        expect(result_array.count).to eq(expected_row_count).and be_positive
+      end
+
+      it 'does not contain the pagination values or links in the response headers' do
+        expect(response.headers['Page']).to be nil
+        expect(response.headers['Link']).to be nil
+        expect(response.headers['Per-Page']).to be nil
+        expect(response.headers['Total']).to be nil
+      end
+    end
+
     context 'when using a valid authentication and filtering by a partial value,' do
       %w[
         event_types

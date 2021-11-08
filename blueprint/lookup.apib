@@ -1,7 +1,7 @@
 # Group Lookup
 
 
-# Lookup list [/api/v3/lookup/{entity}{?locale}]
+# Lookup list [/api/v3/lookup/{entity}{?long_label,name,locale}]
 
 + Model (application/json)
 
@@ -42,7 +42,8 @@
 
 ## lookup [GET]
 
-Returns the unfiltered JSON list of all possible lookup values for a specific entity.
+Returns the JSON list of the possible lookup values for a specific entity, given the entity name,
+a possible matching string ('name' or 'long_label') for further filtering, and a locale override.
 
 **Supported values:**
 
@@ -84,6 +85,7 @@ Any unsupported `entity` value will result in a "not found" empty list response.
 
 + Parameters
     + entity: `heat_types` (string, required) - Lookup entity
+    + name: `BS` (string, optional) - name or long_label to filter results (`long_label` can also be used as an alias for this)
     + locale: `en` (string, optional) - locale code for labels
 
 

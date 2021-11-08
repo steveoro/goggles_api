@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Lookup API for all subentities
   #
-  #   - version:  7.02.18
+  #   - version:  7-0.3.37
   #   - author:   Steve A.
-  #   - build:    20210518
+  #   - build:    20211108
   #
   class LookupAPI < Grape::API
     helpers APIHelpers
@@ -23,6 +23,8 @@ module Goggles
       #
       # - name: filtering parameter on the 'long_label' field of an entity; will return just the
       #         rows matching the specified value for the field (with case ignored)
+      #
+      # - long_label: alias for 'name'
       #
       # - locale: locale string code to be enforced (defaults to 'it')
       #
@@ -64,6 +66,7 @@ module Goggles
       params do
         requires :entity_name, type: String, desc: 'Entity name (plural)'
         optional :name, type: String, desc: 'optional: filtering query substring for \'long_label\', matched ignoring case (no fuzzy search)'
+        optional :long_label, type: String, desc: 'optional: alias for the \'name\' query parameter'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :entity_name do
@@ -74,10 +77,13 @@ module Goggles
           return [] if entity.nil? || !entity&.new.is_a?(Localizable)
 
           entity_rows = entity.all.map { |row| row.lookup_attributes(params['locale'] || 'it') }
-          return entity_rows if params['name'].blank?
+          return entity_rows if params['name'].blank? && params['long_label'].blank?
 
           # Filter out results if a query parameter was specified:
-          entity_rows.select { |row| row['long_label'] =~ Regexp.new(params['name'], Regexp::IGNORECASE) }
+          search_param = params['name'] || params['long_label']
+          entity_rows.select do |row|
+            row['long_label'] =~ Regexp.new(search_param, Regexp::IGNORECASE)
+          end
         end
       end
     end
