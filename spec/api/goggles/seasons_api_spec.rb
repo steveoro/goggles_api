@@ -8,16 +8,32 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
-  let(:api_user)  { FactoryBot.create(:user) }
-  let(:jwt_token) { jwt_for_api_session(api_user) }
-  let(:fixture_row) { FactoryBot.create(:season) }
+  let(:fixture_row) { GogglesDb::Season.first(150).sample }
+  # Admin:
+  let(:admin_user)  { FactoryBot.create(:user) }
+  let(:admin_grant) { FactoryBot.create(:admin_grant, user: admin_user, entity: nil) }
+  let(:admin_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" } }
+  # CRUD user (must result as unauthorized):
+  let(:crud_user)       { FactoryBot.create(:user) }
+  let(:crud_grant)      { FactoryBot.create(:admin_grant, user: crud_user, entity: 'Season') }
+  let(:crud_headers)    { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
+  # Standard user (no grants whatsoever):
+  let(:api_user)    { FactoryBot.create(:user) }
+  let(:jwt_token)   { jwt_for_api_session(api_user) }
   let(:fixture_headers) { { 'Authorization' => "Bearer #{jwt_token}" } }
 
   # Enforce domain context creation
   before do
     expect(fixture_row).to be_a(GogglesDb::Season).and be_valid
+    expect(admin_user).to be_a(GogglesDb::User).and be_valid
+    expect(admin_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+    expect(admin_headers).to be_an(Hash).and have_key('Authorization')
+    expect(crud_user).to be_a(GogglesDb::User).and be_valid
+    expect(crud_grant).to be_a(GogglesDb::AdminGrant).and be_valid
+    expect(crud_headers).to be_an(Hash).and have_key('Authorization')
     expect(api_user).to be_a(GogglesDb::User).and be_valid
     expect(jwt_token).to be_a(String).and be_present
+    expect(fixture_headers).to be_an(Hash).and have_key('Authorization')
   end
 
   describe 'GET /api/v3/season/:id' do
@@ -110,6 +126,103 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
       before { put(api_v3_season_path(id: -1), params: { description: 'FIXTURE Season' }, headers: crud_headers) }
 
       it_behaves_like('an empty but successful JSON response')
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe 'POST /api/v3/season' do
+    # Make sure parameters for the POST include all required attributes:
+    let(:built_row) do
+      FactoryBot.build(
+        :season,
+        season_type_id: GogglesDb::SeasonType.all_masters.sample.id,
+        edition_type_id: GogglesDb::EditionType.all.sample.id,
+        timing_type_id: GogglesDb::TimingType.all.sample.id
+      )
+    end
+
+    before do
+      expect(built_row).to be_a(GogglesDb::Season).and be_valid
+    end
+
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before { post(api_v3_season_path, params: built_row.attributes, headers: admin_headers) }
+
+        it_behaves_like('a successful JSON POST response')
+      end
+
+      context 'with an account having just CRUD grants,' do
+        before { post(api_v3_season_path, params: built_row.attributes, headers: crud_headers) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+
+      context 'with an account not having any grants,' do
+        before { post(api_v3_season_path, params: built_row.attributes, headers: fixture_headers) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
+
+    context 'when using valid parameters but during Maintenance mode,' do
+      context 'with an account having ADMIN grants,' do
+        before do
+          GogglesDb::AppParameter.maintenance = true
+          post(api_v3_season_path, params: built_row.attributes, headers: admin_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+
+        it_behaves_like('a successful JSON POST response')
+      end
+
+      context 'with an account having lesser grants,' do
+        before do
+          GogglesDb::AppParameter.maintenance = true
+          post(api_v3_season_path, params: built_row.attributes, headers: crud_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+
+        it_behaves_like('a request refused during Maintenance (except for admins)')
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before { post(api_v3_season_path, params: built_row.attributes, headers: { 'Authorization' => 'you wish!' }) }
+
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+
+    context 'when using empty or invalid parameters,' do
+      before do
+        post(
+          api_v3_season_path,
+          params: {
+            header_year: '',
+            season_type_id: -1,
+            timing_type_id: built_row.timing_type_id,
+            edition_type_id: built_row.edition_type_id,
+            edition: built_row.edition,
+            description: built_row.description,
+            begin_date: built_row.begin_date,
+            end_date: built_row.end_date
+          },
+          headers: admin_headers
+        )
+      end
+
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+
+      it 'responds with a generic error message and its details in the header' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('error')
+        expect(result['error']).to eq(I18n.t('api.message.creation_failure'))
+        expect(response.headers).to have_key('X-Error-Detail')
+        expect(response.headers['X-Error-Detail']).to be_present
+      end
     end
   end
   #-- -------------------------------------------------------------------------

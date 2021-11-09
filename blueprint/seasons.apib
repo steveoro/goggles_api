@@ -211,7 +211,7 @@ All are optional (except `id`):
 |  Field name  | Data type |  description |
 | --- | --- | --- |
 | `description` | string | verbose name or description for the Season |
-| begin_date`` | date | starting date or Season first day |
+| `begin_date` | date | starting date or Season first day |
 | `end_date` | date | ending date or Season last day |
 | `season_type_id` | number | associated SeasonType ID |
 | | _id_ | _code: description_ |
@@ -385,6 +385,219 @@ All are optional (except `id`):
     + Body
 
             { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new Season, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `description` | string | verbose name or description for the Season |
+| `begin_date` | date | starting date or Season first day |
+| `end_date` | date | ending date or Season last day |
+| `season_type_id` | number | associated SeasonType ID |
+| | _id_ | _code: description_ |
+| | 1 | `MASFIN`: FIN Masters |
+| | 2 | `MASCSI`: CSI Masters |
+| | 3 | `MASUISP`: UISP Masters |
+| | 4 | `AGOFIN`: FIN Pro |
+| | 5 | `AGOCSI`: CSI Pro |
+| | 6 | `AGOUISP`: UISP Pro |
+| | 7 | `MASLEN`: FINA Masters |
+| | 8 | `MASFINA`: FINA Masters |
+| `header_year` | string | descriptive label for Season year; typical format: `YYYY` or `YYYY/YYYY+1` |
+| `edition` | integer | Edition number |
+| `edition_type_id` | number | associated EditionType ID |
+| | _id_ | _code: description_ |
+| | 1 | `O`: ordinal number |
+| | 2 | `R`: roman numeral |
+| | 3 | `N`: none |
+| | 4 | `Y`: year |
+| | 5 | `S`: season |
+| `timing_type_id` | number | associated TimingType ID |
+| | _id_ | _code: description_ |
+| | 1 | `M`: manual |
+| | 2 | `S`: semi-automatic |
+| | 3 | `A`: automatic |
+| `has_individual_rank` | boolean | true if individual rankings are supported |
+| `badge_fee` | string/float | base registration/badge fee (in local currency) |
+
+
+* * *
+
+
++ Attributes
+    + header_year: "2020/2021" (string, required) - referenced year(s) (format: `YYYY` or `YYYY/YYYY+1`)
+    + season_type_id: 1 (number, required) - associated SeasonType ID
+    + edition: 12 (number, required) - edition number
+    + edition_type_id: 2 (number, required) - associated EditionType ID
+    + timing_type_id: 3 (number, required) - associated TimingType ID
+    + description: "FIN SuperMaster 2020/2021" (string, required) - verbose description
+    + begin_date: "2020-09-30" (string, required) - first day of the Season (format: `YYYY-MM-DD`)
+    + end_date: "2021-05-30" (string, required) - last day of the Season (format: `YYYY-MM-DD`)
+    + individual_rank (boolean, optional) - `true` if individual rankings are supported
+    + badge_fee (number, required) - base registration/badge fee (in local currency)
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"header_year": "2020/2021", "season_type_id": 1, "description": "FIN SuperMaster 2020/2021", \
+                 "edition": 12, "edition_type_id": 2, "timing_type_id": 3, "begin_date": "2020-09-30", \
+                 "end_date": "2021-05-30" }'
+            "<API_HOST:PORT>/api/v3/category_type"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/category_type',
+            {
+                "header_year": "2020/2021",
+                "season_type_id": 1,
+                "description": "FIN SuperMaster 2020/2021",
+                "edition": 12,
+                "edition_type_id": 2,
+                "timing_type_id": 3,
+                "begin_date": "2020-09-30",
+                "end_date": "2021-05-30"
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "header_year": "2020/2021",
+                "season_type_id": 1,
+                "description": "FIN SuperMaster 2020/2021",
+                "edition": 12,
+                "edition_type_id": 2,
+                "timing_type_id": 3,
+                "begin_date": "2020-09-30",
+                "end_date": "2021-05-30"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "header_year": "2020/2021",
+                "season_type_id": 1,
+                "description": "FIN SuperMaster 2020/2021",
+                "edition": 12,
+                "edition_type_id": 2,
+                "timing_type_id": 3,
+                "begin_date": "2020-09-30",
+                "end_date": "2021-05-30"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "header_year": "2020/2021",
+                "season_type_id": 1,
+                "description": "FIN SuperMaster 2020/2021",
+                "edition": 12,
+                "edition_type_id": 2,
+                "timing_type_id": 3,
+                "begin_date": "2020-09-30",
+                "end_date": "2021-05-30"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "header_year": "2020/2021",
+                "season_type_id": 1,
+                "description": "FIN SuperMaster 2020/2021",
+                "edition": 12,
+                "edition_type_id": 2,
+                "timing_type_id": 3,
+                "begin_date": "2020-09-30",
+                "end_date": "2021-05-30"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
 
 
 # Season list [/api/v3/seasons{?page,per_page,begin_date,end_date,season_type_id,header_year}]

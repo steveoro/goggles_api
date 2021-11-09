@@ -64,6 +64,48 @@ module Goggles
           season&.update!(declared(params, include_missing: false))
         end
       end
+
+      # POST /api/:version/season
+      #
+      # Creates a new SeasonType given the specified parameters.
+      # Requires Admin grants for the requesting user.
+      #
+      # == Required Params:
+      # All Season params are required, with the exception of individual_rank & badge_fee.
+      #
+      # == Returns:
+      # A JSON Hash containing the result 'msg' and the newly created instance:
+      #
+      #    { "msg": "OK", "new": { ...new row in JSON format... } }
+      #
+      desc 'Create a new Season'
+      params do
+        requires :header_year, type: String, desc: 'referenced year(s) (format: YYYY or YYYY/YYYY+1)'
+        requires :edition, type: Integer, desc: 'edition number'
+        requires :season_type_id, type: Integer, desc: 'associated SeasonType ID'
+        requires :timing_type_id, type: Integer, desc: 'associated TimingType ID'
+        requires :edition_type_id, type: Integer, desc: 'associated EditionType ID'
+        requires :description, type: String, desc: 'verbose description'
+        requires :begin_date, type: Date, desc: 'first day of the Season'
+        requires :end_date, type: Date, desc: 'last day of the Season'
+
+        optional :individual_rank, type: Boolean, desc: 'true if individual rankings are supported'
+        optional :badge_fee, type: Float, desc: 'base registration/badge fee (in local currency)'
+      end
+      post do
+        reject_unless_authorized_admin(check_jwt_session)
+
+        new_row = GogglesDb::Season.create(params)
+        unless new_row.valid?
+          error!(
+            I18n.t('api.message.creation_failure'),
+            422,
+            'X-Error-Detail' => GogglesDb::ValidationErrorTools.recursive_error_for(new_row)
+          )
+        end
+
+        { msg: I18n.t('api.message.generic_ok'), new: new_row }
+      end
     end
 
     resource :seasons do
