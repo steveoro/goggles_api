@@ -348,7 +348,7 @@ RSpec.describe Goggles::CategoryTypesAPI, type: :request do
       end
     end
 
-    context 'when filtering by a specific season_id (with valid authentication),' do
+    context 'when filtering by a specific code (with valid authentication),' do
       before { get(api_v3_category_types_path, params: { code: fixture_code }, headers: fixture_headers) }
 
       it_behaves_like('successful multiple row response either with OR without pagination links')
@@ -363,7 +363,7 @@ RSpec.describe Goggles::CategoryTypesAPI, type: :request do
       it_behaves_like('successful response in Select2 bespoke format')
     end
 
-    context 'when filtering by a specific code (with valid authentication),' do
+    context 'when filtering by a specific season_id (with valid authentication),' do
       before { get(api_v3_category_types_path, params: { season_id: fixture_season_id }, headers: fixture_headers) }
 
       it_behaves_like('successful response with pagination links & values in headers')

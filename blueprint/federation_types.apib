@@ -1,0 +1,566 @@
+# Group FederationTypes
+
+## FederationType details [/api/v3/federation_type/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 4,
+            "lock_version": 0,
+            "code": "LEN",
+            "description": "LIGUE EUROPEENNE de NATATATION",
+            "short_name": "LEN",
+            "created_at": "2014-10-19T00:00:00.000Z",
+            "updated_at": "2014-10-19T00:00:00.000Z"
+        }
+
+
+
+### find [GET]
+The FederationType instance matching the specified `id` returned as JSON.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 4 (number, required) - FederationType ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/federation_type/4"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/federation_type/4',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":4, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [FederationType details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the FederationType fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `code` | string | internal code |
+| `description` | string | federation description |
+| `short_name` | string | short federation name |
+
+
+* * *
+
+
++ Parameters
+    + id: 4 (number, required) - FederationType ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"code": "FIN", "description": "Campionato FIN" }' \
+            "<API_HOST:PORT>/api/v3/federation_type/4"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/federation_type/4',
+                payload: {
+                    "code": "FIN",
+                    "description": "Campionato FIN"
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "code": "FIN",
+                "description": "Campionato FIN"
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "code": "FIN",
+                "description": "Campionato FIN"
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "code": "FIN",
+                "description": "Campionato FIN"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "code": "FIN",
+                "description": "Campionato FIN"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "code": "FIN",
+                "description": "Campionato FIN"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new FederationType, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| *`code` | string | internal code |
+| *`description` | string | federation description |
+| *`short_name` | string | short federation name |
+
+
+* * *
+
+
++ Attributes
+    + code (string, required) - internal code
+    + short_name (string, required) - short federation name
+    + description (string, optional) - federation description
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"code": "FIN", "description": "Campionato Federazione Italiana Nuoto", "short_name": "FIN" }'
+            "<API_HOST:PORT>/api/v3/federation_type"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/federation_type',
+            {
+                "code": "FIN",
+                "short_name": "FIN",
+                "description": "Campionato Federazione Italiana Nuoto"
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "code": "FIN",
+                "short_name": "FIN",
+                "description": "Campionato Federazione Italiana Nuoto"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "code": "FIN",
+                "short_name": "FIN",
+                "description": "Campionato Federazione Italiana Nuoto"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "code": "FIN",
+                "short_name": "FIN",
+                "description": "Campionato Federazione Italiana Nuoto"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "code": "FIN",
+                "short_name": "FIN",
+                "description": "Campionato Federazione Italiana Nuoto"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# FederationType list [/api/v3/federation_types{?page,per_page,code,short_name,description}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/federation_types?page=1&code=FIN>; rel=\"last\", <http://localhost:3000/api/v3/federation_types?page=1&code=FIN>; rel=\"next\""
+            Total: 5
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // FederationType details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // FederationType details 2
+                {
+                    "id": 2,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of FederationTypes associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `code`
+- `short_name`
+- `description`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + code: "FIN" (string, optional) - internal code; supports partial matches
+    + short_name: "FIN" (string, optional) - short federation name; supports partial matches
+    + description: "Campionato" (string, optional) - federation description; supports partial matches
+
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/federation_types?code=FIN"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/federation_types',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { code: "FIN" }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [FederationType list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
