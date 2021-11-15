@@ -383,4 +383,134 @@ RSpec.describe Goggles::CategoryTypesAPI, type: :request do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  describe 'POST /api/v3/category_type/clone' do
+    let(:src_season_id) { [152, 162, 172, 182, 192].sample }
+    let(:dest_season_id) { FactoryBot.create(:season).id }
+    let(:valid_params) { { from_season_id: src_season_id, to_season_id: dest_season_id } }
+
+    before do
+      expect(dest_season_id).to be_positive
+      expect(valid_params).to be_an(Hash).and be_present
+      expect(GogglesDb::Season.exists?(src_season_id)).to be true
+      expect(GogglesDb::Season.exists?(dest_season_id)).to be true
+      expect(GogglesDb::Season.find(dest_season_id).category_types.count).to be_zero
+    end
+
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before { post(api_v3_category_types_clone_path, params: valid_params, headers: admin_headers) }
+
+        it_behaves_like('a successful request that has positive usage stats')
+        it 'returns an OK message and the new row as a JSON object' do
+          result = JSON.parse(response.body)
+          expect(result).to have_key('msg')
+          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
+        end
+        # Side-effect (checked because we're not adding any integration tests for this one):
+        it 'adds the catories to the destination season' do
+          scr_count = GogglesDb::Season.find(src_season_id).category_types.count
+          dest_count = GogglesDb::Season.find(dest_season_id).category_types.count
+          expect(dest_count).to be >= scr_count
+        end
+      end
+
+      context 'with an account having just CRUD grants,' do
+        before { post(api_v3_category_types_clone_path, params: valid_params, headers: crud_headers) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+
+      context 'with an account not having any grants,' do
+        before { post(api_v3_category_types_clone_path, params: valid_params, headers: fixture_headers) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
+
+    context 'when using valid parameters but during Maintenance mode,' do
+      context 'with an account having ADMIN grants,' do
+        before do
+          GogglesDb::AppParameter.maintenance = true
+          post(api_v3_category_types_clone_path, params: valid_params, headers: admin_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+
+        it_behaves_like('a successful request that has positive usage stats')
+        it 'returns an OK message and the new row as a JSON object' do
+          result = JSON.parse(response.body)
+          expect(result).to have_key('msg')
+          expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
+        end
+        # Side-effect (checked because we're not adding any integration tests for this one):
+        it 'adds the catories to the destination season' do
+          scr_count = GogglesDb::Season.find(src_season_id).category_types.count
+          dest_count = GogglesDb::Season.find(dest_season_id).category_types.count
+          expect(dest_count).to be >= scr_count
+        end
+      end
+
+      context 'with an account having lesser grants,' do
+        before do
+          GogglesDb::AppParameter.maintenance = true
+          post(api_v3_category_types_clone_path, params: valid_params, headers: crud_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+
+        it_behaves_like('a request refused during Maintenance (except for admins)')
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before { post(api_v3_category_types_clone_path, params: valid_params, headers: { 'Authorization' => 'you wish!' }) }
+
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+
+    context 'when using missing or invalid parameters,' do
+      before do
+        post(
+          api_v3_category_types_clone_path,
+          params: { from_season_id: src_season_id, to_season_id: -1 },
+          headers: admin_headers
+        )
+      end
+
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+
+      it 'responds with a generic error message and its details in the header' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('error')
+        expect(result['error']).to eq(I18n.t('api.message.invalid_parameter'))
+        expect(response.headers).to have_key('X-Error-Detail')
+        expect(response.headers['X-Error-Detail']).to be_present
+      end
+    end
+
+    context 'when using valid but equal parameters (src == dest),' do
+      before do
+        post(
+          api_v3_category_types_clone_path,
+          params: { from_season_id: src_season_id, to_season_id: src_season_id },
+          headers: admin_headers
+        )
+      end
+
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+
+      it 'responds with a generic error message and its details in the header' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('error')
+        expect(result['error']).to eq(I18n.t('api.message.invalid_parameter'))
+        expect(response.headers).to have_key('X-Error-Detail')
+        expect(response.headers['X-Error-Detail']).to eq('source ID = destination ID')
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

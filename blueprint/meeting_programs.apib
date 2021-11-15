@@ -363,13 +363,21 @@ All are optional (except `id`):
 |  Field name  | Data type |  description |
 | --- | --- | --- |
 | `event_order` | Integer | ordinal number of this program |
-| `category_type_id` | Integer | link to CategoryType |
-| `gender_type_id` | Integer | link to GenderType |
+| `category_type_id` | Integer | associated CategoryType ID |
+| `gender_type_id` | Integer | associated GenderType ID |
+| | _id_ | _code: description_ |
+| | 1 | `M`: male |
+| | 2 | `F`: female |
+| | 3 | `X`: unknown |
 | `begin_time` | String | begin time for this program (parsed with Time.zone, based on year 2000) |
 | `autofilled` | Boolean | true if the fields have been filled-in by the data-import procedure (may need revision) |
 | `out_of_race` | Boolean | true if this program does not concur in the overall rankings or scores |
-| `meeting_event_id` | Integer | link to MeetingEvent |
-| `pool_type_id` | Integer | link to PoolType |
+| `meeting_event_id` | Integer | associated MeetingEvent ID |
+| `pool_type_id` | Integer | associated PoolType ID |
+| | _id_ | _code: description_ |
+| | 1 | `25`: 25 meters |
+| | 2 | `33`: 33 meters |
+| | 3 | `50`: 50 meters |
 
 
 * * *

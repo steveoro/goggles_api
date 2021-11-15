@@ -751,3 +751,149 @@ When this is enabled, results are limited to a _maximum_ of **100** rows (pagina
 + Request no JWT (application/json)
 
 + Response 401 (application/json)
+
+
+
+
+
+### clone [POST]
+
+Clones *all* CategoryType rows found associated with a Season to a destination one.
+
+Returns just a result text 'msg' on success as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| *`from_season_id` | string | source Season ID |
+| *`to_season_id` | string | destination Season ID (where the source CategoryType rows needs to be copied into) |
+
+
+* * *
+
+
++ Attributes
+    + from_season_id (number, required) - source Season ID
+    + to_season_id (number, required) - destination Season ID (needs to be different from the source one)
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"from_season_id": 192, "to_season_id": 194 }'
+            "<API_HOST:PORT>/api/v3/category_types/clone"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/category_type',
+            {
+                "from_season_id": 192,
+                "to_season_id": 194
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\"}">
+
+    > puts res.body
+    {"msg":"OK"}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "from_season_id": 192,
+                "to_season_id": 194
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK"
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "from_season_id": 192,
+                "to_season_id": 194
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "from_season_id": 192,
+                "to_season_id": 194
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "from_season_id": 192,
+                "to_season_id": 194
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }

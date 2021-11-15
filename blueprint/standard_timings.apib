@@ -1,0 +1,745 @@
+# Group StandardTimings
+
+## StandardTiming details [/api/v3/standard_timing/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 14850,
+            "lock_version": 0,
+            "minutes": 0,
+            "seconds": 22,
+            "hundredths": 18,
+            "season_id": 192,
+            "gender_type_id": 1,
+            "pool_type_id": 1,
+            "event_type_id": 2,
+            "category_type_id": 1288,
+            "created_at": "2019-11-10T00:00:00.000Z",
+            "updated_at": "2019-11-10T00:00:00.000Z",
+            "timing": "0'22"18",
+            "display_label": "50SL [25 M] - M25, FIN MASTER 2019/2020, MAS",
+            "short_label": "50SL [25 M] - M25 MAS"
+        }
+
+
+### find [GET]
+The StandardTiming instance matching the specified `id` returned as JSON.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 14850 (number, required) - StandardTiming ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/standard_timing/14850"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/standard_timing/14850',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":14850, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [StandardTiming details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the StandardTiming fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `minutes` | integer | minutes value for this standard timing |
+| `seconds` | integer | seconds value for this standard timing |
+| `hundredths` | integer | hundredths of seconds value for this standard timing |
+| `season_id` | integer | associated Season ID |
+| `gender_type_id` | integer | associated GenderType ID |
+| | _id_ | _code: description_ |
+| | 1 | `M`: male |
+| | 2 | `F`: female |
+| | 3 | `X`: unknown |
+| `pool_type_id` | integer | associated PoolType ID |
+| | _id_ | _code: description_ |
+| | 1 | `25`: 25 meters |
+| | 2 | `33`: 33 meters |
+| | 3 | `50`: 50 meters |
+| `event_type_id` | integer | associated EventType ID |
+| `category_type_id` | integer | associated CategoryType ID |
+
+
+* * *
+
+
++ Parameters
+    + id: 14850 (number, required) - StandardTiming ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"seconds": 35, "hundredths": 49 }' \
+            "<API_HOST:PORT>/api/v3/standard_timing/14850"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/standard_timing/14850',
+                payload: {
+                    "seconds": 35,
+                    "hundredths": 49
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "seconds": 35,
+                "hundredths": 49
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "seconds": 35,
+                "hundredths": 49
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "seconds": 35,
+                "hundredths": 49
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "seconds": 35,
+                "hundredths": 49
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "seconds": 35,
+                "hundredths": 49
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new StandardTiming, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| *`minutes` | integer | minutes value for this standard timing |
+| *`seconds` | integer | seconds value for this standard timing |
+| *`hundredths` | integer | hundredths of seconds value for this standard timing |
+| *`season_id` | integer | associated Season ID |
+| *`gender_type_id` | integer | associated GenderType ID |
+| | _id_ | _code: description_ |
+| | 1 | `M`: male |
+| | 2 | `F`: female |
+| | 3 | `X`: unknown |
+| *`pool_type_id` | integer | associated PoolType ID |
+| | _id_ | _code: description_ |
+| | 1 | `25`: 25 meters |
+| | 2 | `33`: 33 meters |
+| | 3 | `50`: 50 meters |
+| *`event_type_id` | integer | associated EventType ID |
+| *`category_type_id` | integer | associated CategoryType ID |
+
+
+* * *
+
+
++ Attributes
+    + minutes: 1 (number, required) - minutes value for this standard timing
+    + seconds: 20 (number, required) - seconds value for this standard timing
+    + hundredths: 35 (number, required) - hundredths of seconds value for this standard timing
+    + season_id: 192 (number, required) - associated Season ID
+    + gender_type_id: 1 (number, required) - associated GenderType ID
+    + pool_type_id: 1 (number, required) - associated PoolType ID
+    + event_type_id: 52 (number, required) - associated EventType ID
+    + category_type_id: 34 (number, required) - associated CategoryType ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"minutes": 1, "seconds": 20, "hundredths": 35, \
+                 "season_id": 192", "gender_type_id": 1, "pool_type_id": 1, "event_type_id": 52, \
+                 "category_type_id": 34 }'
+            "<API_HOST:PORT>/api/v3/standard_timing"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/standard_timing',
+            {
+                "minutes": 1,
+                "seconds": 20,
+                "hundredths": 35,
+                "season_id": 192,
+                "gender_type_id": 1,
+                "pool_type_id": 1,
+                "event_type_id": 52,
+                "category_type_id": 34
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "minutes": 1,
+                "seconds": 20,
+                "hundredths": 35,
+                "season_id": 192,
+                "gender_type_id": 1,
+                "pool_type_id": 1,
+                "event_type_id": 52,
+                "category_type_id": 34
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "minutes": 1,
+                "seconds": 20,
+                "hundredths": 35,
+                "season_id": 192,
+                "gender_type_id": 1,
+                "pool_type_id": 1,
+                "event_type_id": 52,
+                "category_type_id": 34
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "minutes": 1,
+                "seconds": 20,
+                "hundredths": 35,
+                "season_id": 192,
+                "gender_type_id": 1,
+                "pool_type_id": 1,
+                "event_type_id": 52,
+                "category_type_id": 34
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "minutes": 1,
+                "seconds": 20,
+                "hundredths": 35,
+                "season_id": 192,
+                "gender_type_id": 1,
+                "pool_type_id": 1,
+                "event_type_id": 52,
+                "category_type_id": 34
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 14850 (number, required) - StandardTiming ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/standard_timing/14850"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/standard_timing/14850',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# StandardTiming list [/api/v3/standard_timings{?page,per_page,season_id,gender_type_id,pool_type_id,event_type_id,category_type_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/standard_timings?page=2&season_id=192>; rel=\"last\", <http://localhost:3000/api/v3/standard_timings?page=2&season_id=192>; rel=\"next\""
+            Total: 46
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // StandardTiming details 1
+                {
+                    "id": 14850,
+                    // [...]
+                },
+
+                // StandardTiming details 2
+                {
+                    "id": 14851,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of StandardTimings associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `season_id`
+- `gender_type_id`
+- `pool_type_id`
+- `event_type_id`
+- `category_type_id`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + season_id: 192 (number, required) - associated Season ID
+    + gender_type_id: 1 (number, required) - associated GenderType ID
+    + pool_type_id: 1 (number, required) - associated PoolType ID
+    + event_type_id: 52 (number, required) - associated EventType ID
+    + category_type_id: 34 (number, required) - associated CategoryType ID
+
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/standard_timings?season_id=192"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/standard_timings',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { season_id: 192 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [StandardTiming list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

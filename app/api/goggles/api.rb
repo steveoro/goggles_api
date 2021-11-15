@@ -81,6 +81,7 @@ module Goggles
     mount SeasonsAPI
     mount SessionAPI
     mount SettingsAPI
+    mount StandardTimingsAPI
     mount SwimmersAPI
     mount SwimmingPoolsAPI
     mount TeamAffiliationsAPI

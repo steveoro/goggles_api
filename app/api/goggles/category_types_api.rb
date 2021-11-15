@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: CategoryType API Grape controller
   #
-  #   - version:  7.02.18
+  #   - version:  7-0.3.39
   #   - author:   Steve A.
-  #   - build:    20210519
+  #   - build:    20211115
   #
   class CategoryTypesAPI < Grape::API
     helpers APIHelpers
@@ -185,6 +185,45 @@ module Goggles
           paginate(results)
         end
       end
+
+      # POST /api/:version/category_types/clone
+      #
+      # Clones all CategoryType rows found associated to a source Season to a destination one.
+      # For more details on the actual strategy used, see:
+      # - <tt>GogglesDb::CmdCloneCategories</tt>
+      #
+      # Requires Admin grants for the requesting user.
+      #
+      # == Params:
+      # - <tt>from_season_id</tt>
+      # - <tt>to_season_id</tt>
+      #
+      # == Returns:
+      #
+      # On success, a JSON Hash containing the resulting ok 'msg': <tt>{ msg: 'OK' }</tt>.
+      # On error, a JSON Hash containing the error message with the actual details sent over
+      # the 'X-Error-Detail' header.
+      #
+      desc 'Clone all CategoryTypes from a source Season to a destination Season'
+      params do
+        requires :from_season_id, type: Integer, desc: 'source Season ID'
+        requires :to_season_id, type: Integer, desc: 'destination Season ID for the cloned categories'
+      end
+      post :clone do
+        reject_unless_authorized_admin(check_jwt_session)
+
+        # Retrieve values:
+        from_season = reject_unless_found(params['from_season_id'], GogglesDb::Season)
+        to_season = reject_unless_found(params['to_season_id'], GogglesDb::Season)
+        error!(I18n.t('api.message.invalid_parameter'), 422, 'X-Error-Detail' => 'source ID = destination ID') if params['from_season_id'] == params['to_season_id']
+
+        cmd = GogglesDb::CmdCloneCategories.call(from_season, to_season)
+        error!(I18n.t('api.message.generic_failure'), 422, 'X-Error-Detail' => cmd.errors[:msg]) unless cmd.success?
+
+        { msg: I18n.t('api.message.generic_ok') } if cmd.success?
+      end
+      #-- ---------------------------------------------------------------------
+      #++
     end
   end
 end
