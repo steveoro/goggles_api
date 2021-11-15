@@ -29,6 +29,8 @@
                 "id": 13101,
                 "code": "csiprova1",
                 "header_year": "2013/2014",
+                "display_label": "MASTER CSI: 1A PROVA REGIONALE CSI 2013/2014",
+                "short_label": "1 A Prova 2013/2014",
                 "edition_label": "2013/2014"
             },
 
@@ -89,7 +91,23 @@
                     "relay": false,
                     "season_id": 131,
                     "out_of_race": false,
-                    "undivided": false
+                    "undivided": false,
+                    "display_label": "M45, CSI MASTER 2013/2014",
+                    "short_label": "(2013/2014) M45",
+                    "season": {
+                        "id": 131,
+                        "description": "Circuito Regionale Emilia master CSI 2013/2014",
+                        "begin_date": "2013-10-01",
+                        "end_date": "2014-09-30",
+                        "season_type_id": 2,
+                        "header_year": "2013/2014",
+                        "edition": 14,
+                        "edition_type_id": 5,
+                        "timing_type_id": 2,
+                        "rules": null,
+                        "individual_rank": false,
+                        "badge_fee": null
+                    }
                 },
 
                 "gender_type": {
@@ -242,6 +260,8 @@ The returned result includes these other 1st-level linked entities (some with mi
 - `GenderType`
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

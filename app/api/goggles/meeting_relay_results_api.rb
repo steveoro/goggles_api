@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingRelayResult API Grape controller
   #
-  #   - version:  7.067
+  #   - version:  7-0.3.39
   #   - author:   Steve A.
-  #   - build:    20210122
+  #   - build:    20211115
   #
   # == Note:
   # Relay entries are more than often finalized during the Meeting itself and
@@ -36,10 +36,13 @@ module Goggles
       desc 'MeetingRelayResult details'
       params do
         requires :id, type: Integer, desc: 'MeetingRelayResult ID'
+        optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :id do
         get do
           check_jwt_session
+          # Support locale override:
+          I18n.locale = params['locale'] if params['locale'].present?
 
           GogglesDb::MeetingRelayResult.find_by(id: params['id'])
         end

@@ -408,6 +408,7 @@ RSpec.describe Goggles::CategoryTypesAPI, type: :request do
           expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
         end
         # Side-effect (checked because we're not adding any integration tests for this one):
+
         it 'adds the catories to the destination season' do
           scr_count = GogglesDb::Season.find(src_season_id).category_types.count
           dest_count = GogglesDb::Season.find(dest_season_id).category_types.count
@@ -443,6 +444,7 @@ RSpec.describe Goggles::CategoryTypesAPI, type: :request do
           expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
         end
         # Side-effect (checked because we're not adding any integration tests for this one):
+
         it 'adds the catories to the destination season' do
           scr_count = GogglesDb::Season.find(src_season_id).category_types.count
           dest_count = GogglesDb::Season.find(dest_season_id).category_types.count

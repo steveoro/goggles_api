@@ -6,37 +6,61 @@
 
         {
             "id": 142,
+            "lock_version": 1,
             "last_name": "ALLORO",
             "first_name": "STEFANO",
             "year_of_birth": 1969,
-            // [...]
+            "phone_mobile": null,
+            "phone_number": null,
             "e_mail": null,
             "nickname": "",
             "associated_user_id": 1,
             "gender_type_id": 1,
-            // [...]
             "created_at": "2014-10-19T00:00:00.000Z",
             "updated_at": "2014-10-19T16:04:16.000Z",
             "complete_name": "ALLORO STEFANO",
             "year_guessed": false,
-
-            // Embedded associated User:
+            "long_label": "ALLORO STEFANO (MAS, 1969)",
+            "display_label": "ALLORO STEFANO (MAS, 1969)",
+            "short_label": "ALLORO STEFANO (1969)",
             "associated_user": {
                 "id": 1,
                 "name": "steve",
                 "description": "Stefano Alloro",
-                "swimmer_id": 142,
+                "swimmer_id": null,
+                "email": "steve.alloro@example.com",
+                "reset_password_token": null,
+                "reset_password_sent_at": null,
+                "remember_created_at": "2021-11-13T17:10:59.000Z",
+                "sign_in_count": 59,
+                "current_sign_in_at": "2021-11-13T17:10:59.000Z",
+                "last_sign_in_at": "2021-11-13T17:10:59.000Z",
+                "current_sign_in_ip": "127.0.0.1",
+                "last_sign_in_ip": "127.0.0.1",
+                "confirmed_at": "2021-09-20T17:29:40.000Z",
+                "confirmation_sent_at": "2021-09-20T17:29:25.000Z",
+                "unconfirmed_email": null,
+                "failed_attempts": 0,
+                "unlock_token": null,
+                "locked_at": null,
+                "avatar_url": null,
+                "swimmer_level_type_id": 5,
+                "coach_level_type_id": null,
+                "jwt": "<a valid JWT string>",
+                "outstanding_goggle_score_bias": 800,
+                "outstanding_standard_score_bias": 800,
                 "last_name": "Alloro",
                 "first_name": "Stefano",
                 "year_of_birth": 1969,
-                // [...]
+                "provider": null,
+                "uid": null
             },
-
-            // Embedded associated GenderType:
             "gender_type": {
                 "id": 1,
                 "code": "M",
-                // [...]
+                "label": "MAS",
+                "long_label": "MASCHILE",
+                "alt_label": "MASCHI"
             }
         }
 
@@ -54,6 +78,8 @@ The returned result includes these other 1st-level linked entities:
     | 3 | `X` | intermixed/unknown |
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

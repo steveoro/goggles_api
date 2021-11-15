@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: Lap API Grape controller
   #
-  #   - version:  7.067
+  #   - version:  7-0.0.67
   #   - author:   Steve A.
   #   - build:    20210122
   #

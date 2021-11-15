@@ -47,7 +47,10 @@
                 "meeting_fee": null,
                 "event_fee": null,
                 "relay_fee": null,
+                "display_label": "MASTER CSI: 3A PROVA REGIONALE CSI 2000/2001",
+                "short_label": "3 A Prova 2000/2001",
                 "edition_label": "2000/2001",
+
                 "season": {
                     "id": 1,
                     "description": "Circuito Regionale Emilia master CSI 2000/2001",
@@ -81,7 +84,16 @@
                     "code": "MASCSI",
                     "description": "CIRCUITO ITALIANO MASTER CSI",
                     "short_name": "MASTER CSI",
-                    "federation_type_id": 2
+                    "federation_type_id": 2,
+                    "federation_type": {
+                        "id": 2,
+                        "lock_version": 0,
+                        "code": "CSI",
+                        "description": "CENTRO SPORTIVO ITALIANO",
+                        "short_name": "CSI",
+                        "created_at": "2014-10-19T00:00:00.000Z",
+                        "updated_at": "2014-10-19T00:00:00.000Z"
+                    }
                 },
                 "federation_type": {
                     "id": 2,
@@ -281,6 +293,8 @@ The Meeting instance matching the specified `id` returned as JSON.
 The returned result includes most of all its associated entities, up to the `MeetingEvent` definitions (but no `MeetingProgram`s).
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

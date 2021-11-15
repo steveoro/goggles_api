@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: UserResult API Grape controller
   #
-  #   - version:  7.02.18
+  #   - version:  7-0.3.39
   #   - author:   Steve A.
-  #   - build:    20210520
+  #   - build:    20211115
   #
   # == Note:
   # Unlike MIRs-vs.-MRRs, UserResults can be used for both individuals *and* relays.
@@ -30,10 +30,13 @@ module Goggles
       desc 'UserResult details'
       params do
         requires :id, type: Integer, desc: 'UserResult ID'
+        optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :id do
         get do
           check_jwt_session
+          # Support locale override:
+          I18n.locale = params['locale'] if params['locale'].present?
 
           GogglesDb::UserResult.find_by(id: params['id'])
         end

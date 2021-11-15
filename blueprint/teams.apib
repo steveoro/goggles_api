@@ -22,6 +22,8 @@
             "name_variations": null,
             "city_id": 37,
             "home_page_url": "",
+            "display_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+            "short_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia",
 
             // Embedded associated City:
             "city": {
@@ -52,9 +54,9 @@
                     "fees_due": true,
                     "badge_due": false,
                     "relays_due": true
-                    // [...]
+                    // [...see badges API for more details...]
                 },
-                // [...season 192 badges...]
+                // [...all season 192 badges...]
                 {
                     "id": 124947,
                     "number": "04204788",
@@ -71,7 +73,7 @@
                     "relays_due": false
                     // [...]
                 },
-                // [...season 191 badges...]
+                // [...all season 191 badges...]
             ],
 
             // Last 2 most recent affiliations (season 191 & season 192):
@@ -111,6 +113,8 @@ The returned result includes these other 1st-level linked entities:
 - `Badge`, as above, list of rows found for the selected TeamAffiliations
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

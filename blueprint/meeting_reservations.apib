@@ -16,19 +16,23 @@
             "confirmed": true,
             "created_at": "2017-01-10T11:52:39.000Z",
             "updated_at": "2017-01-10T12:21:45.000Z",
+
             "meeting": {
                 "id": 16102,
                 "code": "csiprova2",
                 "header_year": "2016/2017",
+                "display_label": "MASTER CSI: 2A PROVA REGIONALE CSI 2016/2017",
+                "short_label": "2 A Prova 2016/2017",
                 "edition_label": "2016/2017"
             },
+
             "user": {
                 "id": 2,
                 "name": "leega",
                 "description": "Marco Ligabue",
                 "swimmer_id": 23,
-                "email": "leegaweb@gmail.com",
-                "encrypted_password": "$2a$10$.MsPtU248xvGAN26mxjntOgMeSYvleYd3qe9NI5qk7pLRVxCgbjga",
+                "email": "leega@example.com",
+                "encrypted_password": null,
                 "reset_password_token": null,
                 "reset_password_sent_at": null,
                 "remember_created_at": "2018-04-13T08:08:27.000Z",
@@ -37,7 +41,7 @@
                 "last_sign_in_at": "2020-09-11T16:08:08.000Z",
                 "current_sign_in_ip": "93.36.217.35",
                 "last_sign_in_ip": "93.36.217.35",
-                "confirmation_token": "f767e941f857f10d7dfed303c7aa2844a2c0446a3295fb0cc4c7deb283689e79",
+                "confirmation_token": null,
                 "confirmed_at": "2013-10-23T17:10:05.000Z",
                 "confirmation_sent_at": "2013-10-23T17:10:02.000Z",
                 "unconfirmed_email": null,
@@ -58,6 +62,9 @@
                 "year_of_birth": 1971
             },
 
+            "display_label": "MASTER CSI: 2A PROVA REGIONALE CSI 2016/2017 ➡ CSI 2016/2017: ALLORO STEFANO (1969) ➡ CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia",
+            "short_label": "2 A Prova 2016/2017 ➡ ALLORO STEFANO (1969)",
+
             "badge": {
                 "id": 60192,
                 "number": "04205745",
@@ -75,6 +82,8 @@
 
                 "swimmer": {
                     "id": 142,
+                    "display_label": "ALLORO STEFANO (MAS, 1969)",
+                    "short_label": "ALLORO STEFANO (1969)",
                     "complete_name": "ALLORO STEFANO",
                     "last_name": "ALLORO",
                     "first_name": "STEFANO",
@@ -100,7 +109,9 @@
                     "relay": false,
                     "season_id": 161,
                     "out_of_race": false,
-                    "undivided": false
+                    "undivided": false,
+                    "display_label": "M45, CSI MASTER 2016/2017",
+                    "short_label": "(2016/2017) M45"
                 },
                 "entry_time_type": {
                     "id": 3,
@@ -159,8 +170,8 @@
                     "name": "steve",
                     "description": "Stefano Alloro",
                     "swimmer_id": 142,
-                    "email": "steve.alloro@gmail.com",
-                    "encrypted_password": "$2a$04$w0GRgP7gkKmOzoESHrBU7.spxIOggDhUB3lQJniqqNLYTjHZcDi9u",
+                    "email": "steve.alloro@example.com",
+                    "encrypted_password": null,
                     "reset_password_token": null,
                     "reset_password_sent_at": null,
                     "remember_created_at": "2019-12-06T19:52:15.000Z",
@@ -169,7 +180,7 @@
                     "last_sign_in_at": "2020-02-06T09:23:04.000Z",
                     "current_sign_in_ip": "82.54.169.188",
                     "last_sign_in_ip": "188.11.195.229",
-                    "confirmation_token": "201a65fdf52975e0b4c4de988192fb53695a266d85b83975954127db6a4b54e1",
+                    "confirmation_token": null,
                     "confirmed_at": "2013-10-23T17:10:05.000Z",
                     "confirmation_sent_at": "2013-10-23T17:10:00.000Z",
                     "unconfirmed_email": null,
@@ -429,6 +440,8 @@ Currently, for convenience and for ease of reference, most sub-entities like `ge
 are kept duplicated even if already present inside parent entities.
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

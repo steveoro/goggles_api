@@ -23,10 +23,13 @@ module Goggles
       desc 'CategoryType details'
       params do
         requires :id, type: Integer, desc: 'CategoryType ID'
+        optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :id do
         get do
           check_jwt_session
+          # Support locale override:
+          I18n.locale = params['locale'] if params['locale'].present?
 
           GogglesDb::CategoryType.find_by(id: params['id'])
         end

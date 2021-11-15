@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingRelaySwimmer API Grape controller
   #
-  #   - version:  7.067
+  #   - version:  7-0.3.39
   #   - author:   Steve A.
-  #   - build:    20210122
+  #   - build:    20211115
   #
   # == Note:
   # MeetingRelaySwimmers store lap data for MRRs.
@@ -26,10 +26,13 @@ module Goggles
       desc 'MeetingRelaySwimmer details'
       params do
         requires :id, type: Integer, desc: 'MeetingRelaySwimmer ID'
+        optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :id do
         get do
           check_jwt_session
+          # Support locale override:
+          I18n.locale = params['locale'] if params['locale'].present?
 
           GogglesDb::MeetingRelaySwimmer.find_by(id: params['id'])
         end

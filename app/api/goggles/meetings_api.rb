@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Meeting API Grape controller
   #
-  #   - version:  7.85
+  #   - version:  7-0.3.39
   #   - author:   Steve A.
-  #   - build:    20210310
+  #   - build:    20211115
   #
   class MeetingsAPI < Grape::API
     helpers APIHelpers
@@ -23,10 +23,13 @@ module Goggles
       desc 'Meeting details'
       params do
         requires :id, type: Integer, desc: 'Meeting ID'
+        optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :id do
         get do
           check_jwt_session
+          # Support locale override:
+          I18n.locale = params['locale'] if params['locale'].present?
 
           GogglesDb::Meeting.find_by(id: params['id'])
         end

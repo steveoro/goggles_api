@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: ImportQueue API Grape controller
   #
-  #   - version:  7.03.01
+  #   - version:  7-0.3.01
   #   - author:   Steve A.
   #   - build:    20210519
   #

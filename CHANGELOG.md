@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.3.39** [Steve A.] category types clone endpoint & support for locale override in most detail retrieval endpoints + updated blueprints
 - **0.3.37** [Steve A.] added /tools/compute_score (& time); more filtering options for /team_managers, /badges & /lookup; C-R-U endpoints for /federation_types & /season_types; create /season; full CRUD endpoints for /standard_timing
 - **0.3.30** [Steve A.] added several missing endpoints: DELETE /user, GET+PUT+DELETE+LIST /team_managers, DELETE /badge, GET /admin_grants,
 PUT /meeting_event, PUT /meeting_program

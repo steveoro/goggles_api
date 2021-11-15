@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: Admin Grants API (list-only)
   #
-  #   - version:  7-0.03.30
+  #   - version:  7-0.3.30
   #   - author:   Steve A.
   #   - build:    20210913
   #

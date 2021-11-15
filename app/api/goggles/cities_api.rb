@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: City API Grape controller
   #
-  #   - version:  7.3.07
+  #   - version:  7-0.3.07
   #   - author:   Steve A.
   #   - build:    20210709
   #

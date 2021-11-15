@@ -19,7 +19,23 @@
             "updated_at": "2014-10-19T00:00:00.000Z",
             "season_id": 1,
             "out_of_race": false,
-            "undivided": false
+            "undivided": false,
+            "display_label": "M25, CSI MASTER 2000/2001",
+            "short_label": "(2000/2001) M25",
+            "season": {
+                "id": 1,
+                "description": "Circuito Regionale Emilia master CSI 2000/2001",
+                "begin_date": "2000-09-01",
+                "end_date": "2001-06-30",
+                "season_type_id": 2,
+                "header_year": "2000/2001",
+                "edition": 1,
+                "edition_type_id": 5,
+                "timing_type_id": 2,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": null
+            }
         }
 
 
@@ -27,6 +43,8 @@
 The CategoryType instance matching the specified `id` returned as JSON.
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

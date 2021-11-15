@@ -17,9 +17,84 @@
             "category_type_id": 1288,
             "created_at": "2019-11-10T00:00:00.000Z",
             "updated_at": "2019-11-10T00:00:00.000Z",
-            "timing": "0'22"18",
             "display_label": "50SL [25 M] - M25, FIN MASTER 2019/2020, MAS",
-            "short_label": "50SL [25 M] - M25 MAS"
+            "short_label": "50SL [25 M] - M25 MAS",
+            "timing": "0'22"18",
+            "season": {
+                "id": 192,
+                "description": "Circuito italiano supermaster FIN 2019/2020",
+                "begin_date": "2019-10-01",
+                "end_date": "2020-09-30",
+                "season_type_id": 1,
+                "header_year": "2019/2020",
+                "edition": 19,
+                "edition_type_id": 5,
+                "timing_type_id": 3,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": "24.0"
+            },
+            "pool_type": {
+                "id": 1,
+                "code": "25",
+                "length_in_meters": 25,
+                "eventable": true,
+                "label": "25 M",
+                "long_label": "25 METRI",
+                "alt_label": "25 M"
+            },
+            "event_type": {
+                "id": 2,
+                "code": "50SL",
+                "length_in_meters": 50,
+                "relay": false,
+                "stroke_type_id": 1,
+                "style_order": 2,
+                "mixed_gender": false,
+                "partecipants": 1,
+                "phases": 1,
+                "phase_length_in_meters": 50,
+                "label": "50SL",
+                "long_label": "50 STILE LIBERO",
+                "alt_label": "50SL"
+            },
+            "gender_type": {
+                "id": 1,
+                "code": "M",
+                "label": "MAS",
+                "long_label": "MASCHILE",
+                "alt_label": "MASCHI"
+            },
+            "category_type": {
+                "id": 1288,
+                "code": "M25",
+                "federation_code": "B",
+                "description": "MASTER 25",
+                "short_name": "M25",
+                "group_name": "MASTER",
+                "age_begin": 25,
+                "age_end": 29,
+                "relay": false,
+                "season_id": 192,
+                "out_of_race": false,
+                "undivided": false,
+                "display_label": "M25, FIN MASTER 2019/2020",
+                "short_label": "(2019/2020) M25",
+                "season": {
+                "id": 192,
+                "description": "Circuito italiano supermaster FIN 2019/2020",
+                "begin_date": "2019-10-01",
+                "end_date": "2020-09-30",
+                "season_type_id": 1,
+                "header_year": "2019/2020",
+                "edition": 19,
+                "edition_type_id": 5,
+                "timing_type_id": 3,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": "24.0"
+                }
+            }
         }
 
 
@@ -27,6 +102,8 @@
 The StandardTiming instance matching the specified `id` returned as JSON.
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

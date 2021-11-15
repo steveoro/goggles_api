@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: StandardTiming API Grape controller
   #
-  #   - version:  7-0.3.37
+  #   - version:  7-0.3.39
   #   - author:   Steve A.
-  #   - build:    20211109
+  #   - build:    20211115
   #
   class StandardTimingsAPI < Grape::API
     helpers APIHelpers
@@ -23,20 +23,15 @@ module Goggles
       desc 'StandardTiming details'
       params do
         requires :id, type: Integer, desc: 'StandardTiming ID'
+        optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :id do
         get do
           check_jwt_session
+          # Support locale override:
+          I18n.locale = params['locale'] if params['locale'].present?
 
           GogglesDb::StandardTiming.find_by(id: params['id'])
-          # return unless result.present?
-
-          # result = result.decorate
-          # result.attributes.merge(
-          #   timing: result.to_timing.to_s,
-          #   display_label: result.display_label,
-          #   short_label: result.short_label
-          # )
         end
       end
 

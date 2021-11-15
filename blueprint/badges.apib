@@ -22,6 +22,8 @@
             "fees_due": false,
             "badge_due": false,
             "relays_due": false,
+            "display_label": "MASTER CSI 2019/2020: ALLORO STEFANO (MAS, 1969) ➡ CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+            "short_label": "CSI 2019/2020: ALLORO STEFANO (1969) ➡ CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia",
 
             // Embedded associated entities:
             "swimmer": {
@@ -38,6 +40,9 @@
                 "user_id": 2,
                 "complete_name": "ALLORO STEFANO",
                 "year_guessed": false,
+                "long_label": "ALLORO STEFANO (MAS, 1969)",
+                "display_label": "ALLORO STEFANO (MAS, 1969)",
+                "short_label": "ALLORO STEFANO (1969)",
 
                 "associated_user": {
                     "id": 1,
@@ -101,6 +106,8 @@
                 "name_variations": null,
                 "city_id": 37,
                 "home_page_url": "",
+                "display_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                "short_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia",
 
                 // City details:
                 "city": {
@@ -112,6 +119,9 @@
                     "country_code": "IT",
                     "latitude": "44.716667",
                     "longitude": "10.6",
+                    "plus_code": "8FPGPH8X+MX",
+                    "display_label": "Reggio nell Emilia, Reggio Emilia (IT)",
+                    "short_label": "Reggio nell Emilia, Reggio Emilia",
                     "region": "Emilia-Romagna",
                     "area_code": "RE"
                 }
@@ -129,7 +139,23 @@
                 "relay": false,
                 "season_id": 191,
                 "out_of_race": false,
-                "undivided": false
+                "undivided": false,
+                "display_label": "M50, CSI MASTER 2019/2020",
+                "short_label": "(2019/2020) M50",
+                "season": {
+                    "id": 191,
+                    "description": "Circuito regionale Emilia master CSI 2019/2020",
+                    "begin_date": "2019-10-01",
+                    "end_date": "2020-09-30",
+                    "season_type_id": 2,
+                    "header_year": "2019/2020",
+                    "edition": 20,
+                    "edition_type_id": 5,
+                    "timing_type_id": 2,
+                    "rules": null,
+                    "individual_rank": true,
+                    "badge_fee": "10.0"
+                }
             },
 
             "entry_time_type": {
@@ -155,6 +181,8 @@ The returned result includes these other 1st-level linked entities:
 - `EntryTimeType`
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

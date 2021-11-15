@@ -12,15 +12,25 @@
             "short_name": "MASTER LEN",
             "federation_type_id": 4,
             "created_at": "2014-10-19T00:00:00.000Z",
-            "updated_at": "2014-10-19T00:00:00.000Z"
+            "updated_at": "2014-10-19T00:00:00.000Z",
+            "federation_type": {
+                "id": 4,
+                "lock_version": 0,
+                "code": "LEN",
+                "description": "LIGUE EUROPEENNE de NATATATION",
+                "short_name": "LEN",
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z"
+            }
         }
-
 
 
 ### find [GET]
 The SeasonType instance matching the specified `id` returned as JSON.
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

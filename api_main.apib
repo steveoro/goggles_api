@@ -6,7 +6,7 @@ Backend internal API for the Goggles Engine, core7.
 
     | _Framework_ | _API_ | _App version_ | _DB structure_ | _latest update_ |
     | --- | --- | --- | --- | --- |
-    | `core7` | `v3` | 7.0.3.37 | 1.95.3 | 20211109 |
+    | `core7` | `v3` | 7.0.3.39 | 1.95.3 | 20211115 |
 
 _Previous legacy versions are deprecated and subseeded by this._
 
@@ -14,7 +14,7 @@ _Previous legacy versions are deprecated and subseeded by this._
 * * *
 
 
-## Note on API routes
+## API routes naming ("find" vs "search" vs "list")
 
 "`find`" is used as a verb in API routes to discriminate requests that will yield a _single result_.
 
@@ -28,9 +28,6 @@ required by a possibly similar "`list`" fetch. (But this comparison is not alway
 One exception to this naming scheme is the "`lookup`" group of endpoints, which is specifically chosen for
 just looking up the read-only values of secondary subentities & lookup tables.
 
-Several single-result or single-target miscellaneous endpoints are grouped under the `tools` umbrella
-(such as any `find_`-type or `calc-` endpoint).
-
 Typically, whenever an endpoint path includes the full name of a specific DB entity (as in `meeting_programs`
 or `meeting_reservations`), the supported CRUD operations will always include _reading_ data,
 most of the times _updating_, some times _creating_ and, in a few cases, even _deleting_.
@@ -42,14 +39,34 @@ For instance, meeting reservations or meeting entries can be fully managed by th
 As a rule of thumb, if the entity allows remote creation by end-users, full CRUD support is usually
 conceeded and available with some kind of grant.
 
-Whenever a _dedicated_ endpoint exists for an entity, retrieving a single row with a `GET .../{id}` will yield
-the most fine-grained structure detail available. Whereas, when retrieving one of its parents, the same entity
-may be included as a sibling reference but yielding usually less details.
-(That is the case for example, for Swimmers or Laps: the list of results included in a MeetingProgram response
- contains less associations and details than those obtained by retrieving each result one by one.)
+
+## Details retrieval requests
+
+Whenever a _dedicated_ endpoint exists for an entity (i.e.: `GET /<entity_name>/<id>`),
+retrieving that specific single row with a `GET .../{id}` will yield the most fine-grained structure
+detail available.
+
+For ease of usage, most of the associated details nested in each sub-entity are included even when this
+yields a bit of redundancy.
+
+Depending of the depth level, some of the details may be summarized or not reported at all. To obtain the
+highest level of detail, simply request the entity at the correct depth level.
+
+(For example, the list of associated events included in a MeetingProgram row detail response will contain inevitably
+ less associations and details than those obtained by retrieving each specific meeting event or result one by one.)
+
+Also of note, most of these detail retrieval endpoints (`GET /<entity_name>/<id>`) will support an optional `locale`
+parameter for translating specific locale-dependent display labels (default locale code is currently `it`).
+
+_Supported locales:_
+
+|  Locale code  | description |
+| --- | --- |
+| `it` | **default**, Italian |
+| `en` | English |
 
 
-## Note on Maintenance mode
+## Maintenance mode
 
 The app framework supports two different "maintenance" modes to inhibit most HTTP & API requests:
 "soft" (or logic) maintenance & "hard" maintenance modes.

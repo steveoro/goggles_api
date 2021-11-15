@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: ManagedAffiliation (team/manager) API
   #
-  #   - version:  7-0.3.37
+  #   - version:  7-0.3.39
   #   - author:   Steve A.
-  #   - build:    20211108
+  #   - build:    20211115
   #
   # Implements full CRUD interface for ManagedAffiliation.
   #
@@ -30,10 +30,13 @@ module Goggles
       desc 'ManagedAffiliation details'
       params do
         requires :id, type: Integer, desc: 'ManagedAffiliation ID'
+        optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :id do
         get do
           reject_unless_authorized_admin(check_jwt_session)
+          # Support locale override:
+          I18n.locale = params['locale'] if params['locale'].present?
 
           GogglesDb::ManagedAffiliation.find_by(id: params['id'])
         end

@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingIndividualResult API Grape controller
   #
-  #   - version:  7.062
+  #   - version:  7-0.3.39
   #   - author:   Steve A.
-  #   - build:    20210122
+  #   - build:    20211115
   #
   # == Note:
   # Lap data & registration entry data is stored on separated entities (MeetingEntries & Laps)
@@ -27,10 +27,13 @@ module Goggles
       desc 'MeetingIndividualResult details'
       params do
         requires :id, type: Integer, desc: 'MeetingIndividualResult ID'
+        optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
       end
       route_param :id do
         get do
           check_jwt_session
+          # Support locale override:
+          I18n.locale = params['locale'] if params['locale'].present?
 
           GogglesDb::MeetingIndividualResult.find_by(id: params['id'])
         end

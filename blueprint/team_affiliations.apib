@@ -16,6 +16,8 @@
             "created_at": "2019-10-16T00:00:00.000Z",
             "updated_at": "2019-10-16T00:00:00.000Z",
             "autofilled": false,
+            "display_label": "MASTER CSI 2019/2020: 👥 CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+            "short_label": "CSI 2019/2020: 👥 CSInuoto OberFerrari",
 
             // Embedded associated Team:
             "team": {
@@ -33,6 +35,8 @@
                 "notes": "whatever the team manager needs to write here",
                 "created_at": "2014-10-19T00:00:00.000Z",
                 "updated_at": "2019-02-17T10:26:36.000Z",
+                "display_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                "short_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia",
                 "name_variations": null,
                 "city_id": 37,
                 "home_page_url": "",
@@ -47,6 +51,9 @@
                     "country_code": "IT",
                     "latitude": "44.716667",
                     "longitude": "10.6",
+                    "plus_code": "8FPGPH8X+MX",
+                    "display_label": "Reggio nell Emilia, Reggio Emilia (IT)",
+                    "short_label": "Reggio nell Emilia, Reggio Emilia",
                     "region": "Emilia-Romagna",
                     "area_code": "RE"
                 }
@@ -76,41 +83,92 @@
             "badges": [
                 {
                     "id": 124947,
-                    "lock_version": 0,
                     "number": "04204788",
                     "season_id": 191,
-                    "team_affiliation_id": 142,
+                    "swimmer_id": 142,
                     "team_id": 1,
                     "category_type_id": 1320,
-                    "user_id": 1,
-                    "created_at": "2019-10-16T00:00:00.000Z",
-                    "updated_at": "2019-10-16T00:00:00.000Z",
                     "entry_time_type_id": 5,
                     "team_affiliation_id": 5727,
                     "final_rank": null,
                     "off_gogglecup": false,
                     "fees_due": false,
                     "badge_due": false,
-                    "relays_due": false
+                    "relays_due": false,
+                    "swimmer": {
+                        "id": 142,
+                        "display_label": "ALLORO STEFANO (MAS, 1969)",
+                        "short_label": "ALLORO STEFANO (1969)",
+                        "complete_name": "ALLORO STEFANO",
+                        "last_name": "ALLORO",
+                        "first_name": "STEFANO",
+                        "year_of_birth": 1969,
+                        "year_guessed": false
+                    },
+                    "gender_type": {
+                        "id": 1,
+                        "code": "M",
+                        "label": "MAS",
+                        "long_label": "MASCHILE",
+                        "alt_label": "MASCHI"
+                    },
+                    "category_type": {
+                        "id": 1320,
+                        "code": "M50",
+                        "federation_code": "8",
+                        "description": "MASTER 50",
+                        "short_name": "M50",
+                        "group_name": "MASTER",
+                        "age_begin": 50,
+                        "age_end": 54,
+                        "relay": false,
+                        "season_id": 191,
+                        "out_of_race": false,
+                        "undivided": false,
+                        "display_label": "M50, CSI MASTER 2019/2020",
+                        "short_label": "(2019/2020) M50",
+                        "season": {
+                        "id": 191,
+                        "description": "Circuito regionale Emilia master CSI 2019/2020",
+                        "begin_date": "2019-10-01",
+                        "end_date": "2020-09-30",
+                        "season_type_id": 2,
+                        "header_year": "2019/2020",
+                        "edition": 20,
+                        "edition_type_id": 5,
+                        "timing_type_id": 2,
+                        "rules": null,
+                        "individual_rank": true,
+                        "badge_fee": "10.0"
+                        }
+                    },
+                    "entry_time_type": {
+                        "id": 5,
+                        "code": "U",
+                        "label": "ULT",
+                        "long_label": "ULTIMA PRESTAZIONE",
+                        "alt_label": "ULT"
+                    }
+
                 },
-                // [...season 191 badges...]
+                // [...all ~75 season 191 badges...]
             ],
 
             // All embedded Team Managers for the associated Season:
             "managers": [
-                            {
-                                "id": 2,
-                                "name": "leega",
-                                "description": "Marco Ligabue",
-                                "swimmer_id": 23,
-                                "created_at": "2013-10-23T17:10:02.000Z",
-                                "updated_at": "2020-09-16T09:03:49.000Z",
-                                // [...]
-                                "last_name": "Ligabue",
-                                "first_name": "Marco",
-                                // [...remaning User details...]
-                            }
-                        ]
+                {
+                    "id": 2,
+                    "name": "leega",
+                    "description": "Marco Ligabue",
+                    "swimmer_id": 23,
+                    "created_at": "2013-10-23T17:10:02.000Z",
+                    "updated_at": "2020-09-16T09:03:49.000Z",
+                    // [...]
+                    "last_name": "Ligabue",
+                    "first_name": "Marco",
+                    // [...remaning User details...]
+                }
+            ]
         }
 
 
@@ -124,6 +182,8 @@ The returned result includes these other 1st-level linked entities:
 - `User` / Manager: _full list_ from the associated Season
 
 :key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
 
 
 * * *

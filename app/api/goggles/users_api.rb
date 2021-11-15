@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: User API Grape controller
   #
-  #   - version:  7.81
+  #   - version:  7-0.0.81
   #   - author:   Steve A.
   #   - build:    20210227
   #
