@@ -137,7 +137,7 @@ module Goggles
         optional :complete_name, type: String, desc: 'optional: complete name (partial match supported)'
         optional :gender_type_id, type: Integer, desc: 'optional: associated GenderType ID'
         optional :year_of_birth, type: Integer, desc: 'optional: year of birth value'
-        optional :year_guessed, type: Integer, desc: 'optional: true to search for data having only "guessed" year of birth values'
+        optional :year_guessed, type: Boolean, desc: 'optional: true to search for data having only "guessed" year of birth values'
         optional :select2_format, type: Boolean, desc: 'optional: true to enable the simplified (id+text) Select2 output format'
         use :pagination
       end
