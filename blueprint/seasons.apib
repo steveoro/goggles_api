@@ -417,6 +417,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 |  Field name  | Data type |  description |
 | --- | --- | --- |
+| `id` | number | _optional:_  force or override the created row ID value (must be unique) |
 | `description` | string | verbose name or description for the Season |
 | `begin_date` | date | starting date or Season first day |
 | `end_date` | date | ending date or Season last day |
@@ -444,8 +445,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | | 1 | `M`: manual |
 | | 2 | `S`: semi-automatic |
 | | 3 | `A`: automatic |
-| `has_individual_rank` | boolean | true if individual rankings are supported |
-| `badge_fee` | string/float | base registration/badge fee (in local currency) |
+| `individual_rank` | boolean | _optional:_ +true+ if individual rankings are supported |
+| `badge_fee` | string/float | _optional:_ base registration/badge fee (in local currency) |
 
 
 * * *

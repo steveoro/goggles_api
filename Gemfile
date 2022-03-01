@@ -7,6 +7,7 @@ ruby '2.7.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '>= 6.0.4.1', '< 6.1.0'
+gem 'rails-i18n', '~> 6.0'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.4.4'
 # Use Puma as the app server
@@ -35,6 +36,8 @@ gem 'grape_logging'
 gem 'grape-route-helpers'
 gem 'kaminari'
 gem 'rest-client'
+gem 'scenic'
+gem 'scenic-mysql_adapter'
 gem 'simple_command'
 
 # Inherited data factories from DB engine, published also on production/staging

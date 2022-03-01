@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Season API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.3.46
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20220301
   #
   class SeasonsAPI < Grape::API
     helpers APIHelpers
@@ -92,8 +92,9 @@ module Goggles
         requires :begin_date, type: Date, desc: 'first day of the Season'
         requires :end_date, type: Date, desc: 'last day of the Season'
 
-        optional :individual_rank, type: Boolean, desc: 'true if individual rankings are supported'
-        optional :badge_fee, type: Float, desc: 'base registration/badge fee (in local currency)'
+        optional :id, type: Integer, desc: 'optional: override or force Season ID (must be unique)'
+        optional :individual_rank, type: Boolean, desc: 'optional: true if individual rankings are supported'
+        optional :badge_fee, type: Float, desc: 'optional: base registration/badge fee (in local currency)'
       end
       post do
         reject_unless_authorized_admin(check_jwt_session)

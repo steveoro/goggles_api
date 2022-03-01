@@ -153,6 +153,18 @@ RSpec.describe Goggles::SeasonsAPI, type: :request do
         it_behaves_like('a successful JSON POST response')
       end
 
+      context 'with an account having ADMIN grants while forcing the new row ID,' do
+        before do
+          post(
+            api_v3_season_path,
+            params: built_row.attributes.merge(id: GogglesDb::Season.last.id + 100),
+            headers: admin_headers
+          )
+        end
+
+        it_behaves_like('a successful JSON POST response')
+      end
+
       context 'with an account having just CRUD grants,' do
         before { post(api_v3_season_path, params: built_row.attributes, headers: crud_headers) }
 

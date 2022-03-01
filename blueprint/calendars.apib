@@ -1,0 +1,853 @@
+# Group Calendars
+
+## Calendar details [/api/v3/calendar/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 688,
+            "lock_version": 0,
+            "scheduled_date": "04-05",
+            "meeting_name": "4° Trofeo Amici del Nuoto",
+            "meeting_place": "Firenze",
+            "manifest_code": null,
+            "startlist_code": null,
+            "results_code": "B04A",
+            "meeting_code": "firenzeamicidelnuoto",
+            "season_id": 172,
+            "created_at": "2017-10-06T11:18:00.000Z",
+            "updated_at": "2017-10-06T11:18:00.000Z",
+            "year": "2017",
+            "month": "Novembre",
+            "results_link": "/discipline/master/circuito-supermaster.html?view=risultati&codice=B04A&anno=2018",
+            "startlist_link": null,
+            "manifest_link": "/discipline/master/circuito-supermaster/966.html?view=manifestazione",
+            "manifest": null,
+            "name_import_text": "Scadenza iscrizioni: 31/10/2017",
+            "organization_import_text": "\n\t\t\t\tManifestazione organizzata da: Amici del Nuoto Firenze \n\t\t\t\t\t\t...\t\t\t\t\n\t",
+            "place_import_text": null,
+            "dates_import_text": "04-05 Novembre 2017",
+            "program_import_text": "organizzazione: Organization Team Name\t\t\t\t\n...snip...\r\n...Impianto...\r\n... 200 SL - 100 RA - 50 FA ...",
+            "meeting_id": 17208,
+            "read_only": false,
+            "cancelled": false,
+            "display_label": "MASTER FIN: IV Amici Del Nuoto",
+            "short_label": "IV Amici Del Nuoto",
+            "meeting_date": "2017-11-04",
+
+            "season": {
+                "id": 172,
+                "description": "Circuito italiano supermaster FIN 2017/2018",
+                "begin_date": "2017-10-01",
+                "end_date": "2018-09-30",
+                "season_type_id": 1,
+                "header_year": "2017/2018",
+                "edition": 17,
+                "edition_type_id": 5,
+                "timing_type_id": 3,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": "20.0"
+            },
+
+            "meeting": {
+                "id": 17208,
+                "description": "4° Trofeo Amici del Nuoto",
+                "entry_deadline": "2017-10-31",
+                "warm_up_pool": false,
+                "allows_under25": false,
+                "reference_phone": null,
+                "reference_e_mail": null,
+                "reference_name": null,
+                "notes": null,
+                "manifest": false,
+                "startlist": false,
+                "results_acquired": true,
+                "max_individual_events": 2,
+                "configuration_file": null,
+                "edition": 4,
+                "season_id": 172,
+                "autofilled": true,
+                "header_date": "2017-11-04",
+                "code": "firenzeamicidelnuoto",
+                "header_year": "2017/2018",
+                "max_individual_events_per_session": 2,
+                "off_season": false,
+                "edition_type_id": 2,
+                "timing_type_id": 3,
+                "individual_score_computation_type_id": null,
+                "relay_score_computation_type_id": null,
+                "team_score_computation_type_id": null,
+                "meeting_score_computation_type_id": null,
+                "manifest_body": "<BASE_URL_TO_MANIFEST_BODY>/discipline/master/circuito-supermaster/966.html?view=manifestazione",
+                "confirmed": true,
+                "tweeted": false,
+                "posted": false,
+                "cancelled": false,
+                "pb_acquired": true,
+                "home_team_id": null,
+                "read_only": false,
+                "meeting_fee": "10.0",
+                "event_fee": null,
+                "relay_fee": "10.0",
+                "tags_by_user_list": null,
+                "tags_by_team_list": null,
+                "display_label": "MASTER FIN: IV Amici Del Nuoto",
+                "short_label": "IV Amici Del Nuoto",
+                "edition_label": "IV",
+
+                "season": {
+                    "id": 172,
+                    "description": "Circuito italiano supermaster FIN 2017/2018",
+                    "begin_date": "2017-10-01",
+                    "end_date": "2018-09-30",
+                    "season_type_id": 1,
+                    "header_year": "2017/2018",
+                    "edition": 17,
+                    "edition_type_id": 5,
+                    "timing_type_id": 3,
+                    "rules": null,
+                    "individual_rank": true,
+                    "badge_fee": "20.0"
+                },
+                "edition_type": {
+                    "id": 2,
+                    "code": "R",
+                    "label": "ROM",
+                    "long_label": "ROMANO",
+                    "alt_label": "ROM"
+                },
+                "timing_type": {
+                    "id": 3,
+                    "code": "A",
+                    "label": "AUT",
+                    "long_label": "AUTOMATICO",
+                    "alt_label": "AUT"
+                },
+                "season_type": {
+                    "id": 1,
+                    "code": "MASFIN",
+                    "description": "CIRCUITO ITALIANO MASTER FIN",
+                    "short_name": "MASTER FIN",
+                    "federation_type_id": 1,
+                    "federation_type": {
+                        "id": 1,
+                        "lock_version": 0,
+                        "code": "FIN",
+                        "description": "FEDERAZIONE ITALIANA NUOTO",
+                        "short_name": "FIN",
+                        "created_at": "2014-10-19T00:00:00.000Z",
+                        "updated_at": "2014-10-19T00:00:00.000Z"
+                    }
+                },
+                "federation_type": {
+                    "id": 1,
+                    "code": "FIN",
+                    "description": "FEDERAZIONE ITALIANA NUOTO",
+                    "short_name": "FIN"
+                }
+            }
+        }
+
+
+### find [GET]
+The Calendar instance matching the specified `id` returned as JSON.
+
+:key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
+
+
+* * *
+
+
++ Parameters
+    + id: 688 (number, required) - Calendar ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/calendar/688"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/calendar/688',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":688, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Calendar details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the Calendar fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `scheduled_date` | string | schedule date or dates of the Meeting, usually separated by comma or dash (`DD1-DD2`) |
+| `month` | string | month of the scheduled date of the Meeting, in 3-char format (`mmm`) |
+| `year` | string | scheduled year of the Meeting (`YYYY`) |
+| `meeting_name` | string | Meeting name |
+| `meeting_place` | string | Meeting place or city name |
+| `manifest_code` | string | parametric code used to retrieve the Meeting manifest from the source URL (after publishing) |
+| `startlist_code` | string | parametric code used to retrieve the Meeting starting list from the source URL (after publishing) |
+| `results_code` | string | parametric code used to retrieve the Meeting result list from the source URL (after publishing) |
+| `meeting_code` | string | internal Meeting code-name for Goggles |
+| `season_id` | integer | associated Season ID |
+| `results_link` | string | direct URL to the Meeting results list (not always available; takes precedence over the base URL + code format) |
+| `startlist_link` | string | direct URL to the Meeting starting list (not always available; takes precedence over the base URL + code format) |
+| `manifest_link` | string | direct URL to the Meeting manifest (not always available; takes precedence over the base URL + code format) |
+| `manifest` | string | full manifest page text or full URL to manifest page (if public) |
+| `name_import_text` | string | text part containing the meeting name (as extracted from the manifest) |
+| `organization_import_text` | string | text part containing the organizing team name (as extracted from the manifest) |
+| `place_import_text` | string | text part containing the meeting place or city name (as extracted from the manifest) |
+| `dates_import_text` | string | text part containing the meeting dates (as extracted from the manifest) |
+| `program_import_text` | string | text part containing the meeting events or program (as extracted from the manifest) |
+| `meeting_id` | integer | associated Meeting ID (usually set only after a successful importation) |
+| `cancelled` | boolean | `true` if the Meeting has been cancelled |
+| `read_only` | boolean | `true` to disable further editing by the automatic data-import procedure |
+
+
+* * *
+
+
++ Parameters
+    + id: 688 (number, required) - Calendar ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"year": "2018" }' \
+            "<API_HOST:PORT>/api/v3/calendar/688"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/calendar/688',
+                payload: {
+                    "year": "2018"
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "year": "2018"
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "year": "2018"
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "year": "2018"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "year": "2018"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "year": "2018"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new Calendar, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+Same attributes as `PUT /calendar`, all optional (except `season_id`, *required*,
+and `id`, not present).
+
+
+* * *
+
+
++ Attributes
+    + season_id: 172 (number, required) - associated Season ID
+    + scheduled_date: `21-22` (string, optional) - schedule date or dates of the Meeting, usually separated by comma or dash (`DD1-DD2`)
+    + month: `Dec` (string, optional) - month of the scheduled date of the Meeting, in 3-char format (`mmm`)
+    + year: `2017` (string, optional) - scheduled year of the Meeting (`YYYY`)
+    + meeting_name: `Test Meeting Name` (string, optional) - Meeting name or full description
+    + meeting_place (string, optional) - Meeting place or city name
+    + manifest_code (string, optional) - parametric code used to retrieve the Meeting manifest from the source URL (after publishing)
+    + startlist_code (string, optional) - parametric code used to retrieve the Meeting starting list from the source URL (after publishing)
+    + results_code (string, optional) - parametric code used to retrieve the Meeting result list from the source URL (after publishing)
+    + meeting_code: `testmeetingname` (string, optional) - internal Meeting code-name for Goggles
+    + results_link (string, optional) - direct URL to the Meeting results list (not always available; takes precedence over the base URL + code format)
+    + startlist_link (string, optional) - direct URL to the Meeting starting list (not always available; takes precedence over the base URL + code format)
+    + manifest_link (string, optional) - direct URL to the Meeting manifest (not always available; takes precedence over the base URL + code format)
+    + manifest (string, optional) - full manifest page text or full URL to manifest page (if public)
+    + name_import_text (string, optional) - text part containing the meeting name (as extracted from the manifest)
+    + organization_import_text (string, optional) - text part containing the organizing team name (as extracted from the manifest)
+    + place_import_text (string, optional) - text part containing the meeting place or city name (as extracted from the manifest)
+    + dates_import_text (string, optional) - text part containing the meeting dates (as extracted from the manifest)
+    + program_import_text (string, optional) - text part containing the meeting events or program (as extracted from the manifest)
+    + meeting_id  (number, optional) - associated Meeting ID (usually set only after a successful importation)
+    + cancelled (boolean, optional) - `true` if the Meeting has been cancelled
+    + read_only (boolean, optional) - `true` to disable further editing by the automatic data-import procedure
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"season_id": 172, "scheduled_date": "21-22", "month": "Dec", \
+                 "year": "2017", "meeting_name": "Test Meeting Name", "meeting_code": "testmeetingname" }'
+            "<API_HOST:PORT>/api/v3/calendar"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/calendar',
+            {
+                "season_id": 172,
+                "scheduled_date": "21-22",
+                "month": "Dec",
+                "year": "2017",
+                "meeting_name": "Test Meeting Name",
+                "meeting_code": "testmeetingname"
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "season_id": 172,
+                "scheduled_date": "21-22",
+                "month": "Dec",
+                "year": "2017",
+                "meeting_name": "Test Meeting Name",
+                "meeting_code": "testmeetingname"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "season_id": 172,
+                "scheduled_date": "21-22",
+                "month": "Dec",
+                "year": "2017",
+                "meeting_name": "Test Meeting Name",
+                "meeting_code": "testmeetingname"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "season_id": 172,
+                "scheduled_date": "21-22",
+                "month": "Dec",
+                "year": "2017",
+                "meeting_name": "Test Meeting Name",
+                "meeting_code": "testmeetingname"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "season_id": 172,
+                "scheduled_date": "21-22",
+                "month": "Dec",
+                "year": "2017",
+                "meeting_name": "Test Meeting Name",
+                "meeting_code": "testmeetingname"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 680 (number, required) - Calendar ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/calendar/680"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/calendar/680',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# Calendar list [/api/v3/calendars{?page,per_page,season_id,gender_type_id,pool_type_id,event_type_id,category_type_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/calendars?page=3&season_id=172>; rel=\"last\", <http://localhost:3000/api/v3/calendars?page=2&season_id=172>; rel=\"next\""
+            Total: 172
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // Calendar details 1
+                {
+                    "id": 650,
+                    // [...]
+                },
+
+                // Calendar details 2
+                {
+                    "id": 651,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of Calendars associated to the specified filtering values,
+returned as JSON and optionally filtered by:
+
+- `season_id`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + season_id: 172 (number, required) - associated Season ID
+
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/calendars?season_id=172"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/calendars',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { season_id: 172 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Calendar list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
