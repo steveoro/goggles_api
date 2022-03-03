@@ -192,6 +192,26 @@ shared_examples_for 'successful single response without pagination links in head
 end
 
 # REQUIRES/ASSUMES:
+# - multiple results, less than max-per-page (usually 25 => no pagination)
+# - 'default_per_page' to be already set (default pagination size)
+shared_examples_for 'successful multiple, single-page response without pagination links in headers' do
+  it_behaves_like('a successful request that has positive usage stats')
+
+  it 'returns a paginated array of JSON rows' do
+    result_array = JSON.parse(response.body)
+    expect(result_array).to be_an(Array)
+    expect(result_array.count).to be_positive
+  end
+
+  it 'does not contain the pagination values or links in the response headers' do
+    expect(response.headers['Page']).to eq('1')
+    expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
+    expect(response.headers['Total']).to be_present
+    expect(response.headers['Link']).to be nil
+  end
+end
+
+# REQUIRES/ASSUMES:
 # - 1 or more results, possibly just 1 page (no pagination) OR even multiple pages
 # - 'default_per_page' to be already set (default pagination size)
 # - 'expected_row_count' to be already set (row count for expected result)

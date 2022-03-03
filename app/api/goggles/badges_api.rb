@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Badge API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.3.46
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20220303
   #
   class BadgesAPI < Grape::API
     helpers APIHelpers
@@ -178,6 +178,54 @@ module Goggles
             %w[team_id team_affiliation_id season_id swimmer_id off_gogglecup fees_due badge_due relays_due]
           )
         )
+      end
+
+      # GET /api/:version/badges/search
+      #
+      # Search existing badges with a swimmer name and/or a team name, optionally filtered also by an season header year.
+      #
+      # The +name+ is required and can match both the swimmer *and* the team or just one of the two for any result.
+      # (If a name matches both a team and a swimmer it will be a match; if it matches only one of the two, it will be
+      # match anyway.)
+      #
+      # If the +header_year+ is specified, the search result is filtered also by the matching season(s) years.
+      # (Supports partial match: so, "2018" will match all typical values of "2017/2018", "2018/2019" and "2018".)
+      #
+      # == Returns:
+      # The matching list of badges as an array of JSON objects.
+      #
+      # *Pagination* links are stored and returned in the response headers.
+      # - 'Link': list of request links for last & next data pages, separated by ", "
+      # - 'Total': total data rows found
+      # - 'Per-Page': total rows per page
+      # - 'Page': current page
+      #
+      desc 'Search existing badges for any swimmer name and team name or year'
+      params do
+        requires :name, type: String, desc: 'either a swimmer name or a team name'
+        optional :header_year, type: String, desc: 'the header year of the season'
+        use :pagination
+      end
+      # Defaults:
+      # paginate per_page: 25, max_per_page: nil, enforce_max_per_page: false
+      paginate
+      get :search do
+        check_jwt_session
+
+        possible_swimmers = GogglesDb::Swimmer.for_name(params['name'])
+        possible_teams = GogglesDb::Team.for_name(params['name'])
+        possible_seasons = if params['header_year'].present?
+                             GogglesDb::Season.joins(:federation_type).includes(:federation_type)
+                                              .where('(INSTR(seasons.header_year, ?) > 0)', params[:header_year])
+                           end
+
+        results = GogglesDb::Badge.includes(:swimmer, :team, :season).joins(:swimmer, :team, :season)
+        results = results.where(swimmer_id: possible_swimmers.pluck(:id)) if possible_swimmers.any?
+        results = results.where(team_id: possible_teams.pluck(:id)) if possible_teams.any?
+        results = results.where(season_id: possible_seasons.pluck(:id)) if possible_seasons&.any?
+        results = [] if possible_swimmers.empty? && possible_teams.empty? && possible_seasons.to_a.empty?
+
+        paginate results.to_a.map(&:minimal_attributes)
       end
     end
   end

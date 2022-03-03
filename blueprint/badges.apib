@@ -913,3 +913,237 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     + Body
 
             { "msg": "Unauthorized" }
+
+
+# Badge search [/api/v3/badges/search{?page,per_page,name,header_year}]
+
++ Model (application/json)
+
+    + Header
+
+            Total: 5
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                {
+                    "id": 91344,
+                    "number": "EMI015613",
+                    "season_id": 172,
+                    "swimmer_id": 142,
+                    "team_id": 1,
+                    "category_type_id": 1121,
+                    "entry_time_type_id": 5,
+                    "team_affiliation_id": 4314,
+                    "final_rank": null,
+                    "off_gogglecup": false,
+                    "fees_due": true,
+                    "badge_due": false,
+                    "relays_due": true,
+                    "swimmer": {
+                        "id": 142,
+                        "display_label": "ALLORO STEFANO (MAS, 1969)",
+                        "short_label": "ALLORO STEFANO (1969)",
+                        "complete_name": "ALLORO STEFANO",
+                        "last_name": "ALLORO",
+                        "first_name": "STEFANO",
+                        "year_of_birth": 1969,
+                        "year_guessed": false
+                    },
+                    "gender_type": {
+                        "id": 1,
+                        "code": "M",
+                        "label": "MAS",
+                        "long_label": "MASCHILE",
+                        "alt_label": "MASCHI"
+                    },
+                    "category_type": {
+                        "id": 1121,
+                        "code": "M45",
+                        "federation_code": "F",
+                        "description": "MASTER 45",
+                        "short_name": "M45",
+                        "group_name": "MASTER",
+                        "age_begin": 45,
+                        "age_end": 49,
+                        "relay": false,
+                        "season_id": 172,
+                        "out_of_race": false,
+                        "undivided": false,
+                        "display_label": "M45, FIN MASTER 2017/2018",
+                        "short_label": "(2017/2018) M45",
+                        "season": {
+                            "id": 172,
+                            "description": "Circuito italiano supermaster FIN 2017/2018",
+                            "begin_date": "2017-10-01",
+                            "end_date": "2018-09-30",
+                            "season_type_id": 1,
+                            "header_year": "2017/2018",
+                            "edition": 17,
+                            "edition_type_id": 5,
+                            "timing_type_id": 3,
+                            "rules": null,
+                            "individual_rank": true,
+                            "badge_fee": "20.0"
+                        }
+                    },
+                    "entry_time_type": {
+                        "id": 5,
+                        "code": "U",
+                        "label": "ULT",
+                        "long_label": "ULTIMA PRESTAZIONE",
+                        "alt_label": "ULT"
+                    }
+                },
+                {
+                    "id": 91376,
+                    "number": "04204061",
+                    "season_id": 171,
+                    "swimmer_id": 142,
+                    "team_id": 1,
+                    "category_type_id": 1148,
+                    "entry_time_type_id": 5,
+                    "team_affiliation_id": 4313,
+                    // ...(other fields omitted)...
+                },
+                {
+                    "id": 110697,
+                    "number": "04207999",
+                    "season_id": 181,
+                    "swimmer_id": 142,
+                    "team_id": 1,
+                    "category_type_id": 1213,
+                    // ...(other fields omitted)...
+                },
+                {
+                    "id": 111386,
+                    "number": "43446",
+                    "season_id": 182,
+                    "swimmer_id": 142,
+                    "team_id": 1,
+                    "category_type_id": 1252,
+                    // ...(other fields omitted)...
+                }
+            ]
+
+
+## search [GET]
+
+Search existing badges with a swimmer name and/or a team name, optionally filtered also by an season header year.
+
+Search by:
+
+- `name` (string, required): partial match for swimmer and/or team names
+- `header_year` (string, optional): partial match for season header year (typical format: "AAAA/AAAA")
+
+A `name` value can match both the swimmer *and* the team or just one of the two for any result.
+(If a name matches both a team and a swimmer it will be a match; if it matches only one of the two, it will be
+match anyway.)
+
+If the `header_year` is specified, the search result is filtered also by the matching season(s) years.
+(Supports partial match: so, "2018" will match all typical values of "2017/2018", "2018/2019" and "2018".)
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + name: "alloro" (string, required) - partial match for swimmer name and/or team name
+    + header_year: "2018 (string, optional) - partial match for the header year of the season bound to the badge
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/badges/search?name=alloro&header_year=2018"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/badges/search',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { name: 'alloro', header_year: '2018' }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":91344,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [Badge search][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

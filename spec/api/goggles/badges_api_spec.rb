@@ -343,4 +343,57 @@ RSpec.describe Goggles::BadgesAPI, type: :request do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  describe 'GET /api/v3/badges/search' do
+    let(:search_name) { GogglesDb::Swimmer.find([23].sample).last_name.downcase }
+    let(:search_year) { %w[2015 2016 2017 2018].sample }
+
+    context 'when using a valid authentication' do
+      let(:default_per_page) { 25 }
+
+      context 'without any filters (missing name parameter),' do
+        before { get(api_v3_badges_search_path, headers: fixture_headers) }
+
+        it 'is NOT successful' do
+          expect(response).not_to be_successful
+        end
+
+        it 'responds with a grape error message about the missing required parameter' do
+          result = JSON.parse(response.body)
+          expect(result).to have_key('error')
+          expect(result['error']).to be_present
+        end
+      end
+
+      context 'when using valid parameters but during Maintenance mode,' do
+        before do
+          GogglesDb::AppParameter.maintenance = true
+          get(api_v3_badges_search_path, params: { name: search_name }, headers: fixture_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+
+        it_behaves_like('a request refused during Maintenance (except for admins)')
+      end
+
+      context 'when filtering by both a specific search name and year,' do
+        before { get(api_v3_badges_search_path, params: { name: search_name, header_year: search_year }, headers: fixture_headers) }
+
+        it_behaves_like('successful multiple, single-page response without pagination links in headers')
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before { get(api_v3_badges_search_path, params: { name: search_name }, headers: { 'Authorization' => 'you wish!' }) }
+
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+
+    context 'when filtering by a non-existing value,' do
+      before { get(api_v3_badges_search_path, params: { name: 'zzz!zzz' }, headers: fixture_headers) }
+
+      it_behaves_like('an empty but successful JSON list response')
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
