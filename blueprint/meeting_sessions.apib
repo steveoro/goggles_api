@@ -1,0 +1,846 @@
+# Group MeetingSessions
+
+## MeetingSession details [/api/v3/meeting_session/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 3314,
+            "lock_version": 0,
+            "session_order": 2,
+            "scheduled_date": "2021-11-14",
+            "warm_up_time": null,
+            "begin_time": null,
+            "notes": null,
+            "meeting_id": 19318,
+            "swimming_pool_id": 199,
+            "created_at": "2022-02-10T16:41:11.000Z",
+            "updated_at": "2022-02-10T16:41:11.000Z",
+            "description": "Sessione 2022-02-10",
+            "autofilled": false,
+            "day_part_type_id": 2,
+            "meeting": {
+                "id": 19318,
+                "code": "deakker",
+                "header_year": "2021/2022",
+                "display_label": "MASTER FIN: De Akker Team Asi 2021/2022",
+                "short_label": "De Akker Team Asi 2021/2022",
+                "edition_label": "2021/2022"
+            },
+            "season": {
+                "id": 192,
+                "description": "Circuito italiano supermaster FIN 2019/2020",
+                "begin_date": "2019-10-01",
+                "end_date": "2020-09-30",
+                "season_type_id": 1,
+                "header_year": "2019/2020",
+                "edition": 19,
+                "edition_type_id": 5,
+                "timing_type_id": 3,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": "24.0"
+            },
+            "season_type": {
+                "id": 1,
+                "code": "MASFIN",
+                "description": "CIRCUITO ITALIANO MASTER FIN",
+                "short_name": "MASTER FIN",
+                "federation_type_id": 1,
+                "federation_type": {
+                    "id": 1,
+                    "lock_version": 0,
+                    "code": "FIN",
+                    "description": "FEDERAZIONE ITALIANA NUOTO",
+                    "short_name": "FIN",
+                    "created_at": "2014-10-19T00:00:00.000Z",
+                    "updated_at": "2014-10-19T00:00:00.000Z"
+                }
+            },
+            "swimming_pool": {
+                "id": 199,
+                "name": "Stadio Comunale Carmen Longo",
+                "address": "Via Dello Sport Zona Stadio",
+                "zip": "",
+                "nick_name": "bolognastadiocomunalecarmenlongo50",
+                "phone_number": "",
+                "fax_number": "",
+                "e_mail": "",
+                "contact_name": "",
+                "maps_uri": "https://www.google.com/maps/place/?q=place_id:ChIJ4Wa4c13Uf0cRA4l24qtWFAs",
+                "lanes_number": 10,
+                "multiple_pools": false,
+                "garden": false,
+                "bar": false,
+                "restaurant": false,
+                "gym": false,
+                "child_area": false,
+                "notes": "Via Dello Sport Zona Stadio\r\nplace_id:\r\n@,,15z",
+                "city_id": 3,
+                "pool_type_id": 2,
+                "shower_type_id": null,
+                "hair_dryer_type_id": null,
+                "locker_cabinet_type_id": null,
+                "read_only": true,
+                "latitude": null,
+                "longitude": null,
+                "plus_code": null,
+                "display_label": "Stadio Comunale Carmen Longo ('bolognastadiocomunalecarmenlongo50', 50 M), Bologna, Bologna (IT)",
+                "short_label": "Stadio Comunale Carmen Longo (50 M), Bologna",
+                "city": {
+                    "id": 3,
+                    "name": "Bologna",
+                    "zip": "?",
+                    "area": "Bologna",
+                    "country": "Italia",
+                    "country_code": "IT",
+                    "latitude": "44.483333",
+                    "longitude": "11.333333",
+                    "plus_code": "8FPHF8MM+88",
+                    "display_label": "Bologna, Bologna (IT)",
+                    "short_label": "Bologna, Bologna",
+                    "region": "Emilia-Romagna",
+                    "area_code": "BO"
+                },
+                "pool_type": {
+                    "id": 2,
+                    "code": "50",
+                    "length_in_meters": 50,
+                    "eventable": true,
+                    "label": "50 M",
+                    "long_label": "50 METRI",
+                    "alt_label": "50 M"
+                },
+                "shower_type": null,
+                "hair_dryer_type": null,
+                "locker_cabinet_type": null
+            },
+            "pool_type": {
+                "id": 2,
+                "code": "50",
+                "length_in_meters": 50,
+                "eventable": true,
+                "label": "50 M",
+                "long_label": "50 METRI",
+                "alt_label": "50 M"
+            },
+            "day_part_type": {
+                "id": 2,
+                "code": "P",
+                "label": "POM",
+                "long_label": "POMERIGGIO",
+                "alt_label": "POM"
+            }
+        }
+
+
+### find [GET]
+The MeetingSession instance matching the specified `id` returned as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
+
+
+* * *
+
+
++ Parameters
+    + id: 3314 (number, required) - MeetingSession ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_session/3314"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meeting_session/3314',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":3314, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [MeetingSession details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the MeetingSession fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `scheduled_date` | string | schedule date for this session of the Meeting in ISO format |
+| `session_order` | integer | numerical order of the session, starting from 1 |
+| `description` | string | description of the session |
+| `warm_up_time` | string | warm-up hour for this session in ISO format (HH:MM) |
+| `begin_time` | string | event start hour for this session in ISO format (HH:MM) |
+| `notes` | string | free text notes |
+| `meeting_id` | integer | associated Meeting ID |
+| `swimming_pool_id` | integer | associated SwimmingPool ID |
+| `day_part_type_id` | integer | associated DayPartType ID (morning, afternoon, evening) |
+| | _id_ | _code: description_ |
+| | 1 | `M`: morning |
+| | 2 | `P`: afternoon |
+| | 3 | `S`: evening |
+| | 4 | `N`: night |
+| `autofilled` | boolean | `true` if the values were autofilled by the data-import procedure |
+
+
+* * *
+
+
++ Parameters
+    + id: 3314 (number, required) - MeetingSession ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"session_order": 2, "day_part_type_id": 2 }' \
+            "<API_HOST:PORT>/api/v3/meeting_session/3314"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/meeting_session/3314',
+                payload: {
+                    "session_order": 2,
+                    "day_part_type_id": 2
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "session_order": 2,
+                "day_part_type_id": 2
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "session_order": 2,
+                "day_part_type_id": 2
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "session_order": 2,
+                "day_part_type_id": 2
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "session_order": 2,
+                "day_part_type_id": 2
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "session_order": 2,
+                "day_part_type_id": 2
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new MeetingSession, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+Same attributes as `PUT /meeting_session`, all optional except `scheduled_date`, `meeting_id`,
+`session_order` and `description` which are *required* (`id` not needed when creating rows).
+
+
+* * *
+
+
++ Attributes
+    + scheduled_date: `2019-11-23` (string, required) - schedule date for this session of the Meeting in ISO format
+    + meeting_id: 19318 (number, required) - associated Meeting ID
+    + session_order: 2 (number, required) - numerical order of the session, starting from 1
+    + description: `Finals` (string, required) - description of the session
+    + warm_up_time: `13:30` (string, optional) - warm-up hour for this session in ISO format (HH:MM)
+    + begin_time: `14:00` (string, optional) - event start hour for this session in ISO format (HH:MM)
+    + notes: `only 1 session per athlete allowed due to covid restrictions` (string, optional) - free text notes
+    + swimming_pool_id: 199 (number, optional) - associated SwimmingPool ID
+    + day_part_type_id: 2 (number, optional) - associated DayPartType ID (1: morning, 2: afternoon, 3: evening, 4: night)
+    + autofilled (boolean, optional) - `true` if the values were autofilled by the data-import procedure
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"scheduled_date": "2019-11-23", "meeting_id": 19318, "session_order": 2, \
+                 "description": "Finals", "warm_up_time": "13:30", "begin_time": "14:00", \
+                 "notes": "only 1 session per athlete allowed due to covid restrictions", \
+                 "swimming_pool_id": 199, "day_part_type_id": 2 }' \
+            "<API_HOST:PORT>/api/v3/meeting_session"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/meeting_session',
+            {
+                "scheduled_date": "2019-11-23",
+                "meeting_id": 19318,
+                "session_order": 2,
+                "description": "Finals",
+                "warm_up_time": "13:30",
+                "begin_time": "14:00",
+                "notes": "only 1 session per athlete allowed due to covid restrictions",
+                "swimming_pool_id": 199,
+                "day_part_type_id": 2
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "scheduled_date": "2019-11-23",
+                "meeting_id": 19318,
+                "session_order": 2,
+                "description": "Finals",
+                "warm_up_time": "13:30",
+                "begin_time": "14:00",
+                "notes": "only 1 session per athlete allowed due to covid restrictions",
+                "swimming_pool_id": 199,
+                "day_part_type_id": 2
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "scheduled_date": "2019-11-23",
+                "meeting_id": 19318,
+                "session_order": 2,
+                "description": "Finals",
+                "warm_up_time": "13:30",
+                "begin_time": "14:00",
+                "notes": "only 1 session per athlete allowed due to covid restrictions",
+                "swimming_pool_id": 199,
+                "day_part_type_id": 2
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "scheduled_date": "2019-11-23",
+                "meeting_id": 19318,
+                "session_order": 2,
+                "description": "Finals",
+                "warm_up_time": "13:30",
+                "begin_time": "14:00",
+                "notes": "only 1 session per athlete allowed due to covid restrictions",
+                "swimming_pool_id": 199,
+                "day_part_type_id": 2
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "scheduled_date": "2019-11-23",
+                "meeting_id": 19318,
+                "session_order": 2,
+                "description": "Finals",
+                "warm_up_time": "13:30",
+                "begin_time": "14:00",
+                "notes": "only 1 session per athlete allowed due to covid restrictions",
+                "swimming_pool_id": 199,
+                "day_part_type_id": 2
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 3314 (number, required) - MeetingSession ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_session/3314"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/meeting_session/3314',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# MeetingSession list [/api/v3/meeting_sessions{?page,per_page,scheduled_date,meeting_id,autofilled}]
+
++ Model (application/json)
+
+    + Header
+
+            Total: 2
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // MeetingSession details 1
+                {
+                    "id": 3313,
+                    // [...]
+                },
+
+                // MeetingSession details 2
+                {
+                    "id": 3314,
+                    // [...]
+                }
+            ]
+
+
+## list [GET]
+
+The list of MeetingSessions associated to the specified filtering values,
+returned as JSON and optionally filtered by:
+
+- `meeting_id`
+- `scheduled_date`
+- `autofilled`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + meeting_id: 19318 (number, optional) - associated Meeting ID
+    + scheduled_date: "2019-11-23" (string, optional) - schedule date for this session of the Meeting in ISO format
+    + autofilled: false (boolean, optional) - `true` if the values were autofilled by the data-import procedure
+
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_sessions?meeting_id=19318"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/meeting_sessions',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { meeting_id: 19318 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":3313,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [MeetingSession list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

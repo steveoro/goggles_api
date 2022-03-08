@@ -520,6 +520,287 @@ All are optional (except `id`):
 
 
 
+### create [POST]
+
+Creates a new MeetingProgram, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+Same attributes as `PUT /meeting_program`, all optional except `meeting_event_id`, `event_order`,
+`pool_type_id`, `gender_type_id` and `category_type_id` which are *required* (`id` not needed when creating rows).
+
+
+* * *
+
+
++ Attributes
+    + meeting_event_id: 1230 (string, required) - associated MeetingEvent ID
+    + event_order: 2 (number, required) - ordinal number of this program
+    + pool_type_id: 1 (number, required) - associated PoolType ID
+    + gender_type_id: 2 (number, required) - associated GenderType ID
+    + category_type_id: 4 (number, required) - associated CategoryType ID
+    + begin_time: `14:00` (string, optional) - begin time for this program (parsed with Time.zone, based on year 2000)
+    + out_of_race (string, optional) - `true` if this program does not concur in the overall rankings or scores
+    + autofilled (boolean, optional) - `true` if the values were autofilled by the data-import procedure
+    + standard_timing_id: 199 (number, optional) - associated StandardTiming ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"meeting_event_id": 1230, "event_order": 2, "pool_type_id": 1, \
+                 "gender_type_id": 2, "category_type_id": 4, "begin_time": "14:00" }' \
+            "<API_HOST:PORT>/api/v3/meeting_program"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/meeting_program',
+            {
+                "meeting_event_id": 1230,
+                "event_order": 2,
+                "pool_type_id": 1,
+                "gender_type_id": 2,
+                "category_type_id": 4,
+                "begin_time": "14:00"
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "meeting_event_id": 1230,
+                "event_order": 2,
+                "pool_type_id": 1,
+                "gender_type_id": 2,
+                "category_type_id": 4,
+                "begin_time": "14:00"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "meeting_event_id": 1230,
+                "event_order": 2,
+                "pool_type_id": 1,
+                "gender_type_id": 2,
+                "category_type_id": 4,
+                "begin_time": "14:00"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "meeting_event_id": 1230,
+                "event_order": 2,
+                "pool_type_id": 1,
+                "gender_type_id": 2,
+                "category_type_id": 4,
+                "begin_time": "14:00"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "meeting_event_id": 1230,
+                "event_order": 2,
+                "pool_type_id": 1,
+                "gender_type_id": 2,
+                "category_type_id": 4,
+                "begin_time": "14:00"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 3314 (number, required) - MeetingProgram ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_program/3314"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/meeting_program/3314',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
 # MeetingProgram list [/api/v3/meeting_programs{?page,per_page,meeting_id,meeting_session_id,meeting_event_id,category_type_id,gender_type_id}]
 
 + Model (application/json)

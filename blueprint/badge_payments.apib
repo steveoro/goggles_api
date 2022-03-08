@@ -1,0 +1,851 @@
+# Group BadgePayments
+
+## BadgePayment details [/api/v3/badge_payment/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 164,
+            "lock_version": 0,
+            "amount": "50.0",
+            "payment_date": "2020-01-20",
+            "notes": "Quota iscrizioni gare 2019/2020",
+            "manual": false,
+            "badge_id": 124937,
+            "user_id": 2,
+            "created_at": "2020-02-11T00:00:00.000Z",
+            "updated_at": "2020-02-11T00:00:00.000Z",
+            "badge": {
+                "id": 124937,
+                "number": "42981",
+                "season_id": 192,
+                "swimmer_id": 1443,
+                "team_id": 1,
+                "category_type_id": 1289,
+                "entry_time_type_id": 2,
+                "team_affiliation_id": 5726,
+                "final_rank": null,
+                "off_gogglecup": false,
+                "fees_due": true,
+                "badge_due": false,
+                "relays_due": true,
+                "swimmer": {
+                "id": 1443,
+                "display_label": "JOHNSON MANILA (FEM, 1990)",
+                "short_label": "JOHNSON MANILA (1990)",
+                "complete_name": "JOHNSON MANILA",
+                "last_name": "JOHNSON",
+                "first_name": "MANILA",
+                "year_of_birth": 1990,
+                "year_guessed": false
+            },
+            "gender_type": {
+                "id": 2,
+                "code": "F",
+                "label": "FEM",
+                "long_label": "FEMMINILE",
+                "alt_label": "FEMMINE"
+            },
+            "category_type": {
+                "id": 1289,
+                "code": "M30",
+                "federation_code": "C",
+                "description": "MASTER 30",
+                "short_name": "M30",
+                "group_name": "MASTER",
+                "age_begin": 30,
+                "age_end": 34,
+                "relay": false,
+                "season_id": 192,
+                "out_of_race": false,
+                "undivided": false,
+                "display_label": "M30, FIN MASTER 2019/2020",
+                "short_label": "(2019/2020) M30",
+                "season": {
+                    "id": 192,
+                    "description": "Circuito italiano supermaster FIN 2019/2020",
+                    "begin_date": "2019-10-01",
+                    "end_date": "2020-09-30",
+                    "season_type_id": 1,
+                    "header_year": "2019/2020",
+                    "edition": 19,
+                    "edition_type_id": 5,
+                    "timing_type_id": 3,
+                    "rules": null,
+                    "individual_rank": true,
+                    "badge_fee": "24.0"
+                }
+            },
+            "entry_time_type": {
+                    "id": 2,
+                    "code": "P",
+                    "label": "MPA",
+                    "long_label": "MIGLIOR PRESTAZIONE ASSOLUTA",
+                    "alt_label": "MPA"
+                }
+            },
+            "swimmer": {
+                "id": 1443,
+                "last_name": "JOHNSON",
+                "first_name": "MANILA",
+                "year_of_birth": 1990,
+                "phone_mobile": null,
+                "phone_number": null,
+                "e_mail": null,
+                "nickname": "",
+                "associated_user_id": 394,
+                "gender_type_id": 2,
+                "complete_name": "JOHNSON MANILA",
+                "year_guessed": false,
+                "long_label": "JOHNSON MANILA (FEM, 1990)",
+                "display_label": "JOHNSON MANILA (FEM, 1990)",
+                "short_label": "JOHNSON MANILA (1990)",
+                "associated_user": null,
+                "gender_type": {
+                    "id": 2,
+                    "code": "F",
+                    "label": "FEM",
+                    "long_label": "FEMMINILE",
+                    "alt_label": "FEMMINE"
+                }
+            },
+            "season": {
+                "id": 192,
+                "description": "Circuito italiano supermaster FIN 2019/2020",
+                "begin_date": "2019-10-01",
+                "end_date": "2020-09-30",
+                "season_type_id": 1,
+                "header_year": "2019/2020",
+                "edition": 19,
+                "edition_type_id": 5,
+                "timing_type_id": 3,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": "24.0"
+            },
+            "team": {
+                "id": 1,
+                "name": "CSI NUOTO OBER FERRARI ASD",
+                "editable_name": "CSI NUOTO OBER FERRARI ASD",
+                "address": "Via Agosti, 6",
+                "zip": "",
+                "phone_mobile": "",
+                "phone_number": "",
+                "fax_number": null,
+                "e_mail": "whatever@example.com",
+                "contact_name": "Marco Ligabue",
+                "notes": "Any free notes",
+                "name_variations": null,
+                "city_id": 37,
+                "home_page_url": "",
+                "display_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                "short_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia",
+                "city": {
+                    "id": 37,
+                    "name": "Reggio nell Emilia",
+                    "zip": "?",
+                    "area": "Reggio Emilia",
+                    "country": "Italia",
+                    "country_code": "IT",
+                    "latitude": "44.716667",
+                    "longitude": "10.6",
+                    "plus_code": "8FPGPH8X+MX",
+                    "display_label": "Reggio nell Emilia, Reggio Emilia (IT)",
+                    "short_label": "Reggio nell Emilia, Reggio Emilia",
+                    "region": "Emilia-Romagna",
+                    "area_code": "RE"
+                }
+            }
+        }
+
+
+### find [GET]
+The BadgePayment instance matching the specified `id` returned as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'BadgePayment' or have generic admin grants
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
+
+
+* * *
+
+
++ Parameters
+    + id: 164 (number, required) - BadgePayment ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/badge_payment/164"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/badge_payment/164',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":164, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [BadgePayment details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the BadgePayment fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'BadgePayment' or have generic admin grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `payment_date` | string | payment date in ISO format |
+| `amount` | float | payment amount |
+| `notes` | string | free text notes |
+| `manual` | boolean | `true` for cash payments made by hand |
+| `badge_id` | integer | associated Badge ID |
+| `user_id` | integer | User ID associated to the payment (either the team manager or the user) |
+
+
+* * *
+
+
++ Parameters
+    + id: 164 (number, required) - BadgePayment ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"payment_date": "2018-02-01", "amount": "60.0"}' \
+            "<API_HOST:PORT>/api/v3/badge_payment/164"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/badge_payment/164',
+                payload: {
+                    "payment_date": "2018-02-01",
+                    "amount": "60.0"
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "payment_date": "2018-02-01",
+                "amount": "60.0"
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "payment_date": "2018-02-01",
+                "amount": "60.0"
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "payment_date": "2018-02-01",
+                "amount": "60.0"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "payment_date": "2018-02-01",
+                "amount": "60.0"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "payment_date": "2018-02-01",
+                "amount": "60.0"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new BadgePayment, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'BadgePayment' or have generic admin grants
+
+
+#### Body Attributes:
+
+Same attributes as `PUT /badge_payment`, all optional (except `season_id`, *required*,
+and `id`, not present).
+
+
+* * *
+
+
++ Attributes
+    + payment_date: `2020-01-01` (string, required) - payment date in ISO format
+    + amount: `50.0` (string, required) - payment amount
+    + badge_id: 124937 (number, required) - associated Badge ID
+    + user_id: 2 (number, optional) - User ID associated to the payment (either the team manager or the user)
+    + notes: `covers also meeting registration costs` (string, optional) - free text notes
+    + manual: true (boolean, optional) - `true` for cash payments made by hand
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"payment_date": "2020-01-01", "amount": "50.0", "badge_id": 124937, \
+                 "user_id": 2, "notes": "covers also meeting registration costs", "manual": true }'
+            "<API_HOST:PORT>/api/v3/badge_payment"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/badge_payment',
+            {
+                "payment_date": "2020-01-01",
+                "amount": "50.0",
+                "badge_id": 124937,
+                "user_id": 2,
+                "notes": "covers also meeting registration costs",
+                "manual": true
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "payment_date": "2020-01-01",
+                "amount": "50.0",
+                "badge_id": 124937,
+                "user_id": 2,
+                "notes": "covers also meeting registration costs",
+                "manual": true
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "payment_date": "2020-01-01",
+                "amount": "50.0",
+                "badge_id": 124937,
+                "user_id": 2,
+                "notes": "covers also meeting registration costs",
+                "manual": true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "payment_date": "2020-01-01",
+                "amount": "50.0",
+                "badge_id": 124937,
+                "user_id": 2,
+                "notes": "covers also meeting registration costs",
+                "manual": true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "payment_date": "2020-01-01",
+                "amount": "50.0",
+                "badge_id": 124937,
+                "user_id": 2,
+                "notes": "covers also meeting registration costs",
+                "manual": true
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'BadgePayment' or have generic admin grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 125 (number, required) - BadgePayment ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/badge_payment/125"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/badge_payment/125',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# BadgePayment list [/api/v3/badge_payments{?page,per_page,from_date,user_id,badge_id,manual}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/badge_payments?page=3&from_date=2018-01-01>; rel=\"last\", <http://localhost:3000/api/v3/badge_payments?page=1&from_date=2018-01-01>; rel=\"next\""
+            Total: 150
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // BadgePayment details 1
+                {
+                    "id": 53,
+                    // [...]
+                },
+
+                // BadgePayment details 2
+                {
+                    "id": 54,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of BadgePayments associated to the specified filtering values,
+returned as JSON and optionally filtered by:
+
+- `from_date`, starting payment date in ISO format (all payments on or after this date)
+- `user_id`
+- `badge_id`
+- `manual`, `true` for cash payments made by hand
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'BadgePayment' or have generic admin grants
+
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + from_date: `2018-01-01` (string, optional) - starting payment date in ISO format (all payments on or after this date)
+    + user_id: 2 (number, optional) - associated User ID
+    + badge_id: 12345 (number, optional) - associated Badge ID
+    + manual: false (boolean, optional) - `true` for cash payments made by hand
+
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/badge_payments?from_date=2018-01-01&user_id=2&badge_id=12345&manual=false"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/badge_payments',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: {
+                        from_date: "2018-01-01",
+                        user_id: 2,
+                        badge_id: 12345,
+                        manual: false
+                    }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":53,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [BadgePayment list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

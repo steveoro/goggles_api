@@ -10,7 +10,7 @@ require 'grape_logging'
 #
 #   - version:  7-0.3.46
 #   - author:   Steve A.
-#   - build:    20220301
+#   - build:    20220307
 #
 module Goggles
   # = Goggles::API
@@ -63,6 +63,7 @@ module Goggles
     mount AdminGrantsAPI
     mount APIDailyUsesAPI
     mount BadgesAPI
+    mount BadgePaymentsAPI
     mount CalendarsAPI
     mount CategoryTypesAPI
     mount CitiesAPI
@@ -78,6 +79,7 @@ module Goggles
     mount MeetingRelayResultsAPI
     mount MeetingRelaySwimmersAPI
     mount MeetingReservationsAPI
+    mount MeetingSessionsAPI
     mount SeasonTypesAPI
     mount SeasonsAPI
     mount SessionAPI

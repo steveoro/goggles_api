@@ -131,7 +131,9 @@ shared_examples_for 'a successful JSON POST response' do
     resulting_hash = attr_extractor.call(result['new'])
     expected_hash  = attr_extractor.call(built_row.attributes)
     # Adapt expected hash to the JSON-ified result which will store floats as strings so that the comparison is simpler:
-    expected_hash.each { |key, val| expected_hash[key] = val.to_s if val.is_a?(BigDecimal) || val.is_a?(Float) || val.is_a?(Date) }
+    expected_hash.each do |key, val|
+      expected_hash[key] = val.to_json.delete('"') if val.is_a?(BigDecimal) || val.is_a?(Float) || val.is_a?(Date) || val.is_a?(Time)
+    end
     expect(resulting_hash).to eq(expected_hash)
   end
 end

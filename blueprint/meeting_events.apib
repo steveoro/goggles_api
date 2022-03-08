@@ -369,8 +369,12 @@ All are optional (except `id`):
 | `meeting_session_id` | Integer | link to MeetingSession |
 | `event_type_id` | Integer | link to EventType |
 | `heat_type_id` | Integer | link to HeatType |
-| `split_gender_start_list` | Boolean | true if this event splits gender |
-| `split_category_start_list` | Boolean | true if this event splits category |
+| | _id_ | _code: description_ |
+| | 1 | `B`: standard heat or qualify |
+| | 2 | `S`: semi-finals |
+| | 3 | `G`: finals |
+| `split_gender_start_list` | Boolean | `true` if this event splits gender |
+| `split_category_start_list` | Boolean | `true` if this event splits category |
 
 
 * * *
@@ -511,6 +515,282 @@ All are optional (except `id`):
 
 
 
+### create [POST]
+
+Creates a new MeetingEvent, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+Same attributes as `PUT /meeting_event`, all optional except `meeting_session_id`, `event_order`,
+`event_type_id` and `heat_type_id` which are *required* (`id` not needed when creating rows).
+
+
+* * *
+
+
++ Attributes
+    + meeting_session_id: 12 (number, required) - associated MeetingSession ID
+    + event_order: 1 (number, required) - ordinal number of this event
+    + event_type_id: 19 (number, required) - associated EventType ID
+    + heat_type_id: 3 (number, required) - associated HeatType ID
+    + begin_time: `14:00` (string, optional) - begin time for this event (parsed with Time.zone, based on year 2000)
+    + out_of_race (string, optional) - `true` if this event does not concur in the overall rankings or scores
+    + autofilled (boolean, optional) - `true` if the values were autofilled by the data-import procedure
+    + notes (string, optional) - free text notes
+    + split_gender_start_list (boolean, optional) - `true` if this event ranking is divided by gender
+    + split_category_start_list (boolean, optional) - `true` if this event ranking is divided by category'
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"meeting_session_id": 12, "event_order": 1, "event_type_id": 19, \
+                 "heat_type_id": 3, "begin_time": "14:00" }' \
+            "<API_HOST:PORT>/api/v3/meeting_event"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/meeting_event',
+            {
+                "meeting_session_id": 12,
+                "event_order": 1,
+                "event_type_id": 19,
+                "heat_type_id": 3,
+                "begin_time": "14:00"
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "meeting_session_id": 12,
+                "event_order": 1,
+                "event_type_id": 19,
+                "heat_type_id": 3,
+                "begin_time": "14:00"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "meeting_session_id": 12,
+                "event_order": 1,
+                "event_type_id": 19,
+                "heat_type_id": 3,
+                "begin_time": "14:00"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "meeting_session_id": 12,
+                "event_order": 1,
+                "event_type_id": 19,
+                "heat_type_id": 3,
+                "begin_time": "14:00"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "meeting_session_id": 12,
+                "event_order": 1,
+                "event_type_id": 19,
+                "heat_type_id": 3,
+                "begin_time": "14:00"
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 3 (number, required) - MeetingEvent ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/meeting_event/3"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/meeting_event/3',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
 # MeetingEvent list [/api/v3/meeting_events{?page,per_page,meeting_id,meeting_session_id}]
 
 + Model (application/json)
@@ -573,7 +853,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 + Parameters
     + meeting_id: 1 (number, required) - associated Meeting ID
-    + meeting_session_id: 1 (number, optional) - associated MeetingSession ID
+    + meeting_session_id: 1 (number, optional) - associated MeetingEvent ID
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page

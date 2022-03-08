@@ -2,11 +2,10 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
-- **0.3.46** [Steve A.] minor bundle security fixes; re-sync with the base engine; added CRUD endpoints for /calendars (admin-only) & ID value override in POST /season; added /badges/search endpoint by name and year;
+- **0.3.48** [Steve A.] minor bundle security fixes; re-sync with the base engine; added CRUD endpoints for /calendars, /badge_payments & /meeting_sessions & ID value override in POST /season; added /badges/search endpoint by name and year; added missing create & delete endpoints for /meeting_events & /meeting_programs
 - **0.3.39** [Steve A.] category types clone endpoint & support for locale override in most detail retrieval endpoints + updated blueprints
 - **0.3.37** [Steve A.] added /tools/compute_score (& time); more filtering options for /team_managers, /badges & /lookup; C-R-U endpoints for /federation_types & /season_types; create /season; full CRUD endpoints for /standard_timing
-- **0.3.30** [Steve A.] added several missing endpoints: DELETE /user, GET+PUT+DELETE+LIST /team_managers, DELETE /badge, GET /admin_grants,
-PUT /meeting_event, PUT /meeting_program
+- **0.3.30** [Steve A.] added several missing endpoints: DELETE /user, GET+PUT+DELETE+LIST /team_managers, DELETE /badge, GET /admin_grants, PUT /meeting_event, PUT /meeting_program
 - **0.3.29** [Steve A.] upgrade to Rails 6.0.4.1 due to security fixes
 - **0.3.25** [Steve A.] added /setting endpoints
 - **0.3.20** [Steve A.] re-synch w/ DB structure 1.92.3 (data clean-up)
