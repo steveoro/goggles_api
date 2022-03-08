@@ -386,9 +386,10 @@ RSpec.describe Goggles::StandardTimingsAPI, type: :request do
     context 'when filtering by a specific event_type_id (with valid authentication),' do
       let(:fixture_event_type_id) do
         GogglesDb::StandardTiming.includes(:event_type).joins(:event_type)
-                                 .select(:event_type_id)
-                                 .distinct.first(20)
-                                 .sample.event_type_id
+                                 .distinct(:event_type_id)
+                                 .pluck(:event_type_id)
+                                 .uniq.first(50)
+                                 .sample
       end
       let(:expected_row_count) { GogglesDb::StandardTiming.where(event_type_id: fixture_event_type_id).count }
 
@@ -397,12 +398,17 @@ RSpec.describe Goggles::StandardTimingsAPI, type: :request do
         get(api_v3_standard_timings_path, params: { event_type_id: fixture_event_type_id }, headers: fixture_headers)
       end
 
-      it_behaves_like('successful response with pagination links & values in headers')
+      it_behaves_like('successful multiple row response either with OR without pagination links')
     end
 
     context 'when filtering by a specific category_type_id (with valid authentication),' do
-      let(:fixture_season) { GogglesDb::Season.find([152, 162, 172, 182, 192].sample) }
-      let(:fixture_category_type_id) { GogglesDb::CategoryType.eventable.individuals.for_season(fixture_season).last(100).sample.id }
+      let(:fixture_category_type_id) do
+        GogglesDb::StandardTiming.includes(:category_type).joins(:category_type)
+                                 .distinct(:category_type_id)
+                                 .pluck(:category_type_id)
+                                 .uniq.last(100)
+                                 .sample
+      end
       let(:expected_row_count) { GogglesDb::StandardTiming.where(category_type_id: fixture_category_type_id).count }
 
       before do
@@ -410,7 +416,7 @@ RSpec.describe Goggles::StandardTimingsAPI, type: :request do
         get(api_v3_standard_timings_path, params: { category_type_id: fixture_category_type_id }, headers: fixture_headers)
       end
 
-      it_behaves_like('successful response with pagination links & values in headers')
+      it_behaves_like('successful multiple row response either with OR without pagination links')
     end
 
     context 'when using an invalid JWT,' do
