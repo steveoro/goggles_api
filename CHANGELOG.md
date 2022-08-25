@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.4.05** [Steve A.] support batch SQL import data POST to dedicated API endpoint directly into ImportQueues as file attachments; re-sync w/ base Engine; added (unique) fuzzy matches to the results list for filtered searches in Meetings, SwimmingPools, Cities, Swimmers & Teams.
 - **0.3.51** [Steve A.] re-sync w/ base engine
 - **0.3.50** [Steve A.] bump Rails to 6.0.4.7 for security fixes
 - **0.3.48** [Steve A.] minor bundle security fixes; re-sync with the base engine; added CRUD endpoints for /calendars, /badge_payments & /meeting_sessions & ID value override in POST /season; added /badges/search endpoint by name and year; added missing create & delete endpoints for /meeting_events & /meeting_programs

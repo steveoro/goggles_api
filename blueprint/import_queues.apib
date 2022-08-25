@@ -548,6 +548,160 @@ Returns `true` on success, an empty body when not found.
 
 
 
+## ImportQueue Batch [/api/v3/import_queue/batch_sql]
+
++ Model (application/json)
+
+        {
+            "id": 12175,
+            "batch_sql": true,
+            "data_file": "<ATTACHED_SQL_SCRIPT_AS_MULTIPART_FILE>",
+            # (...Other columns ignored...)
+        }
+
+
+
+### create [POST]
+
+Creates a new ImportQueue marked for macro-transaction, using the uploaded multipart text file as executable SQL
+script that has to be executed and consumed by the same processor job that handles all "standard" micro-transaction
+ImportQueues.
+
+This is the default interface for uploading large data altering queries on the remote DB. The script will be executed
+with delayed timing, depending on the current job queue status and length.
+
+Returns a result text 'msg' on success, with just the 'new' row ID as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have generic **Admin** grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| *`data_file` | File | multipart text file (allegedly) containing a valid SQL script wrapping a single transaction |
+
+
+* * *
+
+
++ Attributes
+    + data_file (required) - Multipart text file (allegedly) containing a valid SQL script wrapping a single transaction |
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -v -F 'data_file=@\"~/path/to/script_file.sql\"' \
+            "<API_HOST:PORT>/api/v3/import_queue/batch_sql"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+        method: :post,
+        url: "<API_HOST:PORT>/api/v3/import_queue/batch_sql",
+        timeout: 60, # Optional
+        payload: {
+            multipart: true,
+            data_file: File.new('~/path/to/script_file.sql, 'rb')
+        },
+        headers: { 'Authorization' => "Bearer <VALID-SESSION-JWT>" }
+    )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":<NEW_ROW_ID>}}">
+
+    > puts res.body
+    {"msg":"OK","new":{"id":<NEW_ROW_ID>}}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            `data_file`: (Any uploaded Multipart text file as value)
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": "{\"id\":<NEW_ROW_ID>}"
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            `data_file`: (Any uploaded Multipart text file as value)
+
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            `data_file`: (Any uploaded Multipart text file as value)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            `data_file`: (Any uploaded Multipart text file as value)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
 # ImportQueue list [/api/v3/import_queues{?page,per_page,user_id,uid,process_runs,requested_depth,solvable_depth,done}]
 
 + Model (application/json)

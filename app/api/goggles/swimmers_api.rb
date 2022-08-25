@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Swimmer API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.05
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20220825
   #
   class SwimmersAPI < Grape::API
     helpers APIHelpers
@@ -149,9 +149,13 @@ module Goggles
       get do
         check_jwt_session
 
+        # Priority #1: get results using standard AR scopes:
         results = filtering_fulltext_search_for(GogglesDb::Swimmer, params['name'])
                   .where(filtering_hash_for(params, %w[gender_type_id year_of_birth year_guessed]))
                   .where(filtering_like_for(params, %w[first_name last_name complete_name]))
+
+        # Priority #2: append unique fuzzy search results when found:
+        results = append_fuzzy_search_results_for(GogglesDb::Swimmer, { complete_name: params['name'] }, results)
 
         if params['select2_format'] == true
           select2_custom_format(results, ->(row) { "#{row.complete_name} (#{row.year_of_birth})" })

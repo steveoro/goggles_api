@@ -293,5 +293,29 @@ module Goggles
     def settings_group_value_setter(settings_group, key, value)
       settings_group.send("#{key}=", value)
     end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    # Appends to the result Array any fuzzy-search result found matching the specified value.
+    #
+    # == Params:
+    # - <tt>model_klass</tt> => model class for the search
+    # - <tt>search_terms</tt> => the Hash specifying the search terms and their expected value,
+    #   in the form <tt>{ search_key1: value1, ... }</tt>
+    # - <tt>match_value</tt> => value searched among the model rows, inside <tt>search_column_name</tt>
+    # - <tt>result_array</tt> => Array container for the overall results (defaults to an empty array)
+    #
+    # == Returns:
+    # the Array of unique resulting rows found matching the parameters, including any initial row
+    # already present inside the <tt>result_array</tt>.
+    #
+    def append_fuzzy_search_results_for(model_klass, search_terms, result_array = [])
+      return result_array unless search_terms.is_a?(Hash) && search_terms.keys.first.present? && search_terms.values.first.present?
+
+      cmd = GogglesDb::CmdFindDbEntity.call(model_klass, search_terms)
+      cmd&.successful? ? (result_array + cmd.matches.map(&:candidate)).uniq : result_array
+    end
+    #-- -----------------------------------------------------------------------
+    #++
   end
 end

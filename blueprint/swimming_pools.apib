@@ -583,7 +583,7 @@ A call to `/lookup/:entity_name_plural/` endpoint will list all available values
 
 
 
-# SwimmingPool list [/api/v3/swimming_pools{?page,per_page,name,address,pool_type_id,city_id,select2_format}]
+# SwimmingPool list [/api/v3/swimming_pools{?page,per_page,name,nick_name,address,pool_type_id,city_id,select2_format}]
 
 + Model (application/json)
 
@@ -619,6 +619,7 @@ The list of SwimmingPools associated to the specified filtering values,
 returned as JSON and optionally filtered by any or all from:
 
 - `name`
+- `nick_name`
 - `address`
 - `pool_type_id`
 - `city_id`
@@ -658,8 +659,9 @@ When this is enabled, results are limited to a _maximum_ of **100** rows (pagina
 
 
 + Parameters
-    + name: `Ferrari` (string, optional) - official name of the venue
-    + address: `Melato` (string, optional) - address of the venue
+    + name: `Ferrari` (string, optional) - official name of the venue; full-text search
+    + nick_name: `comunalemelato50` (string, optional) - internal nickname of the venue; partial match supported
+    + address: `Melato` (string, optional) - address of the venue; partial match
     + pool_type_id: 1 (number, optional) - associated PoolType ID
     + city_id: 1 (number, optional) - associated CityType ID
     + select2_format: false (boolean, optional) - `true` to enable the bespoke Select2 simplified output format

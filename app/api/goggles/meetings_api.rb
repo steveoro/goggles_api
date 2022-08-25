@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Meeting API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.01
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20220802
   #
   class MeetingsAPI < Grape::API
     helpers APIHelpers
@@ -154,6 +154,7 @@ module Goggles
       desc 'List Meetings'
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT search on description & code fields'
+        optional :code, type: String, desc: 'optional: code (partial match supported)'
         optional :season_id, type: Integer, desc: 'optional: associated Season ID'
         optional :pool_type_id, type: Integer, desc: 'optional: associated meeting_sessions.pool_type ID'
         optional :date, type: String, desc: 'optional: header_date or scheduled_date in ISO format (YYYY-MM-DD)'
@@ -164,12 +165,18 @@ module Goggles
       get do
         check_jwt_session
 
+        # Priority #1: get results using standard AR scopes:
         results = filtering_fulltext_search_for(GogglesDb::Meeting, params['name'])
                   .joins(meeting_sessions: :swimming_pool).includes(meeting_sessions: :swimming_pool)
+                  .where(filtering_like_for(params, %w[code]))
                   .where(filtering_hash_for(params, ['season_id']))
                   .where(filtering_for_single_parameter('(header_date = ?) OR (meeting_sessions.scheduled_date = ?)', params, 'date'))
                   .where(filtering_for_single_parameter('swimming_pools.pool_type_id = ?', params, 'pool_type_id'))
                   .distinct
+
+        # Priority #2: append unique fuzzy search results when found:
+        results = append_fuzzy_search_results_for(GogglesDb::Meeting, { description: params['name'] }, results)
+        results = append_fuzzy_search_results_for(GogglesDb::Meeting, { code: params['code'] }, results)
 
         if params['select2_format'] == true
           select2_custom_format(results, ->(row) { "#{row.description} (#{row.header_date})" })

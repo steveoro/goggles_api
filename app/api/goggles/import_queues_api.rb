@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: ImportQueue API Grape controller
   #
-  #   - version:  7-0.3.01
+  #   - version:  7-0.4.05
   #   - author:   Steve A.
-  #   - build:    20210519
+  #   - build:    20220825
   #
   # Implements full CRUD interface for ImportQueue.
   #
@@ -101,6 +101,62 @@ module Goggles
         end
 
         { msg: I18n.t('api.message.generic_ok'), new: new_row }
+      end
+
+      # POST /api/:version/import_queue/batch_sql
+      #
+      # Creates a new ImportQueue storing an executable SQL batch file.
+      #
+      # The payload will be processed and executed by the same service handling the
+      # "standard" micro-transaction ImportQueues, with the difference that in
+      # this case the <tt>batch_sql</tt> flag will be set and the payload file will be
+      # stored for delayed execution in the context of the Main app.
+      #
+      # Requires Admin grants for the requesting user.
+      #
+      # == Params:
+      # - data_file: (text file, required) the uploaded file (Rack::Multipart::UploadedFile)
+      #              allegedly containing only valid SQL batch statement(s), possibly all wrapped in
+      #              a single transaction).
+      #
+      # == Note:
+      # The actual SQL parsing will be done only by the consumer service job running
+      # inside the Main app; this endpoint won't be able to signal in advance if the file
+      # is error free or not.
+      #
+      # == Returns:
+      # A JSON Hash containing the result 'msg' and just the ID of the newly created row:
+      #
+      #    { "msg": "OK", "new": { id: <new_row_id> } }
+      #
+      desc 'Creates a new ImportQueue storing an executable SQL batch file'
+      params do
+        requires :data_file, type: File, desc: 'a valid SQL batch file (supporting multi statements)'
+      end
+      post :batch_sql do
+        admin_user = check_jwt_session
+        reject_unless_authorized_admin(admin_user)
+
+        # File/Multipart params in Grape have 3 sub-attributes:
+        # - :filename (string) => actual file name
+        # - :tempfile (File)   => link to the IO object generated with the multipart REST POST
+        # - :type (string)     => file type
+        filename = params[:data_file]&.fetch(:filename, nil)
+        tempfile = params[:data_file]&.fetch(:tempfile, nil)
+        error!(I18n.t('api.message.invalid_parameter'), 401, 'X-Error-Detail' => ':data_file multipart data invalid') if filename.blank? || tempfile.blank?
+
+        new_row = GogglesDb::ImportQueue.new(batch_sql: true, user_id: admin_user.id,
+                                             request_data: '{}', solved_data: '{}')
+        new_row.data_file.attach(filename: filename, io: tempfile)
+        unless new_row.save
+          error!(
+            I18n.t('api.message.creation_failure'),
+            422,
+            'X-Error-Detail' => GogglesDb::ValidationErrorTools.recursive_error_for(new_row)
+          )
+        end
+
+        { msg: I18n.t('api.message.generic_ok'), new: { id: new_row.id } }
       end
 
       # DELETE /api/:version/import_queue/:id

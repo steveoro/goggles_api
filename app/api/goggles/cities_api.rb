@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: City API Grape controller
   #
-  #   - version:  7-0.3.07
+  #   - version:  7-0.4.05
   #   - author:   Steve A.
-  #   - build:    20210709
+  #   - build:    20220825
   #
   class CitiesAPI < Grape::API
     helpers APIHelpers
@@ -129,7 +129,7 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::City#to_json for structure details.
       #
-      desc 'List Cities'
+      desc 'List or search Cities (in DB rows, with fuzzy search)'
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT search on name & area fields'
         optional :country_code, type: String, desc: 'optional: Country code (2 chars)'
@@ -142,11 +142,16 @@ module Goggles
       get do
         check_jwt_session
 
-        paginate(
-          filtering_fulltext_search_for(GogglesDb::City, params['name'])
-            .where(filtering_hash_for(params, %w[country_code]))
-            .where(filtering_like_for(params, %w[country]))
-        )
+        # Priority #1: get results using standard AR scopes:
+        results = filtering_fulltext_search_for(GogglesDb::City, params['name'])
+                  .where(filtering_hash_for(params, %w[country_code]))
+                  .where(filtering_like_for(params, %w[country]))
+                  .order(:name).to_a
+
+        # Priority #2: append unique fuzzy search results when found:
+        results = append_fuzzy_search_results_for(GogglesDb::City, { name: params['name'] }, results)
+
+        paginate(results)
       end
 
       # GET /api/:version/cities/search
@@ -166,10 +171,10 @@ module Goggles
       #
       # See CmdFindIsoCountry, CmdFindIsoCity & official API blueprint docs for more info.
       #
-      desc 'Search ISO Cities with fuzzy search'
+      desc 'Search ISO list of normalized Cities (with fuzzy search)'
       params do
         requires :name, type: String, desc: 'City name'
-        requires :country_code, type: String, desc: 'Country code (2 chars)'
+        optional :country_code, type: String, desc: 'Country code (2 chars)'
         use :pagination
       end
       # Defaults:
@@ -178,8 +183,8 @@ module Goggles
       get :search do
         check_jwt_session
 
-        country_finder = GogglesDb::CmdFindIsoCountry.call(nil, params['country_code'])
-        city_finder = GogglesDb::CmdFindIsoCity.call(country_finder.result, params['name']) if country_finder.success?
+        country_finder = GogglesDb::CmdFindIsoCountry.call(nil, params['country_code']) if params['country_code'].present?
+        city_finder = GogglesDb::CmdFindIsoCity.call(country_finder&.result, params['name'])
         region_list = GogglesDb::IsoRegionList.new(params['country_code'])
         results = if city_finder.success?
                     city_finder.matches.map do |match_struct|

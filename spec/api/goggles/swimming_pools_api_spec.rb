@@ -277,10 +277,28 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
         it_behaves_like('successful multiple row response either with OR without pagination links')
       end
 
+      context 'when filtering by a specific nick_name of an existing data row,' do
+        let(:existing_nicks) { %w[verolanuova reggio longo bologna modena] }
+        let(:searched_nick) { existing_nicks.sample }
+        let(:nick_test_domain) { GogglesDb::SwimmingPool.where('(nick_name LIKE ?)', "%#{searched_nick}%") }
+        let(:expected_row_count) { nick_test_domain.count }
+
+        before do
+          expect(nick_test_domain).to be_present
+          get(api_v3_swimming_pools_path, params: { nick_name: searched_nick }, headers: fixture_headers)
+        end
+
+        it 'returns a JSON array including the existing row' do
+          returned_nicknames = JSON.parse(response.body).map { |row| row['nick_name'] }
+          expect(returned_nicknames).to all match(Regexp.new(searched_nick))
+        end
+
+        it_behaves_like('successful multiple row response either with OR without pagination links')
+      end
+
       context 'when filtering by a specific name & address of an existing data row,' do
         let(:expected_row_count) do
-          GogglesDb::SwimmingPool.for_name(fixture_row.name)
-                                 .where(city_id: fixture_row.city_id)
+          GogglesDb::SwimmingPool.where(city_id: fixture_row.city_id)
                                  .where(
                                    ActiveRecord::Base.sanitize_sql_for_conditions(
                                      ['address LIKE ?', "%#{fixture_row.address}%"]
@@ -304,7 +322,7 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
           expect(returned_ids).to include(fixture_row.id)
         end
 
-        it_behaves_like('successful multiple row response either with OR without pagination links')
+        it_behaves_like('successful multiple, single-page response without pagination links in headers')
       end
 
       context 'when enabling custom Select2 output,' do

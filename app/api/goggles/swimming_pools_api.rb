@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: SwimmingPool API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.05
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20220825
   #
   class SwimmingPoolsAPI < Grape::API
     helpers APIHelpers
@@ -160,6 +160,7 @@ module Goggles
       desc 'List SwimmingPools'
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT name search on name & nick_name fields'
+        optional :nick_name, type: String, desc: 'optional: nick_name (partial match supported)'
         optional :address, type: String, desc: 'optional: address (partial match supported)'
         optional :pool_type_id, type: Integer, desc: 'optional: associated PoolType ID'
         optional :city_id, type: Integer, desc: 'optional: associated City ID'
@@ -170,9 +171,16 @@ module Goggles
       get do
         check_jwt_session
 
+        # Priority #1: get results using standard AR scopes:
         results = filtering_fulltext_search_for(GogglesDb::SwimmingPool, params['name'])
+                  .where(filtering_like_for(params, %w[nick_name]))
                   .where(filtering_hash_for(params, %w[pool_type_id city_id]))
                   .where(filtering_like_for(params, %w[address]))
+                  .order(:name).to_a
+
+        # Priority #2: append unique fuzzy search results when found:
+        results = append_fuzzy_search_results_for(GogglesDb::SwimmingPool, { name: params['name'] }, results)
+        results = append_fuzzy_search_results_for(GogglesDb::SwimmingPool, { nick_name: params['nick_name'] }, results)
 
         if params['select2_format'] == true
           select2_custom_format(results, ->(row) { "#{row.name} (m.#{row.pool_type.code}, #{row.city&.name || '?'})" })

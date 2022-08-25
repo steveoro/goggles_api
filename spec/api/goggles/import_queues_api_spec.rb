@@ -252,6 +252,111 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
   #-- -------------------------------------------------------------------------
   #++
 
+  describe 'POST /api/v3/import_queue/batch_sql' do
+    let(:fixture_path) { GogglesDb::Engine.root.join('spec', 'fixtures', 'test-script.sql') }
+    let(:fixture_file) { Rack::Test::UploadedFile.new(GogglesDb::Engine.root.join('spec', 'fixtures', 'test-script.sql')) }
+
+    before do
+      expect(fixture_path).to be_present
+      expect(File.exist?(fixture_path)).to be true
+      expect(fixture_file).to be_present
+    end
+
+    # REQUIRES:
+    # - fixture_path: path to the fixture file uploaded as multipart file
+    # PARAMS:
+    # - model_klass: the model class
+    # - content_helper: helper method called on the model instance to retrieve the attached file contents
+    shared_examples_for('a successful multipart POST request returning just the ID of the new row') do |model_klass, content_helper|
+      it_behaves_like('a successful request that has positive usage stats')
+
+      it 'returns an OK message and the new row ID as a JSON object' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('msg').and have_key('new')
+        expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
+        resulting_id = result['new']['id'].to_i
+        expect(resulting_id).to be_positive
+        expect(model_klass.exists?(id: resulting_id)).to be true
+        stored_row = model_klass.find(resulting_id)
+        expect(stored_row.send(content_helper)).to eq(File.read(fixture_path))
+      end
+    end
+
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before { post(api_v3_import_queue_batch_sql_path, params: { data_file: fixture_file }, headers: admin_headers) }
+
+        it_behaves_like(
+          'a successful multipart POST request returning just the ID of the new row',
+          GogglesDb::ImportQueue,
+          :data_file_contents
+        )
+      end
+
+      context 'with an account having just CRUD grants,' do
+        before { post(api_v3_import_queue_batch_sql_path, params: { data_file: fixture_file }, headers: crud_headers) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+
+      context 'with an account not having any grants,' do
+        before { post(api_v3_import_queue_batch_sql_path, params: { data_file: fixture_file }, headers: fixture_headers) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
+
+    context 'when using valid parameters but during Maintenance mode,' do
+      context 'with an account having ADMIN grants,' do
+        before do
+          GogglesDb::AppParameter.maintenance = true
+          post(api_v3_import_queue_batch_sql_path, params: { data_file: fixture_file }, headers: admin_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+
+        it_behaves_like(
+          'a successful multipart POST request returning just the ID of the new row',
+          GogglesDb::ImportQueue,
+          :data_file_contents
+        )
+      end
+
+      context 'with an account having lesser grants,' do
+        before do
+          GogglesDb::AppParameter.maintenance = true
+          post(api_v3_import_queue_batch_sql_path, params: { data_file: fixture_file }, headers: crud_headers)
+          GogglesDb::AppParameter.maintenance = false
+        end
+
+        it_behaves_like('a request refused during Maintenance (except for admins)')
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before { post(api_v3_import_queue_batch_sql_path, params: { data_file: fixture_file }, headers: { 'Authorization' => 'you wish!' }) }
+
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+
+    context 'when using missing or invalid parameters,' do
+      before { post(api_v3_import_queue_batch_sql_path, params: { data_file: nil }, headers: admin_headers) }
+
+      it 'is NOT successful' do
+        expect(response).not_to be_successful
+      end
+
+      it 'responds with a generic error message and its details in the header' do
+        result = JSON.parse(response.body)
+        expect(result).to have_key('error')
+        expect(result['error']).to eq(I18n.t('api.message.invalid_parameter'))
+        expect(response.headers).to have_key('X-Error-Detail')
+        expect(response.headers['X-Error-Detail']).to be_present
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   describe 'DELETE /api/v3/import_queue/:id' do
     let(:deletable_row) { FactoryBot.create(:import_queue) }
 

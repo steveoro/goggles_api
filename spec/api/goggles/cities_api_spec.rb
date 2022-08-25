@@ -216,9 +216,9 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
       end
 
       # Checking specific accented or partial names:
-      %w[FORLI Cesena L'aquila LAquila reggio].each do |fixture_name|
+      %w[FORLI Cesena L'aquila LAquila reggio verola bologna modena carpi cento].each do |fixture_name|
         context "filtering by a generic name (#{fixture_name})," do
-          let(:expected_results) { GogglesDb::City.for_name(fixture_name) }
+          let(:expected_results) { GogglesDb::City.for_name(fixture_name) } # Esteemed domain (could differ due to fuzzy search)
           let(:expected_row_count) { expected_results.count }
 
           before { get(api_v3_cities_path, params: { name: fixture_name }, headers: fixture_headers) }
@@ -257,13 +257,15 @@ RSpec.describe Goggles::CitiesAPI, type: :request do
         it 'responds with a generic error message and its details in the header' do
           result = JSON.parse(response.body)
           expect(result).to have_key('error')
-          expect(result['error']).to eq('name is missing, country_code is missing')
+          expect(result['error']).to eq('name is missing')
         end
       end
 
       # Checking specific accented or partial names:
-      %w[
-        FORLI forlì Cesena L'aquila LAquila reggio Parm modena riccione lodi reggioemilia
+      [
+        'aquila', "L'aquila", 'Cesena', 'FORLI', 'forlì',
+        'reggio emilia', 'bologna', 'Parma', 'modena', 'riccione',
+        'lodi', 'carpi', 'cento'
       ].each do |fixture_name|
         context "when searching for a specific peculiar name (#{fixture_name}) with multiple results," do
           let(:result_country) { GogglesDb::CmdFindIsoCountry.call(nil, 'IT').result }
