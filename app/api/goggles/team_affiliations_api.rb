@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: TeamAffiliation API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20210906
   #
   class TeamAffiliationsAPI < Grape::API
     helpers APIHelpers
@@ -142,6 +142,7 @@ module Goggles
         paginate(
           filtering_fulltext_search_for(GogglesDb::TeamAffiliation, params['name'])
             .where(filtering_hash_for(params, %w[team_id season_id number compute_gogglecup]))
+            .order('team_affiliations.id DESC')
         )
       end
     end

@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Calendar API Grape controller
   #
-  #   - version:  7-0.3.46
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20220301
+  #   - build:    20210906
   #
   class CalendarsAPI < Grape::API
     helpers APIHelpers
@@ -198,7 +198,11 @@ module Goggles
       get do
         check_jwt_session
 
-        paginate(GogglesDb::Calendar.where(filtering_hash_for(params, %w[season_id])))
+        paginate(
+          GogglesDb::Calendar.where(
+            filtering_hash_for(params, %w[season_id])
+          ).order('calendars.id DESC')
+        )
       end
     end
   end

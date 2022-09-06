@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingRelayResult API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20210906
   #
   # == Note:
   # Relay entries are more than often finalized during the Meeting itself and
@@ -206,7 +206,7 @@ module Goggles
         paginate(
           GogglesDb::MeetingRelayResult.where(
             filtering_hash_for(params, %w[meeting_program_id team_affiliation_id team_id])
-          )
+          ).order('meeting_relay_results.id DESC')
         )
       end
     end

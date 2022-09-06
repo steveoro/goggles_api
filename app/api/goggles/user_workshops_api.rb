@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: UserWorkshop API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20210906
   #
   class UserWorkshopsAPI < Grape::API
     helpers APIHelpers
@@ -199,6 +199,7 @@ module Goggles
                   .where(filtering_for_single_parameter('header_date = ?', params, 'date'))
                   .where(filtering_like_for(params, %w[header_year]))
                   .distinct
+                  .order('user_workshops.id DESC')
 
         if params['select2_format'] == true
           select2_custom_format(results, ->(row) { "#{row.description} (#{row.code} - #{row.header_date})" })

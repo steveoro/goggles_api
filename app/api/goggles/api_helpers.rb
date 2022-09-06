@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  7-0.3.25
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20210810
+  #   - build:    20210906
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -296,7 +296,8 @@ module Goggles
     #-- -----------------------------------------------------------------------
     #++
 
-    # Appends to the result Array any fuzzy-search result found matching the specified value.
+    # Appends to the result Array any fuzzy-search result found matching the specified value,
+    # but only if the specified value is actually present.
     #
     # == Params:
     # - <tt>model_klass</tt> => model class for the search

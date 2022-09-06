@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingIndividualResult API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20210906
   #
   # == Note:
   # Lap data & registration entry data is stored on separated entities (MeetingEntries & Laps)
@@ -197,7 +197,7 @@ module Goggles
         paginate(
           GogglesDb::MeetingIndividualResult.where(
             filtering_hash_for(params, %w[meeting_program_id team_affiliation_id team_id swimmer_id badge_id])
-          )
+          ).order('meeting_individual_results.id DESC')
         )
       end
     end

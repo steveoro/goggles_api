@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Season API Grape controller
   #
-  #   - version:  7-0.3.46
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20220301
+  #   - build:    20210906
   #
   class SeasonsAPI < Grape::API
     helpers APIHelpers
@@ -151,7 +151,7 @@ module Goggles
             params,
             %w[begin_date end_date season_type_id header_year]
           )
-        )
+        ).order('seasons.id DESC')
       end
     end
   end

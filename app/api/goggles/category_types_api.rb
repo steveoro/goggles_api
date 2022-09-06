@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: CategoryType API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20210906
   #
   class CategoryTypesAPI < Grape::API
     helpers APIHelpers
@@ -180,7 +180,7 @@ module Goggles
           filtering_hash_for(params, %w[season_id age_begin age_end federation_code relay out_of_race undivided])
         ).where(
           filtering_like_for(params, %w[code short_name group_name description])
-        )
+        ).order('category_types.id DESC')
 
         if params['select2_format'] == true
           select2_custom_format(results, ->(row) { "#{row.code} (#{row.description})" })

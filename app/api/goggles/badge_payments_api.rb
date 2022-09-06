@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: BadgePayment API Grape controller
   #
-  #   - version:  7-0.3.46
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20220305
+  #   - build:    20210906
   #
   class BadgePaymentsAPI < Grape::API
     helpers APIHelpers
@@ -165,6 +165,7 @@ module Goggles
         paginate(
           GogglesDb::BadgePayment.where(filtering_hash_for(params, %w[user_id badge_id manual]))
                                  .where(filtering_for_single_parameter('payment_date >= ?', params, 'from_date'))
+                                 .order('badge_payments.id DESC')
         )
       end
     end

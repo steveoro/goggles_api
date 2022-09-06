@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingSession API Grape controller
   #
-  #   - version:  7-0.3.46
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20220307
+  #   - build:    20210906
   #
   class MeetingSessionsAPI < Grape::API
     helpers APIHelpers
@@ -166,7 +166,11 @@ module Goggles
       get do
         reject_unless_authorized_admin(check_jwt_session)
 
-        paginate(GogglesDb::MeetingSession.where(filtering_hash_for(params, %w[scheduled_date meeting_id autofilled])))
+        paginate(
+          GogglesDb::MeetingSession.where(
+            filtering_hash_for(params, %w[scheduled_date meeting_id autofilled])
+          ).order('meeting_sessions.id DESC')
+        )
       end
     end
   end

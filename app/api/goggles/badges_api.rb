@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Badge API Grape controller
   #
-  #   - version:  7-0.3.46
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20220303
+  #   - build:    20210906
   #
   class BadgesAPI < Grape::API
     helpers APIHelpers
@@ -172,12 +172,13 @@ module Goggles
       get do
         check_jwt_session
 
-        paginate GogglesDb::Badge.where(
+        paginate(GogglesDb::Badge.where(
           filtering_hash_for(
             params,
-            %w[team_id team_affiliation_id season_id swimmer_id off_gogglecup fees_due badge_due relays_due]
+            %w[team_id team_affiliation_id season_id swimmer_id
+               off_gogglecup fees_due badge_due relays_due]
           )
-        )
+        ).order('badges.id DESC'))
       end
 
       # GET /api/:version/badges/search

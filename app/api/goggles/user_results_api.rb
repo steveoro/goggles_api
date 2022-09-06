@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: UserResult API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20210906
   #
   # == Note:
   # Unlike MIRs-vs.-MRRs, UserResults can be used for both individuals *and* relays.
@@ -211,6 +211,7 @@ module Goggles
           ).where(
             filtering_like_for(params, %w[description])
           )
+          .order('user_results.id DESC')
         )
       end
     end

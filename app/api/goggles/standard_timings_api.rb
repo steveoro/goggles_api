@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: StandardTiming API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20210906
   #
   class StandardTimingsAPI < Grape::API
     helpers APIHelpers
@@ -165,7 +165,7 @@ module Goggles
         paginate(
           GogglesDb::StandardTiming.where(
             filtering_hash_for(params, %w[season_id gender_type_id pool_type_id event_type_id category_type_id])
-          )
+          ).order('standard_timings.id DESC')
         )
       end
     end

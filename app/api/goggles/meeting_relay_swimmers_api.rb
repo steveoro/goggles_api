@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingRelaySwimmer API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20210906
   #
   # == Note:
   # MeetingRelaySwimmers store lap data for MRRs.
@@ -178,7 +178,7 @@ module Goggles
         paginate(
           GogglesDb::MeetingRelaySwimmer.where(
             filtering_hash_for(params, %w[meeting_relay_result_id swimmer_id badge_id stroke_type_id relay_order])
-          )
+          ).order('meeting_relay_swimmers.id DESC')
         )
       end
     end

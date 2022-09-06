@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: User API Grape controller
   #
-  #   - version:  7-0.0.81
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20210227
+  #   - build:    20210906
   #
   # Users should read or update just their data and should *not* have any access to
   # any other user row (unless authorized for CRUD on this entity).
@@ -129,7 +129,7 @@ module Goggles
             params,
             %w[name first_name last_name description email]
           )
-        )
+        ).order('users.id DESC')
       end
     end
   end

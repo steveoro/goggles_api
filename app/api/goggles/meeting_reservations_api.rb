@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingReservation API Grape controller
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.06
   #   - author:   Steve A.
-  #   - build:    20211115
+  #   - build:    20210906
   #
   class MeetingReservationsAPI < Grape::API
     helpers APIHelpers
@@ -170,7 +170,7 @@ module Goggles
         paginate(
           GogglesDb::MeetingReservation.where(
             filtering_hash_for(params, %w[meeting_id team_id swimmer_id badge_id])
-          )
+          ).order('meeting_reservations.id DESC')
         )
       end
     end
