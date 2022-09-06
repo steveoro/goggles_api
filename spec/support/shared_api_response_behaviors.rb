@@ -153,8 +153,8 @@ shared_examples_for 'successful response with pagination links & values in heade
   end
 
   it 'contains the pagination values for the first data page in the response headers' do
-    expect(response.headers['Page']).to eq('1')
-    expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
+    expect(response.headers['Page'].to_i).to eq(1)
+    expect(response.headers['Per-Page'].to_i).to eq(default_per_page.to_i)
     expect(response.headers['Total'].to_i).to be_positive
   end
 
@@ -186,9 +186,9 @@ shared_examples_for 'successful single response without pagination links in head
   end
 
   it 'does not contain the pagination values or links in the response headers' do
-    expect(response.headers['Page']).to eq('1')
-    expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
-    expect(response.headers['Total']).to eq('1')
+    expect(response.headers['Page'].to_i).to eq(1)
+    expect(response.headers['Per-Page'].to_i).to eq(default_per_page.to_i)
+    expect(response.headers['Total'].to_i).to eq(1)
     expect(response.headers['Link']).to be nil
   end
 end
@@ -206,8 +206,8 @@ shared_examples_for 'successful multiple, single-page response without paginatio
   end
 
   it 'does not contain the pagination values or links in the response headers' do
-    expect(response.headers['Page']).to eq('1')
-    expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
+    expect(response.headers['Page'].to_i).to eq(1)
+    expect(response.headers['Per-Page'].to_i).to eq(default_per_page.to_i)
     expect(response.headers['Total']).to be_present
     expect(response.headers['Link']).to be nil
   end
@@ -227,9 +227,9 @@ shared_examples_for 'successful multiple row response either with OR without pag
   end
 
   it 'may or may not contain pagination links in the headers, depending on the number of results' do
-    expect(response.headers['Page']).to eq('1')
-    expect(response.headers['Per-Page']).to eq(default_per_page.to_s)
-    expect(response.headers['Total']).to eq(expected_row_count.to_s)
+    expect(response.headers['Page'].to_i).to eq(1)
+    expect(response.headers['Per-Page'].to_i).to eq(default_per_page.to_i)
+    expect(response.headers['Total'].to_i).to eq(expected_row_count.to_i)
 
     if expected_row_count <= default_per_page
       expect(response.headers['Link']).to be nil
