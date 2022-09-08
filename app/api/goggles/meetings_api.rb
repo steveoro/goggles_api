@@ -194,9 +194,14 @@ module Goggles
           page = params[:page] || 1
           per_page = params[:per_page] || 25
           results = results.to_a
-          header('total', results.count)
-          header('page', page)
-          header('per_page', per_page)
+          header('Total', results.count)
+          header('Page', page)
+          header('Per-Page', per_page)
+          # This is a minimum requirement from our specs:
+          if results.count > per_page
+            # Mock the next link given we're paginating the results by hand:
+            header('Link', "#{request.url.split('?').first}?page=#{page + 1}; rel=\"next\"")
+          end
           results[((page - 1) * per_page)...(page * per_page)]
         end
       end

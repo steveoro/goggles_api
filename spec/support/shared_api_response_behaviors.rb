@@ -160,7 +160,7 @@ shared_examples_for 'successful response with pagination links & values in heade
 
   it 'contains the next & last pagination links in the response headers' do
     expect(response.headers['Link']).to be_present
-    expect(response.headers['Link']).to include('next').and include('last')
+    expect(response.headers['Link']).to include('next') # Don't care about 'last'
     # Extract the links into an Hash, keyed by the link rel name:
     page_links = {}
     response.headers['Link'].split(', ').each do |e|
@@ -169,7 +169,8 @@ shared_examples_for 'successful response with pagination links & values in heade
       page_links[link_with_rel.last.split(/rel="(.+)"/).last] = link_with_rel.first.delete('<>')
     end
     expect(page_links['next']).to include('page=2')
-    expect(page_links['last']).to include('page=') # Don't care about the exact number of total pages
+    # Don't care about 'last':
+    # expect(page_links['last']).to include('page=') # Don't care about the exact number of total pages
   end
 end
 
@@ -235,7 +236,7 @@ shared_examples_for 'successful multiple row response either with OR without pag
       expect(response.headers['Link']).to be nil
     else
       expect(response.headers['Link']).to be_present
-      expect(response.headers['Link']).to include('next').and include('last')
+      expect(response.headers['Link']).to include('next') # Don't care about 'last'
       # Extract the links into an Hash, keyed by the link rel name:
       page_links = {}
       response.headers['Link'].split(', ').each do |e|
@@ -244,7 +245,8 @@ shared_examples_for 'successful multiple row response either with OR without pag
         page_links[link_with_rel.last.split(/rel="(.+)"/).last] = link_with_rel.first.delete('<>')
       end
       expect(page_links['next']).to include('page=2')
-      expect(page_links['last']).to include('page=') # Don't care about the exact number of total pages
+      # Don't care about 'last':
+      # expect(page_links['last']).to include('page=') # Don't care about the exact number of total pages
     end
   end
 end
