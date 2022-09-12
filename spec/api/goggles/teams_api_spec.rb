@@ -217,7 +217,7 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
       end
 
       context 'when filtering by name,' do
-        let(:data_domain) { GogglesDb::Team.for_name(search_term) }
+        let(:data_domain) { GogglesDb::Team.for_name(search_term).order('teams.id DESC') }
         let(:expected_row_count) { data_domain.count }
         let(:expected_team) { data_domain.first }
 
@@ -234,7 +234,7 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
       end
 
       context 'when enabling custom Select2 output,' do
-        let(:data_domain) { GogglesDb::Team.for_name(search_term).limit(100) }
+        let(:data_domain) { GogglesDb::Team.for_name(search_term).order('teams.id DESC').limit(100) }
         let(:expected_row_count) { data_domain.count }
 
         before { get(api_v3_teams_path, params: { name: search_term, select2_format: true }, headers: fixture_headers) }
