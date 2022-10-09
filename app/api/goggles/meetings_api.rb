@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Meeting API Grape controller
   #
-  #   - version:  7-0.4.06
+  #   - version:  7-0.4.11
   #   - author:   Steve A.
-  #   - build:    20210906
+  #   - build:    20211009
   #
   class MeetingsAPI < Grape::API
     helpers APIHelpers
@@ -154,6 +154,7 @@ module Goggles
       desc 'List Meetings'
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT search on description & code fields'
+        optional :description, type: String, desc: 'optional: synonym of the name option'
         optional :code, type: String, desc: 'optional: code (partial match supported)'
         optional :season_id, type: Integer, desc: 'optional: associated Season ID'
         optional :pool_type_id, type: Integer, desc: 'optional: associated meeting_sessions.pool_type ID'
@@ -165,10 +166,11 @@ module Goggles
       paginate
       get do
         check_jwt_session
+        fuzzy_name_param = params['name'] || params['description']
 
         # .where(filtering_like_for_single_parameter('(meetings.header_year LIKE ?)', params, %w[header_year]))
         # Priority #1: get results using standard AR scopes:
-        results = filtering_fulltext_search_for(GogglesDb::Meeting, params['name'])
+        results = filtering_fulltext_search_for(GogglesDb::Meeting, fuzzy_name_param)
                   .joins(meeting_sessions: :swimming_pool).includes(meeting_sessions: :swimming_pool)
                   .where(filtering_like_for(params, %w[code]))
                   .where(filtering_hash_for(params, %w[header_year season_id]))
@@ -180,7 +182,7 @@ module Goggles
         # Priority #2: append unique fuzzy search results when found:
         # (use main fuzzy target + any other precise filter matcher, like IDs or numbers)
         results = append_fuzzy_search_results_for(
-          GogglesDb::Meeting, { description: params['name'], season_id: params['season_id'] }, results
+          GogglesDb::Meeting, { description: fuzzy_name_param, season_id: params['season_id'] }, results
         )
         results = append_fuzzy_search_results_for(
           GogglesDb::Meeting, { code: params['code'], season_id: params['season_id'] }, results

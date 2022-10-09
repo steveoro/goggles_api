@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.4.11** [Steve A.] added 'description' as synonym for 'name' in /meetings
 - **0.4.10** [Steve A.] resync w/ base engine: forced UTF-8 encoding for downloaded script files in ImportQueues
 - **0.4.09** [Steve A.] resync w/ base engine: using proper download method for attachments in ImportQueue
 - **0.4.07** [Steve A.] resync w/ base engine;

@@ -717,7 +717,7 @@ Returns `true` on success with the new Meeting details as JSON.
 
 
 
-# Meeting list [/api/v3/meetings{?page,per_page,name,code,date,season_id,header_year,pool_type_id,select2_format}]
+# Meeting list [/api/v3/meetings{?page,per_page,name,description,code,date,season_id,header_year,pool_type_id,select2_format}]
 
 + Model (application/json)
 
@@ -752,7 +752,7 @@ Returns `true` on success with the new Meeting details as JSON.
 The list of Meetings associated to the specified filtering values,
 returned as JSON and optionally filtered by any or all from:
 
-- `name`
+- `name` || `description` (both are considered synonyms here)
 - `code`
 - `date`
 - `season_id`
@@ -789,7 +789,7 @@ When this is enabled, results are limited to a _maximum_ of **100** rows (pagina
 
 
 + Parameters
-    + name: `csi prova` (string, optional) - generic FULLTEXT search on `description` & `code` fields
+    + name: `csi prova` (string, optional) - generic FULLTEXT search on `description` & `code` fields; `description` acts as synonym for `name`
     + code: `csiprova` (string, optional) - internal code of the meeting "type"; partial match supported
     + date: `2005-11-23` (string, optional) - filter by `header_date` or Meeting session's `scheduled_date` in ISO format (`YYYY-MM-DD`)
     + season_id: 1 (number, optional) - associated Season ID
