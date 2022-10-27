@@ -180,7 +180,6 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
     context 'when using a valid authentication' do
       let(:fixture_city_id) { [2, 3, 4, 5, 37].sample }
       let(:search_term) { GogglesDb::Team.select(:name).limit(50).sample.name.split.first }
-      let(:search_term) { GogglesDb::Team.select(:name).limit(50).sample.name.split.first }
       let(:default_per_page) { 25 }
 
       # Make sure the Domain contains the expected seeds:
