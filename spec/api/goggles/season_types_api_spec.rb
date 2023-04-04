@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::SeasonTypesAPI, type: :request do
+RSpec.describe Goggles::SeasonTypesAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 

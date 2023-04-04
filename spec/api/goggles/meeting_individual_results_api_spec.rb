@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::MeetingIndividualResultsAPI, type: :request do
+RSpec.describe Goggles::MeetingIndividualResultsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -68,8 +68,8 @@ RSpec.describe Goggles::MeetingIndividualResultsAPI, type: :request do
       [
         { badge_id: new_badge.id, team_id: new_badge.team_id, team_affiliation_id: new_badge.team_affiliation_id },
         { badge_id: new_badge.id, swimmer_id: new_badge.swimmer_id },
-        { rank: (rand * 30).to_i, standard_points: (500.0 + rand * 500.0).round(2), meeting_points: 0.0 },
-        { rank: (rand * 30).to_i, goggle_cup_points: (500.0 + rand * 500.0).round(2), reaction_time: (rand + 0.07).round(2) },
+        { rank: (rand * 30).to_i, standard_points: (500.0 + (rand * 500.0)).round(2), meeting_points: 0.0 },
+        { rank: (rand * 30).to_i, goggle_cup_points: (500.0 + (rand * 500.0)).round(2), reaction_time: (rand + 0.07).round(2) },
         { disqualified: [true, false].sample, disqualification_code_type_id: [GogglesDb::DisqualificationCodeType.all.sample.id, nil].sample },
         { rank: (rand * 30).to_i, minutes: 0, seconds: ((rand * 59) % 59).to_i, hundredths: ((rand * 59) % 59).to_i },
         { out_of_race: [true, false].sample, personal_best: [true, false].sample, season_type_best: [true, false].sample }

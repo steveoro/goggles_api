@@ -68,9 +68,9 @@ module Goggles
                     GogglesDb::CmdFindEntryTime.call(swimmer, meeting, event_type, pool_type)
                   end
 
-        return { 'label': '0\'00"00', errors: command.errors } unless command.success? # (no timing instance included in result upon failure)
+        return { label: '0\'00"00', errors: command.errors } unless command.success? # (no timing instance included in result upon failure)
 
-        { 'label': command.result.to_s, 'timing': command.result } if command.success?
+        { label: command.result.to_s, timing: command.result } if command.success?
       end
       #-- ---------------------------------------------------------------------
       #++
@@ -170,21 +170,21 @@ module Goggles
           season: season, gender_type: gender_type, category_type: category_type
         )
 
-        return { 'score': 0, 'timing': timing.to_json, errors: command.errors } unless command.success?
+        return { score: 0, timing: timing.to_json, errors: command.errors } unless command.success?
 
         score_value = command.result.compute_for(timing, standard_points: standard_points) if timing.present?
         timing = command.result.timing_from(target_score.to_i) if target_score.present?
         standard_timing = command.result.standard_timing
 
         {
-          'score': score_value || target_score,
-          'timing_label': timing.to_s,
-          'timing': timing,
-          'standard_points': standard_points,
-          'display_label': standard_timing&.decorate&.display_label,
-          'short_label': standard_timing&.decorate&.short_label,
-          'standard_timing_label': standard_timing&.to_timing.to_s,
-          'standard_timing': standard_timing
+          score: score_value || target_score,
+          timing_label: timing.to_s,
+          timing: timing,
+          standard_points: standard_points,
+          display_label: standard_timing&.decorate&.display_label,
+          short_label: standard_timing&.decorate&.short_label,
+          standard_timing_label: standard_timing&.to_timing.to_s,
+          standard_timing: standard_timing
         }
       end
       #-- ---------------------------------------------------------------------

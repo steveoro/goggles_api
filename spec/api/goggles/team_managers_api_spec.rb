@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::TeamManagersAPI, type: :request do
+RSpec.describe Goggles::TeamManagersAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -365,6 +365,36 @@ RSpec.describe Goggles::TeamManagersAPI, type: :request do
       end
 
       it_behaves_like('successful response with pagination links & values in headers')
+    end
+
+    context 'when filtering by a specific team_id,' do
+      let(:fixture_team_id) { 1 } # (we don't need to create fixture Team managers for this one)
+      let(:expected_row_count) do
+        GogglesDb::ManagedAffiliation.joins(:season, :team, :manager)
+                                     .includes(:season, :team, :manager)
+                                     .where('teams.id': fixture_team_id).count
+      end
+      before do
+        expect(expected_row_count).to be_positive
+        get(api_v3_team_managers_path, params: { team_id: fixture_team_id }, headers: admin_headers)
+      end
+
+      it_behaves_like('successful multiple row response either with OR without pagination links')
+    end
+
+    context 'when filtering by a specific season_id,' do
+      let(:fixture_season_id) { [152, 162].sample } # (we don't need to create fixture Team managers for this one)
+      let(:expected_row_count) do
+        GogglesDb::ManagedAffiliation.joins(:season, :team, :manager)
+                                     .includes(:season, :team, :manager)
+                                     .where('seasons.id': fixture_season_id).count
+      end
+      before do
+        expect(expected_row_count).to be_positive
+        get(api_v3_team_managers_path, params: { season_id: fixture_season_id }, headers: admin_headers)
+      end
+
+      it_behaves_like('successful multiple row response either with OR without pagination links')
     end
 
     context 'when filtering by the manager name,' do

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Goggles::API, type: :request do
+RSpec.describe Goggles::API do
   include GrapeRouteHelpers::NamedRouteMatcher
 
   describe 'GET /api/v3/status' do
@@ -10,7 +10,7 @@ RSpec.describe Goggles::API, type: :request do
       it 'returns the OK status message and the current version' do
         GogglesDb::AppParameter.maintenance = false
         get api_v3_status_path
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
         result = JSON.parse(response.body)
         expect(result).to be_an(Hash)
         expect(result['msg']).to eq(I18n.t('api.message.status.ok'))
@@ -22,7 +22,7 @@ RSpec.describe Goggles::API, type: :request do
       it 'returns the maintenance status message and the current version' do
         GogglesDb::AppParameter.maintenance = true
         get api_v3_status_path
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
         result = JSON.parse(response.body)
         expect(result).to be_an(Hash)
         expect(result['msg']).to eq(I18n.t('api.message.status.maintenance'))

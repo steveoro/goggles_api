@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::ImportQueuesAPI, type: :request do
+RSpec.describe Goggles::ImportQueuesAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -98,7 +98,7 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
     let(:expected_changes) do
       [
         { user_id: GogglesDb::User.first(100).sample.id },
-        { request_data: { team: { name: "FFaker::Address.city} Swimming Club #{1990 + (30 * rand).to_i}" } }.to_json },
+        { request_data: { team: { name: "#{FFaker::Address.city} Swimming Club #{1990 + (30 * rand).to_i}" } }.to_json },
         { solved_data: { swimmer_id: GogglesDb::Swimmer.first(100).sample.id }.to_json },
         { process_runs: (rand * 10).to_i },
         { done: [true, false].sample },
@@ -475,13 +475,13 @@ RSpec.describe Goggles::ImportQueuesAPI, type: :request do
       end
     end
 
-    context 'when filtering by a specific route,' do
+    context 'when filtering by a specific UID,' do
       before { get(api_v3_import_queues_path, params: { uid: fixture_uid }, headers: admin_headers) }
 
       it_behaves_like('successful multiple row response either with OR without pagination links')
     end
 
-    context 'when filtering by a specific day,' do
+    context 'when filtering by a specific User ID,' do
       before { get(api_v3_import_queues_path, params: { user_id: fixture_user_id }, headers: admin_headers) }
 
       it_behaves_like('successful response with pagination links & values in headers')

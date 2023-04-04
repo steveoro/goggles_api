@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
+RSpec.describe Goggles::SwimmingPoolsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -69,7 +69,7 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
           {
             name: "#{FFaker::Address.street_name} pool",
             address: FFaker::Address.street_address,
-            nick_name: FFaker::Address.street_name.downcase.gsub(' ', '')
+            nick_name: FFaker::Address.street_name.downcase.delete(' ')
           },
           { contact_name: FFaker::Name.name, phone_number: FFaker::Name.first_name, e_mail: FFaker::Internet.safe_email },
           { pool_type_id: GogglesDb::PoolType.all_eventable.sample.id },
@@ -289,7 +289,7 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
         end
 
         it 'returns a JSON array including the existing row' do
-          returned_nicknames = JSON.parse(response.body).map { |row| row['nick_name'] }
+          returned_nicknames = JSON.parse(response.body).pluck('nick_name')
           expect(returned_nicknames).to all match(Regexp.new(searched_nick))
         end
 
@@ -318,7 +318,7 @@ RSpec.describe Goggles::SwimmingPoolsAPI, type: :request do
         # added prefix ('Comunale'), so a single row result here is not guaranteed:
 
         it 'returns a JSON array including the existing row' do
-          returned_ids = JSON.parse(response.body).map { |row| row['id'] }
+          returned_ids = JSON.parse(response.body).pluck('id')
           expect(returned_ids).to include(fixture_row.id)
         end
 

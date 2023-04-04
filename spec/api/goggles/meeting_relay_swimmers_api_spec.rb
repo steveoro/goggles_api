@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
+RSpec.describe Goggles::MeetingRelaySwimmersAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -165,7 +165,7 @@ RSpec.describe Goggles::MeetingRelaySwimmersAPI, type: :request do
       before do
         post(
           api_v3_meeting_relay_swimmer_path,
-          params: built_row.attributes.reject { |key, _val| key == 'stroke_type_id' },
+          params: built_row.attributes.except('stroke_type_id'),
           headers: crud_headers
         )
       end

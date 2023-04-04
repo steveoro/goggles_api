@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::TeamsAPI, type: :request do
+RSpec.describe Goggles::TeamsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -210,7 +210,7 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = GogglesDb::Team.where(city_id: fixture_city_id).count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+          expect(result_array.count).to eq([full_count, default_per_page].min)
         end
         # (We can't really assert pagination links here, it's enough to test these in the context below)
       end
@@ -223,7 +223,7 @@ RSpec.describe Goggles::TeamsAPI, type: :request do
         before { get(api_v3_teams_path, params: { name: search_term }, headers: fixture_headers) }
 
         it 'includes the expected row in the result array' do
-          result_ids = JSON.parse(response.body).map { |row| row['id'] }
+          result_ids = JSON.parse(response.body).pluck('id')
           expect(result_ids).to include(expected_team.id)
         end
         # Typically any results filtered by name will be just a single row fitting

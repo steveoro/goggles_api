@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::StandardTimingsAPI, type: :request do
+RSpec.describe Goggles::StandardTimingsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -81,7 +81,7 @@ RSpec.describe Goggles::StandardTimingsAPI, type: :request do
   #++
 
   describe 'PUT /api/v3/standard_timing/:id' do
-    let(:built_row) { FactoryBot.build(:standard_timing, season_id: FactoryBot.create('season').id) }
+    let(:built_row) { FactoryBot.build(:standard_timing, season_id: FactoryBot.create(:season).id) }
     let(:expected_changes) do
       [
         { minutes: built_row.minutes, seconds: built_row.seconds, hundredths: built_row.hundredths },
@@ -164,7 +164,7 @@ RSpec.describe Goggles::StandardTimingsAPI, type: :request do
         pool_type_id: GogglesDb::PoolType.all_eventable.sample.id,
         event_type_id: GogglesDb::EventType.all_eventable.sample.id,
         category_type_id: GogglesDb::CategoryType.eventable.individuals.last(100).sample.id,
-        season_id: FactoryBot.create('season').id
+        season_id: FactoryBot.create(:season).id
       )
     end
 

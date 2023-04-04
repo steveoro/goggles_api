@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::UsersAPI, type: :request do
+RSpec.describe Goggles::UsersAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -315,7 +315,7 @@ RSpec.describe Goggles::UsersAPI, type: :request do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = GogglesDb::User.where('first_name LIKE ?', "%#{fixture_first_name}%").count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+          expect(result_array.count).to eq([full_count, default_per_page].min)
         end
         # (We can't really assert pagination links here)
       end
@@ -329,7 +329,7 @@ RSpec.describe Goggles::UsersAPI, type: :request do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = GogglesDb::User.where('last_name LIKE ?', "%#{fixture_last_name}%").count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+          expect(result_array.count).to eq([full_count, default_per_page].min)
         end
         # (We can't really assert pagination links here)
       end

@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::UserLapsAPI, type: :request do
+RSpec.describe Goggles::UserLapsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -208,7 +208,7 @@ RSpec.describe Goggles::UserLapsAPI, type: :request do
       before do
         post(
           api_v3_user_lap_path,
-          params: built_row.attributes.reject { |key, _val| key == 'swimmer_id' },
+          params: built_row.attributes.except('swimmer_id'),
           headers: crud_headers
         )
       end

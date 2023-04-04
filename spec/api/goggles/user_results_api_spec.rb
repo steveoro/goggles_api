@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::UserResultsAPI, type: :request do
+RSpec.describe Goggles::UserResultsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -88,7 +88,7 @@ RSpec.describe Goggles::UserResultsAPI, type: :request do
         { swimmer_id: new_row.swimmer_id },
         { pool_type_id: new_row.pool_type_id, category_type_id: new_row.category_type_id },
         { event_type_id: new_row.event_type_id },
-        { event_date: Time.zone.today, standard_points: (500.0 + rand * 500.0).round(2), meeting_points: 0.0 },
+        { event_date: Time.zone.today, standard_points: (500.0 + (rand * 500.0)).round(2), meeting_points: 0.0 },
         { rank: (rand * 30).to_i, reaction_time: (rand + 0.07).round(2) },
         { disqualified: [true, false].sample, disqualification_code_type_id: [GogglesDb::DisqualificationCodeType.all.sample.id, nil].sample },
         { minutes: 0, seconds: ((rand * 59) % 59).to_i, hundredths: ((rand * 59) % 59).to_i }

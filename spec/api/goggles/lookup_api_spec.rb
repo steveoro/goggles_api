@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::LookupAPI, type: :request do
+RSpec.describe Goggles::LookupAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -40,10 +40,10 @@ RSpec.describe Goggles::LookupAPI, type: :request do
             end
 
             it 'does not contain the pagination values or links in the response headers' do
-              expect(response.headers['Page']).to be nil
-              expect(response.headers['Link']).to be nil
-              expect(response.headers['Per-Page']).to be nil
-              expect(response.headers['Total']).to be nil
+              expect(response.headers['Page']).to be_nil
+              expect(response.headers['Link']).to be_nil
+              expect(response.headers['Per-Page']).to be_nil
+              expect(response.headers['Total']).to be_nil
             end
           end
         end
@@ -74,10 +74,10 @@ RSpec.describe Goggles::LookupAPI, type: :request do
       end
 
       it 'does not contain the pagination values or links in the response headers' do
-        expect(response.headers['Page']).to be nil
-        expect(response.headers['Link']).to be nil
-        expect(response.headers['Per-Page']).to be nil
-        expect(response.headers['Total']).to be nil
+        expect(response.headers['Page']).to be_nil
+        expect(response.headers['Link']).to be_nil
+        expect(response.headers['Per-Page']).to be_nil
+        expect(response.headers['Total']).to be_nil
       end
     end
 

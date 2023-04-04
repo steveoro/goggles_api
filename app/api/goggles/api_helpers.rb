@@ -153,7 +153,7 @@ module Goggles
     # == Returns
     # The corresponding Model class or nil, if the name is unsupported.
     #
-    # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
     def lookup_entity_class_for(table_name)
       case table_name
       when 'coach_level_types'
@@ -192,7 +192,7 @@ module Goggles
         GogglesDb::TimingType
       end
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
     #-- -----------------------------------------------------------------------
     #++
 
@@ -217,7 +217,7 @@ module Goggles
     def update_subentity_details(params, detail_key, detail_class)
       params.select { |key, _v| key == detail_key }.fetch(detail_key, []).each do |detail_values|
         detail_row = detail_class.find_by(id: detail_values['id'])
-        detail_row&.update!(detail_values.reject { |key, _v| key == 'id' })
+        detail_row&.update!(detail_values.except('id'))
       end
     end
     #-- -----------------------------------------------------------------------

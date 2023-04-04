@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
+RSpec.describe Goggles::TeamAffiliationsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -231,7 +231,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = GogglesDb::TeamAffiliation.where(season_id: fixture_season_id).count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+          expect(result_array.count).to eq([full_count, default_per_page].min)
         end
         # (We can't really assert pagination links here, it's enough to test these in the context below)
       end
@@ -254,9 +254,9 @@ RSpec.describe Goggles::TeamAffiliationsAPI, type: :request do
           result_array = JSON.parse(response.body)
           expect(result_array).to be_an(Array)
           full_count = expected_results.count
-          expect(result_array.count).to eq(full_count <= default_per_page ? full_count : default_per_page)
+          expect(result_array.count).to eq([full_count, default_per_page].min)
           expected_team_id = expected_results.first.team_id
-          expect(result_array.map { |arr| arr['team_id'] }).to all eq(expected_team_id)
+          expect(result_array.pluck('team_id')).to all eq(expected_team_id)
         end
       end
 

@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::MeetingRelayResultsAPI, type: :request do
+RSpec.describe Goggles::MeetingRelayResultsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -67,8 +67,8 @@ RSpec.describe Goggles::MeetingRelayResultsAPI, type: :request do
     let(:expected_changes) do
       [
         { relay_code: FFaker::Lorem.word, team_id: new_badge.team_id, team_affiliation_id: new_badge.team_affiliation_id },
-        { rank: (rand * 10).to_i, standard_points: (500.0 + rand * 500.0).round(2), meeting_points: 0.0 },
-        { rank: (rand * 10).to_i, meeting_points: (500.0 + rand * 500.0).round(2), reaction_time: (rand + 0.07).round(2) },
+        { rank: (rand * 10).to_i, standard_points: (500.0 + (rand * 500.0)).round(2), meeting_points: 0.0 },
+        { rank: (rand * 10).to_i, meeting_points: (500.0 + (rand * 500.0)).round(2), reaction_time: (rand + 0.07).round(2) },
         { disqualified: [true, false].sample, disqualification_code_type_id: [GogglesDb::DisqualificationCodeType.all.sample.id, nil].sample },
         { rank: (rand * 10).to_i, minutes: 0, seconds: ((rand * 59) % 59).to_i, hundredths: ((rand * 100) % 100).to_i },
         { entry_minutes: ((rand * 4) % 4).to_i, entry_seconds: ((rand * 59) % 59).to_i, entry_hundredths: ((rand * 100) % 100).to_i },

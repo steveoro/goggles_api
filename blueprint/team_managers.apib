@@ -573,7 +573,7 @@ Returns `true` on success, an empty body when not found.
 
 
 
-# Team Manager list [/api/v3/team_managers{?page,per_page,user_id,team_affiliation_id,manager_name,team_name,season_description}]
+# Team Manager list [/api/v3/team_managers{?page,per_page,user_id,team_affiliation_id,team_id,season_id,manager_name,team_name,season_description}]
 
 + Model (application/json)
 
@@ -610,6 +610,8 @@ returned as JSON and optionally filtered by any or all from:
 
 - `user_id`
 - `team_affiliation_id`
+- `team_id`
+- `season_id`
 - `manager_name`
 - `team_name`
 - `season_description`
@@ -642,6 +644,8 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 + Parameters
     + user_id: 1 (number, optional) - associated User ID
     + team_affiliation_id: 18 (number, optional) - associated TeamAffiliation ID
+    + team_id: 1 (number, optional) - associated Team ID
+    + season_id: 192 (number, optional) - associated Season ID
     + manager_name: 1 (string, optional) - associated Manager (User) name; matches any "like"-text
     + team_name: 1 (string, optional) - associated Team name; matches any "like"-text
     + season_description: 1 (string, optional) - associated Season description; matches any "like"-text

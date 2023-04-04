@@ -1,6 +1,8 @@
 require:
-  - rubocop-rspec
+  - rubocop-performance
   - rubocop-rails
+  - rubocop-rake
+  - rubocop-rspec
 
 inherit_from: .rubocop_todo.yml
 
@@ -30,6 +32,11 @@ Layout/LineLength:
   Exclude:
     - 'bin/bundle'
 
+# We use arrays to group multiple similar specs under a single implementation
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - 'spec/**/*'
+
 Metrics/AbcSize:
   Max: 26
   Exclude:
@@ -39,10 +46,9 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
-  IgnoredMethods: ['describe', 'context', 'define']
   Exclude:
     - 'app/api/goggles/*_api.rb'
-    - 'spec/api/goggles/*_api_spec.rb'
+    - 'spec/**/*'
 
 Metrics/ClassLength:
   Max: 120
@@ -67,6 +73,13 @@ Metrics/PerceivedComplexity:
   Exclude:
     - 'bin/bundle'
 
+
+# We use arrays to group multiple similar specs under a single implementation
+Performance/CollectionLiteralInLoop:
+  Exclude:
+    - 'spec/**/*'
+
+
 # Configuration parameters: EnforcedStyle, AllowToTime.
 # SupportedStyles: strict, flexible
 Rails/Date:
@@ -78,6 +91,9 @@ RSpec/ExpectInHook:
 
 RSpec/ExampleLength:
   Max: 20
+
+RSpec/FactoryBot/SyntaxMethods:
+  Enabled: false
 
 # Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
 # Include: **/*_spec*rb*, **/spec/**/*

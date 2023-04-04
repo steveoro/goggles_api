@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::SettingsAPI, type: :request do
+RSpec.describe Goggles::SettingsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
@@ -251,7 +251,7 @@ RSpec.describe Goggles::SettingsAPI, type: :request do
             expect(cfg_row.settings(group_key).send(key)).to be false
           else
             cfg_row = GogglesDb::AppParameter.config
-            expect(cfg_row.settings(group_key).send(key)).to be nil
+            expect(cfg_row.settings(group_key).send(key)).to be_nil
           end
         end
       end
@@ -294,7 +294,7 @@ RSpec.describe Goggles::SettingsAPI, type: :request do
             expect(cfg_row.settings(group_key).send(key)).to be false
           else
             cfg_row = GogglesDb::AppParameter.config
-            expect(cfg_row.settings(group_key).send(key)).to be nil
+            expect(cfg_row.settings(group_key).send(key)).to be_nil
           end
         end
       end

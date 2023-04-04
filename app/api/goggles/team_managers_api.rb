@@ -146,6 +146,8 @@ module Goggles
       params do
         optional :user_id, type: Integer, desc: 'optional: associated User (Manager) ID'
         optional :team_affiliation_id, type: Integer, desc: 'optional: associated TeamAffiliation ID'
+        optional :team_id, type: Integer, desc: 'optional: associated Team ID'
+        optional :season_id, type: Integer, desc: 'optional: associated Season ID'
 
         optional :manager_name, type: String, desc: 'optional: filter by user/manager name (LIKE supported)'
         optional :team_name, type: String, desc: 'optional: filter by team name (LIKE supported)'
@@ -169,11 +171,14 @@ module Goggles
                              .keep_if { |key, _v| %w[manager_name team_name season_description].include?(key) }
                              .values.map { |value| "%#{value}%" }
         like_condition = ActiveRecord::Base.sanitize_sql_array([joined_tables_mappings, field_values].flatten) unless field_values.empty?
+        # Alias params so that these work with filtering_hash_for():
+        params['teams.id'] = params['team_id']
+        params['seasons.id'] = params['season_id']
 
         results = GogglesDb::ManagedAffiliation.joins(:season, :team, :manager)
                                                .includes(:season, :team, :manager)
                                                .where(
-                                                 filtering_hash_for(params, %w[user_id team_affiliation_id])
+                                                 filtering_hash_for(params, %w[user_id team_affiliation_id seasons.id teams.id])
                                                )
                                                .where(
                                                  like_condition

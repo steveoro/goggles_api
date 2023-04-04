@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.5.01** [Steve A.] resync w/ base engine; added issues API; updated Team manager API w/ support for more filtering (Team & Season); bundle security update
 - **0.4.21** [Steve A.] resync w/ base engine
 - **0.4.20** [Steve A.] resync w/ base engine: some security updates; increased duration of JWTs to 10 hours; removed unconfirmed new user access possibility; added a default scope for Team
 - **0.4.11** [Steve A.] added 'description' as synonym for 'name' in /meetings

@@ -60,7 +60,7 @@ end
 shared_examples_for 'an empty but successful JSON response' do
   it_behaves_like('a successful request that has positive usage stats')
   it 'returns a nil JSON body' do
-    expect(JSON.parse(response.body)).to be nil
+    expect(JSON.parse(response.body)).to be_nil
   end
 end
 
@@ -123,6 +123,7 @@ end
 # - 'built_row' should include all parameters as attributes (will reject some attributes such as IDs or timestamps)
 shared_examples_for 'a successful JSON POST response' do
   it_behaves_like('a successful request that has positive usage stats')
+
   it 'returns an OK message and the new row as a JSON object' do
     result = JSON.parse(response.body)
     expect(result).to have_key('msg').and have_key('new')
@@ -190,7 +191,7 @@ shared_examples_for 'successful single response without pagination links in head
     expect(response.headers['Page'].to_i).to eq(1)
     expect(response.headers['Per-Page'].to_i).to eq(default_per_page.to_i)
     expect(response.headers['Total'].to_i).to eq(1)
-    expect(response.headers['Link']).to be nil
+    expect(response.headers['Link']).to be_nil
   end
 end
 
@@ -210,7 +211,7 @@ shared_examples_for 'successful multiple, single-page response without paginatio
     expect(response.headers['Page'].to_i).to eq(1)
     expect(response.headers['Per-Page'].to_i).to eq(default_per_page.to_i)
     expect(response.headers['Total']).to be_present
-    expect(response.headers['Link']).to be nil
+    expect(response.headers['Link']).to be_nil
   end
 end
 
@@ -224,7 +225,7 @@ shared_examples_for 'successful multiple row response either with OR without pag
   it 'returns a paginated JSON array of associated, filtered rows' do
     result_array = JSON.parse(response.body)
     expect(result_array).to be_an(Array)
-    expect(result_array.count).to eq(expected_row_count <= default_per_page ? expected_row_count : default_per_page)
+    expect(result_array.count).to eq([expected_row_count, default_per_page].min)
   end
 
   it 'may or may not contain pagination links in the headers, depending on the number of results' do
@@ -233,7 +234,7 @@ shared_examples_for 'successful multiple row response either with OR without pag
     expect(response.headers['Total'].to_i).to eq(expected_row_count.to_i)
 
     if expected_row_count <= default_per_page
-      expect(response.headers['Link']).to be nil
+      expect(response.headers['Link']).to be_nil
     else
       expect(response.headers['Link']).to be_present
       expect(response.headers['Link']).to include('next') # Don't care about 'last'

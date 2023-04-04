@@ -1,32 +1,27 @@
-# Group ImportQueues
+# Group Issues
 
 _**Admin-only group**_
 
 
-## ImportQueue details [/api/v3/import_queue/{id}]
+## Issue details [/api/v3/issue/{id}]
 
 + Model (application/json)
 
         {
-            "id": 12174,
-            "lock_version": 1,
-            "user_id": 179297,
-            "process_runs": 0,
-            "request_data": "{\"swimmer_id\":142}",
-            "solved_data": "{}",
-            "done": false,
-            "created_at": "2021-05-21T15:37:13.210Z",
-            "updated_at": "2021-05-21T15:38:09.863Z",
-            "uid": "6D733BDB-2786-E4A5-55B7-090061B22ACD",
-            "bindings_left_count": 0,
-            "bindings_left_list": null,
-            "error_messages": null,
-            "import_queue_id": null # Parent queue ID, if any
+            "id": 10888,
+            "user_id": 316693,
+            "code": "3b",
+            "req": "{\"swimmer_id\":233686}",
+            "priority": 1,
+            "status": 1,
+            "label": "Cambio nuotatore",
+            "long_label": "Cambio nuotatore associato",
+            "alt_label": "Cambio nuotatore"
         }
 
 
 ### find [GET]
-The ImportQueue instance matching the specified `id` returned as JSON.
+The Issue instance matching the specified `id` returned as JSON.
 
 :key: => satisfy both conditions:
 1. `Authorization` request header => valid JWT **required**
@@ -37,7 +32,7 @@ The ImportQueue instance matching the specified `id` returned as JSON.
 
 
 + Parameters
-    + id: 12174 (number, required) - ImportQueue ID
+    + id: 10888 (number, required) - Issue ID
 
 
 + Request ok (application/json)
@@ -49,7 +44,7 @@ The ImportQueue instance matching the specified `id` returned as JSON.
     ```bash
     $> curl -i -X GET -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/import_queue/12174"
+            "<API_HOST:PORT>/api/v3/issue/10888"
     ```
 
     ##### `RestClient` (Ruby):
@@ -57,10 +52,10 @@ The ImportQueue instance matching the specified `id` returned as JSON.
     ```ruby
     > res = RestClient::Request.execute(
                 method: :get,
-                url: '<API_HOST:PORT>/api/v3/import_queue/12174',
+                url: '<API_HOST:PORT>/api/v3/issue/10888',
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
             )
-    => <RestClient::Response 200 "{\"id\":12174, ...">
+    => <RestClient::Response 200 "{\"id\":10888, ...">
     ```
 
 
@@ -72,7 +67,7 @@ The ImportQueue instance matching the specified `id` returned as JSON.
 
 + Response 200
 
-    [ImportQueue details][]
+    [Issue details][]
 
 
 + Request not found (application/json)
@@ -121,7 +116,7 @@ The ImportQueue instance matching the specified `id` returned as JSON.
 
 ## edit [PUT]
 
-Allows direct updates for most of the ImportQueue fields given the `id` of the row.
+Allows direct updates for most of the Issue fields given the `id` of the row.
 
 Returns `true` on success, an empty result when not found.
 
@@ -136,19 +131,20 @@ All are optional (except `id`):
 
 |  Field name  | Data type |  description |
 | --- | --- | --- |
-| `user_id` | integer | associated User ID |
-| `process_runs` | integer | current processed depth |
-| `request_data` | integer | parsable JSON containing the requested entities and thei current state |
-| `solved_data` | integer | parsable JSON containing all associated entities with their IDs that have been "solved" |
-| `done` | boolean | `true` if this request is deletable (both processed & solved completely) |
-| `uid` | string | queue UID (useful for grouping queues) |
+| `req` | string | parsable JSON containing the request parameters (keys & values) |
+| `status` | integer | request status (processable: 0..3, solved/rejected: 4..6) |
+| `priority` | integer | request priority (0..3) |
+
+**Supported values:**
+
+See *create [POST]* for more details about each field.
 
 
 * * *
 
 
 + Parameters
-    + id: 12174 (number, required) - ImportQueue ID
+    + id: 10888 (number, required) - Issue ID
 
 
 + Request ok (application/json)
@@ -160,8 +156,8 @@ All are optional (except `id`):
     ```bash
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            -d '{"request_data": "{}", "solved_data": "{\"swimmer_id\":142}", "done": true}' \
-            "<API_HOST:PORT>/api/v3/import_queue/12174"
+            -d '{"priority": 2, "status": 3}' \
+            "<API_HOST:PORT>/api/v3/issue/10888"
     ```
 
     ##### `RestClient` (Ruby):
@@ -169,12 +165,8 @@ All are optional (except `id`):
     ```ruby
     > res = RestClient::Request.execute(
                 method: :put,
-                url: '<API_HOST:PORT>/api/v3/import_queue/12174',
-                payload: {
-                    request_data: "{}",
-                    solved_data: "{\"swimmer_id\":142}",
-                    done: true
-                },
+                url: '<API_HOST:PORT>/api/v3/issue/10888',
+                payload: { priority: 2, status: 3 },
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
     => <RestClient::Response 200 "true">
@@ -189,9 +181,8 @@ All are optional (except `id`):
     + Body
 
             {
-                "request_data": "{}",
-                "solved_data": "{\"swimmer_id\":142}",
-                "done": true
+                "priority": 2
+                "status": 3
             }
 
 + Response 200 (application/json)
@@ -210,9 +201,8 @@ All are optional (except `id`):
     + Body
 
             {
-                "request_data": "{}",
-                "solved_data": "{\"swimmer_id\":142}",
-                "done": true
+                "priority": 2
+                "status": 3
             }
 
 + Response 200 (application/json)
@@ -231,9 +221,8 @@ All are optional (except `id`):
     + Body
 
             {
-                "request_data": "{}",
-                "solved_data": "{\"swimmer_id\":142}",
-                "done": true
+                "priority": 2
+                "status": 3
             }
 
 + Response 401 (application/json)
@@ -250,9 +239,8 @@ All are optional (except `id`):
 + Request no JWT (application/json)
 
             {
-                "request_data": "{}",
-                "solved_data": "{\"swimmer_id\":142}",
-                "done": true
+                "priority": 2
+                "status": 3
             }
 
 + Response 401 (application/json)
@@ -269,9 +257,8 @@ All are optional (except `id`):
 + Request no grant (application/json)
 
             {
-                "request_data": "{}",
-                "solved_data": "{\"swimmer_id\":142}",
-                "done": true
+                "priority": 2
+                "status": 3
             }
 
 + Response 401 (application/json)
@@ -288,7 +275,7 @@ All are optional (except `id`):
 
 ### create [POST]
 
-Creates a new ImportQueue, given the specified body parameters.
+Creates a new Issue, given the specified body parameters.
 
 Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
@@ -302,10 +289,58 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 |  Field name  | Data type |  description |
 | --- | --- | --- |
 | *`user_id` | integer | associated User ID |
-| *`request_data` | string | parsable JSON containing the requested entities and thei current state |
-| `solved_data` | string | parsable JSON containing all associated entities with their IDs that have been "solved" |
-| `done` | boolean | `true` if this request is deletable (both processed & solved completely) |
-| `uid` | string | queue UID (useful for grouping queues) |
+| *`code` | string | 3 character code defining the type of the issue (see below) |
+| *`req` | string | parsable JSON containing the request parameters (keys & values) |
+| `status` | integer | request status (processable: 0..3, solved/rejected: 4..6) |
+| `priority` | integer | request priority (0..3) |
+
+**Supported values per attribute:**
+
+- `code`
+    | _value_ | _description_ |
+    | --- | --- |
+    | `0` | request upgrade to team manager for a specific (Team, [season IDs]) |
+    | `1a` | new meeting url for future data-import |
+    | `1b` | report missing result |
+    | `1b1` | report result mistake |
+    | `2b1` | wrong team, swimmer or meeting attribution |
+    | `3b` | change swimmer association (free select from existing swimmer) |
+    | `3c` | free associated swimmer details edit |
+    | `4` |  generic application error/bug |
+
+- `status`
+    | _value_ | _description_ |
+    | --- | --- |
+    | 0 | new |
+    | 1 | in review |
+    | 2 | accepted/in process |
+    | 3 | accepted/paused |
+    | 4 | sorted out & auto-deletable |
+    | 5 | rejected/duplicate |
+    | 6 |  rejected/missing info or incomplete |
+
+- `priority`
+    | _value_ | _description_ |
+    | --- | --- |
+    | 0 | normal |
+    | 1 | prioritized |
+    | 2 | urgent |
+    | 3 | critical |
+
+
+**Supported parameters per `req` type (code):**
+
+- `req` JSON payload
+    | _code_ | _parameters_ |
+    | --- | --- |
+    | `0` | `team_id`: ID, `season`: JSON array of IDs |
+    | `1a` | `meeting_id`: ID, `results_url`: URL string |
+    | `1b` | `event_type_id`: ID, `swimmer_id`: ID, `parent_meeting_id`: ID, `parent_meeting_class`: 'Meeting'/'UserWorkshop', `minutes`: number, `seconds`: number, `hundredths`: number |
+    | `1b1` | `result_id`: ID, `result_class`: 'MeetingIndividualResult'/'UserResult', `minutes`: number, `seconds`: number, `hundredths`: number |
+    | `2b1` | `result_id`: ID, `result_class`: 'MeetingIndividualResult'/'UserResult', `wrong_meeting`: '1'/'0', `wrong_swimmer`: '1'/'0', `wrong_team`: '1'/'0' |
+    | `3b` | `swimmer_id`: ID |
+    | `3c` | `type3c_first_name`: first name, `type3c_last_name`: last name, `type3c_year_of_birth`: year, `type3c_gender_type_id`: ID |
+    | `4` | `expected`: free description, `outcome`: free description, `reproduce`: free description |
 
 
 * * *
@@ -313,11 +348,11 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 + Attributes
     + user_id (number, required) - associated User ID
-    + request_data (string, required) - parsable JSON containing the requested entities and thei current state
+    + code (string, required) - 3 character code defining the Issue type
+    + req (string, required) - parsable JSON containing the request parameters (keys & values)
 
-    + solved_data (string, optional) - parsable JSON containing all associated entities with their IDs that have been "solved"
-    + done (boolean, optional) - `true` if this request is deletable (both processed & solved completely)
-    + uid (number, optional) - queue UID (useful for grouping queues)
+    + status 0 (number, optional) - request status (processable: 0..3, solved/rejected: 4..6), default: 0
+    + priority 0 (number, optional) - request priority (0..3), default: 0
 
 
 + Request ok (application/json)
@@ -328,17 +363,18 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
     ```bash
     $> curl -i -X POST -H "Content-Type: application/json" \
-            -d '{"user_id": 179297, "request_data": "{\"swimmer\": {\"last_name\": \"ALLORO\"}}"}'
-            "<API_HOST:PORT>/api/v3/import_queue"
+            -d '{"user_id": 179297, "code": "3b", "req": "{\"swimmer_id\": 142}"}'
+            "<API_HOST:PORT>/api/v3/issue"
     ```
 
     ##### `RestClient` (Ruby):
 
     ```ruby
-    > res = RestClient.post('<API_HOST:PORT>/api/v3/import_queue',
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/issue',
             {
                 'user_id': 179297,
-                'request_data': "{\"swimmer\": {\"last_name\": \"ALLORO\"}}"
+                'code': '3b',
+                'req': "{\"swimmer_id\": 142}"
             } )
     => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
 
@@ -356,7 +392,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
             {
                 'user_id': 179297,
-                'request_data': "{\"swimmer\": {\"last_name\": \"ALLORO\"}}"
+                'code': '3b',
+                'req': "{\"swimmer_id\": 142}"
             }
 
 + Response 200 (application/json)
@@ -379,7 +416,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
             {
                 'user_id': 179297,
-                'request_data': "{\"swimmer\": {\"last_name\": \"ALLORO\"}}"
+                'code': '3b',
+                'req': "{\"swimmer_id\": 142}"
             }
 
 + Response 401 (application/json)
@@ -399,7 +437,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
             {
                 'user_id': 179297,
-                'request_data': "{\"swimmer\": {\"last_name\": \"ALLORO\"}}"
+                'code': '3b',
+                'req': "{\"swimmer_id\": 142}"
             }
 
 + Response 401 (application/json)
@@ -423,7 +462,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
             {
                 'user_id': 179297,
-                'request_data': "{\"swimmer\": {\"last_name\": \"ALLORO\"}}"
+                'code': '3b',
+                'req': "{\"swimmer_id\": 142}"
             }
 
 + Response 401 (application/json)
@@ -452,7 +492,7 @@ Returns `true` on success, an empty body when not found.
 #### Body Attributes:
 
 + Parameters
-    + id: 12174 (number, required) - ImportQueue ID
+    + id: 10888 (number, required) - Issue ID
 
 
 + Request ok (application/json)
@@ -464,7 +504,7 @@ Returns `true` on success, an empty body when not found.
     ```bash
     $> curl -i -X DELETE -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/import_queue/1"
+            "<API_HOST:PORT>/api/v3/issue/10888"
     ```
 
     ##### `RestClient` (Ruby):
@@ -472,7 +512,7 @@ Returns `true` on success, an empty body when not found.
     ```ruby
     > res = RestClient::Request.execute(
                 method: :delete,
-                url: '<API_HOST:PORT>/api/v3/import_queue/1',
+                url: '<API_HOST:PORT>/api/v3/issue/10888',
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
     => <RestClient::Response 200 "true">
@@ -548,181 +588,27 @@ Returns `true` on success, an empty body when not found.
 
 
 
-## ImportQueue Batch [/api/v3/import_queue/batch_sql]
+# Issue list [/api/v3/issues{?page,per_page,user_id,code,priority,status}]
 
 + Model (application/json)
 
-        {
-            "id": 12175,
-            "batch_sql": true,
-            "data_file": "<ATTACHED_SQL_SCRIPT_AS_MULTIPART_FILE>",
-            # (...Other columns ignored...)
-        }
-
-
-
-### create [POST]
-
-Creates a new ImportQueue marked for macro-transaction, using the uploaded multipart text file as executable SQL
-script that has to be executed and consumed by the same processor job that handles all "standard" micro-transaction
-ImportQueues.
-
-This is the default interface for uploading large data altering queries on the remote DB. The script will be executed
-with delayed timing, depending on the current job queue status and length.
-
-Returns a result text 'msg' on success, with just the 'new' row ID as JSON.
-
-:key: => satisfy both conditions:
-1. `Authorization` request header => valid JWT **required**
-2. authenticated user must have generic **Admin** grants
-
-
-#### Body Attributes:
-
-|  Field name  | Data type |  description |
-| --- | --- | --- |
-| *`data_file` | File | multipart text file (allegedly) containing a valid SQL script wrapping a single transaction |
-
-
-* * *
-
-
-+ Attributes
-    + data_file (required) - Multipart text file (allegedly) containing a valid SQL script wrapping a single transaction |
-
-
-+ Request ok (application/json)
-
-    #### Examples
-
-    ##### `curl` (Bash):
-
-    ```bash
-    $> curl -v -F 'data_file=@\"~/path/to/script_file.sql\"' \
-            "<API_HOST:PORT>/api/v3/import_queue/batch_sql"
-    ```
-
-    ##### `RestClient` (Ruby):
-
-    ```ruby
-    > res = RestClient::Request.execute(
-        method: :post,
-        url: "<API_HOST:PORT>/api/v3/import_queue/batch_sql",
-        timeout: 60, # Optional
-        payload: {
-            multipart: true,
-            data_file: File.new('~/path/to/script_file.sql, 'rb')
-        },
-        headers: { 'Authorization' => "Bearer <VALID-SESSION-JWT>" }
-    )
-    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":<NEW_ROW_ID>}}">
-
-    > puts res.body
-    {"msg":"OK","new":{"id":<NEW_ROW_ID>}}
-    ```
-
-    * * *
-
     + Header
 
-            Authorization: "Bearer VALID-SESSION-JWT"
-
-    + Body
-
-            `data_file`: (Any uploaded Multipart text file as value)
-
-+ Response 200 (application/json)
-
-        {
-            "msg": "OK",
-            "new": "{\"id\":<NEW_ROW_ID>}"
-        }
-
-
-+ Request bad JWT (application/json)
-
-    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
-
-    + Header
-
-            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
-
-    + Body
-
-            `data_file`: (Any uploaded Multipart text file as value)
-
-
-+ Response 401 (application/json)
-
-    + Header
-
-            X-Error-Detail: "Invalid JWT token"
-
-    + Body
-
-            { "msg": "Unauthorized" }
-
-
-+ Request no JWT (application/json)
-
-    + Body
-
-            `data_file`: (Any uploaded Multipart text file as value)
-
-+ Response 401 (application/json)
-
-    + Header
-
-            X-Error-Detail: "Missing JWT token"
-
-    + Body
-
-            { "msg": "Unauthorized" }
-
-
-+ Request no grant (application/json)
-
-    + Header
-
-            Authorization: "Bearer VALID-SESSION-JWT"
-
-    + Body
-
-            `data_file`: (Any uploaded Multipart text file as value)
-
-+ Response 401 (application/json)
-
-    + Header
-
-            X-Error-Detail: "Invalid User grants"
-
-    + Body
-
-            { "msg": "Unauthorized" }
-
-
-
-# ImportQueue list [/api/v3/import_queues{?page,per_page,user_id,uid,process_runs,requested_depth,solvable_depth,done}]
-
-+ Model (application/json)
-
-    + Header
-
-            Link: "<API_HOST:PORT/api/v3/import_queues?page=2&done=true>; rel=\"last\", <http://localhost:3000/api/v3/import_queues?page=2&done=true>; rel=\"next\""
-            Total: 46
+            Link: "<API_HOST:PORT/api/v3/issues?page=2&priority=1>; rel=\"last\", <http://localhost:3000/api/v3/issues?page=2&done=true>; rel=\"next\""
+            Total: 3
             Per-Page: 25
             Page: 1
 
     + Body
 
             [
-                // ImportQueue details 1
+                // Issue details 1
                 {
                     "id": 1,
                     // [...]
                 },
 
-                // ImportQueue details 2
+                // Issue details 2
                 {
                     "id": 15,
                     // [...]
@@ -734,15 +620,13 @@ Returns a result text 'msg' on success, with just the 'new' row ID as JSON.
 
 ## list [GET]
 
-The list of ImportQueues associated to the specified filtering values,
+The list of Issues associated to the specified filtering values,
 returned as JSON and optionally filtered by any or all from:
 
 - `user_id`
-- `uid`
-- `process_runs`
-- `requested_depth`
-- `solvable_depth`
-- `done`
+- `code`
+- `priority`
+- `status`
 
 Returns exact matches for all the parameters.
 
@@ -771,11 +655,9 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 + Parameters
     + user_id: 1 (number, optional) - associated User ID
-    + uid: "6D733BDB2786E4A" (string, optional) - queue UID
-    + process_runs: 1 (number, optional) - current processed depth
-    + requested_depth: 2 (number, optional) - current requested depth
-    + solvable_depth: 2 (number, optional) - current solvable depth
-    + done: false (boolean, optional) - `true` if this request is deletable (both processed & solved completely)
+    + code: "3b" (string, optional) - issue code type (max 3 chars; see `create [POST]` Issue for details)
+    + priority: 0 (number, optional) - request priority (0..3)
+    + status: 0 (number, optional) - request status (processable: 0..3, solved/rejected: 4..6)
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
@@ -791,7 +673,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     ```bash
     $> curl -i -X GET -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/import_queues?done=true"
+            "<API_HOST:PORT>/api/v3/issues?done=true"
     ```
 
     #### `RestClient` (Ruby):
@@ -802,7 +684,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     ```ruby
     > res = RestClient::Request.execute(
                 method: :get,
-                url: '<API_HOST:PORT>/api/v3/import_queues',
+                url: '<API_HOST:PORT>/api/v3/issues',
                 headers: {
                     "Authorization" => "Bearer VALID-SESSION-JWT",
                     params: { done: true }
@@ -819,7 +701,7 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 + Response 200
 
-    [ImportQueue list][]
+    [Issue list][]
 
 
 + Request not found (application/json)

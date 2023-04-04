@@ -164,7 +164,7 @@ module Goggles
         check_jwt_session
 
         filtering_conditions = { 'meetings.id': params['meeting_id'] }
-        filtering_conditions.merge!('meeting_sessions.id': params['meeting_session_id']) if params['meeting_session_id'].present?
+        filtering_conditions[:'meeting_sessions.id'] = params['meeting_session_id'] if params['meeting_session_id'].present?
 
         paginate(
           GogglesDb::MeetingEvent.joins(:meeting, :meeting_session)

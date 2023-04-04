@@ -73,7 +73,7 @@ module Goggles
           update_subentity_details(params, 'relays', GogglesDb::MeetingRelayReservation)
 
           # Update parent reservation:
-          parent_updates = params.reject { |key, _v| %w[events relays].include?(key) }
+          parent_updates = params.except('events', 'relays')
           meeting_reservation = GogglesDb::MeetingReservation.find_by(id: params['id'])
           meeting_reservation&.update!(user_id: api_user.id) # set latests changes' user ID
           meeting_reservation&.update!(declared(parent_updates, include_missing: false))

@@ -165,7 +165,7 @@ module Goggles
         check_jwt_session
 
         filtering_conditions = { 'meetings.id': params['meeting_id'] }
-        filtering_conditions.merge!('meeting_sessions.id': params['meeting_session_id']) if params['meeting_session_id'].present?
+        filtering_conditions[:'meeting_sessions.id'] = params['meeting_session_id'] if params['meeting_session_id'].present?
         filtering_conditions.merge!(filtering_hash_for(params, %w[meeting_event_id category_type_id gender_type_id]) || {})
 
         paginate(

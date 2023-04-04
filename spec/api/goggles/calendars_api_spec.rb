@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/api_session_helpers'
 require 'support/shared_api_response_behaviors'
 
-RSpec.describe Goggles::CalendarsAPI, type: :request do
+RSpec.describe Goggles::CalendarsAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
