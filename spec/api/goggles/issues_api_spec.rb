@@ -8,14 +8,14 @@ RSpec.describe Goggles::IssuesAPI do
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 
-  let(:issue_factory) do
+  let(:issue_factories) do
     %i[
       issue_type0 issue_type1a issue_type1b issue_type1b1
       issue_type2b1 issue_type3b issue_type3c issue_type4
     ]
   end
   let(:fixture_row) do
-    FactoryBot.create(issue_factory.sample)
+    FactoryBot.create(issue_factories.sample)
   end
   # Admin:
   let(:admin_user)  { FactoryBot.create(:user) }
@@ -174,7 +174,7 @@ RSpec.describe Goggles::IssuesAPI do
 
   describe 'POST /api/v3/issue' do
     # Make sure parameters for the POST include all required attributes:
-    let(:built_row) { FactoryBot.build(issue_factory.sample, user_id: GogglesDb::User.first(100).sample.id) }
+    let(:built_row) { FactoryBot.build(issue_factories.sample, user_id: GogglesDb::User.first(100).sample.id) }
 
     before do
       expect(built_row).to be_a(GogglesDb::Issue).and be_valid
@@ -321,14 +321,14 @@ RSpec.describe Goggles::IssuesAPI do
 
   describe 'GET /api/v3/issues/' do
     let(:fixture_user_id) { GogglesDb::User.first(100).sample.id }
-    let(:fixture_factory_4_code) { issue_factory.sample }
+    let(:fixture_factory_4_code) { issue_factories.sample }
     let(:fixture_code) { fixture_factory_4_code.to_s.split('_type').last }
     let(:expected_row_count) { GogglesDb::Issue.where(code: fixture_code).count }
     let(:default_per_page) { 25 }
     # Make sure the Domain contains the expected seeds:
 
     before do
-      26.times { FactoryBot.create(issue_factory.sample, user_id: fixture_user_id) }
+      26.times { FactoryBot.create(issue_factories.sample, user_id: fixture_user_id) }
       FactoryBot.create_list(fixture_factory_4_code, 5)
       expect(GogglesDb::Issue.count).to be >= 31
       expect(expected_row_count).to be_positive
