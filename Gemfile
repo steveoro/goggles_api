@@ -90,6 +90,7 @@ group :test do
   # (Bullet works best just on development). Do not use memoized values for testing.
   # Example:
   #          expect { get :index }.to perform_constant_number_of_queries"
+  gem 'rspec_junit_formatter' # required by new Semaphore test reports
   gem 'simplecov', '= 0.13.0', require: false
 end
 
