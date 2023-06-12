@@ -166,7 +166,7 @@ module Goggles
           GogglesDb::StandardTiming.where(
             filtering_hash_for(params, %w[season_id gender_type_id pool_type_id event_type_id category_type_id])
           ).order('standard_timings.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

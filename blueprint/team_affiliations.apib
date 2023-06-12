@@ -6,80 +6,59 @@
 
         {
             "id": 5727,
-            // [...]
             "number": "04200002",
             "name": "CSInuoto OberFerrari",
             "compute_gogglecup": true,
             "team_id": 1,
             "season_id": 191,
-            // [...]
-            "created_at": "2019-10-16T00:00:00.000Z",
-            "updated_at": "2019-10-16T00:00:00.000Z",
             "autofilled": false,
-            "display_label": "MASTER CSI 2019/2020: 👥 CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+            "display_label": "MASTER CSI 2019/2020: 👥 Lake Ramiro Swimming Club ASD, Reggio nell Emilia, Reggio Emilia (IT)",
             "short_label": "CSI 2019/2020: 👥 CSInuoto OberFerrari",
 
-            // Embedded associated Team:
             "team": {
                 "id": 1,
-                // [...]
-                "name": "CSI NUOTO OBER FERRARI ASD",
-                "editable_name": "CSI NUOTO OBER FERRARI ASD",
-                "address": "Team HQ address",
-                "zip": "",
-                "phone_mobile": "",
-                "phone_number": "",
+                "name": "Lake Ramiro Swimming Club ASD",
+                "editable_name": "Lake Ramiro Swimming Club ASD",
+                "address": "9038 Littel Lights",
+                "zip": "028088",
+                "phone_mobile": "265-752-0508 x022",
+                "phone_number": "493-278-0409",
                 "fax_number": null,
-                "e_mail": "contact.email@this.is.just.a.fake.domain.com",
-                "contact_name": "Marco Ligabue",
-                "notes": "whatever the team manager needs to write here",
-                "created_at": "2014-10-19T00:00:00.000Z",
-                "updated_at": "2019-02-17T10:26:36.000Z",
-                "display_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia, Reggio Emilia (IT)",
-                "short_label": "CSI NUOTO OBER FERRARI ASD, Reggio nell Emilia",
+                "e_mail": "zenaida@example.net",
+                "contact_name": "Dede Sipes",
+                "notes": "Meatloaf rump pork ribeye shank sirloin venison tongue.",
                 "name_variations": null,
                 "city_id": 37,
-                "home_page_url": "",
-
-                // City details:
-                "city": {
-                    "id": 37,
-                    "name": "Reggio nell Emilia",
-                    "zip": "?",
-                    "area": "Reggio Emilia",
-                    "country": "Italy",
-                    "country_code": "IT",
-                    "latitude": "44.716667",
-                    "longitude": "10.6",
-                    "plus_code": "8FPGPH8X+MX",
-                    "display_label": "Reggio nell Emilia, Reggio Emilia (IT)",
-                    "short_label": "Reggio nell Emilia, Reggio Emilia",
-                    "region": "Emilia-Romagna",
-                    "area_code": "RE"
-                }
+                "home_page_url": "http://watsica.us",
+                "display_label": "Lake Ramiro Swimming Club ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                "short_label": "Lake Ramiro Swimming Club ASD, Reggio nell Emilia",
+                "city_name": "Reggio nell Emilia, Reggio Emilia (IT)"
             },
 
-            // Embedded associated Season:
             "season": {
                 "id": 191,
-                "lock_version": 0,
                 "description": "Circuito regionale Emilia master CSI 2019/2020",
                 "begin_date": "2019-10-01",
                 "end_date": "2020-09-30",
                 "season_type_id": 2,
-                "created_at": "2019-10-16T07:20:51.000Z",
-                "updated_at": "2019-10-16T07:20:51.000Z",
                 "header_year": "2019/2020",
                 "edition": 20,
                 "edition_type_id": 5,
                 "timing_type_id": 2,
                 "rules": null,
-                "has_individual_rank": true,
-                "badge_fee": "10.0"
+                "individual_rank": true,
+                "badge_fee": "10.0",
+                "display_label": "MASTER CSI 2019/2020",
+                "short_label": "CSI 2019/2020"
+            },
+            "season_type": {
+                "id": 2,
+                "code": "MASCSI",
+                "description": "CIRCUITO ITALIANO MASTER CSI",
+                "short_name": "MASTER CSI",
+                "federation_type_id": 2
             },
 
-            // All Badges beloging to any year found in between
-            // associated Season's `begin_date.year`..`end_date.year`:
             "badges": [
                 {
                     "id": 124947,
@@ -95,78 +74,35 @@
                     "fees_due": false,
                     "badge_due": false,
                     "relays_due": false,
-                    "swimmer": {
-                        "id": 142,
-                        "display_label": "ALLORO STEFANO (MAS, 1969)",
-                        "short_label": "ALLORO STEFANO (1969)",
-                        "complete_name": "ALLORO STEFANO",
-                        "last_name": "ALLORO",
-                        "first_name": "STEFANO",
-                        "year_of_birth": 1969,
-                        "year_guessed": false
-                    },
-                    "gender_type": {
-                        "id": 1,
-                        "code": "M",
-                        "label": "MAS",
-                        "long_label": "MASCHILE",
-                        "alt_label": "MASCHI"
-                    },
-                    "category_type": {
-                        "id": 1320,
-                        "code": "M50",
-                        "federation_code": "8",
-                        "description": "MASTER 50",
-                        "short_name": "M50",
-                        "group_name": "MASTER",
-                        "age_begin": 50,
-                        "age_end": 54,
-                        "relay": false,
-                        "season_id": 191,
-                        "out_of_race": false,
-                        "undivided": false,
-                        "display_label": "M50, CSI MASTER 2019/2020",
-                        "short_label": "(2019/2020) M50",
-                        "season": {
-                        "id": 191,
-                        "description": "Circuito regionale Emilia master CSI 2019/2020",
-                        "begin_date": "2019-10-01",
-                        "end_date": "2020-09-30",
-                        "season_type_id": 2,
-                        "header_year": "2019/2020",
-                        "edition": 20,
-                        "edition_type_id": 5,
-                        "timing_type_id": 2,
-                        "rules": null,
-                        "individual_rank": true,
-                        "badge_fee": "10.0"
-                        }
-                    },
-                    "entry_time_type": {
-                        "id": 5,
-                        "code": "U",
-                        "label": "ULT",
-                        "long_label": "ULTIMA PRESTAZIONE",
-                        "alt_label": "ULT"
-                    }
-
+                    "display_label": "MASTER CSI 2019/2020: ALLORO STEFANO (MAL, 1969) ➡ Lake Ramiro Swimming Club ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                    "short_label": "CSI 2019/2020: ALLORO STEFANO (1969) ➡ Lake Ramiro Swimming Club ASD, Reggio nell Emilia"
                 },
-                // [...all ~75 season 191 badges...]
-            ],
-
-            // All embedded Team Managers for the associated Season:
-            "managers": [
                 {
-                    "id": 2,
-                    "name": "leega",
-                    "description": "Marco Ligabue",
-                    "swimmer_id": 23,
-                    "created_at": "2013-10-23T17:10:02.000Z",
-                    "updated_at": "2020-09-16T09:03:49.000Z",
-                    // [...]
-                    "last_name": "Ligabue",
-                    "first_name": "Marco",
-                    // [...remaning User details...]
+                    "id": 124948,
+                    "number": "04204789",
+                    "season_id": 191,
+                    "swimmer_id": 51,
+                    "team_id": 1,
+                    "category_type_id": 1322,
+                    "entry_time_type_id": 5,
+                    "team_affiliation_id": 5727,
+                    "final_rank": null,
+                    "off_gogglecup": false,
+                    "fees_due": false,
+                    "badge_due": false,
+                    "relays_due": false,
+                    "display_label": "MASTER CSI 2019/2020: Grady Lanita 45783 (MAL, 1991) ➡ Lake Ramiro Swimming Club ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                    "short_label": "CSI 2019/2020: Grady Lanita 45783 (1991) ➡ Lake Ramiro Swimming Club ASD, Reggio nell Emilia"
+                },
+                // ...Remaining Badges details for the corresponding Season...
+            ],
+            "managed_affiliations": [
+                {
+                "id": 162,
+                "team_affiliation_id": 5727,
+                "user_id": 2,
+                "display_label": "🗣  leega - whatever@example.org (Marco Ligabue, 1971) ➡ CSI 2019/2020: 👥 CSInuoto OberFerrari",
+                "short_label": "🗣  leega (Marco Ligabue) ➡ CSI 2019/2020: 👥 CSInuoto OberFerrari"
                 }
             ]
         }

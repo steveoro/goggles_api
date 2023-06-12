@@ -177,7 +177,7 @@ module Goggles
 
         paginate(
           GogglesDb::UserLap.where(filtering_hash_for(params, %w[user_result_id swimmer_id]))
-        )
+        ).map(&:to_hash)
       end
     end
   end

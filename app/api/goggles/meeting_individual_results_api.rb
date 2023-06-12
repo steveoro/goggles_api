@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingIndividualResult API Grape controller
   #
-  #   - version:  7-0.4.06
+  #   - version:  7-0.5.05
   #   - author:   Steve A.
-  #   - build:    20210906
+  #   - build:    20230523
   #
   # == Note:
   # Lap data & registration entry data is stored on separated entities (MeetingEntries & Laps)
@@ -188,17 +188,28 @@ module Goggles
         optional :team_id, type: Integer, desc: 'optional: associated Team ID'
         optional :swimmer_id, type: Integer, desc: 'optional: associated Swimmer ID'
         optional :badge_id, type: Integer, desc: 'optional: associated Badge ID'
+        optional :meeting_id, type: Integer, desc: 'optional: associated Meeting ID'
+        optional :category_type_id, type: Integer, desc: 'optional: associated CategoryType ID'
+        optional :event_type_id, type: Integer, desc: 'optional: associated EventType ID'
+        optional :gender_type_id, type: Integer, desc: 'optional: associated GenderType ID'
         use :pagination
       end
       paginate
       get do
         check_jwt_session
 
+        domain = GogglesDb::MeetingIndividualResult.includes(:meeting, :category_type, :event_type, :gender_type)
+                                                   .joins(:meeting, :category_type, :event_type, :gender_type)
+        domain = domain.where('meetings.id': params['meeting_id']) if params['meeting_id'].present?
+        domain = domain.where('category_types.id': params['category_type_id']) if params['category_type_id'].present?
+        domain = domain.where('event_types.id': params['event_type_id']) if params['event_type_id'].present?
+        domain = domain.where('gender_types.id': params['gender_type_id']) if params['gender_type_id'].present?
+
         paginate(
-          GogglesDb::MeetingIndividualResult.where(
-            filtering_hash_for(params, %w[meeting_program_id team_affiliation_id team_id swimmer_id badge_id])
-          ).order('meeting_individual_results.id DESC')
-        )
+          domain.where(filtering_hash_for(params,
+                                          %w[meeting_program_id team_affiliation_id team_id swimmer_id badge_id]))
+                .order('meeting_individual_results.id DESC')
+        ).map(&:to_hash)
       end
     end
   end

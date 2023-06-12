@@ -6,9 +6,6 @@
 
         {
             "id": 1,
-            "lock_version": 0,
-            "created_at": "2014-10-19T00:00:00.000Z",
-            "updated_at": "2014-10-19T00:00:00.000Z",
             "event_order": 1,
             "begin_time": "2000-01-01T00:00:00.000Z",
             "out_of_race": false,
@@ -19,6 +16,8 @@
             "heat_type_id": 3,
             "split_gender_start_list": true,
             "split_category_start_list": false,
+            "display_label": "1° PROVA REGIONALE 2003/2004 (25 M): 1. 50 BS",
+            "short_label": "50 BS",
 
             "meeting_session": {
                 "id": 12,
@@ -33,8 +32,30 @@
                 "autofilled": false,
                 "day_part_type_id": null
             },
-            "display_label": "1 A Prova 2003/2004 (25 M): 1. 50RA",
-            "short_label": "50RA",
+
+            "season": {
+                "id": 4,
+                "description": "Circuito Regionale Emilia master CSI 2003/2004",
+                "begin_date": "2003-09-01",
+                "end_date": "2004-06-30",
+                "season_type_id": 2,
+                "header_year": "2003/2004",
+                "edition": 4,
+                "edition_type_id": 5,
+                "timing_type_id": 2,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": null,
+                "display_label": "MASTER CSI 2003/2004",
+                "short_label": "CSI 2003/2004"
+            },
+            "season_type": {
+                "id": 2,
+                "code": "MASCSI",
+                "description": "CIRCUITO ITALIANO MASTER CSI",
+                "short_name": "MASTER CSI",
+                "federation_type_id": 2
+            },
 
             "event_type": {
                 "id": 19,
@@ -51,7 +72,6 @@
                 "long_label": "50 BREASTROKE",
                 "alt_label": "50 BS"
             },
-
             "pool_type": {
                 "id": 1,
                 "code": "25",
@@ -78,28 +98,6 @@
                 "alt_label": "FN"
             },
 
-            "season": {
-                "id": 4,
-                "description": "Circuito Regionale Emilia master CSI 2003/2004",
-                "begin_date": "2003-09-01",
-                "end_date": "2004-06-30",
-                "season_type_id": 2,
-                "header_year": "2003/2004",
-                "edition": 4,
-                "edition_type_id": 5,
-                "timing_type_id": 2,
-                "rules": null,
-                "individual_rank": true,
-                "badge_fee": null
-            },
-            "season_type": {
-                "id": 2,
-                "code": "MASCSI",
-                "description": "CIRCUITO ITALIANO MASTER CSI",
-                "short_name": "MASTER CSI",
-                "federation_type_id": 2
-            },
-
             "meeting_programs": [
                 {
                     "id": 448,
@@ -111,62 +109,13 @@
                     "begin_time": null,
                     "meeting_event_id": 1,
                     "pool_type_id": 1,
-                    "time_standard_id": null,
-                    "pool_type": {
-                        "id": 1,
-                        "code": "25",
-                        "length_in_meters": 25,
-                        "eventable": true,
-                        "label": "25 M",
-                        "long_label": "25 METERS",
-                        "alt_label": "25 M"
-                    },
-                    "event_type": {
-                        "id": 19,
-                        "code": "50RA",
-                        "length_in_meters": 50,
-                        "relay": false,
-                        "stroke_type_id": 4,
-                        "style_order": 19,
-                        "mixed_gender": false,
-                        "partecipants": 1,
-                        "phases": 1,
-                        "phase_length_in_meters": 50,
-                        "label": "50 BS",
-                        "long_label": "50 BREASTROKE",
-                        "alt_label": "50 BS"
-                    },
-                    "category_type": {
-                        "id": 43,
-                        "code": "M25",
-                        "federation_code": "3",
-                        "description": "MASTER 25",
-                        "short_name": "M25",
-                        "group_name": "MASTER",
-                        "age_begin": 25,
-                        "age_end": 29,
-                        "relay": false,
-                        "season_id": 4,
-                        "out_of_race": false,
-                        "undivided": false
-                    },
-                    "gender_type": {
-                        "id": 1,
-                        "code": "M",
-                        "label": "MAL",
-                        "long_label": "MALE",
-                        "alt_label": "MALE"
-                    },
-                    "stroke_type": {
-                        "id": 4,
-                        "code": "RA",
-                        "eventable": true,
-                        "label": "BR",
-                        "long_label": "BREASTROKE",
-                        "alt_label": "BS"
-                    }
+                    "standard_timing_id": null,
+                    "event_label": "50 BS",
+                    "category_label": "(2003/2004) M25",
+                    "category_code": "M25",
+                    "gender_code": "M",
+                    "pool_code": "25"
                 },
-
                 {
                     "id": 449,
                     "event_order": 13,
@@ -177,66 +126,33 @@
                     "begin_time": null,
                     "meeting_event_id": 1,
                     "pool_type_id": 1,
-                    "time_standard_id": null,
-                    "pool_type": {
-                        "id": 1,
-                        "code": "25",
-                        "length_in_meters": 25,
-                        "eventable": true,
-                        "label": "25 M",
-                        "long_label": "25 METERS",
-                        "alt_label": "25 M"
-                    },
-                    "event_type": {
-                        "id": 19,
-                        "code": "50RA",
-                        "length_in_meters": 50,
-                        "relay": false,
-                        "stroke_type_id": 4,
-                        "style_order": 19,
-                        "mixed_gender": false,
-                        "partecipants": 1,
-                        "phases": 1,
-                        "phase_length_in_meters": 50,
-                        "label": "50 BS",
-                        "long_label": "50 BREASTROKE",
-                        "alt_label": "50 BS"
-                    },
-                    "category_type": {
-                        "id": 44,
-                        "code": "M30",
-                        "federation_code": "4",
-                        "description": "MASTER 30",
-                        "short_name": "M30",
-                        "group_name": "MASTER",
-                        "age_begin": 30,
-                        "age_end": 34,
-                        "relay": false,
-                        "season_id": 4,
-                        "out_of_race": false,
-                        "undivided": false
-                    },
-                    "gender_type": {
-                        "id": 2,
-                        "code": "F",
-                        "label": "FEM",
-                        "long_label": "FEMALE",
-                        "alt_label": "FEMALE"
-                    },
-                    "stroke_type": {
-                        "id": 4,
-                        "code": "RA",
-                        "eventable": true,
-                        "label": "BR",
-                        "long_label": "BREASTROKE",
-                        "alt_label": "BS"
-                    }
+                    "standard_timing_id": null,
+                    "event_label": "50 BS",
+                    "category_label": "(2003/2004) M30",
+                    "category_code": "M30",
+                    "gender_code": "F",
+                    "pool_code": "25"
                 },
-
-                // ...All remaining MeetingProgram rows w/ details...
+                {
+                    "id": 452,
+                    "event_order": 16,
+                    "category_type_id": 44,
+                    "gender_type_id": 1,
+                    "autofilled": false,
+                    "out_of_race": false,
+                    "begin_time": null,
+                    "meeting_event_id": 1,
+                    "pool_type_id": 1,
+                    "standard_timing_id": null,
+                    "event_label": "50 BS",
+                    "category_label": "(2003/2004) M30",
+                    "category_code": "M30",
+                    "gender_code": "M",
+                    "pool_code": "25"
+                },
+                // [...All remaining MeetingProgram rows w/ details...]
             ]
         }
-
 
 
 ### find [GET]

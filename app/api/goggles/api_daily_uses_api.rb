@@ -116,7 +116,7 @@ module Goggles
           GogglesDb::APIDailyUse
             .where(filtering_hash_for(params, %w[day]))
             .where(filtering_like_for(params, %w[route]))
-        )
+        ).map(&:to_hash)
       end
 
       # DELETE /api/:version/api_daily_uses

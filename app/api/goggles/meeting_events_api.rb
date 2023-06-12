@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingEvent API Grape controller
   #
-  #   - version:  7-0.4.06
+  #   - version:  7-0.5.05
   #   - author:   Steve A.
-  #   - build:    20210906
+  #   - build:    20230523
   #
   class MeetingEventsAPI < Grape::API
     helpers APIHelpers
@@ -157,6 +157,7 @@ module Goggles
       params do
         requires :meeting_id, type: Integer, desc: 'associated Meeting ID'
         optional :meeting_session_id, type: Integer, desc: 'optional: associated MeetingSession ID'
+        optional :event_type_id, type: Integer, desc: 'optional: associated EventType ID'
         use :pagination
       end
       paginate
@@ -165,15 +166,16 @@ module Goggles
 
         filtering_conditions = { 'meetings.id': params['meeting_id'] }
         filtering_conditions[:'meeting_sessions.id'] = params['meeting_session_id'] if params['meeting_session_id'].present?
+        filtering_conditions[:'event_types.id'] = params['event_type_id'] if params['event_type_id'].present?
 
         paginate(
-          GogglesDb::MeetingEvent.joins(:meeting, :meeting_session)
-                                 .includes(:meeting, :meeting_session)
+          GogglesDb::MeetingEvent.joins(:meeting, :meeting_session, :event_type)
+                                 .includes(:meeting, :meeting_session, :event_type)
                                  .where(
                                    ActiveRecord::Base.sanitize_sql_for_conditions(filtering_conditions)
                                  )
                                  .order('meeting_events.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

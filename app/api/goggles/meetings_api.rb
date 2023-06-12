@@ -195,7 +195,7 @@ module Goggles
           # paginate(results)
           page = params[:page] || 1
           per_page = params[:per_page] || 25
-          results = results.to_a
+          results = results.map(&:to_hash)
           header('Total', results.count)
           header('Page', page)
           header('Per-Page', per_page)

@@ -6,72 +6,20 @@
 
         {
             "id": 1,
-            "lock_version": 0,
             "event_order": 1,
             "category_type_id": 4,
             "gender_type_id": 1,
-            "created_at": "2014-10-19T00:00:00.000Z",
-            "updated_at": "2014-10-19T00:00:00.000Z",
             "autofilled": false,
             "out_of_race": false,
             "begin_time": null,
             "meeting_event_id": 1230,
             "pool_type_id": 1,
-            "time_standard_id": null,
-
-            "meeting_event": {
-                "id": 1230,
-                "event_order": 1,
-                "begin_time": "2000-01-01T00:00:00.000Z",
-                "out_of_race": false,
-                "autofilled": false,
-                "notes": null,
-                "meeting_session_id": 1,
-                "event_type_id": 19,
-                "heat_type_id": 3,
-                "split_gender_start_list": true,
-                "split_category_start_list": false,
-                "event_type": {
-                    "id": 19,
-                    "code": "50RA",
-                    "length_in_meters": 50,
-                    "relay": false,
-                    "stroke_type_id": 4,
-                    "style_order": 19,
-                    "mixed_gender": false,
-                    "partecipants": 1,
-                    "phases": 1,
-                    "phase_length_in_meters": 50,
-                    "label": "50 BS",
-                    "long_label": "50 BREASTROKE",
-                    "alt_label": "50 BS"
-                },
-                "pool_type": {
-                    "id": 1,
-                    "code": "25",
-                    "length_in_meters": 25,
-                    "eventable": true,
-                    "label": "25 M",
-                    "long_label": "25 METERS",
-                    "alt_label": "25 M"
-                },
-                "stroke_type": {
-                    "id": 4,
-                    "code": "RA",
-                    "eventable": true,
-                    "label": "BR",
-                    "long_label": "BREASTROKE",
-                    "alt_label": "BS"
-                },
-                "heat_type": {
-                    "id": 3,
-                    "code": "F",
-                    "default": false,
-                    "label": "FN",
-                    "long_label": "FINALS",
-                    "alt_label": "FN"
-                }
-            },
+            "standard_timing_id": null,
+            "event_label": "50 BS",
+            "category_label": "(2000/2001) M25",
+            "category_code": "M25",
+            "gender_code": "M",
+            "pool_code": "25",
 
             "pool_type": {
                 "id": 1,
@@ -109,7 +57,9 @@
                 "relay": false,
                 "season_id": 1,
                 "out_of_race": false,
-                "undivided": false
+                "undivided": false,
+                "display_label": "M25, CSI MASTER 2000/2001",
+                "short_label": "(2000/2001) M25"
             },
             "gender_type": {
                 "id": 1,
@@ -127,7 +77,6 @@
                 "alt_label": "BS"
             },
 
-            // List of all associated individual results:
             "meeting_individual_results": [
                 {
                     "id": 19917,
@@ -151,38 +100,15 @@
                     "team_affiliation_id": 3,
                     "personal_best": false,
                     "season_type_best": false,
-                    "swimmer": {
-                        "id": 47,
-                        "last_name": "Pacocha",
-                        "first_name": "Christa",
-                        "year_of_birth": 1960,
-                        "phone_mobile": null,
-                        "phone_number": null,
-                        "e_mail": "Christa.Pacocha-205@fake.example.com",
-                        "nickname": "Christ the Wolverine",
-                        "associated_user_id": null,
-                        "gender_type_id": 2,
-                        "complete_name": "Pacocha Christa 87497",
-                        "year_guessed": false,
-                        "associated_user": null,
-                        "gender_type": {
-                            "id": 2,
-                            "code": "F",
-                            "label": "FEM",
-                            "long_label": "FEMALE",
-                            "alt_label": "FEMALE"
-                        }
-                    },
-                    "team_affiliation": {
-                        "id": 3,
-                        "number": "",
-                        "name": "STELLA AZZURRA MO",
-                        "compute_gogglecup": false,
-                        "team_id": 4,
-                        "season_id": 1,
-                        "autofilled": false
-                    },
-                    "disqualification_code_type": null
+                    "timing": "0'43\"71",
+                    "swimmer_name": "Pacocha Christa 87497",
+                    "swimmer_label": "Pacocha Christa 87497 (FEM, 1960)",
+                    "team_name": "Nobukoport Swimming Club ASD",
+                    "team_label": "Nobukoport Swimming Club ASD, Modena, Modena (IT)",
+                    "event_label": "50 BS",
+                    "category_label": "(2000/2001) M25",
+                    "category_code": "M25",
+                    "gender_code": "M"
                 },
                 {
                     "id": 19923,
@@ -206,44 +132,19 @@
                     "team_affiliation_id": 3,
                     "personal_best": true,
                     "season_type_best": false,
-                    "swimmer": {
-                        "id": 18,
-                        "last_name": "Baumbach",
-                        "first_name": "Lina",
-                        "year_of_birth": 1993,
-                        "phone_mobile": null,
-                        "phone_number": null,
-                        "e_mail": "Lina.Baumbach-67@fake.example.org",
-                        "nickname": "Lina the Fox",
-                        "associated_user_id": null,
-                        "gender_type_id": 2,
-                        "complete_name": "Baumbach Lina 75778",
-                        "year_guessed": false,
-                        "associated_user": null,
-                        "gender_type": {
-                            "id": 2,
-                            "code": "F",
-                            "label": "FEM",
-                            "long_label": "FEMALE",
-                            "alt_label": "FEMALE"
-                        }
-                    },
-                    "team_affiliation": {
-                        "id": 3,
-                        "number": "",
-                        "name": "STELLA AZZURRA MO",
-                        "compute_gogglecup": false,
-                        "team_id": 4,
-                        "season_id": 1,
-                        "autofilled": false
-                    },
-                    "disqualification_code_type": null
+                    "timing": "0'37\"80",
+                    "swimmer_name": "Baumbach Lina 75778",
+                    "swimmer_label": "Baumbach Lina 75778 (FEM, 1993)",
+                    "team_name": "Nobukoport Swimming Club ASD",
+                    "team_label": "Nobukoport Swimming Club ASD, Modena, Modena (IT)",
+                    "event_label": "50 BS",
+                    "category_label": "(2000/2001) M25",
+                    "category_code": "M25",
+                    "gender_code": "M"
                 },
-
-                // ...Remaining individual results...
+                // ...Remaining MIRs...
             ]
         }
-
 
 ### find [GET]
 The MeetingProgram instance matching the specified `id` returned as JSON.

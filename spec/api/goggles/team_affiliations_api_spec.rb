@@ -9,15 +9,6 @@ RSpec.describe Goggles::TeamAffiliationsAPI do
   include APISessionHelpers
 
   let(:api_user) { FactoryBot.create(:user) }
-  let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
-  let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
-  #-- -------------------------------------------------------------------------
-  #++
-
-  let(:crud_user) { FactoryBot.create(:user) }
-  #-- -------------------------------------------------------------------------
-  #++
-
   let(:crud_user) { FactoryBot.create(:user) }
   let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'TeamAffiliation') }
   let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
@@ -277,7 +268,7 @@ RSpec.describe Goggles::TeamAffiliationsAPI do
         it_behaves_like('successful single response without pagination links in headers')
 
         it 'returns a JSON array containing the single associated row' do
-          expect(response.body).to eq([fixture_row].to_json)
+          expect(response.body).to eq([fixture_row].map(&:to_hash).to_json)
         end
       end
     end

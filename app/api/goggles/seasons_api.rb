@@ -151,7 +151,7 @@ module Goggles
             params,
             %w[begin_date end_date season_type_id header_year]
           )
-        ).order('seasons.id DESC')
+        ).order('seasons.id DESC').map(&:to_hash)
       end
     end
   end

@@ -3,9 +3,8 @@
 module Goggles
   # = Goggles API v3: Lookup API for all subentities
   #
-  #   - version:  7-0.3.37
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
-  #   - build:    20211108
   #
   class LookupAPI < Grape::API
     helpers APIHelpers
@@ -76,7 +75,7 @@ module Goggles
           entity = lookup_entity_class_for(params['entity_name'].to_s)
           return [] if entity.nil? || !entity&.new.is_a?(Localizable)
 
-          entity_rows = entity.all.map { |row| row.lookup_attributes(params['locale'] || 'it') }
+          entity_rows = entity.all.map { |row| row.minimal_attributes(params['locale'] || 'it') }
           return entity_rows if params['name'].blank? && params['long_label'].blank?
 
           # Filter out results if a query parameter was specified:

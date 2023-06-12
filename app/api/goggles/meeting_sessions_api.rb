@@ -170,7 +170,7 @@ module Goggles
           GogglesDb::MeetingSession.where(
             filtering_hash_for(params, %w[scheduled_date meeting_id autofilled])
           ).order('meeting_sessions.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

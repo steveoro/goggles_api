@@ -3,7 +3,7 @@
 module Goggles
   # = Goggles API v3: TeamAffiliation API Grape controller
   #
-  #   - version:  7-0.4.06
+  #   - version:  7-0.5.12
   #   - author:   Steve A.
   #   - build:    20210906
   #
@@ -91,6 +91,9 @@ module Goggles
         api_user = check_jwt_session
         reject_unless_authorized_admin(api_user)
 
+        # Set fallback defaults:
+        params['name'] ||= GogglesDb::Team.find_by(id: params['team_id']).name
+        params['number'] ||= '?'
         new_row = GogglesDb::TeamAffiliation.create(params)
         unless new_row.valid?
           error!(
@@ -143,7 +146,7 @@ module Goggles
           filtering_fulltext_search_for(GogglesDb::TeamAffiliation, params['name'])
             .where(filtering_hash_for(params, %w[team_id season_id number compute_gogglecup]))
             .order('team_affiliations.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

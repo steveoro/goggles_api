@@ -179,7 +179,7 @@ module Goggles
           GogglesDb::MeetingRelaySwimmer.where(
             filtering_hash_for(params, %w[meeting_relay_result_id swimmer_id badge_id stroke_type_id relay_order])
           ).order('meeting_relay_swimmers.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

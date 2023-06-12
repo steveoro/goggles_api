@@ -79,6 +79,7 @@ group :development, :test do
   gem 'letter_opener'
   gem 'pry'
   gem 'rspec'
+  gem 'rspec_pacman_formatter'
   gem 'rspec-rails'
 end
 

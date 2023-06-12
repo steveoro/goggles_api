@@ -226,7 +226,7 @@ module Goggles
         results = results.where(season_id: possible_seasons.pluck(:id)) if possible_seasons&.any?
         results = [] if possible_swimmers.empty? && possible_teams.empty? && possible_seasons.to_a.empty?
 
-        paginate results.to_a.map(&:minimal_attributes)
+        paginate(results).map(&:to_hash)
       end
     end
   end

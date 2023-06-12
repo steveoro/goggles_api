@@ -18,15 +18,6 @@ RSpec.describe Goggles::MeetingReservationsAPI do
     FactoryBot.create(:meeting_event_reservation, meeting_event: mevent, meeting_reservation: fixture_row)
   end
   let(:mer_first) { fixture_row.meeting_event_reservations.first }
-  let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
-  let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'MeetingReservation') }
-  #-- -------------------------------------------------------------------------
-  #++
-
-  let(:crud_user) { FactoryBot.create(:user) }
-  #-- -------------------------------------------------------------------------
-  #++
-
   let(:crud_user) { FactoryBot.create(:user) }
   let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'MeetingReservation') }
   let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }

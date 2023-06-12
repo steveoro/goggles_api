@@ -204,7 +204,7 @@ module Goggles
         if params['select2_format'] == true
           select2_custom_format(results, ->(row) { "#{row.description} (#{row.code} - #{row.header_date})" })
         else
-          paginate(results)
+          paginate(results).map(&:to_hash)
         end
       end
     end

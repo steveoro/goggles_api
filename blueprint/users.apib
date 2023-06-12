@@ -16,13 +16,52 @@ to any other user row (unless authorized for CRUD on this entity).
             "created_at": "2013-10-23T17:10:00.000Z",
             "updated_at": "2020-02-09T18:17:29.000Z",
             // [...]
-            "email": "steve.alloro@not.an.actual.domain.com",
+            "email": "whatever@example.com",
             // [...]
             "last_name": "Alloro",
             "first_name": "Stefano",
             "year_of_birth": 1969,
             "jwt": "<valid JWT string>"
             // [...]
+            "display_label": "steve - whatever@example.com (Stefano Alloro, 1969)",
+            "short_label": "steve (Stefano Alloro)",
+
+            "swimmer": {
+                "id": 142,
+                "last_name": "ALLORO",
+                "first_name": "STEFANO",
+                "year_of_birth": 1969,
+                "phone_mobile": nil,
+                "phone_number": nil,
+                "e_mail": nil,
+                "nickname": "",
+                "associated_user_id": 1,
+                "gender_type_id": 1,
+                "complete_name": "ALLORO STEFANO",
+                "year_guessed": false,
+                "long_label": "ALLORO STEFANO (MAL, 1969)",
+                "display_label": "ALLORO STEFANO (MAL, 1969)",
+                "short_label": "ALLORO STEFANO (1969)"
+            },
+
+            "admin_grants": [
+                {
+                    "id": 1,
+                    "entity": nil,
+                    "user_id": 1
+                }
+            ],
+
+            "managed_affiliations": [
+                {
+                    "id": 56,
+                    "team_affiliation_id": 1331,
+                    "user_id": 1,
+                    "display_label": "🗣  steve - whatever@example.com (Stefano Alloro, 1969) ➡ FINA 2015: 👥 CSI NUOTO OBER FERRARI",
+                    "short_label": "🗣  steve (Stefano Alloro) ➡ FINA 2015: 👥 CSI NUOTO OBER FERRARI"
+                },
+                // [...]
+            ]
         }
 
 
@@ -139,6 +178,8 @@ All are optional (except `id`):
 | `description` | string | user description or complete name |
 | `year_of_birth` | integer | year of birth |
 | `swimmer_id` | integer | associated Swimmer ID |
+| `locked` | boolean | `true`/`false` to force-lock/unlock the account (user will still be able to request unlock automatically) |
+| `active` | boolean | `false` to force-deactivate the account (default value is `true`) |
 
 
 * * *

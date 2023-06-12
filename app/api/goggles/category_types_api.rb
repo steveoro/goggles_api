@@ -185,7 +185,7 @@ module Goggles
         if params['select2_format'] == true
           select2_custom_format(results, ->(row) { "#{row.code} (#{row.description})" })
         else
-          paginate(results)
+          paginate(results).map(&:to_hash)
         end
       end
 

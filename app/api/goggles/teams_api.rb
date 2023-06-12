@@ -155,7 +155,7 @@ module Goggles
         if params['select2_format'] == true
           select2_custom_format(results, ->(row) { "#{row.editable_name} (#{row.city&.name || '?'})" })
         else
-          paginate(results)
+          paginate(results).map(&:to_hash)
         end
       end
     end

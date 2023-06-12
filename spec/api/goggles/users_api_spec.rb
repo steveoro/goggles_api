@@ -109,6 +109,8 @@ RSpec.describe Goggles::UsersAPI do
         { first_name: new_user_values.first_name, last_name: new_user_values.last_name },
         { description: new_user_values.description },
         { year_of_birth: new_user_values.year_of_birth },
+        { locked: true },
+        { active: false },
         { swimmer_id: new_swimmer.id }
       ].sample
     end
@@ -132,7 +134,11 @@ RSpec.describe Goggles::UsersAPI do
         it 'updates the row' do
           updated_row = api_user.reload
           expected_changes.each do |key, value|
-            expect(updated_row.send(key)).to eq(value)
+            if (key == :locked) # user#locked => locked_at.present?
+              expect(updated_row.locked_at.present?).to eq(value)
+            else
+              expect(updated_row.send(key)).to eq(value)
+            end
           end
         end
       end
@@ -345,7 +351,7 @@ RSpec.describe Goggles::UsersAPI do
         before { get(api_v3_users_path, params: { email: fixture_row.email }, headers: crud_headers) }
 
         it 'returns a JSON array containing the single associated row' do
-          expect(response.body).to eq([fixture_row].to_json)
+          expect(response.body).to eq([fixture_row].map(&:to_hash).to_json)
         end
 
         it_behaves_like('successful single response without pagination links in headers')

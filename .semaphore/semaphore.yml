@@ -63,7 +63,7 @@ blocks:
       prologue:
         commands:
           - sem-version ruby 2.7
-          - sem-service start mysql
+          - sem-service start mysql 5.7
           - bundle config set path 'vendor/bundle'
           - GIT_LFS_SKIP_SMUDGE=1 bundle install
           - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter

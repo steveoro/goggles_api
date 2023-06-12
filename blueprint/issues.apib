@@ -9,7 +9,7 @@ _**Admin-only group**_
 
         {
             "id": 10888,
-            "user_id": 316693,
+            "user_id": 1,
             "code": "3b",
             "req": "{\"swimmer_id\":233686}",
             "priority": 1,
@@ -17,6 +17,14 @@ _**Admin-only group**_
             "label": "Cambio nuotatore",
             "long_label": "Cambio nuotatore associato",
             "alt_label": "Cambio nuotatore"
+
+            "user": {
+                "id": 1,
+                "name": "steve",
+                "description": "Stefano Alloro",
+                "user_id": 142,
+                // [...]
+            }
         }
 
 
@@ -315,9 +323,9 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     | 1 | in review |
     | 2 | accepted/in process |
     | 3 | accepted/paused |
-    | 4 | sorted out & auto-deletable |
+    | 4 | sorted out & auto-deletable ("done") |
     | 5 | rejected/duplicate |
-    | 6 |  rejected/missing info or incomplete |
+    | 6 | rejected/missing info or incomplete |
 
 - `priority`
     | _value_ | _description_ |
@@ -658,6 +666,8 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
     + code: "3b" (string, optional) - issue code type (max 3 chars; see `create [POST]` Issue for details)
     + priority: 0 (number, optional) - request priority (0..3)
     + status: 0 (number, optional) - request status (processable: 0..3, solved/rejected: 4..6)
+    + processable: `true` (boolean, optional) - will select only the rows with a "processable" status (see above); default: no filtering
+    + done: `true` (boolean, optional) - will select only the rows with a "solved/done" status (see above); default: no filtering
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page

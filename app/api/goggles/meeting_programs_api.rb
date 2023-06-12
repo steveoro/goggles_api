@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingProgram API Grape controller
   #
-  #   - version:  7-0.4.06
+  #   - version:  7-0.5.05
   #   - author:   Steve A.
-  #   - build:    20210906
+  #   - build:    20230523
   #
   class MeetingProgramsAPI < Grape::API
     helpers APIHelpers
@@ -175,7 +175,7 @@ module Goggles
                                      ActiveRecord::Base.sanitize_sql_for_conditions(filtering_conditions)
                                    )
                                    .order('meeting_programs.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

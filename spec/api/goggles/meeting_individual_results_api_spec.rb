@@ -9,15 +9,6 @@ RSpec.describe Goggles::MeetingIndividualResultsAPI do
   include APISessionHelpers
 
   let(:api_user) { FactoryBot.create(:user) }
-  let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }
-  let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'MeetingIndividualResult') }
-  #-- -------------------------------------------------------------------------
-  #++
-
-  let(:crud_user) { FactoryBot.create(:user) }
-  #-- -------------------------------------------------------------------------
-  #++
-
   let(:crud_user) { FactoryBot.create(:user) }
   let(:crud_grant) { FactoryBot.create(:admin_grant, user: crud_user, entity: 'MeetingIndividualResult') }
   let(:crud_headers) { { 'Authorization' => "Bearer #{jwt_for_api_session(crud_user)}" } }

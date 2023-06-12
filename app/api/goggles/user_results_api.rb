@@ -212,7 +212,7 @@ module Goggles
             filtering_like_for(params, %w[description])
           )
           .order('user_results.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

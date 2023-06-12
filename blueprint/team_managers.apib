@@ -2,6 +2,10 @@
 
 _**Admin-only group**_
 
+Although for historical reasons this API group is named "TeamManagers", it's actually
+about the `ManagedAffiliation` model entity, which associates a user/"manager"
+to a specific `TeamAffiliation`.
+
 
 ## Team Manager details [/api/v3/team_manager/{id}]
 
@@ -9,53 +13,66 @@ _**Admin-only group**_
 
         {
             "id": 1,
-            "lock_version": 0,
-            "created_at": "2015-12-22T11:34:24.000Z",
-            "updated_at": "2015-12-22T11:34:24.000Z",
             "team_affiliation_id": 1539,
             "user_id": 2,
-            "display_label": "🗣 leega - leega@example.com (Marco Ligabue, 1971) ➡ FIN 2015/2016: 👥 CSI NUOTO OBER FERRARI",
-            "short_label": "🗣 leega (Marco Ligabue) ➡ FIN 2015/2016: 👥 CSI NUOTO OBER FERRARI",
+            "display_label": "🗣  leega - whatever@example.com (Marco Ligabue, 1971) ➡ FIN 2015/2016: 👥 CSI NUOTO OBER FERRARI",
+            "short_label": "🗣  leega (Marco Ligabue) ➡ FIN 2015/2016: 👥 CSI NUOTO OBER FERRARI",
             "manager": {
-            "id": 2,
-            "name": "leega",
-            "description": "Marco Ligabue",
-            "swimmer_id": 23,
-            "email": "leega@example.com",
-            "reset_password_token": null,
-            "reset_password_sent_at": null,
-            "remember_created_at": null,
-            "sign_in_count": 1366,
-            "current_sign_in_at": "2021-09-20T17:00:46.000Z",
-            "last_sign_in_at": "2021-09-20T17:00:46.000Z",
-            "current_sign_in_ip": "127.0.0.1",
-            "last_sign_in_ip": "127.0.0.1",
-            "confirmed_at": "2013-10-23T17:10:05.000Z",
-            "confirmation_sent_at": "2013-10-23T17:10:02.000Z",
-            "unconfirmed_email": null,
-            "failed_attempts": 0,
-            "unlock_token": null,
-            "locked_at": null,
-            "avatar_url": null,
-            "swimmer_level_type_id": null,
-            "coach_level_type_id": null,
-            "jwt": null,
-            "outstanding_goggle_score_bias": 800,
-            "outstanding_standard_score_bias": 800,
-            "last_name": "Ligabue",
-            "first_name": "Marco",
-            "year_of_birth": 1971,
-            "provider": null,
-            "uid": null
+                "id": 2,
+                "name": "leega",
+                "description": "Marco Ligabue",
+                "swimmer_id": 23,
+                "email": "whatever@example.com",
+                // ...remaining user/manager details...
+                "short_label": "leega (Marco Ligabue)"
             },
             "team_affiliation": {
-            "id": 1539,
-            "number": "EMI-001454",
-            "name": "CSI NUOTO OBER FERRARI",
-            "compute_gogglecup": true,
-            "team_id": 1,
-            "season_id": 152,
-            "autofilled": false
+                "id": 1539,
+                "number": "EMI-001454",
+                "name": "CSI NUOTO OBER FERRARI",
+                "compute_gogglecup": true,
+                "team_id": 1,
+                "season_id": 152,
+                "autofilled": false,
+                "display_label": "MASTER FIN 2015/2016: 👥 Lake Ramiro Swimming Club ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                "short_label": "FIN 2015/2016: 👥 CSI NUOTO OBER FERRARI"
+            },
+
+            "team": {
+                "id": 1,
+                "name": "Lake Ramiro Swimming Club ASD",
+                "editable_name": "Lake Ramiro Swimming Club ASD",
+                "address": "9038 Littel Lights",
+                "zip": "028088",
+                "phone_mobile": "265-752-0508 x022",
+                "phone_number": "493-278-0409",
+                "fax_number": null,
+                "e_mail": "zenaida@example.net",
+                "contact_name": "Dede Sipes",
+                "notes": "Meatloaf rump pork ribeye shank sirloin venison tongue.",
+                "name_variations": null,
+                "city_id": 37,
+                "home_page_url": "http://watsica.us",
+                "display_label": "Lake Ramiro Swimming Club ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                "short_label": "Lake Ramiro Swimming Club ASD, Reggio nell Emilia",
+                "city_name": "Reggio nell Emilia, Reggio Emilia (IT)"
+            },
+
+            "season": {
+                "id": 152,
+                "description": "Circuito italiano supermaster FIN 2015/2016",
+                "begin_date": "2015-10-01",
+                "end_date": "2016-09-30",
+                "season_type_id": 1,
+                "header_year": "2015/2016",
+                "edition": 15,
+                "edition_type_id": 5,
+                "timing_type_id": 3,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": "20.0",
+                "display_label": "MASTER FIN 2015/2016",
+                "short_label": "FIN 2015/2016"
             }
         }
 

@@ -207,7 +207,7 @@ module Goggles
           GogglesDb::MeetingRelayResult.where(
             filtering_hash_for(params, %w[meeting_program_id team_affiliation_id team_id])
           ).order('meeting_relay_results.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

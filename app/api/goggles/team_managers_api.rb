@@ -184,7 +184,7 @@ module Goggles
                                                  like_condition
                                                )
                                                .order('managed_affiliations.id DESC')
-        paginate(results)
+        paginate(results).map(&:to_hash)
       end
     end
   end

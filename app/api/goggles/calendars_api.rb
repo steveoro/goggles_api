@@ -202,7 +202,7 @@ module Goggles
           GogglesDb::Calendar.where(
             filtering_hash_for(params, %w[season_id])
           ).order('calendars.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

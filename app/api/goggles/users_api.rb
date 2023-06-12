@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: User API Grape controller
   #
-  #   - version:  7-0.4.06
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
-  #   - build:    20210906
+  #   - build:    20230525
   #
   # Users should read or update just their data and should *not* have any access to
   # any other user row (unless authorized for CRUD on this entity).
@@ -51,6 +51,8 @@ module Goggles
         optional :description, type: String, desc: 'optional: User description - usually, first_name + blank + last_name'
         optional :year_of_birth, type: Integer, desc: 'optional: year of birth'
         optional :swimmer_id, type: Integer, desc: 'optional: associated Swimmer ID'
+        optional :locked, type: Boolean, desc: 'optional: true|false to force-lock the account (user will still be able to request unlock automatically)'
+        optional :active, type: Boolean, desc: 'optional: true|false to force-deactivate the account'
       end
       route_param :id do
         put do
@@ -58,7 +60,11 @@ module Goggles
           reject_unless_authorized_for_crud_or_has_id(api_user, 'User', params['id'].to_i)
 
           user = GogglesDb::User.find_by(id: params['id'])
-          user&.update!(declared(params, include_missing: false))
+          # Special case for 'locked' toggle:
+          user.lock_access!(send_instructions: false) if user.present? && params['locked'] == true
+          user.unlock_access! if user.present? && params['locked'] == false
+          # Standard update for the rest:
+          user&.update!(declared(params.except('locked'), include_missing: false))
         end
       end
 
@@ -130,6 +136,7 @@ module Goggles
             %w[name first_name last_name description email]
           )
         ).order('users.id DESC')
+                                .map(&:to_hash)
       end
     end
   end

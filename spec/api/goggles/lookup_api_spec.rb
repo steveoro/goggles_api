@@ -55,7 +55,7 @@ RSpec.describe Goggles::LookupAPI do
       let(:data_domain) do
         # Search is actually implemented on the localizations, so we need to replicate it here:
         # (default locale is 'it')
-        entity_rows = GogglesDb::EventType.all.map { |row| row.lookup_attributes('it') }
+        entity_rows = GogglesDb::EventType.all.map { |row| row.minimal_attributes('it') }
         entity_rows.select { |row| row['long_label'] =~ Regexp.new(search_param, Regexp::IGNORECASE) }
       end
       let(:expected_row_count) { data_domain.count }

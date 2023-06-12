@@ -5,55 +5,72 @@
 + Model (application/json)
 
         {
-            "id": 7078,
-            "header_date": "2021-06-19",
+            "id": 7346,
+            "header_date": "2021-08-19",
             "header_year": "2021/2022",
             "code": "workshop-1",
-            "description": "DDS Creolachester Workshop",
-            "edition": 6,
-            "notes": "Cupiditate mollitia fugiat nisi beatae.",
-            "user_id": 179871,
-            "team_id": 169194,
-            "season_id": 296497,
-            "edition_type_id": 4,
-            "timing_type_id": 1,
+            "description": "DVM North Violaville Workshop",
+            "edition": 40,
+            "notes": "Accusamus eaque aperiam perspiciatis deserunt aut.",
+            "user_id": 3,
+            "team_id": 170551,
+            "season_id": 295035,
+            "edition_type_id": 1,
+            "timing_type_id": 3,
             "swimming_pool_id": null,
-            "autofilled": true,
-            "off_season": true,
-            "confirmed": true,
+            "autofilled": false,
+            "off_season": false,
+            "confirmed": false,
             "cancelled": false,
             "pb_acquired": false,
             "read_only": false,
-            "edition_label": "2021/2022",
+            "display_label": "MASTER UISP: 40° North Violaville Workshop",
+            "short_label": "40° North Violaville",
+            "edition_label": "40°",
+            "meeting_date": "2021-07-07",
 
+            "user": {
+                "id": 3,
+                "name": "user-id-3",
+                "description": "user Id-3",
+                "swimmer_id": null,
+                // ...Remaining user details...
+            },
+
+            "team": {
+                "id": 170551,
+                "name": "Mannland Swimming Club 2021",
+                "editable_name": "Mannland Swimming Club 2021",
+                "address": "1610 Rodriguez Landing",
+                "zip": "007206",
+                "phone_mobile": "(232)692-7530",
+                "phone_number": "(476)590-2357 x0946",
+                "fax_number": null,
+                "e_mail": "adriana@example.com",
+                "contact_name": "Alejandro Crooks",
+                "notes": "Pork loin pork belly brisket ball tip frankfurter.",
+                "name_variations": null,
+                "city_id": 288238,
+                "home_page_url": "http://pollich.us",
+                "display_label": "Mannland Swimming Club 2021, Mannland,  (PG)",
+                "short_label": "Mannland Swimming Club 2021, Mannland",
+                "city_name": "Mannland,  (PG)"
+            },
             "season": {
-                "id": 296497,
-                "description": "Fake Season 1/952",
-                "begin_date": "2021-04-21",
-                "end_date": "2022-01-21",
+                "id": 295035,
+                "description": "Fake Season 1/195",
+                "begin_date": "2021-06-07",
+                "end_date": "2022-03-07",
                 "season_type_id": 3,
                 "header_year": "2021/2022",
-                "edition": 952,
-                "edition_type_id": 5,
-                "timing_type_id": 2,
+                "edition": 195,
+                "edition_type_id": 3,
+                "timing_type_id": 1,
                 "rules": null,
                 "individual_rank": true,
-                "badge_fee": null
-            },
-
-            "edition_type": {
-                "id": 4,
-                "code": "A",
-                "label": "YEA",
-                "long_label": "YEAR",
-                "alt_label": "YEA"
-            },
-            "timing_type": {
-                "id": 1,
-                "code": "M",
-                "label": "MAN",
-                "long_label": "MANUAL",
-                "alt_label": "MAN"
+                "badge_fee": null,
+                "display_label": "MASTER UISP 2021/2022",
+                "short_label": "UISP 2021/2022"
             },
             "season_type": {
                 "id": 3,
@@ -69,55 +86,84 @@
                 "short_name": "UISP"
             },
 
-            "user": {
-                "id": 179871,
-                "name": "cleveland.reinger-9989",
-                "description": "Cleveland Reinger",
-                "swimmer_id": null,
-                "email": "cleveland.reinger-9989@fake.example.net",
-                // (...)
-                "swimmer_level_type_id": 11,
-                "coach_level_type_id": null,
-                "outstanding_goggle_score_bias": 800,
-                "outstanding_standard_score_bias": 800,
-                "last_name": "Reinger",
-                "first_name": "Cleveland",
-                "year_of_birth": 1996,
-                "provider": null,
-                "uid": null
+            "edition_type": {
+                "id": 1,
+                "code": "O",
+                "label": "ORD",
+                "long_label": "ORDINAL",
+                "alt_label": "ORD"
+            },
+            "timing_type": {
+                "id": 3,
+                "code": "A",
+                "label": "AUT",
+                "long_label": "AUTOMATIC",
+                "alt_label": "AUT"
             },
 
-            "home_team": {
-                // (The node is named 'home_team', but the instance is a Team)
-                "id": 169194,
-                "name": "Lake Antonettemouth Swimming Club 2021",
-                "editable_name": "Lake Antonettemouth Swimming Club 2021",
-                "address": "287 Kristyn Brook",
-                "zip": "008723",
-                "phone_mobile": "436-825-5041 x513",
-                "phone_number": "268.799.5715",
-                "fax_number": null,
-                "e_mail": "florencia@example.net",
-                "contact_name": "Kaye Stiedemann",
-                "notes": "Ground round shank pastrami ham hock ham pork turkey prosciutto.",
-                "name_variations": null,
-                "city_id": 286107,
-                "home_page_url": null,
-                "city": {
-                    "id": 286107,
-                    "name": "Lake Antonettemouth",
-                    "zip": null,
-                    "area": "Lefkosia",
-                    "country": "Cyprus",
-                    "country_code": "CY",
-                    "latitude": "",
-                    "longitude": "",
-                    "plus_code": null,
-                    "region": "?",
-                    "area_code": "01"
-                }
-            },
-            "swimming_pool": null
+            "user_results": [
+                {
+                    "id": 6032,
+                    "standard_points": "850.0",
+                    "meeting_points": "850.0",
+                    "rank": 13,
+                    "disqualified": false,
+                    "minutes": 0,
+                    "seconds": 50,
+                    "hundredths": 6,
+                    "swimmer_id": 187661,
+                    "category_type_id": 123304,
+                    "pool_type_id": 2,
+                    "user_id": 3,
+                    "disqualification_code_type_id": null,
+                    "description": "Sawayn Shawanda 97103, 400SL",
+                    "event_date": "2021-07-07",
+                    "reaction_time": "0.77",
+                    "event_type_id": 5,
+                    "user_workshop_id": 7346,
+                    "swimming_pool_id": 117603,
+                    "standard_timing_id": null,
+                    "timing": "0'50\"06",
+                    "swimmer_name": "Sawayn Shawanda 97103",
+                    "swimmer_label": "Sawayn Shawanda 97103 (FEM, 1966)",
+                    "event_label": "400 FS",
+                    "category_label": "(2020/2021) M50",
+                    "category_code": "M50",
+                    "gender_code": "F"
+                },
+
+                {
+                    "id": 6033,
+                    "standard_points": "400.0",
+                    "meeting_points": "400.0",
+                    "rank": 36,
+                    "disqualified": true,
+                    "minutes": 0,
+                    "seconds": 57,
+                    "hundredths": 22,
+                    "swimmer_id": 187662,
+                    "category_type_id": 938,
+                    "pool_type_id": 2,
+                    "user_id": 3,
+                    "disqualification_code_type_id": 13,
+                    "description": "Sauer Sulema 12071, 50SL",
+                    "event_date": "2021-07-07",
+                    "reaction_time": "0.47",
+                    "event_type_id": 2,
+                    "user_workshop_id": 7346,
+                    "swimming_pool_id": 117604,
+                    "standard_timing_id": null,
+                    "timing": "0'57\"22",
+                    "swimmer_name": "Sauer Sulema 12071",
+                    "swimmer_label": "Sauer Sulema 12071 (FEM, 2000)",
+                    "event_label": "50 FS",
+                    "category_label": "(2016) M40",
+                    "category_code": "M40",
+                    "gender_code": "F"
+                },
+
+                // ...Remaining User results...
+            ]
         }
 
 

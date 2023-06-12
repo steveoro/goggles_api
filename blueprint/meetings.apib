@@ -4,287 +4,176 @@
 
 + Model (application/json)
 
-            {
+        {
+            "id": 1,
+            "description": "3A PROVA REGIONALE CSI",
+            "entry_deadline": null,
+            "warm_up_pool": false,
+            "allows_under25": false,
+            "reference_phone": null,
+            "reference_e_mail": null,
+            "reference_name": null,
+            "notes": null,
+            "manifest": false,
+            "startlist": false,
+            "results_acquired": true,
+            "max_individual_events": 2,
+            "configuration_file": "",
+            "edition": 3,
+            "season_id": 1,
+            "autofilled": false,
+            "header_date": "2001-04-01",
+            "code": "csiprova3",
+            "header_year": "2000/2001",
+            "max_individual_events_per_session": 0,
+            "off_season": false,
+            "edition_type_id": 5,
+            "timing_type_id": 2,
+            "individual_score_computation_type_id": 3,
+            "relay_score_computation_type_id": 15,
+            "team_score_computation_type_id": 14,
+            "meeting_score_computation_type_id": 7,
+            "manifest_body": null,
+            "confirmed": true,
+            "tweeted": false,
+            "posted": false,
+            "cancelled": false,
+            "pb_acquired": true,
+            "home_team_id": null,
+            "read_only": false,
+            "meeting_fee": null,
+            "event_fee": null,
+            "relay_fee": null,
+            "tags_by_user_list": null,
+            "tags_by_team_list": null,
+            "display_label": "MASTER CSI: 3° PROVA REGIONALE 2000/2001",
+            "short_label": "3° PROVA REGIONALE 2000/2001",
+            "edition_label": "3°",
+            "meeting_date": "2001-04-01",
+
+            "season": {
                 "id": 1,
-                "lock_version": 0,
-                "description": "3A PROVA REGIONALE CSI",
-                "entry_deadline": null,
-                "warm_up_pool": false,
-                "allows_under25": false,
-                "reference_phone": "",
-                "reference_e_mail": "",
-                "reference_name": "",
-                "notes": "",
-                "manifest": false,
-                "startlist": false,
-                "results_acquired": true,
-                "max_individual_events": 2,
-                "configuration_file": "",
-                "edition": 0,
-                "season_id": 1,
-                "created_at": "2014-10-19T00:00:00.000Z",
-                "updated_at": "2014-10-19T00:00:00.000Z",
-                "autofilled": false,
-                "header_date": "2001-04-01",
-                "code": "csiprova3",
+                "description": "Circuito Regionale Emilia master CSI 2000/2001",
+                "begin_date": "2000-09-01",
+                "end_date": "2001-06-30",
+                "season_type_id": 2,
                 "header_year": "2000/2001",
-                "max_individual_events_per_session": 0,
-                "off_season": false,
+                "edition": 1,
                 "edition_type_id": 5,
                 "timing_type_id": 2,
-                "individual_score_computation_type_id": 3,
-                "relay_score_computation_type_id": 15,
-                "team_score_computation_type_id": 14,
-                "meeting_score_computation_type_id": 7,
-                "manifest_body": null,
-                "confirmed": true,
-                "tweeted": false,
-                "posted": false,
-                "cancelled": false,
-                "pb_acquired": true,
-                "home_team_id": null,
-                "read_only": false,
-                "meeting_fee": null,
-                "event_fee": null,
-                "relay_fee": null,
-                "display_label": "MASTER CSI: 3A PROVA REGIONALE CSI 2000/2001",
-                "short_label": "3 A Prova 2000/2001",
-                "edition_label": "2000/2001",
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": null,
+                "display_label": "MASTER CSI 2000/2001",
+                "short_label": "CSI 2000/2001"
+            },
+            "season_type": {
+                "id": 2,
+                "code": "MASCSI",
+                "description": "CIRCUITO ITALIANO MASTER CSI",
+                "short_name": "MASTER CSI",
+                "federation_type_id": 2
+            },
+            "federation_type": {
+                "id": 2,
+                "code": "CSI",
+                "description": "CENTRO SPORTIVO ITALIANO",
+                "short_name": "CSI"
+            },
+            "edition_type": {
+                "id": 5,
+                "code": "S",
+                "label": "SEA",
+                "long_label": "SEASON",
+                "alt_label": "SEA"
+            },
+            "timing_type": {
+                "id": 2,
+                "code": "S",
+                "label": "SEM",
+                "long_label": "SEMIAUTOMATIC",
+                "alt_label": "SEM"
+            },
 
-                "season": {
-                    "id": 1,
-                    "description": "Circuito Regionale Emilia master CSI 2000/2001",
-                    "begin_date": "2000-09-01",
-                    "end_date": "2001-06-30",
-                    "season_type_id": 2,
-                    "header_year": "2000/2001",
-                    "edition": 1,
-                    "edition_type_id": 5,
-                    "timing_type_id": 2,
-                    "rules": null,
-                    "individual_rank": true,
-                    "badge_fee": null
-                },
-                "edition_type": {
-                    "id": 5,
-                    "code": "S",
-                    "label": "SEA",
-                    "long_label": "SEASON",
-                    "alt_label": "SEA"
-                },
-                "timing_type": {
-                    "id": 2,
-                    "code": "S",
-                    "label": "SEM",
-                    "long_label": "SEMIAUTOMATIC",
-                    "alt_label": "SEM"
-                },
-                "season_type": {
-                    "id": 2,
-                    "code": "MASCSI",
-                    "description": "CIRCUITO ITALIANO MASTER CSI",
-                    "short_name": "MASTER CSI",
-                    "federation_type_id": 2,
-                    "federation_type": {
-                        "id": 2,
-                        "lock_version": 0,
-                        "code": "CSI",
-                        "description": "CENTRO SPORTIVO ITALIANO",
-                        "short_name": "CSI",
-                        "created_at": "2014-10-19T00:00:00.000Z",
-                        "updated_at": "2014-10-19T00:00:00.000Z"
-                    }
-                },
-                "federation_type": {
-                    "id": 2,
-                    "code": "CSI",
-                    "description": "CENTRO SPORTIVO ITALIANO",
-                    "short_name": "CSI"
-                },
-                "meeting_sessions": [
-                    {
-                        "id": 1,
-                        "session_order": 1,
-                        "scheduled_date": "2001-04-01",
-                        "warm_up_time": "2000-01-01T00:00:00.000Z",
-                        "begin_time": "2000-01-01T00:00:00.000Z",
-                        "notes": "",
-                        "meeting_id": 1,
-                        "swimming_pool_id": 5,
-                        "description": "FINALI",
-                        "autofilled": false,
-                        "day_part_type_id": null
-                    }
-                ],
-                "meeting_events": [
-                    // Event 1:
-                    {
-                        "id": 1230,
-                        "event_order": 1,
-                        "begin_time": "2000-01-01T00:00:00.000Z",
-                        "out_of_race": false,
-                        "autofilled": false,
-                        "notes": null,
-                        "meeting_session_id": 1,
-                        "event_type_id": 19,
-                        "heat_type_id": 3,
-                        "split_gender_start_list": true,
-                        "split_category_start_list": false,
-                        "event_type": {
-                            "id": 19,
-                            "code": "50RA",
-                            "length_in_meters": 50,
-                            "relay": false,
-                            "stroke_type_id": 4,
-                            "style_order": 19,
-                            "mixed_gender": false,
-                            "partecipants": 1,
-                            "phases": 1,
-                            "phase_length_in_meters": 50,
-                            "label": "50 BS",
-                            "long_label": "50 BREASTROKE",
-                            "alt_label": "50 BS"
-                        },
-                        "pool_type": {
-                            "id": 1,
-                            "code": "25",
-                            "length_in_meters": 25,
-                            "eventable": true,
-                            "label": "25 M",
-                            "long_label": "25 METERS",
-                            "alt_label": "25 M"
-                        },
-                        "stroke_type": {
-                            "id": 4,
-                            "code": "RA",
-                            "eventable": true,
-                            "label": "BR",
-                            "long_label": "BREASTROKE",
-                            "alt_label": "BS"
-                        },
-                        "heat_type": {
-                            "id": 3,
-                            "code": "F",
-                            "default": false,
-                            "label": "FN",
-                            "long_label": "FINALS",
-                            "alt_label": "FN"
-                        }
-                    },
+            "meeting_sessions": [
+                {
+                "id": 1,
+                "session_order": 1,
+                "scheduled_date": "2001-04-01",
+                "warm_up_time": "2000-01-01T00:00:00.000Z",
+                "begin_time": "2000-01-01T00:00:00.000Z",
+                "notes": "",
+                "meeting_id": 1,
+                "swimming_pool_id": 5,
+                "description": "FINALI",
+                "autofilled": false,
+                "day_part_type_id": null
+                }
+            ],
 
-                    // Event 2:
-                    {
-                        "id": 1231,
-                        "event_order": 2,
-                        "begin_time": "2000-01-01T00:00:00.000Z",
-                        "out_of_race": false,
-                        "autofilled": false,
-                        "notes": null,
-                        "meeting_session_id": 1,
-                        "event_type_id": 15,
-                        "heat_type_id": 3,
-                        "split_gender_start_list": true,
-                        "split_category_start_list": false,
-                        "event_type": {
-                            "id": 15,
-                            "code": "50DO",
-                            "length_in_meters": 50,
-                            "relay": false,
-                            "stroke_type_id": 3,
-                            "style_order": 15,
-                            "mixed_gender": false,
-                            "partecipants": 1,
-                            "phases": 1,
-                            "phase_length_in_meters": 50,
-                            "label": "50 BK",
-                            "long_label": "50 BACKSTROKE",
-                            "alt_label": "50 BK"
-                        },
-                        "pool_type": {
-                            "id": 1,
-                            "code": "25",
-                            "length_in_meters": 25,
-                            "eventable": true,
-                            "label": "25 M",
-                            "long_label": "25 METERS",
-                            "alt_label": "25 M"
-                        },
-                        "stroke_type": {
-                            "id": 3,
-                            "code": "DO",
-                            "eventable": true,
-                            "label": "BK",
-                            "long_label": "BACKSTROKE",
-                            "alt_label": "BA"
-                        },
-                        "heat_type": {
-                            "id": 3,
-                            "code": "F",
-                            "default": false,
-                            "label": "FN",
-                            "long_label": "FINALS",
-                            "alt_label": "FN"
-                        }
-                    },
-
-                    // Event 3:
-                    {
-                        "id": 1232,
-                        "event_order": 3,
-                        "begin_time": "2000-01-01T00:00:00.000Z",
-                        "out_of_race": false,
-                        "autofilled": false,
-                        "notes": null,
-                        "meeting_session_id": 1,
-                        "event_type_id": 11,
-                        "heat_type_id": 3,
-                        "split_gender_start_list": true,
-                        "split_category_start_list": false,
-                        "event_type": {
-                            "id": 11,
-                            "code": "50FA",
-                            "length_in_meters": 50,
-                            "relay": false,
-                            "stroke_type_id": 2,
-                            "style_order": 11,
-                            "mixed_gender": false,
-                            "partecipants": 1,
-                            "phases": 1,
-                            "phase_length_in_meters": 50,
-                            "label": "50 BF",
-                            "long_label": "50 BUTTERFLY",
-                            "alt_label": "50 BF"
-                        },
-                        "pool_type": {
-                            "id": 1,
-                            "code": "25",
-                            "length_in_meters": 25,
-                            "eventable": true,
-                            "label": "25 M",
-                            "long_label": "25 METERS",
-                            "alt_label": "25 M"
-                        },
-                        "stroke_type": {
-                            "id": 2,
-                            "code": "FA",
-                            "eventable": true,
-                            "label": "BT",
-                            "long_label": "BUTTERFLY",
-                            "alt_label": "BU"
-                        },
-                        "heat_type": {
-                            "id": 3,
-                            "code": "F",
-                            "default": false,
-                            "label": "FN",
-                            "long_label": "FINALS",
-                            "alt_label": "FN"
-                        }
-                    },
-
-                    // [...More event definitions...]
-                ]
-            }
+            "meeting_events": [
+                {
+                    "id": 1230,
+                    "event_order": 1,
+                    "begin_time": "2000-01-01T00:00:00.000Z",
+                    "out_of_race": false,
+                    "autofilled": false,
+                    "notes": null,
+                    "meeting_session_id": 1,
+                    "event_type_id": 19,
+                    "heat_type_id": 3,
+                    "split_gender_start_list": true,
+                    "split_category_start_list": false,
+                    "display_label": "3° PROVA REGIONALE 2000/2001 (25 M): 1. 50 BS",
+                    "short_label": "50 BS"
+                },
+                {
+                    "id": 1231,
+                    "event_order": 2,
+                    "begin_time": "2000-01-01T00:00:00.000Z",
+                    "out_of_race": false,
+                    "autofilled": false,
+                    "notes": null,
+                    "meeting_session_id": 1,
+                    "event_type_id": 15,
+                    "heat_type_id": 3,
+                    "split_gender_start_list": true,
+                    "split_category_start_list": false,
+                    "display_label": "3° PROVA REGIONALE 2000/2001 (25 M): 2. 50 BK",
+                    "short_label": "50 BK"
+                },
+                {
+                    "id": 1232,
+                    "event_order": 3,
+                    "begin_time": "2000-01-01T00:00:00.000Z",
+                    "out_of_race": false,
+                    "autofilled": false,
+                    "notes": null,
+                    "meeting_session_id": 1,
+                    "event_type_id": 11,
+                    "heat_type_id": 3,
+                    "split_gender_start_list": true,
+                    "split_category_start_list": false,
+                    "display_label": "3° PROVA REGIONALE 2000/2001 (25 M): 3. 50 BF",
+                    "short_label": "50 BF"
+                },
+                {
+                    "id": 1233,
+                    "event_order": 4,
+                    "begin_time": "2000-01-01T00:00:00.000Z",
+                    "out_of_race": false,
+                    "autofilled": false,
+                    "notes": null,
+                    "meeting_session_id": 1,
+                    "event_type_id": 22,
+                    "heat_type_id": 3,
+                    "split_gender_start_list": true,
+                    "split_category_start_list": false,
+                    "display_label": "3° PROVA REGIONALE 2000/2001 (25 M): 4. 100 IM",
+                    "short_label": "100 IM"
+                }
+            ]
+        }
 
 
 ## find [GET]

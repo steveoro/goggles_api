@@ -166,7 +166,7 @@ module Goggles
           GogglesDb::BadgePayment.where(filtering_hash_for(params, %w[user_id badge_id manual]))
                                  .where(filtering_for_single_parameter('payment_date >= ?', params, 'from_date'))
                                  .order('badge_payments.id DESC')
-        )
+        ).map(&:to_hash)
       end
     end
   end

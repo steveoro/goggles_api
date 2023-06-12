@@ -219,7 +219,7 @@ module Goggles
           GogglesDb::ImportQueue.where(
             filtering_hash_for(params, %w[user_id uid process_runs requested_depth solvable_depth done])
           )
-        )
+        ).map(&:to_hash)
       end
     end
   end

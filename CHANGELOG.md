@@ -2,6 +2,8 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.5.12** [Steve A.] re-sync w/ base engine; minor specs & blueprints updates
+- **0.5.05** [Steve A.] re-sync w/ base engine; now all API list methods respond with proper to_hash methods instead of the un-overridden to_json default; added locked & active parameters to /user
 - **0.5.03** [Steve A.] resync w/ base engine: slight change in ImportQueueDecorator so that #chrono_delta_label can be called also on master chrono rows
 - **0.5.01** [Steve A.] resync w/ base engine; added issues API; updated Team manager API w/ support for more filtering (Team & Season); bundle security update
 - **0.4.21** [Steve A.] resync w/ base engine

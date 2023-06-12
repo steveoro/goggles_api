@@ -324,7 +324,7 @@ RSpec.describe Goggles::BadgesAPI do
         it_behaves_like('successful single response without pagination links in headers')
 
         it 'returns a JSON array containing the single associated row' do
-          expect(response.body).to eq([fixture_row].to_json)
+          expect(response.body).to eq([fixture_row].map(&:to_hash).to_json)
         end
       end
     end

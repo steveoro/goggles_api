@@ -202,7 +202,7 @@ module Goggles
                     []
                   end
 
-        paginate results
+        paginate(results).map(&:to_hash)
       end
     end
   end

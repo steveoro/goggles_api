@@ -37,7 +37,7 @@ module Goggles
           GogglesDb::AdminGrant.where(
             filtering_hash_for(params, %w[user_id entity])
           )
-        )
+        ).map(&:to_hash)
       end
     end
   end

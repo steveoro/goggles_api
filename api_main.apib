@@ -6,7 +6,7 @@ Backend internal API for the Goggles Engine, core7.
 
     | _Framework_ | _API_ | _App version_ | _DB structure_ | _latest update_ |
     | --- | --- | --- | --- | --- |
-    | `core7` | `v3` | 7-0.5.01 | 1.98.0 | 20230404 |
+    | `core7` | `v3` | 7-0.5.10 | 1.99.0 | 20230530 |
 
 _Previous legacy versions are deprecated and subseeded by this._
 
@@ -43,14 +43,11 @@ conceeded and available with some kind of grant.
 ## Details retrieval requests
 
 Whenever a _dedicated_ endpoint exists for an entity (i.e.: `GET /<entity_name>/<id>`),
-retrieving that specific single row with a `GET .../{id}` will yield the most fine-grained structure
-detail available.
+retrieving that specific single row with a `GET .../{id}` may yield a more fine-grained structure
+as many multiple association rows are condensed and summarized in detail (depending on the depth level).
 
-For ease of usage, most of the associated details nested in each sub-entity are included even when this
-yields a bit of redundancy.
-
-Depending of the depth level, some of the details may be summarized or not reported at all. To obtain the
-highest level of detail, simply request the entity at the correct depth level.
+For ease of usage, most of the associated details nested in each sub-entity are included anyway
+even when this yields a bit of redundancy.
 
 (For example, the list of associated events included in a MeetingProgram row detail response will contain inevitably
  less associations and details than those obtained by retrieving each specific meeting event or result one by one.)

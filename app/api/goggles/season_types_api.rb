@@ -137,7 +137,7 @@ module Goggles
           ).where(
             filtering_like_for(params, %w[code short_name description])
           )
-        )
+        ).map(&:to_hash)
       end
     end
   end

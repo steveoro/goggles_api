@@ -127,7 +127,7 @@ module Goggles
           GogglesDb::FederationType.where(
             filtering_like_for(params, %w[code short_name group_name description])
           )
-        )
+        ).map(&:to_hash)
       end
     end
   end

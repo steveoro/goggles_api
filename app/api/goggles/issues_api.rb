@@ -148,6 +148,8 @@ module Goggles
         optional :code, type: String, desc: 'optional: issue code type (max 3 chars; see [goggles_db] Issue model for details)'
         optional :priority, type: Integer, desc: 'optional: request priority (0..3)'
         optional :status, type: Integer, desc: 'optional: request status (processable: 0..3, solved/rejected: 4..6)'
+        optional :processable, type: Boolean, desc: 'optional: when +true+, returns only rows with \'processable\' status (0..3)'
+        optional :done, type: Boolean, desc: 'optional: when +true+, returns only rows with status (4..6)'
         use :pagination
       end
       paginate
@@ -155,10 +157,10 @@ module Goggles
         reject_unless_authorized_admin(check_jwt_session)
 
         paginate(
-          GogglesDb::Issue.where(
-            filtering_hash_for(params, %w[user_id code priority status])
-          )
-        )
+          GogglesDb::Issue.where(filtering_hash_for(params, %w[user_id code priority status]))
+                          .where(params[:processable] ? { status: [0, 1, 2, 3] } : nil)
+                          .where(params[:done] ? { status: [4, 5, 6] } : nil)
+        ).map(&:to_hash)
       end
     end
   end

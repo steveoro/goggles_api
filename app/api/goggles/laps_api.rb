@@ -194,7 +194,7 @@ module Goggles
           GogglesDb::Lap.where(
             filtering_hash_for(params, %w[meeting_individual_result_id meeting_program_id team_id swimmer_id])
           )
-        )
+        ).map(&:to_hash)
       end
     end
   end

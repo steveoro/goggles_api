@@ -1,4 +1,5 @@
 require:
+  - rubocop-factory_bot
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
@@ -23,6 +24,9 @@ AllCops:
   Exclude:
     - 'db/schema.rb'
     - 'vendor/**/*'
+
+FactoryBot/SyntaxMethods:
+  Enabled: false
 
 # Cop supports --auto-correct.
 # Configuration parameters: AutoCorrect, AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
@@ -55,6 +59,7 @@ Metrics/ClassLength:
   Exclude:
     - 'app/api/goggles/calendars_api.rb'
     - 'app/api/goggles/meetings_api.rb'
+    - 'app/api/goggles/meeting_individual_results_api.rb'
     - 'app/api/goggles/meeting_reservations_api.rb'
     - 'app/api/goggles/user_results_api.rb'
 
@@ -91,9 +96,6 @@ RSpec/ExpectInHook:
 
 RSpec/ExampleLength:
   Max: 20
-
-RSpec/FactoryBot/SyntaxMethods:
-  Enabled: false
 
 # Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
 # Include: **/*_spec*rb*, **/spec/**/*
