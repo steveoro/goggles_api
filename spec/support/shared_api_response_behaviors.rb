@@ -100,7 +100,7 @@ shared_examples_for 'a successful JSON PUT response' do
     updated_row = fixture_row.reload
     expected_changes.each do |key, value|
       # Adapt expectation depending on peculiar cases:
-      if (key == :locked) # user#locked => locked_at.present?
+      if key == :locked # user#locked => locked_at.present?
         expect(updated_row.locked_at.present?.to_s).to eq(value.to_s)
       else
         expect(updated_row.send(key).to_s).to eq(value.to_s)

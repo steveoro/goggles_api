@@ -134,7 +134,7 @@ RSpec.describe Goggles::UsersAPI do
         it 'updates the row' do
           updated_row = api_user.reload
           expected_changes.each do |key, value|
-            if (key == :locked) # user#locked => locked_at.present?
+            if key == :locked # user#locked => locked_at.present?
               expect(updated_row.locked_at.present?).to eq(value)
             else
               expect(updated_row.send(key)).to eq(value)
