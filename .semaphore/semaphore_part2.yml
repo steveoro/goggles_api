@@ -47,19 +47,7 @@ blocks:
             # The cache will be updated with the new content just once for all blocks in the pipeline:
             - cache store bundle-5.20-$(checksum Gemfile.lock) vendor/bundle
 
-  - name: Code scanning
-    task:
-      jobs:
-        - name: check style + security
-          commands:
-            - sem-version ruby 2.7
-            - bundle config set path 'vendor/bundle'
-            - GIT_LFS_SKIP_SMUDGE=1 bundle install
-            - bundle exec rubocop
-            - bundle exec brakeman -c .brakeman.cfg
-            - bundle exec rails zeitwerk:check
-
-  - name: RSpec tests part 1
+  - name: RSpec tests part 2
     task:
       prologue:
         commands:
@@ -75,22 +63,15 @@ blocks:
           - 'RAILS_ENV=test bin/rails db:migrate'
           - ./cc-test-reporter before-build
       jobs:
-        - name: RSpec - commands
-          commands:
-            - 'bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman -t type:command'
-            - cache delete cc-command-goggles_api
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
-            - cache store cc-command-goggles_api coverage/cc-command.json
-
-        - name: RSpec requests A-F, S-U
+        - name: RSpec - API requests I-M
           matrix:
             - env_var: SPECS
-              values: [ "spec/api/goggles/a*","spec/api/goggles/b*","spec/api/goggles/c*","spec/api/goggles/f*", "spec/api/goggles/s*", "spec/api/goggles/t*", "spec/api/goggles/u*" ]
+              values: [ "spec/api/goggles/i*","spec/api/goggles/l*","spec/api/goggles/m*" ]
           commands:
-            - 'bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman --format RspecJunitFormatter --out coverage/requests-af-su.xml $SPECS'
-            - cache delete cc-request-goggles_api-af-su
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-request-af-su.json
-            - cache store cc-request-goggles_api-af-su coverage/cc-request-af-su.json
+            - 'bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman --format RspecJunitFormatter --out coverage/requests-im.xml $SPECS'
+            - cache delete cc-request-goggles_api-im
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-request-im.json
+            - cache store cc-request-goggles_api-im coverage/cc-request-im.json
 
       # Publish all test results from coverage/*.xml and/or screenshots from tmp/cucumber/* on Semaphore
       epilogue:
@@ -101,16 +82,11 @@ blocks:
             - test-results publish coverage
 
 promotions:
-  - name: RSpec tests part 2
-    pipeline_file: semaphore_part2.yml
+  - name: Code coverage
+    pipeline_file: semaphore_coverage_upload.yml
+    auto_promote:
+      when: branch = 'master' AND result = 'passed'
+  - name: Docker images
+    pipeline_file: semaphore_docker_build.yml
     auto_promote:
       when: result = 'passed'
-
-after_pipeline:
-  task:
-    jobs:
-      - name: Publish Results
-        commands:
-          # Do this only if needed:
-          # - artifact pull workflow tmp/cucumber
-          - test-results gen-pipeline-report

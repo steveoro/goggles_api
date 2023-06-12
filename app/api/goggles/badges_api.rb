@@ -178,7 +178,7 @@ module Goggles
             %w[team_id team_affiliation_id season_id swimmer_id
                off_gogglecup fees_due badge_due relays_due]
           )
-        ).order('badges.id DESC'))
+        ).order('badges.id DESC')).map(&:to_hash)
       end
 
       # GET /api/:version/badges/search

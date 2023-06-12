@@ -131,10 +131,11 @@ shared_examples_for 'a successful JSON POST response' do
     result = JSON.parse(response.body)
     expect(result).to have_key('msg').and have_key('new')
     expect(result['msg']).to eq(I18n.t('api.message.generic_ok'))
-    attr_extractor = ->(hash) { hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key.to_s) } }
+    # The following fields will differ from a locally built row & the remote JSONified result, so we'll skip them:
+    attr_extractor = ->(hash) { hash.except('id', 'lock_version', 'created_at', 'updated_at') }
     resulting_hash = attr_extractor.call(result['new'])
     expected_hash  = attr_extractor.call(built_row.attributes)
-    # Adapt expected hash to the JSON-ified result which will store floats as strings so that the comparison is simpler:
+    # Stringify locally built values:
     expected_hash.each do |key, val|
       expected_hash[key] = val.to_json.delete('"') if val.is_a?(BigDecimal) || val.is_a?(Float) || val.is_a?(Date) || val.is_a?(Time)
     end

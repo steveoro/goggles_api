@@ -26,7 +26,8 @@ global_job_config:
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
       - chmod +x ./cc-test-reporter
       - cache restore cc-command-goggles_api
-      - cache restore cc-request-goggles_api
+      - cache restore cc-request-goggles_api-af-su
+      - cache restore cc-request-goggles_api-im
 
 blocks:
   - name: Code coverage upload

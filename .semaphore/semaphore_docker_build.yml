@@ -24,9 +24,9 @@ global_job_config:
       - checkout
       - echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
       - echo $RAILS_MASTER_KEY > config/master.key
-      - mkdir -pv tmp
+      - mkdir -pv tmp coverage
       - gem i bundler
-      - cache restore bundle-3.30-$(checksum Gemfile.lock)
+      - cache restore bundle-5.20-$(checksum Gemfile.lock)
       - sem-version ruby 2.7
       - bundle config set path 'vendor/bundle'
       - GIT_LFS_SKIP_SMUDGE=1 bundle install
