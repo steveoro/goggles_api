@@ -26,8 +26,10 @@ global_job_config:
       - echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
       - echo $RAILS_MASTER_KEY > config/master.key
       - mkdir -pv tmp coverage
-      # Make sure we are using Bundler 2+:
-      - gem i bundler
+      # Make sure we are using the Bundler version from the Gemfile:
+      - export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
+      - gem i bundler -v $BUNDLER_VERSION
+      - echo "Current Bundler with version:" && which bundler && bundle --version
       # Use GogglesDb::VERSION as master reference here, or force a minor version change to rebuild the cache:
       - cache restore bundle-5.20-$(checksum Gemfile.lock)
 

@@ -25,7 +25,9 @@ global_job_config:
       - echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
       - echo $RAILS_MASTER_KEY > config/master.key
       - mkdir -pv tmp coverage
-      - gem i bundler
+      - export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
+      - gem i bundler -v $BUNDLER_VERSION
+      - echo "Current Bundler with version:" && which bundler && bundle --version
       - cache restore bundle-5.20-$(checksum Gemfile.lock)
       - sem-version ruby 2.7
       - bundle config set path "vendor/bundle"
