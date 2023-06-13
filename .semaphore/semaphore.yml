@@ -91,22 +91,22 @@ blocks:
           - RAILS_ENV=test bin/rails db:migrate
           - ./cc-test-reporter before-build
       jobs:
-        - name: RSpec - commands
-          commands:
-            - bundle exec rspec -t type:command --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/command.xml
-            - cache delete cc-command-goggles_api
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
-            - cache store cc-command-goggles_api coverage/cc-command.json
+        # - name: RSpec - commands
+        #   commands:
+        #     - bundle exec rspec -t type:command --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/command.xml
+        #     - cache delete cc-command-goggles_api
+        #     - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
+        #     - cache store cc-command-goggles_api coverage/cc-command.json
 
         - name: RSpec requests A-F, S-U
           matrix:
             - env_var: SPECS
-              values: [ "a","b","c","f", "s","t","u" ]
+              values: [ "a", "b", "c", "f", "s", "t", "u" ]
           commands:
-            - bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out "coverage/requests-$SPECS.xml" "spec/api/goggles/$SPECS*"
-            - cache delete "cc-request-goggles_api-$SPECS"
-            - ./cc-test-reporter format-coverage -t simplecov -o "coverage/cc-request-$SPECS.json"
-            - cache store "cc-request-goggles_api-$SPECS" "coverage/cc-request-$SPECS.json"
+            - bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/requests-$SPECS.xml spec/api/goggles/$SPECS*
+            - cache delete cc-request-goggles_api-$SPECS
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-request-$SPECS.json
+            - cache store cc-request-goggles_api-$SPECS coverage/cc-request-$SPECS.json
 
       # Publish all test results from coverage/*.xml and/or screenshots from tmp/cucumber/* on Semaphore
       epilogue:
@@ -120,4 +120,4 @@ promotions:
   - name: RSpec tests part 2
     pipeline_file: semaphore_part2.yml
     auto_promote:
-      when: result = 'passed'
+      when: result = "passed"

@@ -66,12 +66,12 @@ blocks:
         - name: RSpec - API requests I-M
           matrix:
             - env_var: SPECS
-              values: [ "i","l","m" ]
+              values: [ "i", "l", "m" ]
           commands:
-            - bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out "coverage/requests-$SPECS.xml" "spec/api/goggles/$SPECS*"
-            - cache delete "cc-request-goggles_api-$SPECS"
-            - ./cc-test-reporter format-coverage -t simplecov -o "coverage/cc-request-$SPECS.json"
-            - cache store "cc-request-goggles_api-$SPECS" "coverage/cc-request-$SPECS.json"
+            - bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/requests-$SPECS.xml spec/api/goggles/$SPECS*
+            - cache delete cc-request-goggles_api-$SPECS
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-request-$SPECS.json
+            - cache store cc-request-goggles_api-$SPECS coverage/cc-request-$SPECS.json
 
       # Publish all test results from coverage/*.xml and/or screenshots from tmp/cucumber/* on Semaphore
       epilogue:
@@ -85,11 +85,11 @@ promotions:
   - name: Code coverage
     pipeline_file: semaphore_coverage_upload.yml
     auto_promote:
-      when: branch = "master" AND result = 'passed'
+      when: branch = "master" AND result = "passed"
   - name: Docker images
     pipeline_file: semaphore_docker_build.yml
     auto_promote:
-      when: result = 'passed'
+      when: result = "passed"
 
 after_pipeline:
   task:
