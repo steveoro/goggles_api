@@ -7,10 +7,10 @@ agent:
 
 fail_fast:
   stop:
-    when: "true"
+    when: 'true'
 auto_cancel:
   running:
-    when: "true"
+    when: 'true'
 
 global_job_config:
   # Connect secrets to all jobs in the pipeline:
@@ -120,4 +120,4 @@ promotions:
   - name: RSpec tests part 2
     pipeline_file: semaphore_part2.yml
     auto_promote:
-      when: result = "passed"
+      when: result = 'passed'

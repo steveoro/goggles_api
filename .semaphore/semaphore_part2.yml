@@ -7,10 +7,10 @@ agent:
 
 fail_fast:
   stop:
-    when: "true"
+    when: 'true'
 auto_cancel:
   running:
-    when: "true"
+    when: 'true'
 
 global_job_config:
   # Connect secrets to all jobs in the pipeline:
@@ -85,11 +85,11 @@ promotions:
   - name: Code coverage
     pipeline_file: semaphore_coverage_upload.yml
     auto_promote:
-      when: branch = "master" AND result = "passed"
+      when: branch = "master" AND result = 'passed'
   - name: Docker images
     pipeline_file: semaphore_docker_build.yml
     auto_promote:
-      when: result = "passed"
+      when: result = 'passed'
 
 after_pipeline:
   task:
