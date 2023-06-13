@@ -66,12 +66,12 @@ blocks:
         - name: RSpec - API requests I-M
           matrix:
             - env_var: SPECS
-              values: [ "spec/api/goggles/i*","spec/api/goggles/l*","spec/api/goggles/m*" ]
+              values: [ "i","l","m" ]
           commands:
-            - bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman --format RspecJunitFormatter --out coverage/requests-im.xml $SPECS
-            - cache delete cc-request-goggles_api-im
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-request-im.json
-            - cache store cc-request-goggles_api-im coverage/cc-request-im.json
+            - bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out "coverage/requests-$SPECS.xml" "spec/api/goggles/$SPECS*"
+            - cache delete "cc-request-goggles_api-$SPECS"
+            - ./cc-test-reporter format-coverage -t simplecov -o "coverage/cc-request-$SPECS.json"
+            - cache store "cc-request-goggles_api-$SPECS" "coverage/cc-request-$SPECS.json"
 
       # Publish all test results from coverage/*.xml and/or screenshots from tmp/cucumber/* on Semaphore
       epilogue:

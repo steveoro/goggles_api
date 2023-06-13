@@ -55,7 +55,7 @@ blocks:
             - sem-version ruby 2.7
             - bundle config set path "vendor/bundle"
             - GIT_LFS_SKIP_SMUDGE=1 bundle install
-            - bundle exec rubocop
+            - bundle exec rubocop -f pacman
             - bundle exec brakeman -c .brakeman.cfg
 
   - name: Zeitwerk check
@@ -93,7 +93,7 @@ blocks:
       jobs:
         - name: RSpec - commands
           commands:
-            - bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman -t type:command
+            - bundle exec rspec -t type:command --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/command.xml
             - cache delete cc-command-goggles_api
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
             - cache store cc-command-goggles_api coverage/cc-command.json
@@ -101,12 +101,12 @@ blocks:
         - name: RSpec requests A-F, S-U
           matrix:
             - env_var: SPECS
-              values: [ "spec/api/goggles/a*","spec/api/goggles/b*","spec/api/goggles/c*","spec/api/goggles/f*", "spec/api/goggles/s*", "spec/api/goggles/t*", "spec/api/goggles/u*" ]
+              values: [ "a","b","c","f", "s","t","u" ]
           commands:
-            - bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman --format RspecJunitFormatter --out coverage/requests-af-su.xml $SPECS
-            - cache delete cc-request-goggles_api-af-su
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-request-af-su.json
-            - cache store cc-request-goggles_api-af-su coverage/cc-request-af-su.json
+            - bundle exec rspec --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out "coverage/requests-$SPECS.xml" "spec/api/goggles/$SPECS*"
+            - cache delete "cc-request-goggles_api-$SPECS"
+            - ./cc-test-reporter format-coverage -t simplecov -o "coverage/cc-request-$SPECS.json"
+            - cache store "cc-request-goggles_api-$SPECS" "coverage/cc-request-$SPECS.json"
 
       # Publish all test results from coverage/*.xml and/or screenshots from tmp/cucumber/* on Semaphore
       epilogue:
