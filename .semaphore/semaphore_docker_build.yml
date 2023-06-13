@@ -7,10 +7,10 @@ agent:
 
 fail_fast:
   stop:
-    when: 'true'
+    when: "true"
 auto_cancel:
   running:
-    when: 'true'
+    when: "true"
 
 global_job_config:
   # Connect secrets to all jobs in the pipeline:
@@ -28,7 +28,7 @@ global_job_config:
       - gem i bundler
       - cache restore bundle-5.20-$(checksum Gemfile.lock)
       - sem-version ruby 2.7
-      - bundle config set path 'vendor/bundle'
+      - bundle config set path "vendor/bundle"
       - GIT_LFS_SKIP_SMUDGE=1 bundle install
 
 blocks:
@@ -40,12 +40,12 @@ blocks:
       prologue:
         commands:
           # The first pull will build the local cache for all the layers so that the build will act on the diff:
-          - 'docker pull $DOCKERHUB_USERNAME/goggles-api:latest || true'
+          - docker pull $DOCKERHUB_USERNAME/goggles-api:latest || true
       jobs:
         - name: Docker latest
           commands:
-            - 'docker build -t $DOCKERHUB_USERNAME/goggles-api:latest --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.staging .'
-            - 'docker push $DOCKERHUB_USERNAME/goggles-api:latest'
+            - docker build -t $DOCKERHUB_USERNAME/goggles-api:latest --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.staging .
+            - docker push $DOCKERHUB_USERNAME/goggles-api:latest
 
   # Run only if there's a tag
   - name: Build versioned images
@@ -54,21 +54,21 @@ blocks:
     task:
       prologue:
         commands:
-          - echo 'Current TAG $SEMAPHORE_GIT_TAG_NAME'
+          - echo "Current TAG $SEMAPHORE_GIT_TAG_NAME"
           # The first pull will build the local cache for all the layers so that the build will act on the diff:
-          - 'docker pull $DOCKERHUB_USERNAME/goggles-api:latest || true'
+          - docker pull $DOCKERHUB_USERNAME/goggles-api:latest || true
       jobs:
         - name: Docker dev
           commands:
-            - 'docker build -t $DOCKERHUB_USERNAME/goggles-api:dev-$SEMAPHORE_GIT_TAG_NAME --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.dev .'
-            - 'docker push $DOCKERHUB_USERNAME/goggles-api:dev-$SEMAPHORE_GIT_TAG_NAME'
+            - docker build -t $DOCKERHUB_USERNAME/goggles-api:dev-$SEMAPHORE_GIT_TAG_NAME --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.dev .
+            - docker push $DOCKERHUB_USERNAME/goggles-api:dev-$SEMAPHORE_GIT_TAG_NAME
 
         - name: Docker staging
           commands:
-            - 'docker build -t $DOCKERHUB_USERNAME/goggles-api:staging-$SEMAPHORE_GIT_TAG_NAME --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.staging .'
-            - 'docker push $DOCKERHUB_USERNAME/goggles-api:staging-$SEMAPHORE_GIT_TAG_NAME'
+            - docker build -t $DOCKERHUB_USERNAME/goggles-api:staging-$SEMAPHORE_GIT_TAG_NAME --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.staging .
+            - docker push $DOCKERHUB_USERNAME/goggles-api:staging-$SEMAPHORE_GIT_TAG_NAME
 
         - name: Docker prod
           commands:
-            - 'docker build -t $DOCKERHUB_USERNAME/goggles-api:prod-$SEMAPHORE_GIT_TAG_NAME --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .'
-            - 'docker push $DOCKERHUB_USERNAME/goggles-api:prod-$SEMAPHORE_GIT_TAG_NAME'
+            - docker build -t $DOCKERHUB_USERNAME/goggles-api:prod-$SEMAPHORE_GIT_TAG_NAME --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .
+            - docker push $DOCKERHUB_USERNAME/goggles-api:prod-$SEMAPHORE_GIT_TAG_NAME
