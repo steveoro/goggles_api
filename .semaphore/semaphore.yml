@@ -121,12 +121,3 @@ promotions:
     pipeline_file: semaphore_part2.yml
     auto_promote:
       when: result = "passed"
-
-after_pipeline:
-  task:
-    jobs:
-      - name: Publish Results
-        commands:
-          # Do this only if needed:
-          # - artifact pull workflow tmp/cucumber
-          - test-results gen-pipeline-report
