@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.5.22** [Steve A.] re-sync w/ base engine; bundle & build setup update
 - **0.5.20** [Steve A.] re-sync w/ base engine; bundle & build setup update; minor specs adjustments
 - **0.5.12** [Steve A.] re-sync w/ base engine; minor specs & blueprints updates
 - **0.5.05** [Steve A.] re-sync w/ base engine; now all API list methods respond with proper to_hash methods instead of the un-overridden to_json default; added locked & active parameters to /user
