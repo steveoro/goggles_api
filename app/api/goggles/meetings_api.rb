@@ -195,7 +195,6 @@ module Goggles
           # paginate(results)
           page = params[:page] || 1
           per_page = params[:per_page] || 25
-          results = results.map(&:to_hash)
           header('Total', results.count)
           header('Page', page)
           header('Per-Page', per_page)
@@ -204,7 +203,7 @@ module Goggles
             # Mock the next link given we're paginating the results by hand:
             header('Link', "#{request.url.split('?').first}?page=#{page + 1}; rel=\"next\"")
           end
-          results[((page - 1) * per_page)...(page * per_page)]
+          results[((page - 1) * per_page)...(page * per_page)].map(&:to_hash)
         end
       end
     end

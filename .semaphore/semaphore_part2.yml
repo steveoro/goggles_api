@@ -94,6 +94,4 @@ after_pipeline:
     jobs:
       - name: Publish Results
         commands:
-          # Do this only if needed:
-          # - artifact pull workflow tmp/cucumber
           - test-results gen-pipeline-report

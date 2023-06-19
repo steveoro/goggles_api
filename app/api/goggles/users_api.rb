@@ -135,8 +135,7 @@ module Goggles
             params,
             %w[name first_name last_name description email]
           )
-        ).order('users.id DESC')
-                                .map(&:to_hash)
+        ).order('users.id DESC').map(&:to_hash)
       end
     end
   end
