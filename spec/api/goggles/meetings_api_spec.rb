@@ -266,8 +266,7 @@ RSpec.describe Goggles::MeetingsAPI do
     context 'when using a valid authentication' do
       # actual Meeting count x recent Seasons: 141=6, 142=143, 151=6, 152=141, 161=6, 162=147, 171=5, 172=144, 181=4, 182=88, 191=3, 192=16
       let(:many_pages_season_id) { [142, 152, 162, 172, 182].sample }
-      let(:fixture_description) { %w[Riccione CSI].sample }
-      let(:fixture_description) { %w[Riccione CSI].sample }
+      let(:fixture_description) { 'CSI' }
       let(:single_page_season_id) { [141, 151, 161, 171, 181, 191, 192].sample }
       let(:default_per_page) { 25 }
 
