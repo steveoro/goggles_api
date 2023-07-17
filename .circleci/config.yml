@@ -27,6 +27,7 @@ common-folder-struct: &common-folder-struct
   name: Common folders & structure
   command: |
     mkdir -p $CI_OUTPUT/rubocop $CI_OUTPUT/brakeman $CI_OUTPUT/rspec tmp coverage
+    echo $RAILS_MASTER_KEY > config/master.key
     mv config/database_ci.yml config/database.yml
 
 common-db-setup: &common-db-setup
@@ -52,7 +53,7 @@ jobs:
       - ruby/rubocop-check:
           app-dir: ~/goggles_api
           format: pacman
-          out-path: $CI_OUTPUT/rubocop/rubocop.xml
+          # out-path: $CI_OUTPUT/rubocop/rubocop.xml
 
   brakeman:
     <<: *common-config
@@ -67,8 +68,8 @@ jobs:
           name: Brakeman
           command: |
             bundle exec brakeman -A --except CheckForceSSL
-      - store_test_results:
-          path: $CI_OUTPUT/brakeman
+      # - store_test_results:
+      #     path: $CI_OUTPUT/brakeman
 
   zeitwerk:
     <<: *common-config
@@ -85,8 +86,8 @@ jobs:
           name: Zeitwerk check
           command: |
             bundle exec rake zeitwerk:check
-      - store_test_results:
-          path: $CI_OUTPUT
+      # - store_test_results:
+      #     path: $CI_OUTPUT
 
   rspec-A-F:
     <<: *common-config
@@ -102,7 +103,7 @@ jobs:
       - ruby/rspec-test:
           app-dir: ~/goggles_api
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: $CI_OUTPUT/rspec
           include: spec/**/a*_spec.rb,spec/**/b*_spec.rb,spec/**/c*_spec.rb,spec/**/f*_spec.rb
 
   rspec-I-L:
@@ -119,7 +120,7 @@ jobs:
       - ruby/rspec-test:
           app-dir: ~/goggles_api
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: $CI_OUTPUT/rspec
           include: spec/**/i*_spec.rb,spec/**/l*_spec.rb
 
   rspec-M:
@@ -136,7 +137,7 @@ jobs:
       - ruby/rspec-test:
           app-dir: ~/goggles_api
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: $CI_OUTPUT/rspec
           include: spec/**/m*_spec.rb
 
   rspec-S:
@@ -153,7 +154,7 @@ jobs:
       - ruby/rspec-test:
           app-dir: ~/goggles_api
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: $CI_OUTPUT/rspec
           include: spec/**/s*_spec.rb
 
   rspec-T:
@@ -170,7 +171,7 @@ jobs:
       - ruby/rspec-test:
           app-dir: ~/goggles_api
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: $CI_OUTPUT/rspec
           include: spec/**/t*_spec.rb
 
   rspec-U:
@@ -187,7 +188,7 @@ jobs:
       - ruby/rspec-test:
           app-dir: ~/goggles_api
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: $CI_OUTPUT/rspec
           include: spec/**/u*_spec.rb
 
   deploy:
