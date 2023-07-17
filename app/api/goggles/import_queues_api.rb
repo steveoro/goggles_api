@@ -147,7 +147,7 @@ module Goggles
 
         new_row = GogglesDb::ImportQueue.new(batch_sql: true, user_id: admin_user.id,
                                              request_data: '{}', solved_data: '{}')
-        new_row.data_file.attach(filename: filename, io: tempfile)
+        new_row.data_file.attach(filename:, io: tempfile)
         unless new_row.save
           error!(
             I18n.t('api.message.creation_failure'),

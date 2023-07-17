@@ -282,7 +282,7 @@ RSpec.describe Goggles::SeasonsAPI do
       end
 
       context 'when filtering by a specific header_year,' do
-        before { get(api_v3_seasons_path, params: { header_year: header_year }, headers: fixture_headers) }
+        before { get(api_v3_seasons_path, params: { header_year: }, headers: fixture_headers) }
 
         it_behaves_like('a successful request that has positive usage stats')
 
@@ -294,7 +294,7 @@ RSpec.describe Goggles::SeasonsAPI do
       end
 
       context 'when filtering by a specific range date,' do
-        before { get(api_v3_seasons_path, params: { begin_date: begin_date, end_date: end_date }, headers: fixture_headers) }
+        before { get(api_v3_seasons_path, params: { begin_date:, end_date: }, headers: fixture_headers) }
 
         it_behaves_like('a successful request that has positive usage stats')
 

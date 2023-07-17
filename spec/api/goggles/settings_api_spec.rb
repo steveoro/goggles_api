@@ -43,19 +43,19 @@ RSpec.describe Goggles::SettingsAPI do
             cfg_row.settings(group_key.to_sym).value
           end
 
-          before { get(api_v3_setting_path(group_key: group_key), headers: admin_headers) }
+          before { get(api_v3_setting_path(group_key:), headers: admin_headers) }
 
           it_behaves_like('a successful JSON row response')
         end
 
         context 'with an account having just CRUD grants,' do
-          before { get(api_v3_setting_path(group_key: group_key), headers: crud_headers) }
+          before { get(api_v3_setting_path(group_key:), headers: crud_headers) }
 
           it_behaves_like('a failed auth attempt due to unauthorized credentials')
         end
 
         context 'with an account not having any grants,' do
-          before { get(api_v3_setting_path(group_key: group_key), headers: fixture_headers) }
+          before { get(api_v3_setting_path(group_key:), headers: fixture_headers) }
 
           it_behaves_like('a failed auth attempt due to unauthorized credentials')
         end
@@ -70,7 +70,7 @@ RSpec.describe Goggles::SettingsAPI do
 
           before do
             GogglesDb::AppParameter.maintenance = true
-            get(api_v3_setting_path(group_key: group_key), headers: admin_headers)
+            get(api_v3_setting_path(group_key:), headers: admin_headers)
             GogglesDb::AppParameter.maintenance = false
           end
 
@@ -80,7 +80,7 @@ RSpec.describe Goggles::SettingsAPI do
         context 'with an account having lesser grants,' do
           before do
             GogglesDb::AppParameter.maintenance = true
-            get(api_v3_setting_path(group_key: group_key), headers: crud_headers)
+            get(api_v3_setting_path(group_key:), headers: crud_headers)
             GogglesDb::AppParameter.maintenance = false
           end
 
@@ -89,7 +89,7 @@ RSpec.describe Goggles::SettingsAPI do
       end
 
       context 'when using an invalid JWT,' do
-        before { get(api_v3_setting_path(group_key: group_key), headers: { 'Authorization' => 'you wish!' }) }
+        before { get(api_v3_setting_path(group_key:), headers: { 'Authorization' => 'you wish!' }) }
 
         it_behaves_like('a failed auth attempt due to invalid JWT')
       end
@@ -134,7 +134,7 @@ RSpec.describe Goggles::SettingsAPI do
           cfg_row.settings(group_key.to_sym).value
         end
 
-        before { put(api_v3_setting_path(group_key: group_key), params: params, headers: admin_headers) }
+        before { put(api_v3_setting_path(group_key:), params:, headers: admin_headers) }
 
         it_behaves_like('a successful request that has positive usage stats')
         it 'returns true' do
@@ -147,13 +147,13 @@ RSpec.describe Goggles::SettingsAPI do
       end
 
       context 'with an account having just CRUD grants,' do
-        before { put(api_v3_setting_path(group_key: group_key), params: params, headers: crud_headers) }
+        before { put(api_v3_setting_path(group_key:), params:, headers: crud_headers) }
 
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
 
       context 'with an account not having any grants,' do
-        before { put(api_v3_setting_path(group_key: group_key), params: params, headers: fixture_headers) }
+        before { put(api_v3_setting_path(group_key:), params:, headers: fixture_headers) }
 
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
       end
@@ -168,7 +168,7 @@ RSpec.describe Goggles::SettingsAPI do
       context 'with an account having ADMIN grants,' do
         before do
           GogglesDb::AppParameter.maintenance = true
-          put(api_v3_setting_path(group_key: group_key), params: params, headers: admin_headers)
+          put(api_v3_setting_path(group_key:), params:, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
 
@@ -185,7 +185,7 @@ RSpec.describe Goggles::SettingsAPI do
       context 'with an account having lesser grants,' do
         before do
           GogglesDb::AppParameter.maintenance = true
-          put(api_v3_setting_path(group_key: group_key), params: params, headers: crud_headers)
+          put(api_v3_setting_path(group_key:), params:, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
 
@@ -194,13 +194,13 @@ RSpec.describe Goggles::SettingsAPI do
     end
 
     context 'when using an invalid JWT,' do
-      before { put(api_v3_setting_path(group_key: group_key), params: params, headers: { 'Authorization' => 'you wish!' }) }
+      before { put(api_v3_setting_path(group_key:), params:, headers: { 'Authorization' => 'you wish!' }) }
 
       it_behaves_like 'a failed auth attempt due to invalid JWT'
     end
 
     context 'when requesting a non-existing group key,' do
-      before { put(api_v3_setting_path(group_key: 'NON-existing'), params: params, headers: admin_headers) }
+      before { put(api_v3_setting_path(group_key: 'NON-existing'), params:, headers: admin_headers) }
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
@@ -235,7 +235,7 @@ RSpec.describe Goggles::SettingsAPI do
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
         before do
-          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: admin_headers)
+          delete(api_v3_setting_path(group_key:), params: { key: }, headers: admin_headers)
         end
 
         it_behaves_like('a successful request that has positive usage stats')
@@ -258,7 +258,7 @@ RSpec.describe Goggles::SettingsAPI do
 
       context 'with an account having just CRUD grants,' do
         before do
-          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: crud_headers)
+          delete(api_v3_setting_path(group_key:), params: { key: }, headers: crud_headers)
         end
 
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
@@ -266,7 +266,7 @@ RSpec.describe Goggles::SettingsAPI do
 
       context 'with an account not having any grants,' do
         before do
-          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: fixture_headers)
+          delete(api_v3_setting_path(group_key:), params: { key: }, headers: fixture_headers)
         end
 
         it_behaves_like 'a failed auth attempt due to unauthorized credentials'
@@ -277,7 +277,7 @@ RSpec.describe Goggles::SettingsAPI do
       context 'with an account having ADMIN grants,' do
         before do
           GogglesDb::AppParameter.maintenance = true
-          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: admin_headers)
+          delete(api_v3_setting_path(group_key:), params: { key: }, headers: admin_headers)
           GogglesDb::AppParameter.maintenance = false
         end
 
@@ -302,7 +302,7 @@ RSpec.describe Goggles::SettingsAPI do
       context 'with an account having lesser grants,' do
         before do
           GogglesDb::AppParameter.maintenance = true
-          delete(api_v3_setting_path(group_key: group_key), params: { key: key }, headers: crud_headers)
+          delete(api_v3_setting_path(group_key:), params: { key: }, headers: crud_headers)
           GogglesDb::AppParameter.maintenance = false
         end
 
@@ -313,8 +313,8 @@ RSpec.describe Goggles::SettingsAPI do
     context 'when using an invalid JWT,' do
       before do
         delete(
-          api_v3_setting_path(group_key: group_key),
-          params: { key: key },
+          api_v3_setting_path(group_key:),
+          params: { key: },
           headers: { 'Authorization' => 'you wish!' }
         )
       end

@@ -28,7 +28,7 @@ RSpec.describe Goggles::LookupAPI do
             let(:expected_row_count) { "GogglesDb::#{entity_name.singularize.camelize}".constantize.count }
 
             before do
-              get(api_v3_lookup_path(entity_name: entity_name), params: { locale: locale }, headers: fixture_headers)
+              get(api_v3_lookup_path(entity_name:), params: { locale: }, headers: fixture_headers)
             end
 
             it_behaves_like('a successful request that has positive usage stats')
@@ -87,7 +87,7 @@ RSpec.describe Goggles::LookupAPI do
       ].each do |entity_name|
         context "for #{entity_name}," do
           before do
-            get(api_v3_lookup_path(entity_name: entity_name), params: { name: 'rana', locale: 'it' }, headers: fixture_headers)
+            get(api_v3_lookup_path(entity_name:), params: { name: 'rana', locale: 'it' }, headers: fixture_headers)
           end
 
           it_behaves_like('a successful request that has positive usage stats')

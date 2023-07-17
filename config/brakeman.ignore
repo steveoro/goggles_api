@@ -1,51 +1,13 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "Missing Encryption",
-      "warning_code": 109,
-      "fingerprint": "6a26086cd2400fbbfb831b2f8d7291e320bcc2b36984d2abc359e41b3b63212b",
-      "check_name": "ForceSSL",
-      "message": "The application does not force use of HTTPS: `config.force_ssl` is not enabled",
-      "file": "config/environments/production.rb",
-      "line": 38,
-      "link": "https://brakemanscanner.org/docs/warning_types/missing_encryption/",
-      "code": null,
-      "render_path": null,
-      "location": null,
-      "user_input": null,
-      "confidence": "High",
-      "cwe_id": [
-        311
-      ],
-      "note": ""
-    },
-    {
       "warning_type": "Unmaintained Dependency",
       "warning_code": 120,
       "fingerprint": "d84924377155b41e094acae7404ec2e521629d86f97b0ff628e3d1b263f8101c",
       "check_name": "EOLRails",
       "message": "Support for Rails 6.0.6.1 ended on 2023-06-01",
       "file": "Gemfile.lock",
-      "line": 369,
-      "link": "https://brakemanscanner.org/docs/warning_types/unmaintained_dependency/",
-      "code": null,
-      "render_path": null,
-      "location": null,
-      "user_input": null,
-      "confidence": "High",
-      "cwe_id": [
-        1104
-      ],
-      "note": ""
-    },
-    {
-      "warning_type": "Unmaintained Dependency",
-      "warning_code": 121,
-      "fingerprint": "edf687f759ec9765bd5db185dbc615c80af77d6e7e19386fc42934e7a80307af",
-      "check_name": "EOLRuby",
-      "message": "Support for Ruby 2.7.2 ended on 2023-03-31",
-      "file": ".ruby-version",
-      "line": 1,
+      "line": 372,
       "link": "https://brakemanscanner.org/docs/warning_types/unmaintained_dependency/",
       "code": null,
       "render_path": null,
@@ -58,6 +20,6 @@
       "note": ""
     }
   ],
-  "updated": "2023-06-10 16:10:06 +0200",
-  "brakeman_version": "5.4.1"
+  "updated": "2023-07-17 19:58:15 +0200",
+  "brakeman_version": "6.0.0"
 }

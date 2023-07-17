@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.6.00** [Steve A.] test upgrade to Ruby 3.1.4
 - **0.5.22** [Steve A.] re-sync w/ base engine; bundle & build setup update
 - **0.5.20** [Steve A.] re-sync w/ base engine; bundle & build setup update; minor specs adjustments
 - **0.5.12** [Steve A.] re-sync w/ base engine; minor specs & blueprints updates

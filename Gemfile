@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.2'
+ruby '3.1.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '>= 6.0.6', '< 6.1.0'
@@ -30,7 +30,7 @@ gem 'rack-cors'
 
 gem 'api-pagination'
 gem 'devise'
-gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
+gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db', branch: 'ruby-3.1'
 gem 'grape'
 gem 'grape_logging'
 gem 'grape-route-helpers'
@@ -59,8 +59,7 @@ group :development do
   gem 'haml_lint', require: false
   gem 'inch', require: false # grades source documentation
   gem 'listen', '~> 3.2'
-  # [20210128] Rubocop 1.9.0 seems to have several issues with the current stack
-  gem 'rubocop' # '= 1.8.1', require: false
+  gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rails', '= 2.19', require: false # currently 2.20 introduces a bug with '#falsey_literal?'
   gem 'rubocop-rake'

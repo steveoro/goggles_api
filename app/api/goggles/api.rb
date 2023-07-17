@@ -32,7 +32,7 @@ module Goggles
     logger = Logger.new('log/api_audit.log', 10, 1_024_000)
     logger.formatter = AuditFormatter.new
     use GrapeLogging::Middleware::RequestLogger, {
-      logger: logger,
+      logger:,
       include: [
         GrapeLogging::Loggers::Response.new,
         GrapeLogging::Loggers::FilterParameters.new,
