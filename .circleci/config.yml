@@ -16,6 +16,7 @@ common-config: &common-config
         BUNDLE_RETRY: 2
         BUNDLE_PATH: vendor/bundle
         PAGER: cat
+        GIT_LFS_SKIP_SMUDGE: 1
     - image: cimg/mariadb:10.6.12
       environment:
         DATABASE_NAME: goggles_test
@@ -33,7 +34,7 @@ common-bundle: &common-bundle
   command: |
     echo "Current Bundler with version:" && which bundler && bundle --version
     bundle config set path "vendor/bundle"
-    bundle install
+    GIT_LFS_SKIP_SMUDGE=1 bundle install
 
 common-db-setup: &common-db-setup
   name: DB setup
