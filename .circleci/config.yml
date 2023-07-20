@@ -271,7 +271,6 @@ jobs:
   docker-build-production:
     <<: *common-config
     steps:
-      # Docker is preinstalled, along with docker-compose
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_api
@@ -279,7 +278,8 @@ jobs:
       - run:
           name: Docker TAGGED prod
           command: |
-            which docker
+            sudo apt-get update
+            sudo apt-get install docker-ce
             mkdir -p tmp
             echo "Git Tag << pipeline.git.tag >>"
             docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
@@ -291,7 +291,6 @@ jobs:
   docker-build-staging:
     <<: *common-config
     steps:
-      # Docker is preinstalled, along with docker-compose
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_api
@@ -299,7 +298,8 @@ jobs:
       - run:
           name: Docker LATEST staging
           command: |
-            which docker
+            sudo apt-get update
+            sudo apt-get install docker-ce
             mkdir -p tmp
             docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
             docker pull $DOCKERHUB_USERNAME/goggles-api:latest
