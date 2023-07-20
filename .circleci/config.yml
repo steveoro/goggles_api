@@ -275,27 +275,14 @@ jobs:
       - ruby/install-deps:
           app-dir: ~/goggles_api
           key: goggles_api-v0600
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
       - run:
           name: Docker TAGGED prod
-          # From dockerhub.org: (DOESN'T WORK)
-          # sudo apt-get update
-          # sudo apt-get install ca-certificates curl gnupg
-          # sudo install -m 0755 -d /etc/apt/keyrings
-          # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-          # sudo chmod a+r /etc/apt/keyrings/docker.gpg
-          # echo \
-          #     "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-          #     "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-          #     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          # sudo apt-get update
-          # sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
           command: |
-            sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-            sudo service docker start
-            sudo service docker status
-            mkdir -p tmp
             echo "Git Tag << pipeline.git.tag >>"
-            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
             docker pull $DOCKERHUB_USERNAME/goggles-api:latest
             docker build -t $DOCKERHUB_USERNAME/goggles-api:prod-<< pipeline.git.tag >> --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .
             docker push $DOCKERHUB_USERNAME/goggles-api:prod-<< pipeline.git.tag >>
@@ -308,14 +295,13 @@ jobs:
       - ruby/install-deps:
           app-dir: ~/goggles_api
           key: goggles_api-v0600
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
       - run:
           name: Docker LATEST staging
           command: |
-            sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-            sudo service docker start
-            sudo service docker status
-            mkdir -p tmp
-            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
             docker pull $DOCKERHUB_USERNAME/goggles-api:latest
             docker build -t $DOCKERHUB_USERNAME/goggles-api:latest --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.staging .
             docker push $DOCKERHUB_USERNAME/goggles-api:latest
