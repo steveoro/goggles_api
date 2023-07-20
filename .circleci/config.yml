@@ -270,8 +270,8 @@ jobs:
 
   docker-build-production:
     <<: *common-config
-    # parallelism: 1 (no actual need here)
     steps:
+      # Docker is preinstalled, along with docker-compose
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_api
@@ -279,11 +279,10 @@ jobs:
       - run:
           name: Docker TAGGED prod
           command: |
-            sudo apt update
-            sudo apt-get install docker
+            which docker
             mkdir -p tmp
             echo "Git Tag << pipeline.git.tag >>"
-            echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
             docker pull $DOCKERHUB_USERNAME/goggles-api:latest
             docker build -t $DOCKERHUB_USERNAME/goggles-api:prod-<< pipeline.git.tag >> --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .
             docker push $DOCKERHUB_USERNAME/goggles-api:prod-<< pipeline.git.tag >>
@@ -291,8 +290,8 @@ jobs:
 
   docker-build-staging:
     <<: *common-config
-    # parallelism: 1 (no actual need here)
     steps:
+      # Docker is preinstalled, along with docker-compose
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_api
@@ -300,10 +299,9 @@ jobs:
       - run:
           name: Docker LATEST staging
           command: |
-            sudo apt update
-            sudo apt-get install docker
+            which docker
             mkdir -p tmp
-            echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
             docker pull $DOCKERHUB_USERNAME/goggles-api:latest
             docker build -t $DOCKERHUB_USERNAME/goggles-api:latest --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.staging .
             docker push $DOCKERHUB_USERNAME/goggles-api:latest
