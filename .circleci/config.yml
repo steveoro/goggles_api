@@ -279,7 +279,7 @@ jobs:
           name: Docker TAGGED prod
           command: |
             sudo apt-get update
-            sudo apt-get install docker-ce
+            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
             mkdir -p tmp
             echo "Git Tag << pipeline.git.tag >>"
             docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
@@ -299,7 +299,7 @@ jobs:
           name: Docker LATEST staging
           command: |
             sudo apt-get update
-            sudo apt-get install docker-ce
+            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
             mkdir -p tmp
             docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
             docker pull $DOCKERHUB_USERNAME/goggles-api:latest
