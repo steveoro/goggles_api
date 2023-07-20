@@ -273,16 +273,15 @@ jobs:
     # parallelism: 1 (no actual need here)
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/goggles_api/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_api
           key: goggles_api-v0600
       - run:
-          <<: *common-db-setup
-      - run:
           name: Docker TAGGED prod
           command: |
+            sudo apt update
+            sudo apt-get install docker
+            mkdir -p tmp
             echo "Git Tag << pipeline.git.tag >>"
             echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
             docker pull $DOCKERHUB_USERNAME/goggles-api:latest
@@ -295,16 +294,15 @@ jobs:
     # parallelism: 1 (no actual need here)
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/goggles_api/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_api
           key: goggles_api-v0600
       - run:
-          <<: *common-db-setup
-      - run:
           name: Docker LATEST staging
           command: |
+            sudo apt update
+            sudo apt-get install docker
+            mkdir -p tmp
             echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
             docker pull $DOCKERHUB_USERNAME/goggles-api:latest
             docker build -t $DOCKERHUB_USERNAME/goggles-api:latest --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.staging .
