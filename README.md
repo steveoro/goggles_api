@@ -1,7 +1,5 @@
 # Goggles API README
 
-[![Build Status](https://steveoro.semaphoreci.com/badges/goggles_api/branches/master.svg)](https://steveoro.semaphoreci.com/projects/goggles_api) _(Branch not setup for Semaphore)_
-
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/steveoro/goggles_api/tree/ruby-3%2E1.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/steveoro/goggles_api/tree/ruby-3%2E1) _(Current branch: `ruby-3.1`)_
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/ffc7f57dfb4ce9d73056/maintainability)](https://codeclimate.com/github/steveoro/goggles_api/maintainability)

@@ -130,38 +130,7 @@ jobs:
             - codeclimate.rspec-a-f.*.json
 
 
-  rspec-I-L:
-    <<: *common-config
-    parallelism: 2
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/goggles_api/tmp
-      - ruby/install-deps:
-          app-dir: ~/goggles_api
-          key: goggles_api-v0600
-      - run:
-          <<: *common-db-setup
-      - run:
-          name: RSpec - I..L
-          command: |
-            TEST_FILES=$(circleci tests glob "spec/**/i*_spec.rb,spec/**/l*_spec.rb" | circleci tests split --split-by=timings)
-            bundle exec rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out ~/test-results/rspec-i-l.xml \
-                        -f doc -- ${TEST_FILES}
-            ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "./tmp/codeclimate.rspec-i-l.$CIRCLE_NODE_INDEX.json"
-      - store_test_results:
-          path: ~/test-results
-      - store_artifacts:
-          path: ~/test-artifacts
-      - persist_to_workspace:
-          root: tmp
-          paths:
-            - codeclimate.rspec-i-l.*.json
-
-
-  rspec-M:
+  rspec-I:
     <<: *common-config
     parallelism: 3
     steps:
@@ -174,14 +143,14 @@ jobs:
       - run:
           <<: *common-db-setup
       - run:
-          name: RSpec - M
+          name: RSpec - I
           command: |
-            TEST_FILES=$(circleci tests glob "spec/**/m*_spec.rb" | circleci tests split --split-by=timings)
+            TEST_FILES=$(circleci tests glob "spec/**/i*_spec.rb" | circleci tests split --split-by=timings)
             bundle exec rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out ~/test-results/rspec-m.xml \
+                        -f RspecJunitFormatter --out ~/test-results/rspec-i.xml \
                         -f doc -- ${TEST_FILES}
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "./tmp/codeclimate.rspec-m.$CIRCLE_NODE_INDEX.json"
+                                   -o "./tmp/codeclimate.rspec-i.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -189,10 +158,10 @@ jobs:
       - persist_to_workspace:
           root: tmp
           paths:
-            - codeclimate.rspec-m.*.json
+            - codeclimate.rspec-i.*.json
 
 
-  rspec-S-T:
+  rspec-L-M:
     <<: *common-config
     parallelism: 3
     steps:
@@ -205,14 +174,14 @@ jobs:
       - run:
           <<: *common-db-setup
       - run:
-          name: RSpec - S..T
+          name: RSpec - L..M
           command: |
-            TEST_FILES=$(circleci tests glob "spec/**/s*_spec.rb,spec/**/t*_spec.rb" | circleci tests split --split-by=timings)
+            TEST_FILES=$(circleci tests glob "spec/**/l*_spec.rb,spec/**/m*_spec.rb" | circleci tests split --split-by=timings)
             bundle exec rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out ~/test-results/rspec-s-t.xml \
+                        -f RspecJunitFormatter --out ~/test-results/rspec-l-m.xml \
                         -f doc -- ${TEST_FILES}
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "./tmp/codeclimate.rspec-s-t.$CIRCLE_NODE_INDEX.json"
+                                   -o "./tmp/codeclimate.rspec-l-m.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -220,10 +189,41 @@ jobs:
       - persist_to_workspace:
           root: tmp
           paths:
-            - codeclimate.rspec-s-t.*.json
+            - codeclimate.rspec-l-m.*.json
 
 
-  rspec-U:
+  rspec-S:
+    <<: *common-config
+    parallelism: 3
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/goggles_api/tmp
+      - ruby/install-deps:
+          app-dir: ~/goggles_api
+          key: goggles_api-v0600
+      - run:
+          <<: *common-db-setup
+      - run:
+          name: RSpec - S
+          command: |
+            TEST_FILES=$(circleci tests glob "spec/**/s*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec rspec --profile 10 --color --order rand \
+                        -f RspecJunitFormatter --out ~/test-results/rspec-s.xml \
+                        -f doc -- ${TEST_FILES}
+            ./tmp/cc-test-reporter format-coverage -t simplecov \
+                                   -o "./tmp/codeclimate.rspec-s.$CIRCLE_NODE_INDEX.json"
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-artifacts
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.rspec-s.*.json
+
+
+  rspec-T-U:
     <<: *common-config
     parallelism: 2
     steps:
@@ -238,12 +238,12 @@ jobs:
       - run:
           name: RSpec - U
           command: |
-            TEST_FILES=$(circleci tests glob "spec/**/u*_spec.rb" | circleci tests split --split-by=timings)
+            TEST_FILES=$(circleci tests glob "spec/**/t*_spec.rb,spec/**/u*_spec.rb" | circleci tests split --split-by=timings)
             bundle exec rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out ~/test-results/rspec-u.xml \
+                        -f RspecJunitFormatter --out ~/test-results/rspec-t-u.xml \
                         -f doc -- ${TEST_FILES}
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "./tmp/codeclimate.rspec-u.$CIRCLE_NODE_INDEX.json"
+                                   -o "./tmp/codeclimate.rspec-t-u.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -251,7 +251,7 @@ jobs:
       - persist_to_workspace:
           root: tmp
           paths:
-            - codeclimate.rspec-u.*.json
+            - codeclimate.rspec-t-u.*.json
 
 
   upload-coverage:
@@ -321,27 +321,27 @@ workflows:
             - rubocop
             - zeitwerk
 
-      - rspec-I-L:
+      - rspec-I:
           requires:
             - brakeman
             - rubocop
             - zeitwerk
 
-      - rspec-M:
+      - rspec-L-M:
           requires:
             - rspec-A-F
-      - rspec-S-T:
+      - rspec-S:
           requires:
-            - rspec-I-L
-      - rspec-U:
+            - rspec-I
+      - rspec-T-U:
           requires:
             - rspec-A-F
 
       - upload-coverage:
           requires:
-            - rspec-M
-            - rspec-S-T
-            - rspec-U
+            - rspec-L-M
+            - rspec-S
+            - rspec-T-U
 
       - docker-build:
           requires:
