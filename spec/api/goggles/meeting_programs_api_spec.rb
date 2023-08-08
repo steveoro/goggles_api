@@ -166,7 +166,7 @@ RSpec.describe Goggles::MeetingProgramsAPI do
         meeting_event_id: fixture_event.id,
         gender_type_id: GogglesDb::GenderType.send(%w[male female].sample).id,
         pool_type_id: fixture_event.pool_type.id,
-        category_type_id: category_type_id
+        category_type_id:
       )
     end
 
