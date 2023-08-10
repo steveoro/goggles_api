@@ -3,6 +3,7 @@ orbs:
   ruby: circleci/ruby@2.0.1
 
 common-config: &common-config
+  resource_class: large
   working_directory: ~/goggles_api
   shell: /bin/bash --login
   # NOTE: make sure ENV vars on CircleCI include CC_TEST_REPORTER_ID
@@ -114,12 +115,11 @@ jobs:
       - run:
           name: RSpec - A..F
           command: |
-            TEST_FILES=$(circleci tests glob "spec/**/a*_spec.rb,spec/**/b*_spec.rb,spec/**/c*_spec.rb,spec/**/f*_spec.rb" | circleci tests split --split-by=timings)
-            bundle exec rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out ~/test-results/rspec-a-f.xml \
-                        -f doc -- ${TEST_FILES}
+            TEST_FILES=$(circleci tests glob "spec/**/a*_spec.rb,spec/**/b*_spec.rb,spec/**/c*_spec.rb,spec/**/f*_spec.rb")
+            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+                        --format RspecJunitFormatter -o ~/test-results/rspec-a-f.xml" --verbose --split-by=timings
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "./tmp/codeclimate.rspec-a-f.$CIRCLE_NODE_INDEX.json"
+                        -o "./tmp/codeclimate.rspec-a-f.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -145,12 +145,11 @@ jobs:
       - run:
           name: RSpec - I
           command: |
-            TEST_FILES=$(circleci tests glob "spec/**/i*_spec.rb" | circleci tests split --split-by=timings)
-            bundle exec rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out ~/test-results/rspec-i.xml \
-                        -f doc -- ${TEST_FILES}
+            TEST_FILES=$(circleci tests glob "spec/**/i*_spec.rb")
+            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+                        --format RspecJunitFormatter -o ~/test-results/rspec-i.xml" --verbose --split-by=timings
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "./tmp/codeclimate.rspec-i.$CIRCLE_NODE_INDEX.json"
+                        -o "./tmp/codeclimate.rspec-i.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -176,12 +175,11 @@ jobs:
       - run:
           name: RSpec - L..M
           command: |
-            TEST_FILES=$(circleci tests glob "spec/**/l*_spec.rb,spec/**/m*_spec.rb" | circleci tests split --split-by=timings)
-            bundle exec rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out ~/test-results/rspec-l-m.xml \
-                        -f doc -- ${TEST_FILES}
+            TEST_FILES=$(circleci tests glob "spec/**/l*_spec.rb,spec/**/m*_spec.rb")
+            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+                        --format RspecJunitFormatter -o ~/test-results/rspec-l-m.xml" --verbose --split-by=timings
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "./tmp/codeclimate.rspec-l-m.$CIRCLE_NODE_INDEX.json"
+                        -o "./tmp/codeclimate.rspec-l-m.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -207,12 +205,11 @@ jobs:
       - run:
           name: RSpec - S
           command: |
-            TEST_FILES=$(circleci tests glob "spec/**/s*_spec.rb" | circleci tests split --split-by=timings)
-            bundle exec rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out ~/test-results/rspec-s.xml \
-                        -f doc -- ${TEST_FILES}
+            TEST_FILES=$(circleci tests glob "spec/**/s*_spec.rb")
+            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+                        --format RspecJunitFormatter -o ~/test-results/rspec-s.xml" --verbose --split-by=timings
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "./tmp/codeclimate.rspec-s.$CIRCLE_NODE_INDEX.json"
+                        -o "./tmp/codeclimate.rspec-s.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -238,12 +235,11 @@ jobs:
       - run:
           name: RSpec - U
           command: |
-            TEST_FILES=$(circleci tests glob "spec/**/t*_spec.rb,spec/**/u*_spec.rb" | circleci tests split --split-by=timings)
-            bundle exec rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out ~/test-results/rspec-t-u.xml \
-                        -f doc -- ${TEST_FILES}
+            TEST_FILES=$(circleci tests glob "spec/**/t*_spec.rb,spec/**/u*_spec.rb")
+            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+                        --format RspecJunitFormatter -o ~/test-results/rspec-t-u.xml" --verbose --split-by=timings
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "./tmp/codeclimate.rspec-t-u.$CIRCLE_NODE_INDEX.json"
+                        -o "./tmp/codeclimate.rspec-t-u.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
