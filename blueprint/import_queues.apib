@@ -608,7 +608,7 @@ Returns a result text 'msg' on success, with just the 'new' row ID as JSON.
         timeout: 60, # Optional
         payload: {
             multipart: true,
-            data_file: File.new('~/path/to/script_file.sql, 'rb')
+            data_file: File.new('~/path/to/script_file.sql', 'rb')
         },
         headers: { 'Authorization' => "Bearer <VALID-SESSION-JWT>" }
     )
