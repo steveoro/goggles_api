@@ -122,7 +122,7 @@ RSpec.describe Goggles::MeetingReservationsAPI do
           return unless expected_changes.key?(sub_sym_key)
 
           expected_changes[sub_sym_key].each do |expected_sub_changes|
-            updated_sub_row = updated_row.send("meeting_#{sub_sym_key.to_s.singularize}_reservations").find_by(id: expected_sub_changes[:id])
+            updated_sub_row = updated_row.send(:"meeting_#{sub_sym_key.to_s.singularize}_reservations").find_by(id: expected_sub_changes[:id])
             expect(updated_sub_row).to be_a(sub_klass).and be_valid
             expected_sub_changes.each do |key, value|
               expect(updated_sub_row.send(key)).to eq(value)

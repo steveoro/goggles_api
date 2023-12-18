@@ -1,0 +1,942 @@
+# Group RelayLaps
+
+## RelayLap details [/api/v3/relay_lap/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 3994,
+            "minutes": 0,
+            "seconds": 28,
+            "hundredths": 96,
+            "minutes_from_start": 1,
+            "seconds_from_start": 28,
+            "hundredths_from_start": 96,
+            "reaction_time": "0.75",
+            "length_in_meters": 100,
+            "position": 4,
+            "stroke_cycles": 25,
+            "breath_cycles": null,
+            "swimmer_id": 192,
+            "team_id": 1,
+            "meeting_relay_result_id": 37802,
+            "meeting_relay_swimmer_id": 2192,
+            "created_at": "2023-12-18T19:45:10.028Z",
+            "updated_at": "2023-12-18T19:45:10.028Z",
+            "timing": "0'28\"96",
+            "timing_from_start": "1'28\"96",
+            "swimmer": {
+                "id": 192,
+                "complete_name": "Paucek Dierdre 85768",
+                "last_name": "Paucek",
+                "first_name": "Dierdre",
+                "year_of_birth": 1998,
+                "year_guessed": false
+            },
+            "gender_type": {
+                "id": 2,
+                "code": "F",
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z",
+                "label": "FEM",
+                "long_label": "FEMMINILE",
+                "alt_label": "FEMMINE"
+            },
+            "team": {
+                "id": 1,
+                "name": "Lake Ramiro Swimming Club ASD",
+                "editable_name": "Lake Ramiro Swimming Club ASD",
+                "address": "9038 Littel Lights",
+                "zip": "028088",
+                "phone_mobile": "265-752-0508 x022",
+                "phone_number": "493-278-0409",
+                "fax_number": null,
+                "e_mail": "zenaida@example.net",
+                "contact_name": "Dede Sipes",
+                "notes": "Meatloaf rump pork ribeye shank sirloin venison tongue.",
+                "name_variations": null,
+                "city_id": 37,
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2019-02-17T10:26:36.000Z",
+                "home_page_url": "http://whatever.us",
+                "display_label": "Lake Ramiro Swimming Club ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                "short_label": "Lake Ramiro Swimming Club ASD, Reggio nell Emilia",
+                "city_name": "Reggio nell Emilia, Reggio Emilia (IT)"
+            },
+            "meeting": {
+                "id": 18273,
+                "code": "sassuolo",
+                "header_year": "2018/2019",
+                "display_label": "MASTER FIN: II Trofeo Citta` di Sassuolo",
+                "short_label": "II Citta` di Sassuolo",
+                "edition_label": "II"
+            },
+            "meeting_program": {
+                "id": 163725,
+                "event_order": 39,
+                "category_type_id": 1268,
+                "gender_type_id": 3,
+                "created_at": "2019-08-06T00:00:00.000Z",
+                "updated_at": "2019-08-06T00:00:00.000Z",
+                "autofilled": false,
+                "out_of_race": false,
+                "begin_time": null,
+                "meeting_event_id": 19315,
+                "pool_type_id": 1,
+                "standard_timing_id": 14767,
+                "event_label": "MS 4x50 MI",
+                "category_label": "(2018/2019) 200-239",
+                "category_code": "200-239",
+                "gender_code": "X",
+                "pool_code": "25"
+            },
+            "event_type": {
+                "id": 33,
+                "code": "M4X50MI",
+                "length_in_meters": 200,
+                "relay": true,
+                "stroke_type_id": 10,
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z",
+                "style_order": 33,
+                "mixed_gender": true,
+                "partecipants": 4,
+                "phases": 4,
+                "phase_length_in_meters": 50,
+                "label": "MS 4x50 MI",
+                "long_label": "MISTAFFETTA 4x50 MISTA",
+                "alt_label": "MS 4x50 MI"
+            },
+            "category_type": {
+                "id": 1268,
+                "code": "200-239",
+                "federation_code": "xD",
+                "description": "STAFF. M 200-239",
+                "short_name": "200-239",
+                "group_name": "MASTER",
+                "age_begin": 200,
+                "age_end": 239,
+                "relay": true,
+                "created_at": "2018-10-24T07:11:49.000Z",
+                "updated_at": "2018-10-24T07:11:49.000Z",
+                "season_id": 182,
+                "out_of_race": false,
+                "undivided": false,
+                "display_label": "200-239, FIN MASTER 2018/2019",
+                "short_label": "(2018/2019) 200-239"
+            },
+            "meeting_relay_result": {
+                "id": 37802,
+                "created_at": "2019-08-06T00:00:00.000Z",
+                "updated_at": "2019-08-06T00:00:00.000Z",
+                "rank": 2,
+                "play_off": false,
+                "out_of_race": false,
+                "disqualified": false,
+                "standard_points": "800.46",
+                "meeting_points": "0.0",
+                "minutes": 2,
+                "seconds": 31,
+                "hundredths": 60,
+                "team_id": 1,
+                "meeting_program_id": 163725,
+                "disqualification_code_type_id": 0,
+                "relay_code": "CSI Nuoto Ober Ferrari",
+                "reaction_time": "0.0",
+                "entry_minutes": null,
+                "entry_seconds": null,
+                "entry_hundredths": null,
+                "team_affiliation_id": 5197,
+                "entry_time_type_id": null,
+                "disqualification_notes": null,
+                "timing": "2'31\"60",
+                "team_name": "Lake Ramiro Swimming Club ASD",
+                "team_label": "Lake Ramiro Swimming Club ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                "event_label": "MS 4x50 MI",
+                "category_label": "(2018/2019) 200-239",
+                "category_code": "200-239",
+                "gender_code": "X"
+            },
+            "meeting_relay_swimmer": {
+                "id": 2192,
+                "created_at": "2019-08-06T00:00:00.000Z",
+                "updated_at": "2019-08-06T00:00:00.000Z",
+                "relay_order": 2,
+                "swimmer_id": 192,
+                "badge_id": 111389,
+                "stroke_type_id": 4,
+                "reaction_time": "0.0",
+                "minutes": 0,
+                "seconds": 46,
+                "hundredths": 40,
+                "meeting_relay_result_id": 37802,
+                "length_in_meters": null,
+                "minutes_from_start": null,
+                "seconds_from_start": null,
+                "hundredths_from_start": null,
+                "timing": "0'46\"40",
+                "swimmer_name": "Paucek Dierdre 85768",
+                "swimmer_label": "Paucek Dierdre 85768 (FEM, 1998)",
+                "team_name": "Lake Ramiro Swimming Club ASD",
+                "team_label": "Lake Ramiro Swimming Club ASD, Reggio nell Emilia, Reggio Emilia (IT)",
+                "event_label": "MS 4x50 MI",
+                "stroke_code": "RA",
+                "gender_code": "F"
+            }
+        }
+
+
+### find [GET]
+The RelayLap instance matching the specified `id` returned as JSON.
+
+The returned detailed result includes some of its parents and more: take a look at the structure aside for more details.
+
+Some of the sub-entities (such as the GenderType) are duplicated in the hierachy tree for ease of reference.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + id: 9976 (number, required) - RelayLap ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/relay_lap/9976"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/relay_lap/9976',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":9976, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [RelayLap details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for all the RelayLap fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'RelayLap' or have generic admin grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `meeting_individual_result_id` | integer | associated MeetingIndividualResult ID |
+| `meeting_program_id` | integer | associated MeetingProgram ID |
+| `team_id` | integer | associated Team ID |
+| `swimmer_id` | integer | associated Swimmer ID |
+| `reaction_time` | float | reaction time (when available; must be positive to be considered) |
+| `minutes` | integer | relay_lap time, minutes |
+| `seconds` | integer | relay_lap time, seconds |
+| `hundredths` | integer | relay_lap time, hundredths of seconds |
+| `length_in_meters` | integer | relay_lap length in meters |
+| `minutes_from_start` | integer | overall minutes from heat start |
+| `seconds_from_start` | integer | overall seconds from heat start |
+| `hundredths_from_start` | integer | overall hundredths of second from heat start |
+| `stroke_cycles` | integer | relay_lap overall stroke cycles |
+| `underwater_seconds` | integer | time spent underwater on turn/start, seconds |
+| `underwater_hundredths` | integer | time spent underwater on turn/start, hundredths of a second |
+| `underwater_kicks` | integer | underwater kicks after relay_lap turn/start |
+| `breath_cycles` | integer | relay_lap overall breath cycles |
+| `position` | integer | position in heat at the end of the relay_lap |
+
+
+* * *
+
+
++ Parameters
+    + id: 9976 (number, required) - RelayLap ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"position": 3, "minutes": 0, "seconds": 39, "hundredths": 65 }' \
+            "<API_HOST:PORT>/api/v3/relay_lap/9976"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/relay_lap/9976',
+                payload: {
+                    position: 3,
+                    minutes: 0,
+                    seconds: 30,
+                    hundredths: 65
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "position": 3,
+                "minutes": 0,
+                "seconds": 30,
+                "hundredths": 65
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "position": 3,
+                "minutes": 0,
+                "seconds": 30,
+                "hundredths": 65
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "position": 3,
+                "minutes": 0,
+                "seconds": 30,
+                "hundredths": 65
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "position": 3,
+                "minutes": 0,
+                "seconds": 30,
+                "hundredths": 65
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "position": 3,
+                "minutes": 0,
+                "seconds": 30,
+                "hundredths": 65
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new RelayLap, given the specified body parameters.
+
+Association with MIR is optional to allow relay_lap creation even before
+the heat is over.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'RelayLap' or have generic admin grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `meeting_program_id` | integer | **required**, associated MeetingProgram ID |
+| `team_id` | integer | **required**, associated Team ID |
+| `swimmer_id` | integer | **required**, associated Swimmer ID |
+| `meeting_individual_result_id` | integer | associated MeetingIndividualResult ID |
+| `reaction_time` | float | reaction time (when available; must be positive to be considered) |
+| `minutes` | integer | relay_lap time, minutes |
+| `seconds` | integer | relay_lap time, seconds |
+| `hundredths` | integer | relay_lap time, hundredths of seconds |
+| `length_in_meters` | integer | relay_lap length in meters |
+| `minutes_from_start` | integer | overall minutes from heat start |
+| `seconds_from_start` | integer | overall seconds from heat start |
+| `hundredths_from_start` | integer | overall hundredths of second from heat start |
+| `stroke_cycles` | integer | relay_lap overall stroke cycles |
+| `underwater_seconds` | integer | time spent underwater on turn/start, seconds |
+| `underwater_hundredths` | integer | time spent underwater on turn/start, hundredths of a second |
+| `underwater_kicks` | integer | underwater kicks after relay_lap turn/start |
+| `breath_cycles` | integer | relay_lap overall breath cycles |
+| `position` | integer | position in heat at the end of the relay_lap |
+
+
+* * *
+
+
++ Attributes
+    + meeting_program_id: 161956 (number, required) - associated MeetingProgram ID
+    + team_id: 1 (number, required) - associated Team ID
+    + swimmer_id: 23 (number, required) - associated Swimmer ID
+    + meeting_individual_result_id: 834879 (number, optional) - associated MeetingIndividualResult ID
+    + reaction_time (number, optional)
+    + minutes: 1 (number, optional)
+    + seconds: 15 (number, optional)
+    + hundredths: 97 (number, optional)
+    + length_in_meters: 150 (number, optional)
+    + minutes_from_start (number, optional)
+    + seconds_from_start (number, optional)
+    + hundredths_from_start (number, optional)
+    + stroke_cycles (number, optional)
+    + underwater_seconds (number, optional)
+    + underwater_hundredths (number, optional)
+    + underwater_kicks (number, optional)
+    + breath_cycles (number, optional)
+    + position (number, optional)
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"meeting_individual_result_id": 834879, "meeting_program_id": 168301, \
+                 "team_id": 1, "swimmer_id": 23, "length_in_meters": 150, \
+                 "position": 5, "minutes": 1, "seconds": 15, "hundredths": 97}'
+            "<API_HOST:PORT>/api/v3/relay_lap"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/relay_lap',
+            {
+                "meeting_individual_result_id": 834879,
+                "meeting_program_id": 168301,
+                "team_id": 1,
+                "swimmer_id": 23,
+                "length_in_meters": 150,
+                "position": 5,
+                "minutes": 1,
+                "seconds": 15,
+                "hundredths": 97
+            } )
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "meeting_individual_result_id": 834879,
+                "meeting_program_id": 168301,
+                "team_id": 1,
+                "swimmer_id": 23,
+                "length_in_meters": 150,
+                "position": 5,
+                "minutes": 1,
+                "seconds": 15,
+                "hundredths": 97
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "meeting_individual_result_id": 834879,
+                "meeting_program_id": 168301,
+                "team_id": 1,
+                "swimmer_id": 23,
+                "length_in_meters": 150,
+                "position": 5,
+                "minutes": 1,
+                "seconds": 15,
+                "hundredths": 97
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "meeting_individual_result_id": 834879,
+                "meeting_program_id": 168301,
+                "team_id": 1,
+                "swimmer_id": 23,
+                "length_in_meters": 150,
+                "position": 5,
+                "minutes": 1,
+                "seconds": 15,
+                "hundredths": 97
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "meeting_individual_result_id": 834879,
+                "meeting_program_id": 168301,
+                "team_id": 1,
+                "swimmer_id": 23,
+                "length_in_meters": 150,
+                "position": 5,
+                "minutes": 1,
+                "seconds": 15,
+                "hundredths": 97
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'RelayLap' or have generic admin grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 9983 (number, required) - RelayLap ID of the row that has to be deleted
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/relay_lap/9983"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/relay_lap/9983',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# RelayLap list [/api/v3/relay_laps{?page,per_page,meeting_individual_result_id,meeting_program_id,team_id,swimmer_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/relay_laps?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/relay_laps?page=2&team_id=1>; rel=\"next\""
+            Total: 9275
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // RelayLap details 1
+                {
+                    "id": 1,
+                    // [...]
+                },
+
+                // RelayLap details 2
+                {
+                    "id": 2,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of RelayLaps associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `meeting_individual_result_id`
+- `meeting_program_id`
+- `team_id`
+- `swimmer_id`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + meeting_program_id: 161956 (number, required) - associated MeetingProgram ID
+    + team_id: 1 (number, required) - associated Team ID
+    + swimmer_id: 23 (number, required) - associated Swimmer ID
+    + meeting_individual_result_id: 834879 (number, optional) - associated MeetingIndividualResult ID
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/relay_laps?team_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/relay_laps',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { team_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [RelayLap list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)

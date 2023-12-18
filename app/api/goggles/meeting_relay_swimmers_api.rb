@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: MeetingRelaySwimmer API Grape controller
   #
-  #   - version:  7-0.4.06
+  #   - version:  7-0.6.10
   #   - author:   Steve A.
-  #   - build:    20210906
+  #   - build:    20231218
   #
   # == Note:
   # MeetingRelaySwimmers store lap data for MRRs.
@@ -58,6 +58,10 @@ module Goggles
         optional :minutes, type: Integer, desc: 'optional: lap time, minutes'
         optional :seconds, type: Integer, desc: 'optional: lap time, seconds'
         optional :hundredths, type: Integer, desc: 'optional: lap time, hundredths of seconds'
+        optional :length_in_meters, type: Integer, desc: 'optional: relay_lap length in meters'
+        optional :minutes_from_start, type: Integer, desc: 'optional: overall minutes from heat start'
+        optional :seconds_from_start, type: Integer, desc: 'optional: overall seconds from heat start'
+        optional :hundredths_from_start, type: Integer, desc: 'optional: overall hundredths of second from heat start'
       end
       route_param :id do
         put do
@@ -103,6 +107,10 @@ module Goggles
         optional :minutes, type: Integer, desc: 'optional: lap time, minutes'
         optional :seconds, type: Integer, desc: 'optional: lap time, seconds'
         optional :hundredths, type: Integer, desc: 'optional: lap time, hundredths of seconds'
+        optional :length_in_meters, type: Integer, desc: 'optional: relay_lap length in meters'
+        optional :minutes_from_start, type: Integer, desc: 'optional: overall minutes from heat start'
+        optional :seconds_from_start, type: Integer, desc: 'optional: overall seconds from heat start'
+        optional :hundredths_from_start, type: Integer, desc: 'optional: overall hundredths of second from heat start'
       end
       post do
         api_user = check_jwt_session

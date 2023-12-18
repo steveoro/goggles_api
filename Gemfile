@@ -30,7 +30,7 @@ gem 'rack-cors'
 
 gem 'api-pagination'
 gem 'devise'
-gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db', branch: 'ruby-3.1'
+gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
 gem 'grape'
 gem 'grape_logging'
 gem 'grape-route-helpers'

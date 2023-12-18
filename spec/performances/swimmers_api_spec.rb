@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'support/api_session_helpers'
 
-RSpec.describe Goggles::SwimmersAPI, tag: :performance, type: :request do
+RSpec.describe Goggles::SwimmersAPI, tag: :performance, type: :request do # rubocop:disable RSpec/SpecFilePathFormat
   include GrapeRouteHelpers::NamedRouteMatcher
   include APISessionHelpers
 

@@ -291,7 +291,7 @@ module Goggles
     # - value => new value for the key
     #
     def settings_group_value_setter(settings_group, key, value)
-      settings_group.send("#{key}=", value)
+      settings_group.send(:"#{key}=", value)
     end
     #-- -----------------------------------------------------------------------
     #++

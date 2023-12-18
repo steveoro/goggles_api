@@ -8,9 +8,9 @@ require 'grape_logging'
 #
 # Mounts all required API modules
 #
-#   - version:  7-0.5.01
+#   - version:  7-0.6.10
 #   - author:   Steve A.
-#   - build:    20230404
+#   - build:    20231218
 #
 module Goggles
   # = Goggles::API
@@ -81,6 +81,7 @@ module Goggles
     mount MeetingRelaySwimmersAPI
     mount MeetingReservationsAPI
     mount MeetingSessionsAPI
+    mount RelayLapsAPI
     mount SeasonTypesAPI
     mount SeasonsAPI
     mount SessionAPI
