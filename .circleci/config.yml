@@ -307,14 +307,17 @@ jobs:
       - setup_remote_docker:
           version: 20.10.14
           docker_layer_caching: true
-      - run:
-          name: Docker TAGGED prod
-          command: |
-            echo "Git Tag << pipeline.git.tag >>"
-            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-            docker pull $DOCKERHUB_USERNAME/goggles-api:latest
-            docker build -t $DOCKERHUB_USERNAME/goggles-api:prod-<< pipeline.git.tag >> --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .
-            docker push $DOCKERHUB_USERNAME/goggles-api:prod-<< pipeline.git.tag >>
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Docker TAGGED prod
+                command: |
+                  echo "Git Tag << pipeline.git.tag >>"
+                  echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+                  docker pull $DOCKERHUB_USERNAME/goggles-api:latest
+                  docker build -t $DOCKERHUB_USERNAME/goggles-api:prod-<< pipeline.git.tag >> --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .
+                  docker push $DOCKERHUB_USERNAME/goggles-api:prod-<< pipeline.git.tag >>
 
 
 workflows:
@@ -363,6 +366,8 @@ workflows:
           requires:
             - upload-coverage
           filters:
+            branches:
+              only: master
             tags:
               ignore: /.*/
 
