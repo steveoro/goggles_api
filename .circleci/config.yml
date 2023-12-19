@@ -305,6 +305,8 @@ workflows:
     jobs:
       - persisted-data
       - rspec-A-F
+          requires:
+            - persisted-data
 
       # - brakeman:
       #     requires:
