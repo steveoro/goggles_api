@@ -114,7 +114,7 @@ jobs:
           <<: *common-db-setup
       - run:
           name: RSpec - A..F
-          # WIP:
+          # (WIP: split-run config below doesn't seem to work anymore a.t.m.; reverting to split-by-timing)
           # TEST_FILES=$(circleci tests glob "spec/api/goggles/{a*_spec.rb,b*_spec.rb,c*_spec.rb,f*_spec.rb},spec/commands/*_spec.rb")
           # echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
           #             --format RspecJunitFormatter -o ~/test-results/rspec-a-f.xml" --verbose --split-by=timings
@@ -147,10 +147,13 @@ jobs:
           <<: *common-db-setup
       - run:
           name: RSpec - I
+          # (See note in previous job)
+          # TEST_FILES=$(circleci tests glob "spec/api/goggles/i*_spec.rb")
+          # echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+          #             --format RspecJunitFormatter -o ~/test-results/rspec-i.xml" --verbose --split-by=timings
           command: |
-            TEST_FILES=$(circleci tests glob "spec/api/goggles/i*_spec.rb")
-            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
-                        --format RspecJunitFormatter -o ~/test-results/rspec-i.xml" --verbose --split-by=timings
+            bundle exec rspec --color --order rand -f doc --format RspecJunitFormatter -o ~/test-results/rspec-i.xml \
+                  $(circleci tests glob "spec/api/goggles/i*_spec.rb" | circleci tests split --split-by=timings)
             ./tmp/cc-test-reporter format-coverage -t simplecov \
                         -o "./tmp/codeclimate.rspec-i.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
@@ -177,10 +180,13 @@ jobs:
           <<: *common-db-setup
       - run:
           name: RSpec - L..M
+          # (See note in previous job)
+          # TEST_FILES=$(circleci tests glob "spec/api/goggles/{l*_spec.rb,m*_spec.rb}")
+          # echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+          #             --format RspecJunitFormatter -o ~/test-results/rspec-l-m.xml" --verbose --split-by=timings
           command: |
-            TEST_FILES=$(circleci tests glob "spec/api/goggles/{l*_spec.rb,m*_spec.rb}")
-            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
-                        --format RspecJunitFormatter -o ~/test-results/rspec-l-m.xml" --verbose --split-by=timings
+            bundle exec rspec --color --order rand -f doc --format RspecJunitFormatter -o ~/test-results/rspec-l-m.xml \
+                  $(circleci tests glob "spec/api/goggles/{l*_spec.rb,m*_spec.rb}" | circleci tests split --split-by=timings)
             ./tmp/cc-test-reporter format-coverage -t simplecov \
                         -o "./tmp/codeclimate.rspec-l-m.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
@@ -207,10 +213,13 @@ jobs:
           <<: *common-db-setup
       - run:
           name: RSpec - R..S
+          # (See note in previous job)
+          # TEST_FILES=$(circleci tests glob "spec/api/goggles/{r*_spec.rb,s*_spec.rb}")
+          # echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+          #             --format RspecJunitFormatter -o ~/test-results/rspec-r-s.xml" --verbose --split-by=timings
           command: |
-            TEST_FILES=$(circleci tests glob "spec/api/goggles/{r*_spec.rb,s*_spec.rb}")
-            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
-                        --format RspecJunitFormatter -o ~/test-results/rspec-r-s.xml" --verbose --split-by=timings
+            bundle exec rspec --color --order rand -f doc --format RspecJunitFormatter -o ~/test-results/rspec-r-s.xml \
+                  $(circleci tests glob "spec/api/goggles/{r*_spec.rb,s*_spec.rb}" | circleci tests split --split-by=timings)
             ./tmp/cc-test-reporter format-coverage -t simplecov \
                         -o "./tmp/codeclimate.rspec-r-s.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
@@ -237,10 +246,13 @@ jobs:
           <<: *common-db-setup
       - run:
           name: RSpec - U
+          # (See note in previous job)
+          # TEST_FILES=$(circleci tests glob "spec/api/goggles/{t*_spec.rb,u*_spec.rb}")
+          # echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+          #             --format RspecJunitFormatter -o ~/test-results/rspec-t-u.xml" --verbose --split-by=timings
           command: |
-            TEST_FILES=$(circleci tests glob "spec/api/goggles/{t*_spec.rb,u*_spec.rb}")
-            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
-                        --format RspecJunitFormatter -o ~/test-results/rspec-t-u.xml" --verbose --split-by=timings
+            bundle exec rspec --color --order rand -f doc --format RspecJunitFormatter -o ~/test-results/rspec-t-u.xml \
+                  $(circleci tests glob "spec/api/goggles/{t*_spec.rb,u*_spec.rb}" | circleci tests split --split-by=timings)
             ./tmp/cc-test-reporter format-coverage -t simplecov \
                         -o "./tmp/codeclimate.rspec-t-u.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
@@ -304,48 +316,44 @@ workflows:
   full-build:
     jobs:
       - persisted-data
-      - rspec-A-F:
+      - brakeman:
+          requires:
+            - persisted-data
+      - rubocop:
+          requires:
+            - persisted-data
+      - zeitwerk:
           requires:
             - persisted-data
 
-      # - brakeman:
-      #     requires:
-      #       - persisted-data
-      # - rubocop:
-      #     requires:
-      #       - persisted-data
-      # - zeitwerk:
-      #     requires:
-      #       - persisted-data
+      - rspec-A-F:
+          requires:
+            - brakeman
+            - rubocop
+            - zeitwerk
 
-      # - rspec-A-F:
-      #     requires:
-      #       - brakeman
-      #       - rubocop
-      #       - zeitwerk
+      - rspec-I:
+          requires:
+            - brakeman
+            - rubocop
+            - zeitwerk
 
-      # - rspec-I:
-      #     requires:
-      #       - brakeman
-      #       - rubocop
-      #       - zeitwerk
+      - rspec-L-M:
+          requires:
+            - rspec-A-F
+      - rspec-R-S:
+          requires:
+            - rspec-I
+      - rspec-T-U:
+          requires:
+            - rspec-A-F
 
-      # - rspec-L-M:
-      #     requires:
-      #       - rspec-A-F
-      # - rspec-R-S:
-      #     requires:
-      #       - rspec-I
-      # - rspec-T-U:
-      #     requires:
-      #       - rspec-A-F
+      - upload-coverage:
+          requires:
+            - rspec-L-M
+            - rspec-R-S
+            - rspec-T-U
 
-      # - upload-coverage:
-      #     requires:
-      #       - rspec-L-M
-      #       - rspec-R-S
-      #       - rspec-T-U
-
-      # - docker-build:
-      #     requires:
-      #       - upload-coverage
+      - docker-build:
+          requires:
+            - upload-coverage
