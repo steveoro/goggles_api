@@ -365,8 +365,6 @@ workflows:
           filters:
             tags:
               ignore: /.*/
-            branches:
-              only: /.*/
 
       - docker-release:
           requires:
@@ -374,5 +372,3 @@ workflows:
           filters:
             tags:
               only: /.*/
-            branches:
-              ignore: /.*/
