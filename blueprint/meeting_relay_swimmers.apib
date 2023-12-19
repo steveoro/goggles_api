@@ -10,10 +10,14 @@
             "swimmer_id": 24842,
             "badge_id": 111358,
             "stroke_type_id": 1,
-            "reaction_time": "0.0",
+            "reaction_time": "0.75",
             "minutes": 0,
-            "seconds": 0,
-            "hundredths": 0,
+            "seconds": 35,
+            "hundredths": 24,
+            "minutes_from_start": 1,
+            "seconds_from_start": 28,
+            "hundredths_from_start": 96,
+            "length_in_meters": 100,
             "meeting_relay_result_id": 37828,
             "timing": "0'00\"00",
             "swimmer_name": "Yost Tran 361",
@@ -363,6 +367,10 @@ All are optional (except `id`):
 | `minutes` | integer | lap time, minutes |
 | `seconds` | integer | lap time, seconds |
 | `hundredths` | integer | lap time, hundredths of seconds |
+| `length_in_meters` | integer | lap length in meters |
+| `minutes_from_start` | integer | overall minutes from heat start |
+| `seconds_from_start` | integer | overall seconds from heat start |
+| `hundredths_from_start` | integer | overall hundredths of second from heat start |
 
 
 * * *
@@ -551,6 +559,10 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | `minutes` | integer | lap time, minutes |
 | `seconds` | integer | lap time, seconds |
 | `hundredths` | integer | lap time, hundredths of seconds |
+| `length_in_meters` | integer | lap length in meters |
+| `minutes_from_start` | integer | overall minutes from heat start |
+| `seconds_from_start` | integer | overall seconds from heat start |
+| `hundredths_from_start` | integer | overall hundredths of second from heat start |
 
 
 * * *
@@ -566,6 +578,10 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + minutes: 1 (number, optional)
     + seconds: 15 (number, optional)
     + hundredths: 97 (number, optional)
+    + length_in_meters: 150 (number, optional)
+    + minutes_from_start (number, optional)
+    + seconds_from_start (number, optional)
+    + hundredths_from_start (number, optional)
 
 
 + Request ok (application/json)

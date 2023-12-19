@@ -200,7 +200,7 @@ Some of the sub-entities (such as the GenderType) are duplicated in the hierachy
 
 
 + Parameters
-    + id: 9976 (number, required) - RelayLap ID
+    + id: 3994 (number, required) - RelayLap ID
 
 
 + Request ok (application/json)
@@ -212,7 +212,7 @@ Some of the sub-entities (such as the GenderType) are duplicated in the hierachy
     ```bash
     $> curl -i -X GET -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/relay_lap/9976"
+            "<API_HOST:PORT>/api/v3/relay_lap/3994"
     ```
 
     ##### `RestClient` (Ruby):
@@ -220,10 +220,10 @@ Some of the sub-entities (such as the GenderType) are duplicated in the hierachy
     ```ruby
     > res = RestClient::Request.execute(
                 method: :get,
-                url: '<API_HOST:PORT>/api/v3/relay_lap/9976',
+                url: '<API_HOST:PORT>/api/v3/relay_lap/3994',
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
             )
-    => <RestClient::Response 200 "{\"id\":9976, ...">
+    => <RestClient::Response 200 "{\"id\":3994, ...">
     ```
 
 
@@ -299,8 +299,8 @@ All are optional (except `id`):
 
 |  Field name  | Data type |  description |
 | --- | --- | --- |
-| `meeting_individual_result_id` | integer | associated MeetingIndividualResult ID |
-| `meeting_program_id` | integer | associated MeetingProgram ID |
+| `meeting_relay_result_id` | integer | associated MeetingRelayResult ID |
+| `meeting_relay_swimmer_id` | integer | associated MeetingRelaySwimmer ID |
 | `team_id` | integer | associated Team ID |
 | `swimmer_id` | integer | associated Swimmer ID |
 | `reaction_time` | float | reaction time (when available; must be positive to be considered) |
@@ -312,9 +312,6 @@ All are optional (except `id`):
 | `seconds_from_start` | integer | overall seconds from heat start |
 | `hundredths_from_start` | integer | overall hundredths of second from heat start |
 | `stroke_cycles` | integer | relay_lap overall stroke cycles |
-| `underwater_seconds` | integer | time spent underwater on turn/start, seconds |
-| `underwater_hundredths` | integer | time spent underwater on turn/start, hundredths of a second |
-| `underwater_kicks` | integer | underwater kicks after relay_lap turn/start |
 | `breath_cycles` | integer | relay_lap overall breath cycles |
 | `position` | integer | position in heat at the end of the relay_lap |
 
@@ -323,7 +320,7 @@ All are optional (except `id`):
 
 
 + Parameters
-    + id: 9976 (number, required) - RelayLap ID
+    + id: 3994 (number, required) - RelayLap ID
 
 
 + Request ok (application/json)
@@ -336,7 +333,7 @@ All are optional (except `id`):
     $> curl -i -X PUT -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
             -d '{"position": 3, "minutes": 0, "seconds": 39, "hundredths": 65 }' \
-            "<API_HOST:PORT>/api/v3/relay_lap/9976"
+            "<API_HOST:PORT>/api/v3/relay_lap/3994"
     ```
 
     ##### `RestClient` (Ruby):
@@ -344,7 +341,7 @@ All are optional (except `id`):
     ```ruby
     > res = RestClient::Request.execute(
                 method: :put,
-                url: '<API_HOST:PORT>/api/v3/relay_lap/9976',
+                url: '<API_HOST:PORT>/api/v3/relay_lap/3994',
                 payload: {
                     position: 3,
                     minutes: 0,
@@ -485,10 +482,10 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 |  Field name  | Data type |  description |
 | --- | --- | --- |
-| `meeting_program_id` | integer | **required**, associated MeetingProgram ID |
+| `meeting_relay_result_id` | integer | **required**, associated MeetingRelayResult ID |
+| `meeting_relay_swimmer_id` | integer | **required**, associated MeetingRelaySwimmer ID |
 | `team_id` | integer | **required**, associated Team ID |
 | `swimmer_id` | integer | **required**, associated Swimmer ID |
-| `meeting_individual_result_id` | integer | associated MeetingIndividualResult ID |
 | `reaction_time` | float | reaction time (when available; must be positive to be considered) |
 | `minutes` | integer | relay_lap time, minutes |
 | `seconds` | integer | relay_lap time, seconds |
@@ -498,9 +495,6 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 | `seconds_from_start` | integer | overall seconds from heat start |
 | `hundredths_from_start` | integer | overall hundredths of second from heat start |
 | `stroke_cycles` | integer | relay_lap overall stroke cycles |
-| `underwater_seconds` | integer | time spent underwater on turn/start, seconds |
-| `underwater_hundredths` | integer | time spent underwater on turn/start, hundredths of a second |
-| `underwater_kicks` | integer | underwater kicks after relay_lap turn/start |
 | `breath_cycles` | integer | relay_lap overall breath cycles |
 | `position` | integer | position in heat at the end of the relay_lap |
 
@@ -509,10 +503,10 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
 
 + Attributes
-    + meeting_program_id: 161956 (number, required) - associated MeetingProgram ID
+    + meeting_relay_result_id: 834879 (number, required) - associated MeetingRelayResult ID
     + team_id: 1 (number, required) - associated Team ID
     + swimmer_id: 23 (number, required) - associated Swimmer ID
-    + meeting_individual_result_id: 834879 (number, optional) - associated MeetingIndividualResult ID
+    + meeting_relay_swimmer_id: 161956 (number, optional) - associated MeetingRelaySwimmer ID
     + reaction_time (number, optional)
     + minutes: 1 (number, optional)
     + seconds: 15 (number, optional)
@@ -522,9 +516,6 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + seconds_from_start (number, optional)
     + hundredths_from_start (number, optional)
     + stroke_cycles (number, optional)
-    + underwater_seconds (number, optional)
-    + underwater_hundredths (number, optional)
-    + underwater_kicks (number, optional)
     + breath_cycles (number, optional)
     + position (number, optional)
 
@@ -537,7 +528,7 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
 
     ```bash
     $> curl -i -X POST -H "Content-Type: application/json" \
-            -d '{"meeting_individual_result_id": 834879, "meeting_program_id": 168301, \
+            -d '{"meeting_relay_result_id": 834879, "meeting_relay_swimmer_id": 168301, \
                  "team_id": 1, "swimmer_id": 23, "length_in_meters": 150, \
                  "position": 5, "minutes": 1, "seconds": 15, "hundredths": 97}'
             "<API_HOST:PORT>/api/v3/relay_lap"
@@ -548,8 +539,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     ```ruby
     > res = RestClient.post('<API_HOST:PORT>/api/v3/relay_lap',
             {
-                "meeting_individual_result_id": 834879,
-                "meeting_program_id": 168301,
+                "meeting_relay_result_id": 834879,
+                "meeting_relay_swimmer_id": 168301,
                 "team_id": 1,
                 "swimmer_id": 23,
                 "length_in_meters": 150,
@@ -573,8 +564,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + Body
 
             {
-                "meeting_individual_result_id": 834879,
-                "meeting_program_id": 168301,
+                "meeting_relay_result_id": 834879,
+                "meeting_relay_swimmer_id": 168301,
                 "team_id": 1,
                 "swimmer_id": 23,
                 "length_in_meters": 150,
@@ -603,8 +594,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + Body
 
             {
-                "meeting_individual_result_id": 834879,
-                "meeting_program_id": 168301,
+                "meeting_relay_result_id": 834879,
+                "meeting_relay_swimmer_id": 168301,
                 "team_id": 1,
                 "swimmer_id": 23,
                 "length_in_meters": 150,
@@ -630,8 +621,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + Body
 
             {
-                "meeting_individual_result_id": 834879,
-                "meeting_program_id": 168301,
+                "meeting_relay_result_id": 834879,
+                "meeting_relay_swimmer_id": 168301,
                 "team_id": 1,
                 "swimmer_id": 23,
                 "length_in_meters": 150,
@@ -661,8 +652,8 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
     + Body
 
             {
-                "meeting_individual_result_id": 834879,
-                "meeting_program_id": 168301,
+                "meeting_relay_result_id": 834879,
+                "meeting_relay_swimmer_id": 168301,
                 "team_id": 1,
                 "swimmer_id": 23,
                 "length_in_meters": 150,
@@ -698,7 +689,7 @@ Returns `true` on success, an empty body when not found.
 #### Body Attributes:
 
 + Parameters
-    + id: 9983 (number, required) - RelayLap ID of the row that has to be deleted
+    + id: 3994 (number, required) - RelayLap ID of the row that has to be deleted
 
 
 + Request ok (application/json)
@@ -710,7 +701,7 @@ Returns `true` on success, an empty body when not found.
     ```bash
     $> curl -i -X DELETE -H "Content-Type: application/json" \
             -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
-            "<API_HOST:PORT>/api/v3/relay_lap/9983"
+            "<API_HOST:PORT>/api/v3/relay_lap/3994"
     ```
 
     ##### `RestClient` (Ruby):
@@ -718,7 +709,7 @@ Returns `true` on success, an empty body when not found.
     ```ruby
     > res = RestClient::Request.execute(
                 method: :delete,
-                url: '<API_HOST:PORT>/api/v3/relay_lap/9983',
+                url: '<API_HOST:PORT>/api/v3/relay_lap/3994',
                 headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
             )
     => <RestClient::Response 200 "true">
@@ -794,14 +785,14 @@ Returns `true` on success, an empty body when not found.
 
 
 
-# RelayLap list [/api/v3/relay_laps{?page,per_page,meeting_individual_result_id,meeting_program_id,team_id,swimmer_id}]
+# RelayLap list [/api/v3/relay_laps{?page,per_page,meeting_relay_result_id,meeting_relay_swimmer_id,team_id,swimmer_id}]
 
 + Model (application/json)
 
     + Header
 
             Link: "<API_HOST:PORT/api/v3/relay_laps?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/relay_laps?page=2&team_id=1>; rel=\"next\""
-            Total: 9275
+            Total: 175
             Per-Page: 25
             Page: 1
 
@@ -829,8 +820,8 @@ Returns `true` on success, an empty body when not found.
 The list of RelayLaps associated to the specified filtering values,
 returned as JSON and optionally filtered by any or all from:
 
-- `meeting_individual_result_id`
-- `meeting_program_id`
+- `meeting_relay_result_id`
+- `meeting_relay_swimmer_id`
 - `team_id`
 - `swimmer_id`
 
@@ -857,10 +848,10 @@ Typical `Link` header format (single String, separated by COMMA+BLANK):
 
 
 + Parameters
-    + meeting_program_id: 161956 (number, required) - associated MeetingProgram ID
-    + team_id: 1 (number, required) - associated Team ID
-    + swimmer_id: 23 (number, required) - associated Swimmer ID
-    + meeting_individual_result_id: 834879 (number, optional) - associated MeetingIndividualResult ID
+    + meeting_relay_swimmer_id: 161956 (number, optional) - associated MeetingRelaySwimmer ID
+    + meeting_relay_result_id: 834879 (number, optional) - associated MeetingRelayResult ID
+    + team_id: 1 (number, optional) - associated Team ID
+    + swimmer_id: 23 (number, optional) - associated Swimmer ID
     + page: 1 (number, optional) - pagination: selected page
         + Default: 1
     + per_page: 25 (number, optional) - pagination: desired total rows per page
