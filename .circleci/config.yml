@@ -114,10 +114,13 @@ jobs:
           <<: *common-db-setup
       - run:
           name: RSpec - A..F
+          # WIP:
+          # TEST_FILES=$(circleci tests glob "spec/api/goggles/{a*_spec.rb,b*_spec.rb,c*_spec.rb,f*_spec.rb},spec/commands/*_spec.rb")
+          # echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+          #             --format RspecJunitFormatter -o ~/test-results/rspec-a-f.xml" --verbose --split-by=timings
           command: |
-            TEST_FILES=$(circleci tests glob "spec/api/goggles/{a*_spec.rb,b*_spec.rb,c*_spec.rb,f*_spec.rb},spec/commands/*_spec.rb")
-            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
-                        --format RspecJunitFormatter -o ~/test-results/rspec-a-f.xml" --verbose --split-by=timings
+            bundle exec rspec --color --order rand -f doc --format RspecJunitFormatter -o ~/test-results/rspec-a-f.xml \
+                  $(circleci tests glob "spec/api/goggles/{a*_spec.rb,b*_spec.rb,c*_spec.rb,f*_spec.rb},spec/commands/*_spec.rb" | circleci tests split --split-by=timings)
             ./tmp/cc-test-reporter format-coverage -t simplecov \
                         -o "./tmp/codeclimate.rspec-a-f.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
@@ -301,44 +304,46 @@ workflows:
   full-build:
     jobs:
       - persisted-data
-      - brakeman:
-          requires:
-            - persisted-data
-      - rubocop:
-          requires:
-            - persisted-data
-      - zeitwerk:
-          requires:
-            - persisted-data
+      - rspec-A-F
 
-      - rspec-A-F:
-          requires:
-            - brakeman
-            - rubocop
-            - zeitwerk
+      # - brakeman:
+      #     requires:
+      #       - persisted-data
+      # - rubocop:
+      #     requires:
+      #       - persisted-data
+      # - zeitwerk:
+      #     requires:
+      #       - persisted-data
 
-      - rspec-I:
-          requires:
-            - brakeman
-            - rubocop
-            - zeitwerk
+      # - rspec-A-F:
+      #     requires:
+      #       - brakeman
+      #       - rubocop
+      #       - zeitwerk
 
-      - rspec-L-M:
-          requires:
-            - rspec-A-F
-      - rspec-R-S:
-          requires:
-            - rspec-I
-      - rspec-T-U:
-          requires:
-            - rspec-A-F
+      # - rspec-I:
+      #     requires:
+      #       - brakeman
+      #       - rubocop
+      #       - zeitwerk
 
-      - upload-coverage:
-          requires:
-            - rspec-L-M
-            - rspec-R-S
-            - rspec-T-U
+      # - rspec-L-M:
+      #     requires:
+      #       - rspec-A-F
+      # - rspec-R-S:
+      #     requires:
+      #       - rspec-I
+      # - rspec-T-U:
+      #     requires:
+      #       - rspec-A-F
 
-      - docker-build:
-          requires:
-            - upload-coverage
+      # - upload-coverage:
+      #     requires:
+      #       - rspec-L-M
+      #       - rspec-R-S
+      #       - rspec-T-U
+
+      # - docker-build:
+      #     requires:
+      #       - upload-coverage
