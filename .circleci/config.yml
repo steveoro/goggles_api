@@ -304,7 +304,7 @@ workflows:
   full-build:
     jobs:
       - persisted-data
-      - rspec-A-F
+      - rspec-A-F:
           requires:
             - persisted-data
 
