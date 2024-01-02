@@ -8,9 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: CircleCI trigger job
+        # Action ID:
         id: goggles-api-dockerhub-versioned
         uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.1.0
-        with:
-          run_workflow_versioned: true
         env:
           CCI_TOKEN: ${{ secrets.CCI_TOKEN }}
