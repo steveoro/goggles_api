@@ -7,11 +7,8 @@ jobs:
   trigger-circleci:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "- Branch... ${{ github.ref }}"
-      - run: echo "- Event.... ${{ github.event_name }}"
-      - run: echo "- Runner OS ${{ runner.os }} (on GitHub)"
-      - name: run CircleCI Docker job
-        id: goggles-api-docker-publish
+      - name: CircleCI trigger job
+        id: release-docker-versioned
         uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.1.0
         env:
           CCI_TOKEN: ${{ secrets.CCI_TOKEN }}
