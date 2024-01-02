@@ -336,10 +336,10 @@ jobs:
 
 workflows:
   build-docker-versioned:
-    when: << pipeline.git.tag >>
+    # when: << pipeline.git.tag >>
     # when: << pipeline.parameters.GHA_Event >>
     # when:
-    #   equal: [ "release", << pipeline.parameters.GHA_Event >>]
+    #   equal: ["release", << pipeline.parameters.GHA_Event >>]
     jobs:
       - persisted-data
       - brakeman:
@@ -352,17 +352,22 @@ workflows:
       - docker-versioned:
           requires:
             - brakeman
-          # filters:
-          #   tags:
-          #     only: /^\d+\.\d+\.\d+(-pre\.\d+)?$/
-          #   branches:
-          #     ignore: /.*/
+          filters:
+            tags:
+              only: /^\d+\.\d+.*/
+            branches:
+              ignore: /.*/
+      # filters:
+      #     tags:
+      #       only: /^\d+\.\d+\.\d+(-pre\.\d+)?$/
+      #     branches:
+      #       ignore: /.*/
 
   test-and-build-latest:
-    when: << pipeline.git.tag >>
-    # when: << pipeline.parameters.GHA_Event >>
+    # unless: << pipeline.parameters.GHA_Event >>
+    # when: << pipeline.git.tag >>
     # when:
-    #   equal: [ "release", << pipeline.parameters.GHA_Event >>]
+    #   equal: ["release", << pipeline.parameters.GHA_Event >>]
     jobs:
       - persisted-data
       - brakeman:
@@ -406,6 +411,11 @@ workflows:
       - docker-latest:
           requires:
             - brakeman
+          filters:
+            tags:
+              only: /^\d+\.\d+.*/
+            branches:
+              ignore: /.*/
           # filters:
           #   tags:
           #     only: /^\d+\.\d+\.\d+(-pre\.\d+)?$/
