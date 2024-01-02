@@ -341,7 +341,13 @@ workflows:
     # when:
     #   equal: ["release", << pipeline.parameters.GHA_Event >>]
     jobs:
-      - persisted-data
+      - persisted-data:
+          filters:
+            tags:
+              only: /^\d+\.\d+.*/
+            branches:
+              ignore: /.*/
+
       - brakeman:
           requires:
             - persisted-data
@@ -352,11 +358,6 @@ workflows:
       - docker-versioned:
           requires:
             - brakeman
-          filters:
-            tags:
-              only: /^\d+\.\d+.*/
-            branches:
-              ignore: /.*/
       # filters:
       #     tags:
       #       only: /^\d+\.\d+\.\d+(-pre\.\d+)?$/
@@ -369,7 +370,13 @@ workflows:
     # when:
     #   equal: ["release", << pipeline.parameters.GHA_Event >>]
     jobs:
-      - persisted-data
+      - persisted-data:
+          filters:
+            tags:
+              only: /^\d+\.\d+.*/
+            branches:
+              ignore: /.*/
+
       - brakeman:
           requires:
             - persisted-data
@@ -411,11 +418,6 @@ workflows:
       - docker-latest:
           requires:
             - brakeman
-          filters:
-            tags:
-              only: /^\d+\.\d+.*/
-            branches:
-              ignore: /.*/
           # filters:
           #   tags:
           #     only: /^\d+\.\d+\.\d+(-pre\.\d+)?$/
