@@ -335,7 +335,8 @@ jobs:
 
 
 workflows:
-  test-build:
+  test-and-build-latest:
+    unless: << pipeline.parameters.GHA_Event >>
     jobs:
       - persisted-data
       - brakeman:
@@ -344,9 +345,9 @@ workflows:
       # - rubocop:
       #     requires:
       #       - persisted-data
-      - zeitwerk:
-          requires:
-            - persisted-data
+      # - zeitwerk:
+      #     requires:
+      #       - persisted-data
 
       # - rspec-A-F:
       #     requires:
@@ -376,32 +377,22 @@ workflows:
       #       - rspec-R-S
       #       - rspec-T-U
 
-  release-docker-latest:
-    unless: << pipeline.parameters.GHA_Action >>
-    jobs:
-      - persisted-data
-      - brakeman:
-          requires:
-            - persisted-data
-      - zeitwerk:
-          requires:
-            - persisted-data
-            - brakeman
       - docker-latest:
           requires:
-            - zeitwerk
+            - brakeman
 
-  release-docker-versioned:
-    when: << pipeline.parameters.GHA_Action >>
+  build-docker-versioned:
+    when:
+      equal: [ "release", << pipeline.parameters.GHA_Event >>]
     jobs:
       - persisted-data
       - brakeman:
           requires:
             - persisted-data
-      - zeitwerk:
-          requires:
-            - persisted-data
-            - brakeman
+      # - zeitwerk:
+      #     requires:
+      #       - persisted-data
+      #       - brakeman
       - docker-versioned:
           requires:
-            - zeitwerk
+            - brakeman
