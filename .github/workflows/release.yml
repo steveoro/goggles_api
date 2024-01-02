@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: CircleCI trigger job
-        id: <customize id>
+        id: goggles-api-dockerhub-versioned
         uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.1.0
         with:
           run_workflow_versioned: true
