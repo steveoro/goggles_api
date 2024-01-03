@@ -1,3 +1,5 @@
+# Currently unused as "filters" already triggers the release part of .circleci/config.yml
+# (Kept here as reference for GHA workflows)
 name: DockerHub Versioned Release
 run-name: DockeHub release by ${{ github.actor }}
 on:
@@ -7,7 +9,7 @@ jobs:
   trigger-circleci:
     runs-on: ubuntu-latest
     steps:
-      - name: CircleCI trigger job
+      - name: CircleCI GHA trigger job
         # Action ID:
         id: goggles-api-dockerhub-versioned
         uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.1.0

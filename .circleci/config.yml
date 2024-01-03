@@ -347,22 +347,31 @@ workflows:
               only: /^\d+\.\d+.*/
             branches:
               ignore: /.*/
-
       - brakeman:
           requires:
             - persisted-data
-      # - zeitwerk:
-      #     requires:
-      #       - persisted-data
-      #       - brakeman
+          filters:
+            tags:
+              only: /^\d+\.\d+.*/
+            branches:
+              ignore: /.*/
+      - zeitwerk:
+          requires:
+            - persisted-data
+          filters:
+            tags:
+              only: /^\d+\.\d+.*/
+            branches:
+              ignore: /.*/
       - docker-versioned:
           requires:
             - brakeman
-      # filters:
-      #     tags:
-      #       only: /^\d+\.\d+\.\d+(-pre\.\d+)?$/
-      #     branches:
-      #       ignore: /.*/
+            - zeitwerk
+          filters:
+            tags:
+              only: /^\d+\.\d+.*/
+            branches:
+              ignore: /.*/
 
   test-and-build-latest:
     # unless: << pipeline.parameters.GHA_Event >>
@@ -370,22 +379,16 @@ workflows:
     # when:
     #   equal: ["release", << pipeline.parameters.GHA_Event >>]
     jobs:
-      - persisted-data:
-          filters:
-            tags:
-              only: /^\d+\.\d+.*/
-            branches:
-              ignore: /.*/
-
+      - persisted-data
       - brakeman:
           requires:
             - persisted-data
-      # - rubocop:
-      #     requires:
-      #       - persisted-data
-      # - zeitwerk:
-      #     requires:
-      #       - persisted-data
+      - rubocop:
+          requires:
+            - persisted-data
+      - zeitwerk:
+          requires:
+            - persisted-data
 
       # - rspec-A-F:
       #     requires:
@@ -418,6 +421,8 @@ workflows:
       - docker-latest:
           requires:
             - brakeman
+            - rubocop
+            - zeitwerk
           # filters:
           #   tags:
           #     only: /^\d+\.\d+\.\d+(-pre\.\d+)?$/
