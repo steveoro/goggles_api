@@ -34,7 +34,7 @@ class CmdAuthenticateUser
         user_id: authenticated_user.id
       },
       Rails.application.credentials.api_static_key
-      # use defalt session length (@see GogglesDb::JWTManager::TOKEN_LIFE)
+      # use default session length (@see GogglesDb::JWTManager::TOKEN_LIFE)
     )
   end
   #-- --------------------------------------------------------------------------

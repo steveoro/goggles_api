@@ -46,3 +46,5 @@ node_modules/
 
 # Ignore editors settings
 .vscode/*
+
+/config/credentials/development.key
