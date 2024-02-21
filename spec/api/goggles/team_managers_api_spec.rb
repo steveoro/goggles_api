@@ -358,7 +358,7 @@ RSpec.describe Goggles::TeamManagersAPI do
       let(:fixture_user_id) { GogglesDb::ManagedAffiliation.first(150).sample.user_id }
       let(:expected_row_count) { GogglesDb::ManagedAffiliation.where(user_id: fixture_user_id).count }
       before do
-        FactoryBot.create_list(:managed_affiliation, 26, user_id: fixture_user_id)
+        FactoryBot.create_list(:managed_affiliation, 26, user_id: fixture_user_id) # rubocop:disable FactoryBot/ExcessiveCreateList
         expect(GogglesDb::ManagedAffiliation.count).to be_positive
         expect(expected_row_count).to be_positive
         get(api_v3_team_managers_path, params: { user_id: fixture_user_id }, headers: admin_headers)

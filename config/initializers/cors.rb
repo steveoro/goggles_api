@@ -26,7 +26,6 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors, debug: true, lo
       credentials: true, # (default false; JWT is already encrypted and we need to send it through)
       # [Optional] Specify how long the preflight request cache should last:
       max_age: 86_400
-
       # [Optional] Specify which response headers are exposed to the browser:
       # expose: %w[Access-Control-Allow-Private-Network]
       # List here headers to expose with their value:

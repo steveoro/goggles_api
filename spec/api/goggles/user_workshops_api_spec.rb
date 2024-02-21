@@ -324,7 +324,7 @@ RSpec.describe Goggles::UserWorkshopsAPI do
       @fixture_user_id = FactoryBot.create(:user).id
       @fixture_team_id = GogglesDb::Team.first(50).sample.id
       FactoryBot.create_list(:user_workshop, 5, user_id: @fixture_user_id)
-      FactoryBot.create_list(:user_workshop, 26, team_id: @fixture_team_id)
+      FactoryBot.create_list(:user_workshop, 26, team_id: @fixture_team_id) # rubocop:disable FactoryBot/ExcessiveCreateList
     end
 
     after(:all) do

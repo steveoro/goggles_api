@@ -174,7 +174,7 @@ module Goggles
         check_jwt_session
 
         paginate(
-          GogglesDb::MeetingEntry.where(
+          GogglesDb::MeetingEntry.includes(:swimmer, team: :city).where(
             filtering_hash_for(params, %w[meeting_program_id team_affiliation_id team_id swimmer_id badge_id])
           ).order('meeting_entries.id DESC')
         ).map(&:to_hash)

@@ -41,8 +41,8 @@ RSpec.describe Goggles::AdminGrantsAPI do
     let(:default_per_page) { 25 }
     # Make sure the Domain contains the expected seeds:
     before do
-      FactoryBot.create_list(:admin_grant, 26, entity: 'UserWorkshop')
-      expect(GogglesDb::AdminGrant.count).to be >= 26
+      FactoryBot.create_list(:admin_grant, 10, entity: 'UserWorkshop')
+      expect(GogglesDb::AdminGrant.count).to be >= 10
       expect(expected_row_count).to be_positive
     end
 

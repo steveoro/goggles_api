@@ -254,7 +254,7 @@ RSpec.describe Goggles::FederationTypesAPI do
   describe 'GET /api/v3/federation_types/' do
     let(:fixture_code) { %w[fin csi].sample }
     let(:default_per_page) { 25 }
-    # Enforce Domain existance:
+    # Enforce Domain existence:
 
     context 'without any filters (with valid authentication),' do
       let(:expected_row_count) { GogglesDb::FederationType.count }

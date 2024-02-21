@@ -198,8 +198,7 @@ module Goggles
       get do
         check_jwt_session
 
-        domain = GogglesDb::MeetingIndividualResult.includes(:meeting, :category_type, :event_type, :gender_type)
-                                                   .joins(:meeting, :category_type, :event_type, :gender_type)
+        domain = GogglesDb::MeetingIndividualResult
         domain = domain.where('meetings.id': params['meeting_id']) if params['meeting_id'].present?
         domain = domain.where('category_types.id': params['category_type_id']) if params['category_type_id'].present?
         domain = domain.where('event_types.id': params['event_type_id']) if params['event_type_id'].present?

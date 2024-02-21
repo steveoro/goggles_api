@@ -427,7 +427,7 @@ RSpec.describe Goggles::ImportQueuesAPI do
     # Make sure the Domain contains the expected seeds:
 
     before do
-      FactoryBot.create_list(:import_queue_existing_team, 26, user_id: fixture_user_id)
+      FactoryBot.create_list(:import_queue_existing_team, 26, user_id: fixture_user_id) # rubocop:disable FactoryBot/ExcessiveCreateList
       FactoryBot.create_list(:import_queue_existing_swimmer, 5, uid: fixture_uid)
       expect(GogglesDb::ImportQueue.count).to be >= 31
       expect(expected_row_count).to be_positive

@@ -172,7 +172,7 @@ module Goggles
       get do
         check_jwt_session
 
-        paginate(GogglesDb::Badge.where(
+        paginate(GogglesDb::Badge.includes(team: :city, season: :federation_type).where(
           filtering_hash_for(
             params,
             %w[team_id team_affiliation_id season_id swimmer_id
@@ -215,12 +215,10 @@ module Goggles
 
         possible_swimmers = GogglesDb::Swimmer.for_name(params['name'])
         possible_teams = GogglesDb::Team.for_name(params['name'])
-        possible_seasons = if params['header_year'].present?
-                             GogglesDb::Season.joins(:federation_type).includes(:federation_type)
-                                              .where('(INSTR(seasons.header_year, ?) > 0)', params[:header_year])
-                           end
+        possible_seasons = (GogglesDb::Season.where('(INSTR(seasons.header_year, ?) > 0)', params[:header_year]) if params['header_year'].present?)
 
-        results = GogglesDb::Badge.includes(:swimmer, :team, :season).joins(:swimmer, :team, :season)
+        results = GogglesDb::Badge.includes(swimmer: :gender_type, season: %i[season_type federation_type], team: :city)
+                                  .joins(:swimmer, :gender_type, :team, season: %i[season_type federation_type])
         results = results.where(swimmer_id: possible_swimmers.pluck(:id)) if possible_swimmers.any?
         results = results.where(team_id: possible_teams.pluck(:id)) if possible_teams.any?
         results = results.where(season_id: possible_seasons.pluck(:id)) if possible_seasons&.any?

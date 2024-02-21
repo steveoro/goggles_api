@@ -216,7 +216,7 @@ module Goggles
         reject_unless_authorized_admin(check_jwt_session)
 
         paginate(
-          GogglesDb::ImportQueue.where(
+          GogglesDb::ImportQueue.includes(:import_queue, :data_file_attachment, :data_file_blob).where(
             filtering_hash_for(params, %w[user_id uid process_runs requested_depth solvable_depth done])
           )
         ).map(&:to_hash)

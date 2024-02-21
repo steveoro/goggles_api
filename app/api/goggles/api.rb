@@ -43,6 +43,18 @@ module Goggles
     #-- -----------------------------------------------------------------------
     #++
 
+    unless Rails.env.production?
+      before do
+        Prosopite.scan
+      end
+
+      finally do
+        Prosopite.finish
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
     resource :status do
       # GET /api/:version/status
       #

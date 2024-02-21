@@ -169,12 +169,10 @@ module Goggles
         filtering_conditions[:'event_types.id'] = params['event_type_id'] if params['event_type_id'].present?
 
         paginate(
-          GogglesDb::MeetingEvent.joins(:meeting, :meeting_session, :event_type)
-                                 .includes(:meeting, :meeting_session, :event_type)
-                                 .where(
-                                   ActiveRecord::Base.sanitize_sql_for_conditions(filtering_conditions)
-                                 )
-                                 .order('meeting_events.id DESC')
+          GogglesDb::MeetingEvent.where(
+            ActiveRecord::Base.sanitize_sql_for_conditions(filtering_conditions)
+          )
+          .order('meeting_events.id DESC')
         ).map(&:to_hash)
       end
     end

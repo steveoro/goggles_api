@@ -163,7 +163,8 @@ module Goggles
         reject_unless_authorized_for_crud(api_user, 'BadgePayment')
 
         paginate(
-          GogglesDb::BadgePayment.where(filtering_hash_for(params, %w[user_id badge_id manual]))
+          GogglesDb::BadgePayment.includes(:team_affiliation, :category_type, :entry_time_type, :gender_type)
+                                 .where(filtering_hash_for(params, %w[user_id badge_id manual]))
                                  .where(filtering_for_single_parameter('payment_date >= ?', params, 'from_date'))
                                  .order('badge_payments.id DESC')
         ).map(&:to_hash)

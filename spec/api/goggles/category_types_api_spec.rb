@@ -312,7 +312,7 @@ RSpec.describe Goggles::CategoryTypesAPI do
     let(:fixture_code) { %w[M25 M30 M35 M40 M50 M55].sample }
     let(:default_per_page) { 25 }
     let(:expected_row_count) { GogglesDb::CategoryType.where(code: fixture_code).count }
-    # Enforce Domain existance:
+    # Enforce Domain existence:
 
     before do
       expect(fixture_season_id).to be_positive

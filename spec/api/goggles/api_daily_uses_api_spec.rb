@@ -234,7 +234,7 @@ RSpec.describe Goggles::APIDailyUsesAPI do
     # Make sure the Domain contains the expected seeds:
 
     before do
-      FactoryBot.create_list(:api_daily_use, 26, day: fixture_date)
+      FactoryBot.create_list(:api_daily_use, 26, day: fixture_date) # rubocop:disable FactoryBot/ExcessiveCreateList
       (1..6).each { |num| FactoryBot.create(:api_daily_use, route: fixture_route, day: Time.zone.today + num.days) }
       expect(GogglesDb::APIDailyUse.count).to be >= 32
       expect(expected_row_count).to be_positive
