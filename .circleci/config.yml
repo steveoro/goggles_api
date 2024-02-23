@@ -15,7 +15,7 @@ version: 2.1
 #     default: ""
 
 orbs:
-  ruby: circleci/ruby@2.1.0
+  ruby: circleci/ruby@2.1.1
 
 common-config: &common-config
   resource_class: large
@@ -301,7 +301,7 @@ jobs:
           app-dir: ~/goggles_api
           key: goggles_api-v0610
       - setup_remote_docker:
-          version: 20.10.14
+          version: default
           docker_layer_caching: true
       - run:
           name: Docker LATEST staging
@@ -319,7 +319,7 @@ jobs:
           app-dir: ~/goggles_api
           key: goggles_api-v0610
       - setup_remote_docker:
-          version: 20.10.14
+          version: default
           docker_layer_caching: true
       - run:
           name: Docker TAGGED prod
