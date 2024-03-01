@@ -315,8 +315,7 @@ RSpec.describe Goggles::MeetingEventsAPI do
     let(:fixture_meeting_event) do
       GogglesDb::MeetingEvent.joins(:meeting, :meeting_session)
                              .includes(:meeting, :meeting_session)
-                             .select('meetings.id, meeting_sessions.id')
-                             .distinct.limit(500)
+                             .distinct('meetings.id, meeting_sessions.id').limit(250)
                              .sample
     end
     let(:fixture_meeting) { fixture_meeting_event.meeting }

@@ -170,8 +170,8 @@ RSpec.describe Goggles::MeetingReservationsAPI do
     end
 
     context 'when using incorrect children IDs,' do # (may have successful parent updates with failing children's)
-      let(:invalid_mer_id) {  GogglesDb::MeetingEventReservation.select(:id).last.id + 10 }
-      let(:invalid_mrr_id) {  GogglesDb::MeetingRelayReservation.select(:id).last.id + 10 }
+      let(:invalid_mer_id) {  GogglesDb::MeetingEventReservation.last.id + 10 }
+      let(:invalid_mrr_id) {  GogglesDb::MeetingRelayReservation.last.id + 10 }
       let(:expected_changes) do
         [
           {
