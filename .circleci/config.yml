@@ -116,7 +116,7 @@ jobs:
 
   rspec-A-F:
     <<: *common-config
-    parallelism: 3
+    parallelism: 4
     steps:
       - checkout
       - attach_workspace:
@@ -149,7 +149,7 @@ jobs:
 
   rspec-I:
     <<: *common-config
-    parallelism: 3
+    parallelism: 4
     steps:
       - checkout
       - attach_workspace:
