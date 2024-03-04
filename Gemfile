@@ -6,8 +6,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.1.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '>= 6.0.6', '< 6.1.0'
-gem 'rails-i18n', '~> 6.0'
+gem 'rails', '>= 6.1.7', '< 7'
+gem 'rails-i18n', '~> 6'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.4.4'
 # Use Puma as the app server
@@ -30,7 +30,7 @@ gem 'rack-cors' # DEBUG: path: '<abs_path_to>/rack-cors-testbed' # (local fork u
 
 gem 'api-pagination'
 gem 'devise'
-gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
+gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db', branch: 'dependabot/bundler/rails-6.1.7.7'
 gem 'grape'
 gem 'grape_logging'
 gem 'grape-route-helpers'

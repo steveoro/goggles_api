@@ -77,7 +77,7 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - ruby/rubocop-check:
           app-dir: ~/goggles_api
           label: Rubocop
@@ -90,7 +90,7 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - run:
           name: Brakeman
           command: |
@@ -105,7 +105,7 @@ jobs:
           at: ~/goggles_api/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -123,7 +123,7 @@ jobs:
           at: ~/goggles_api/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -156,7 +156,7 @@ jobs:
           at: ~/goggles_api/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -189,7 +189,7 @@ jobs:
           at: ~/goggles_api/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -222,7 +222,7 @@ jobs:
           at: ~/goggles_api/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -255,7 +255,7 @@ jobs:
           at: ~/goggles_api/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -299,7 +299,7 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - setup_remote_docker:
           version: default
           docker_layer_caching: true
@@ -317,7 +317,7 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_api
-          key: goggles_api-v0610
+          key: goggles_api-v0700
       - setup_remote_docker:
           version: default
           docker_layer_caching: true

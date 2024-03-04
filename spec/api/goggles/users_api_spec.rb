@@ -276,8 +276,9 @@ RSpec.describe Goggles::UsersAPI do
   describe 'GET /api/v3/users/' do
     context 'when using a valid authentication' do
       # [Steve A.] Note: if we don't select at least the 3 field below, user.associate_to_swimmer! will make the select fail
-      let(:fixture_first_name) { GogglesDb::User.select(:last_name, :first_name, :year_of_birth).limit(100).map(&:first_name).sample }
-      let(:fixture_last_name)  { GogglesDb::User.select(:last_name, :first_name, :year_of_birth).limit(100).map(&:last_name).sample }
+      let(:rand_fixture) { GogglesDb::User.limit(100).sample }
+      let(:fixture_first_name) { rand_fixture.first_name }
+      let(:fixture_last_name)  { rand_fixture.last_name }
       # Choose among the many existing rows in the seed w/ more than 25 rows per domain => pagination guaranteed)
       let(:fixture_email)    { '@fake.example.' }
       let(:default_per_page) { 25 }
@@ -285,6 +286,7 @@ RSpec.describe Goggles::UsersAPI do
       # Make sure the Domain contains the expected seeds:
       before do
         expect(fixture_first_name).to be_present
+        expect(fixture_last_name).to be_present
         expect(fixture_email).to be_present
         expect(GogglesDb::User.where('first_name LIKE ?', "%#{fixture_first_name}%").count).to be_positive
         expect(GogglesDb::User.where('email LIKE ?', "%#{fixture_email}%").count).to be_positive.and be > 25

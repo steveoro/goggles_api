@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.7.00** [Steve A.] update to Rails 6.1; specs adjustments
 - **0.6.30** [Steve A.] re-sync w/ base engine; added Prosopite config in test & development environments for quick checking specific API endpoints, although kept it disabled as well as Bullet
 - **0.6.20** [Steve A.] updated CORS, session storage & CSP settings; bundle update & resync w/ base engine
 - **0.6.12** [Steve A.] CircleCI workflow edits: simplified build for docker-versioned (skips tests when tags are published to get the release sooner)

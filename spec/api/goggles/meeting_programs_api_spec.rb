@@ -319,8 +319,7 @@ RSpec.describe Goggles::MeetingProgramsAPI do
   describe 'GET /api/v3/meeting_programs/' do
     let(:fixture_meeting_program) do
       GogglesDb::MeetingProgram.joins(:meeting).includes(:meeting)
-                               .select('meetings.id')
-                               .distinct.limit(500)
+                               .distinct('meetings.id').limit(500)
                                .sample
     end
     let(:fixture_meeting) { fixture_meeting_program.meeting }

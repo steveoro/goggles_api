@@ -87,7 +87,7 @@ RSpec.describe Goggles::StandardTimingsAPI do
         { minutes: built_row.minutes, seconds: built_row.seconds, hundredths: built_row.hundredths },
         { gender_type_id: GogglesDb::GenderType.send(%w[male female].sample).id },
         { pool_type_id: GogglesDb::PoolType.all_eventable.sample.id },
-        { event_type_id: GogglesDb::StandardTiming.includes(:event_type).joins(:event_type).select(:event_type_id).distinct.first(20).sample.event_type_id },
+        { event_type_id: GogglesDb::StandardTiming.includes(:event_type).joins(:event_type).distinct(:event_type_id).first(20).sample.event_type_id },
         { category_type_id: GogglesDb::CategoryType.eventable.individuals.last(100).sample.id },
         { season_id: built_row.season_id }
       ].sample
