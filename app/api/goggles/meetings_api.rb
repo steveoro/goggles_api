@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Meeting API Grape controller
   #
-  #   - version:  7-0.4.11
+  #   - version:  7-0.7.06
   #   - author:   Steve A.
-  #   - build:    20211009
+  #   - build:    20240327
   #
   class MeetingsAPI < Grape::API
     helpers APIHelpers
@@ -172,7 +172,7 @@ module Goggles
         # Priority #1: get results using standard AR scopes:
         results = filtering_fulltext_search_for(GogglesDb::Meeting, fuzzy_name_param)
                   .joins(meeting_sessions: :swimming_pool).includes(meeting_sessions: :swimming_pool)
-                  .where(filtering_like_for(params, %w[code]))
+                  .where(filtering_like_for(params, %w[code], 'meetings'))
                   .where(filtering_hash_for(params, %w[header_year season_id]))
                   .where(filtering_for_single_parameter('(header_date = ?) OR (meeting_sessions.scheduled_date = ?)', params, 'date'))
                   .where(filtering_for_single_parameter('swimming_pools.pool_type_id = ?', params, 'pool_type_id'))

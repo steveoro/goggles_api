@@ -5,9 +5,9 @@ module Goggles
   #
   #   Wrapper module for helper methods used by the API.
   #
-  #   - version:  7-0.4.06
+  #   - version:  7-0.7.06
   #   - author:   Steve A.
-  #   - build:    20210906
+  #   - build:    20240327
   #
   module APIHelpers
     extend Grape::API::Helpers
@@ -89,10 +89,19 @@ module Goggles
     #
     # Assumes a 1:1 mapping and same-named columns for both field_list (which are the column names)
     # and the params.keys names.
-    def filtering_hash_for(params, field_list)
+    #
+    # Specify the +table_name+ in case *all* field names under +field_list+ can be wrapped under it and
+    # are in need of disambiguation.
+    def filtering_hash_for(params, field_list, table_name = nil)
       filtering = {}
       field_list.each do |field_name|
-        filtering.merge!(field_name => params[field_name]) if params[field_name].present?
+        next if params[field_name].blank?
+
+        if table_name.present?
+          filtering["#{table_name}.#{field_name}"] = params[field_name]
+        else
+          filtering[field_name] = params[field_name]
+        end
       end
       ActiveRecord::Base.sanitize_sql_for_conditions(filtering)
     end
@@ -103,12 +112,16 @@ module Goggles
     #
     # Assumes a 1:1 mapping and same-named columns for both field_list (which are the column names)
     # and the params.keys names.
-    def filtering_like_for(params, field_list)
-      like_condition = field_list.dup.keep_if { |field_name| params.key?(field_name) }
-                                 .map { |field_name| "(#{field_name} LIKE ?)" }.join(' AND ')
+    #
+    # Specify the +table_name+ in case *all* field names under +field_list+ can be wrapped under it and
+    # are in need of disambiguation.
+    def filtering_like_for(params, field_list, table_name = nil)
+      like_condition = field_list.dup.keep_if { |field_name| params.key?(field_name) }.map do |field_name|
+        table_name.present? ? "(#{table_name}.#{field_name} LIKE ?)" : "(#{field_name} LIKE ?)"
+      end
       field_values = params.dup.keep_if { |key, _v| field_list.include?(key) }
                            .values.map { |value| "%#{value}%" }
-      ActiveRecord::Base.sanitize_sql_array([like_condition, field_values].flatten) unless field_values.empty?
+      ActiveRecord::Base.sanitize_sql_array([like_condition.join(' AND '), field_values].flatten) unless field_values.empty?
     end
 
     # Returns a filtering WHERE condition or nil given the param. name.
