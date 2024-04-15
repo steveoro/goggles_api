@@ -173,7 +173,7 @@ jobs:
 
   rspec-I:
     <<: *common-config
-    parallelism: 4
+    parallelism: 2
     steps:
       - checkout
       - attach_workspace:
@@ -185,10 +185,16 @@ jobs:
           <<: *common-db-setup
       - run:
           name: RSpec - I
+          # FIXME: for some reason *only here* the glob does't work and yields 0 files:
+          # TEST_FILES=$(circleci tests glob "spec/api/goggles/i*_spec.rb")
+          # echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+          #       --format RspecJunitFormatter -o ~/test-results/rspec-i.xml" --verbose --split-by=timings
+          # ./tmp/cc-test-reporter format-coverage -t simplecov -o "./tmp/codeclimate.rspec-i.$CIRCLE_NODE_INDEX.json"
           command: |
-            TEST_FILES=$(circleci tests glob "spec/api/goggles/im*_spec.rb" "spec/api/goggles/is*_spec.rb")
-            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
-                 --format RspecJunitFormatter -o ~/test-results/rspec-i.xml" --verbose --split-by=timings
+            circleci tests run --command="bundle exec rspec --color --order rand -f doc \
+                --format RspecJunitFormatter -o ~/test-results/rspec-i.xml \
+                spec/api/goggles/import_queues_api_spec.rb spec/api/goggles/issues_api_spec.rb" \
+                --verbose --split-by=timings
             ./tmp/cc-test-reporter format-coverage -t simplecov -o "./tmp/codeclimate.rspec-i.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
