@@ -114,7 +114,7 @@ jobs:
             bundle exec rake zeitwerk:check
 
 
-  rspec-A-F:
+  rspec-A-B:
     <<: *common-config
     parallelism: 4
     steps:
@@ -127,16 +127,16 @@ jobs:
       - run:
           <<: *common-db-setup
       - run:
-          name: RSpec - A..F
+          name: RSpec - A..B
           # (WIP: split-run config below doesn't seem to work anymore a.t.m.; reverting to split-by-timing)
-          # TEST_FILES=$(circleci tests glob "spec/api/goggles/{a*_spec.rb,b*_spec.rb,c*_spec.rb,f*_spec.rb},spec/commands/*_spec.rb")
+          # TEST_FILES=$(circleci tests glob "spec/api/goggles/{a*_spec.rb,b*_spec.rb},spec/commands/*_spec.rb")
           # echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
-          #             --format RspecJunitFormatter -o ~/test-results/rspec-a-f.xml" --verbose --split-by=timings
+          #             --format RspecJunitFormatter -o ~/test-results/rspec-a-b.xml" --verbose --split-by=timings
           command: |
-            bundle exec rspec --color --order rand -f doc --format RspecJunitFormatter -o ~/test-results/rspec-a-f.xml \
-                  $(circleci tests glob "spec/api/goggles/{a*_spec.rb,b*_spec.rb,c*_spec.rb,f*_spec.rb},spec/commands/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec rspec --color --order rand -f doc --format RspecJunitFormatter -o ~/test-results/rspec-a-b.xml \
+                  $(circleci tests glob "spec/api/goggles/{a*_spec.rb,b*_spec.rb},spec/commands/*_spec.rb" | circleci tests split --split-by=timings)
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                        -o "./tmp/codeclimate.rspec-a-f.$CIRCLE_NODE_INDEX.json"
+                        -o "./tmp/codeclimate.rspec-a-b.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -144,7 +144,39 @@ jobs:
       - persist_to_workspace:
           root: tmp
           paths:
-            - codeclimate.rspec-a-f.*.json
+            - codeclimate.rspec-a-b.*.json
+
+  rspec-C-F:
+    <<: *common-config
+    parallelism: 4
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/goggles_api/tmp
+      - ruby/install-deps:
+          app-dir: ~/goggles_api
+          key: goggles_api-v0700
+      - run:
+          <<: *common-db-setup
+      - run:
+          name: RSpec - C..F
+          # (WIP: split-run config below doesn't seem to work anymore a.t.m.; reverting to split-by-timing)
+          # TEST_FILES=$(circleci tests glob "spec/api/goggles/{c*_spec.rb,f*_spec.rb},spec/commands/*_spec.rb")
+          # echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec --color --order rand -f doc \
+          #             --format RspecJunitFormatter -o ~/test-results/rspec-c-f.xml" --verbose --split-by=timings
+          command: |
+            bundle exec rspec --color --order rand -f doc --format RspecJunitFormatter -o ~/test-results/rspec-c-f.xml \
+                  $(circleci tests glob "spec/api/goggles/{c*_spec.rb,f*_spec.rb},spec/commands/*_spec.rb" | circleci tests split --split-by=timings)
+            ./tmp/cc-test-reporter format-coverage -t simplecov \
+                        -o "./tmp/codeclimate.rspec-c-f.$CIRCLE_NODE_INDEX.json"
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-artifacts
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.rspec-c-f.*.json
 
 
   rspec-I:
@@ -379,7 +411,13 @@ workflows:
           requires:
             - persisted-data
 
-      - rspec-A-F:
+      - rspec-A-B:
+          requires:
+            - brakeman
+            - rubocop
+            - zeitwerk
+
+      - rspec-C-F:
           requires:
             - brakeman
             - rubocop
@@ -393,13 +431,13 @@ workflows:
 
       - rspec-L-M:
           requires:
-            - rspec-A-F
+            - rspec-A-B
       - rspec-R-S:
           requires:
             - rspec-I
       - rspec-T-U:
           requires:
-            - rspec-A-F
+            - rspec-C-F
 
       - upload-coverage:
           requires:
