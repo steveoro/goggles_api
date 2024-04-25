@@ -1,0 +1,963 @@
+# Group IndividualRecords
+
+## IndividualRecord details [/api/v3/individual_record/{id}]
+
++ Model (application/json)
+
+        {
+            "id": 292,
+            "created_at": "2019-12-22T23:07:20.000Z",
+            "updated_at": "2019-12-22T23:07:20.000Z",
+            "pool_type_id": 1,
+            "event_type_id": 16,
+            "category_type_id": 1304,
+            "gender_type_id": 1,
+            "minutes": 1,
+            "seconds": 12,
+            "hundredths": 84,
+            "team_record": true,
+            "swimmer_id": 33540,
+            "team_id": 995,
+            "season_id": 192,
+            "federation_type_id": 1,
+            "meeting_individual_result_id": 843346,
+            "record_type_id": 4,
+            "timing": "1'12\"84",
+            "swimmer_name": "ROSSI MARIO",
+            "swimmer_label": "ROSSI MARIO (MAS, 1997)",
+            "team_name": "Swimming Center Spa - BigCity",
+            "team_label": "Swimming Center Spa - BigCity, Bologna (IT)",
+            "event_label": "100DO",
+            "category_label": "(2019/2020) U25",
+            "category_code": "U25",
+            "gender_code": "M",
+            "swimmer": {
+                "id": 33540,
+                "complete_name": "ROSSI MARIO",
+                "last_name": "ROSSI",
+                "first_name": "MARIO",
+                "year_of_birth": 1997,
+                "year_guessed": false
+            },
+            "team": {
+                "id": 995,
+                "name": "Swimming Center Spa - BigCity",
+                "editable_name": "Swimming Center Spa - BigCity",
+                "address": null,
+                "zip": null,
+                "phone_mobile": null,
+                "phone_number": null,
+                "fax_number": null,
+                "e_mail": null,
+                "contact_name": null,
+                "notes": null,
+                "name_variations": "Swimming Center Spa - BigCity",
+                "city_id": 19,
+                "created_at": "2016-11-21T07:39:01.000Z",
+                "updated_at": "2022-11-17T13:27:01.000Z",
+                "home_page_url": null,
+                "display_label": "Swimming Center Spa - BigCity, Bologna (IT)",
+                "short_label": "Swimming Center Spa - BigCity",
+                "city_name": "BigCity, Bologna (IT)"
+            },
+            "record_type": {
+                "id": 4,
+                "code": "TTB",
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z",
+                "swimmer": false,
+                "team": true,
+                "season": false,
+                "label": "PS",
+                "long_label": "RECORD DI SQUADRA",
+                "alt_label": "PS"
+            },
+            "pool_type": {
+                "id": 1,
+                "code": "25",
+                "length_in_meters": 25,
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z",
+                "eventable": true,
+                "label": "25 M",
+                "long_label": "25 METRI",
+                "alt_label": "25 M"
+            },
+            "event_type": {
+                "id": 16,
+                "code": "100DO",
+                "length_in_meters": 100,
+                "relay": false,
+                "stroke_type_id": 3,
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z",
+                "style_order": 16,
+                "mixed_gender": false,
+                "partecipants": 1,
+                "phases": 1,
+                "phase_length_in_meters": 100,
+                "label": "100DO",
+                "long_label": "100 DORSO",
+                "alt_label": "100DO"
+            },
+            "category_type": {
+                "id": 1304,
+                "code": "U25",
+                "federation_code": "A",
+                "description": "UNDER 25",
+                "short_name": "U25",
+                "group_name": "MASTER",
+                "age_begin": 16,
+                "age_end": 24,
+                "relay": false,
+                "created_at": "2019-10-14T05:52:03.000Z",
+                "updated_at": "2019-10-14T05:52:03.000Z",
+                "season_id": 192,
+                "out_of_race": false,
+                "undivided": false,
+                "display_label": "U25, FIN MASTER 2019/2020",
+                "short_label": "(2019/2020) U25"
+            },
+            "gender_type": {
+                "id": 1,
+                "code": "M",
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z",
+                "label": "MAS",
+                "long_label": "MASCHILE",
+                "alt_label": "MASCHI"
+            },
+            "season": {
+                "id": 192,
+                "description": "Circuito italiano supermaster FIN 2019/2020",
+                "begin_date": "2019-10-01",
+                "end_date": "2020-09-30",
+                "season_type_id": 1,
+                "created_at": "2019-10-14T05:52:03.000Z",
+                "updated_at": "2019-10-14T05:52:03.000Z",
+                "header_year": "2019/2020",
+                "edition": 19,
+                "edition_type_id": 5,
+                "timing_type_id": 3,
+                "rules": null,
+                "individual_rank": true,
+                "badge_fee": "24.0",
+                "display_label": "MASTER FIN 2019/2020",
+                "short_label": "FIN 2019/2020"
+            },
+            "season_type": {
+                "id": 1,
+                "code": "MASFIN",
+                "description": "CIRCUITO ITALIANO MASTER FIN",
+                "short_name": "MASTER FIN",
+                "federation_type_id": 1,
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z"
+            },
+            "federation_type": {
+                "id": 1,
+                "code": "FIN",
+                "description": "FEDERAZIONE ITALIANA NUOTO",
+                "short_name": "FIN",
+                "created_at": "2014-10-19T00:00:00.000Z",
+                "updated_at": "2014-10-19T00:00:00.000Z"
+            }
+        }
+
+
+### find [GET]
+The IndividualRecord instance matching the specified `id` returned as JSON.
+
+The returned result includes these other 1st-level linked entities (some with minimal attributes):
+- `PoolType`
+- `EventType`
+- `CategoryType`
+- `GenderType`
+- `Season`
+- `SeasonType`
+- `FederationType`
+- `Team`
+- `Swimmer`
+- `RecordType`
+
+:key: `Authorization` request header => valid JWT **required**
+
+_Supports the `locale` override parameter ([`it`]|`en`)_
+
+
+* * *
+
+
++ Parameters
+    + id: 292 (number, required) - IndividualRecord ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/individual_record/292"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/individual_record/292',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"id\":292, ...">
+    ```
+
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [IndividualRecord details][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## edit [PUT]
+
+Allows direct updates for most of the IndividualRecord fields given the `id` of the row.
+
+Returns `true` on success, an empty result when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'IndividualRecord' or have generic admin grants
+
+
+#### Body Attributes:
+
+All are optional (except `id`):
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `pool_type_id` | integer | associated PoolType ID |
+| | _id_ | _code: description_ |
+| | 1 | `25`: 25 meters |
+| | 2 | `33`: 33 meters |
+| | 3 | `50`: 50 meters |
+| `event_type_id` | integer | associated EventType ID |
+| `category_type_id` | integer | associated CategoryType ID |
+| `gender_type_id` | integer | associated GenderType ID |
+| | _id_ | _code: description_ |
+| | 1 | `M`: male |
+| | 2 | `F`: female |
+| | 3 | `X`: unknown |
+| `season_id` | integer | associated Season ID |
+| `federation_type_id` | integer | associated FederationType ID |
+| `meeting_individual_result_id` | integer | associated MIR ID |
+| `record_type_id` | integer | associated RecordType ID |
+| | _id_ | _code: description_ |
+| | 1 | `SPB`: personal-best performance |
+| | 2 | `SSB`: seasonal personal-best (*UNUSED*) |
+| | 3 | `SLP`: last performance (*UNUSED*) |
+| | 4 | `TTB`: team performance |
+| | 5 | `TSB`: seasonal team performance (*UNUSED*) |
+| | 6 | `SOR`: seasonal record (*UNUSED*) |
+| | 7 | `FOR`: federation record |
+| | 8 | `SLS`: seasonal last-performance (*UNUSED*) |
+| `team_id` | integer | associated Team ID |
+| `swimmer_id` | integer | associated Swimmer ID |
+| `minutes` | integer | record time minutes |
+| `seconds` | integer | record time seconds |
+| `hundredths` | integer | record time hundredths of seconds |
+| `team_record` | boolean | `true` if this is a team record (not necessarily a best result in the overall Championship) |
+
+
+* * *
+
+
++ Parameters
+    + id: 292 (number, required) - IndividualRecord ID
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X PUT -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            -d '{"pool_type_id": 1, "minutes": 5, "seconds": 45, "hundredths": 60 }' \
+            "<API_HOST:PORT>/api/v3/individual_record/292"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :put,
+                url: '<API_HOST:PORT>/api/v3/individual_record/292',
+                payload: {
+                    pool_type_id: 1,
+                    minutes: 5,
+                    seconds: 45,
+                    hundredths: 60
+                },
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "pool_type_id": 1,
+                "minutes": 5,
+                "seconds": 45,
+                "hundredths": 60
+            }
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "pool_type_id": 1,
+                "minutes": 5,
+                "seconds": 45,
+                "hundredths": 60
+            }
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "pool_type_id": 1,
+                "minutes": 5,
+                "seconds": 45,
+                "hundredths": 60
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+            {
+                "pool_type_id": 1,
+                "minutes": 5,
+                "seconds": 45,
+                "hundredths": 60
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+            {
+                "pool_type_id": 1,
+                "minutes": 5,
+                "seconds": 45,
+                "hundredths": 60
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+### create [POST]
+
+Creates a new IndividualRecord, given the specified body parameters.
+
+Returns a result text 'msg' on success, plus the 'new' row as JSON.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'IndividualRecord' or have generic admin grants
+
+
+#### Body Attributes:
+
+|  Field name  | Data type |  description |
+| --- | --- | --- |
+| `pool_type_id` | integer | (*required*) associated PoolType ID |
+| `event_type_id` | integer | (*required*) associated EventType ID |
+| `category_type_id` | integer | (*required*) associated CategoryType ID |
+| `gender_type_id` | integer | (*required*) associated GenderType ID |
+| `season_id` | integer | (*required*) associated Season ID |
+| `federation_type_id` | integer | (*required*) associated FederationType ID |
+| `record_type_id` | integer | (*required*) associated RecordType ID |
+| `team_id` | integer | (*required*) associated Team ID |
+| `swimmer_id` | integer | (*required*) associated Swimmer ID |
+| `minutes` | integer | record time minutes |
+| `seconds` | integer | record time seconds |
+| `hundredths` | integer | record time hundredths of seconds |
+| `meeting_individual_result_id` | integer | associated MIR ID |
+| `team_record` | boolean | `true` if this is a team record (not necessarily a best result in the overall Championship) |
+
+
+* * *
+
+
++ Attributes
+    + pool_type_id (number, required) - associated PoolType ID
+    + event_type_id (number, required) - associated EventType ID
+    + category_type_id (number, required) - associated CategoryType ID
+    + gender_type_id (number, required) - associated GenderType ID
+    + season_id (number, required) - associated Season ID
+    + federation_type_id (number, required) - associated FederationType ID
+    + record_type_id (number, required) - associated RecordType ID
+    + team_id (number, required) - associated Team ID
+    + swimmer_id (number, required) - associated Swimmer ID
+    + minutes (number, optional)
+    + seconds (number, optional)
+    + hundredths (number, optional)
+    + meeting_individual_result_id (number, optional) - associated MIR ID
+    + team_record (boolean, optional)
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X POST -H "Content-Type: application/json" \
+            -d '{"pool_type_id": 1, "event_type_id": 4, "category_type_id": 1293, \
+                 "gender_type_id": 2, "minutes": 2, "seconds": 42, "hundredths": 44, \
+                 "swimmer_id": 1895, "team_id": 1210, "season_id": 192, "federation_type_id": 1, \
+                 "record_type_id": 4 }'
+            "<API_HOST:PORT>/api/v3/individual_record"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/individual_record',
+            {
+                "pool_type_id": 1,
+                "event_type_id": 4,
+                "category_type_id": 1293,
+                "gender_type_id": 2,
+                "minutes": 2,
+                "seconds": 42,
+                "hundredths": 44,
+                "swimmer_id": 1895,
+                "team_id": 1210,
+                "season_id": 192,
+                "federation_type_id": 1,
+                "record_type_id": 4
+            })
+    => <RestClient::Response 201 "{\"msg\":\"OK\",\"new\":{\"id\":...">
+
+    > puts res.body
+    {"msg":"OK","new":<NEW_ROW_AS_JSON>}
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "pool_type_id": 1,
+                "event_type_id": 4,
+                "category_type_id": 1293,
+                "gender_type_id": 2,
+                "minutes": 2,
+                "seconds": 42,
+                "hundredths": 44,
+                "swimmer_id": 1895,
+                "team_id": 1210,
+                "season_id": 192,
+                "federation_type_id": 1,
+                "record_type_id": 4
+            }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "OK",
+            "new": <NEW_ROW_AS_JSON>
+        }
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
+    + Body
+
+            {
+                "pool_type_id": 1,
+                "event_type_id": 4,
+                "category_type_id": 1293,
+                "gender_type_id": 2,
+                "minutes": 2,
+                "seconds": 42,
+                "hundredths": 44,
+                "swimmer_id": 1895,
+                "team_id": 1210,
+                "season_id": 192,
+                "federation_type_id": 1,
+                "record_type_id": 4
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
+    + Body
+
+            {
+                "pool_type_id": 1,
+                "event_type_id": 4,
+                "category_type_id": 1293,
+                "gender_type_id": 2,
+                "minutes": 2,
+                "seconds": 42,
+                "hundredths": 44,
+                "swimmer_id": 1895,
+                "team_id": 1210,
+                "season_id": 192,
+                "federation_type_id": 1,
+                "record_type_id": 4
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
+    + Body
+
+            {
+                "pool_type_id": 1,
+                "event_type_id": 4,
+                "category_type_id": 1293,
+                "gender_type_id": 2,
+                "minutes": 2,
+                "seconds": 42,
+                "hundredths": 44,
+                "swimmer_id": 1895,
+                "team_id": 1210,
+                "season_id": 192,
+                "federation_type_id": 1,
+                "record_type_id": 4
+            }
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+## delete [DELETE]
+
+Allows the deletion of individual rows, given their `id`.
+
+Returns `true` on success, an empty body when not found.
+
+:key: => satisfy both conditions:
+1. `Authorization` request header => valid JWT **required**
+2. authenticated user must have CRUD grant on 'IndividualRecord' or have generic admin grants
+
+
+#### Body Attributes:
+
++ Parameters
+    + id: 292 (number, required) - IndividualRecord ID of the row that has to be deleted
+
+
++ Request ok (application/json)
+
+    #### Examples
+
+    ##### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X DELETE -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/individual_record/292"
+    ```
+
+    ##### `RestClient` (Ruby):
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :delete,
+                url: '<API_HOST:PORT>/api/v3/individual_record/292',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT"}
+            )
+    => <RestClient::Response 200 "true">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        true
+
+
++ Request not found (application/json)
+
+    The row for the specified ID must be existing in order to be edited.
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        null
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no grant (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid User grants"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
+
+# IndividualRecord list [/api/v3/individual_records{?page,per_page,meeting_program_id,team_affiliation_id,team_id,swimmer_id,badge_id}]
+
++ Model (application/json)
+
+    + Header
+
+            Link: "<API_HOST:PORT/api/v3/individual_records?page=2&team_id=1>; rel=\"last\", <http://localhost:3000/api/v3/individual_records?page=2&team_id=1>; rel=\"next\""
+            Total: 7860
+            Per-Page: 25
+            Page: 1
+
+    + Body
+
+            [
+                // IndividualRecord details 1
+                {
+                    "id": 8,
+                    // [...]
+                },
+
+                // IndividualRecord details 2
+                {
+                    "id": 9,
+                    // [...]
+                },
+
+                // [...]
+            ]
+
+
+## list [GET]
+
+The list of IndividualRecords associated to the specified filtering values,
+returned as JSON and optionally filtered by any or all from:
+
+- `pool_type_id`
+- `event_type_id`
+- `category_type_id`
+- `gender_type_id`
+- `team_id`
+- `swimmer_id`
+- `season_id`
+- `federation_type_id`
+- `meeting_individual_result_id`
+- `record_type_id`
+- `team_record`
+
+Returns exact matches for all the parameters.
+
+Optional pagination parameters for the request:
+
+- `page`: current/selected page cursor
+- `per_page`: total items per data page (default: 25)
+
+:key: `Authorization` request header => valid JWT **required**
+
+### Pagination
+
+Pagination links will be returned in the `Link` _response header_, for all arrays with
+more than 25 results.
+
+Typical `Link` header format (single String, separated by COMMA+BLANK):
+
+    "<REQ_URL_FOR_NEXT_PAGE>; rel=\"next\", <REQ_URL_FOR_LAST_PAGE>; rel=\"last\""
+
+
+* * *
+
+
++ Parameters
+    + pool_type_id: 1 (number, optional) - associated PoolType ID
+    + event_type_id: 1 (number, optional) - associated EventType ID
+    + category_type_id: 1 (number, optional) - associated CategoryType ID
+    + gender_type_id: 1 (number, optional) - associated GenderType ID
+    + team_id: 1 (number, optional) - associated Team ID
+    + swimmer_id: 142 (number, optional) - associated Swimmer ID
+    + season_id: 1 (number, optional) - associated Season ID
+    + federation_type_id: 1 (number, optional) - associated FederationType ID
+    + meeting_individual_result_id: 1 (number, optional) - associated MIR ID
+    + record_type_id: 1 (number, optional) - associated RecordType ID
+    + team_record: false (boolean, optional) - true if this is a team record (not necessarily a best result in the overall Championship)
+    + page: 1 (number, optional) - pagination: selected page
+        + Default: 1
+    + per_page: 25 (number, optional) - pagination: desired total rows per page
+        + Default: 25
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' \
+            "<API_HOST:PORT>/api/v3/individual_records?team_id=1"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/individual_records',
+                headers: {
+                    "Authorization" => "Bearer VALID-SESSION-JWT",
+                    params: { team_id: 1 }
+                }
+            )
+    => <RestClient::Response 200 "[{\"id\":1,...">
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [IndividualRecord list][]
+
+
++ Request not found (application/json)
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200 (application/json)
+
+        []
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
