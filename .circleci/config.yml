@@ -15,7 +15,7 @@ version: 2.1
 #     default: ""
 
 orbs:
-  ruby: circleci/ruby@2.1.1
+  ruby: circleci/ruby@2.1.2
 
 common-config: &common-config
   resource_class: large
