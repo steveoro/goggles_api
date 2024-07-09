@@ -15,7 +15,7 @@ version: 2.1
 #     default: ""
 
 orbs:
-  ruby: circleci/ruby@2.1.2
+  ruby: circleci/ruby@2.1.3
 
 common-config: &common-config
   resource_class: large
@@ -32,7 +32,7 @@ common-config: &common-config
         BUNDLE_PATH: vendor/bundle
         PAGER: cat
         GIT_LFS_SKIP_SMUDGE: 1
-    - image: cimg/mariadb:10.6.12
+    - image: cimg/mariadb:11.4.1
       environment:
         DATABASE_NAME: goggles_test
         DATABASE_USER: root

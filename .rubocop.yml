@@ -95,6 +95,9 @@ Rails/Date:
 RSpec/ExpectInHook:
   Enabled: false
 
+RSpec/ExpectInLet:
+  Enabled: false
+
 RSpec/ExampleLength:
   Max: 20
 
