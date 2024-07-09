@@ -92,6 +92,13 @@ Rails/Date:
   Exclude:
     - 'spec/support/shared_api_response_behaviors.rb'
 
+# Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
+# Include: **/*_spec*rb*, **/spec/**/*
+Rails/FilePath:
+  Exclude:
+    - 'spec/performances/swimmers_api_spec.rb'
+
+
 RSpec/ExpectInHook:
   Enabled: false
 
@@ -100,12 +107,6 @@ RSpec/ExpectInLet:
 
 RSpec/ExampleLength:
   Max: 20
-
-# Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
-# Include: **/*_spec*rb*, **/spec/**/*
-RSpec/FilePath:
-  Exclude:
-    - 'spec/performances/swimmers_api_spec.rb'
 
 RSpec/MultipleExpectations:
   Enabled: false
