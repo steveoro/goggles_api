@@ -47,7 +47,7 @@ class CmdAuthenticateUser
   # Returns a valid, authenticated +User+ instance or +nil+ otherwise.
   def authenticated_user
     user = GogglesDb::User.find_by(email:)
-    return user if user&.confirmed? && user&.valid_password?(password)
+    return user if user&.confirmed? && user.valid_password?(password)
 
     # Add any errors to SimpleCommand internal list:
     if user && !user.confirmed?
