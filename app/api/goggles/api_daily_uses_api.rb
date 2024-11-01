@@ -116,6 +116,7 @@ module Goggles
           GogglesDb::APIDailyUse
             .where(filtering_hash_for(params, %w[day]))
             .where(filtering_like_for(params, %w[route]))
+            .order('id DESC')
         ).map(&:to_hash)
       end
 
