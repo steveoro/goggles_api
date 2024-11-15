@@ -349,7 +349,7 @@ RSpec.describe Goggles::BadgePaymentsAPI do
 
     context 'when filtering by a specific from_date filter (with valid authentication),' do
       let(:fixture_season) { [GogglesDb::Season.find(162), GogglesDb::Season.find(172)].sample }
-      let(:expected_row_count) { GogglesDb::BadgePayment.where('payment_date >= ?', fixture_season.begin_date).count }
+      let(:expected_row_count) { GogglesDb::BadgePayment.where(payment_date: fixture_season.begin_date..).count }
 
       before do
         expect(expected_row_count).to be_positive

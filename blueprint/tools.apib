@@ -377,3 +377,156 @@ present but with an empty value, unless a corresponding StandardTiming has been 
     + Body
 
             { "msg": "Unauthorized" }
+
+
+# retrieve latest updates [/api/v3/tools/latest_updates{?max}]
+
++ Model (application/json)
+
+    + Body
+
+            {
+                "calendars": [
+                    {
+                        "id": 1393,
+                        "updated_at": "2024-11-14T13:44:10.000Z",
+                        "meeting_id": 19850
+                    },
+                    {
+                        "id": 1399,
+                        "updated_at": "2024-11-13T16:56:53.000Z",
+                        "meeting_id": 19856
+                    },
+                    # [...up to 10 rows max per entity...]
+                ],
+                "meetings": [
+                    {
+                        "id": 19850,
+                        "description": "15° Trofeo Citta`di Whatever",
+                        "season_id": 242,
+                        "updated_at": "2024-11-14T13:44:10.000Z"
+                    },
+                    {
+                        "id": 19877,
+                        "description": "9° Trofeo Sprint di MiaZia",
+                        "season_id": 242,
+                        "updated_at": "2024-11-13T16:04:25.000Z"
+                    },
+                    # [...up to 10 rows max per entity...]
+                ],
+                "meeting_individual_results": [
+                    {
+                        "id": 1176870,
+                        "meeting_program_id": 243124,
+                        "swimmer_id": 17542,
+                        "updated_at": "2024-11-14T14:01:31.000Z"
+                    },
+                    {
+                        "id": 1176869,
+                        "meeting_program_id": 243123,
+                        "swimmer_id": 1922,
+                        "updated_at": "2024-11-14T14:01:30.000Z"
+                    },
+                    # [...up to 10 rows max per entity...]
+                ],
+
+                # [...more entities follow...]
+            }
+
+## retrieve latest updates [GET]
+
+Returns the an array of rows detailing the `max` (default: 3, max value: 10) latest updated
+data rows found for each one of the following entities:
+
+- `GogglesDb::Calendar`
+- `GogglesDb::Meeting`
+- `GogglesDb::MeetingIndividualResult`
+- `GogglesDb::MeetingRelayResult`
+- `GogglesDb::Lap`
+- `GogglesDb::RelayLap`
+- `GogglesDb::MeetingEvent`
+- `GogglesDb::MeetingProgram`
+- `GogglesDb::Badge`
+- `GogglesDb::Swimmer`
+- `GogglesDb::Team`
+
+Each key in the resulting hash is the table name of the entity.
+Each corresponding value is an array of `max` rows.
+Each row in the returned array (for each entity) is an hash having at least the `id` & `updated_at` key fields.
+
+:key: `Authorization` request header => valid JWT **required**
+
+
+* * *
+
+
++ Parameters
+    + max: 3 (number, optional) - maximum number of rows retrieved with the latest `updated_at` value for each main entity
+
+
++ Request ok (application/json)
+
+    ### Examples
+
+    #### `curl` (Bash):
+
+    ```bash
+    $> curl -i -X GET -H "Content-Type: application/json" \
+            -H 'Authorization: "Bearer VALID-SESSION-JWT"' "<API_HOST:PORT>/api/v3/tools/latest_updates"
+    ```
+
+    #### `RestClient` (Ruby):
+
+    _(Note that due to how the current version of RestClient handles the actual query parameters of the request,
+    the `params` hash needs to be specified inside the `headers` hash.)_
+
+    ```ruby
+    > res = RestClient::Request.execute(
+                method: :get,
+                url: '<API_HOST:PORT>/api/v3/tools/latest_updates',
+                headers: { "Authorization" => "Bearer VALID-SESSION-JWT" }
+            )
+    => <RestClient::Response 200 "{\"calendars\":[{\"id\":1393,\"updated_at\":\"2024-11-14T13:44:10.000Z\", ...>
+    ```
+
+    * * *
+
+    + Header
+
+            Authorization: "Bearer VALID-SESSION-JWT"
+
++ Response 200
+
+    [retrieve latest updates][]
+
+
++ Request bad JWT (application/json)
+
+    All JWTs expire: see [Session API docs](#sessions-session-post) for info.
+
+    + Header
+
+            Authorization: "Bearer BAD-OR-EXPIRED-JWT"
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Invalid JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }
+
+
++ Request no JWT (application/json)
+
++ Response 401 (application/json)
+
+    + Header
+
+            X-Error-Detail: "Missing JWT token"
+
+    + Body
+
+            { "msg": "Unauthorized" }

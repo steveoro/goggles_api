@@ -189,6 +189,86 @@ module Goggles
       end
       #-- ---------------------------------------------------------------------
       #++
+      # GET /api/:version/tools/latest_updates
+      #
+      # Returns the an array of rows detailing the <tt>max</tt> (default: 3) latest updated
+      # data rows found for:
+      #
+      # - <tt>GogglesDb::Calendar</tt>
+      # - <tt>GogglesDb::Meeting</tt>
+      # - <tt>GogglesDb::MeetingIndividualResult</tt>
+      # - <tt>GogglesDb::MeetingRelayResult</tt>
+      # - <tt>GogglesDb::Lap</tt>
+      # - <tt>GogglesDb::RelayLap</tt>
+      # - <tt>GogglesDb::MeetingEvent</tt>
+      # - <tt>GogglesDb::MeetingProgram</tt>
+      # - <tt>GogglesDb::Badge</tt>
+      # - <tt>GogglesDb::Swimmer</tt>
+      # - <tt>GogglesDb::Team</tt>
+      #
+      # == Params:
+      # - <tt>max</tt>: maximum number of rows retrieved x entity; default: 3 (optional);
+      #   max value allowed: 10
+      #
+      # == Returns:
+      #
+      # A JSON object with table names as keys pointing to an array of rows with the top 3 or 4
+      # most significant fields. Example structure:
+      #
+      #   {
+      #     "calendars": [
+      #       {
+      #         "id": <id>,
+      #         "updated_at": <timestamp>,
+      #         "description": <description>,
+      #         "meeting_id": <meeting_id>
+      #       },
+      #       ...
+      #     ],
+      #     "meetings": [
+      #       {
+      #         "id": <id>,
+      #         "updated_at": <timestamp>,
+      #         "description": <description>,
+      #         "season_id": <season_id>
+      #       },
+      #       ...
+      #     ],
+      #     ...
+      #   }
+      #
+      desc 'Retrieve latest updates x main entities'
+      params do
+        optional :max, type: Integer, desc: 'Maximum number or rows x main entities (default: 3; max allowed: 10)'
+      end
+      get :latest_updates do
+        check_jwt_session
+
+        max_rows = params['max'] || 3
+        max_rows = 10 if max_rows.to_i < 1 || max_rows.to_i > 10
+        result = {}
+        {
+          GogglesDb::Calendar => %w[id updated_at description meeting_id],
+          GogglesDb::Meeting => %w[id updated_at description season_id],
+          GogglesDb::MeetingIndividualResult => %w[id updated_at meeting_program_id swimmer_id],
+          GogglesDb::MeetingRelayResult => %w[id updated_at meeting_program_id team_id],
+          GogglesDb::Lap => %w[id updated_at meeting_individual_result_id],
+          GogglesDb::RelayLap => %w[id updated_at meeting_relay_result_id],
+          GogglesDb::MeetingEvent => %w[id updated_at meeting_session_id],
+          GogglesDb::MeetingProgram => %w[id updated_at meeting_event_id],
+          GogglesDb::Swimmer => %w[id updated_at complete_name year_of_birth],
+          GogglesDb::Team => %w[id updated_at name],
+          GogglesDb::Badge => %w[id updated_at swimmer_id team_id],
+          GogglesDb::TeamAffiliation => %w[id updated_at team_id season_id]
+        }.each do |entity, col_names|
+          result[entity.table_name] = entity.order(updated_at: :desc).limit(max_rows)
+                                            .map { |row| row.attributes.keep_if { |col, _v| col_names.include?(col) } }
+        end
+
+        result
+      end
+      #-- ---------------------------------------------------------------------
+      #++
     end
   end
 end

@@ -318,4 +318,64 @@ RSpec.describe Goggles::ToolsAPI do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # REQUIRES/ASSUMES:
+  # - 'result_hash' parsed JSON response
+  shared_examples_for('successful GET /api/v3/tools/latest_updates request') do |expected_rows_count|
+    describe 'the parsed JSON response' do
+      it 'is an hash' do
+        expect(result_hash).to be_a(Hash)
+      end
+
+      %w[
+        calendars meetings meeting_individual_results meeting_relay_results
+        laps relay_laps meeting_events meeting_programs
+        swimmers teams badges team_affiliations
+      ].each do |table_name|
+        it "has a '#{table_name}' key" do
+          expect(result_hash).to have_key(table_name)
+        end
+
+        it "the '#{table_name}' value is an array of #{expected_rows_count} hash rows" do
+          expect(result_hash[table_name]).to be_an(Array)
+          expect(result_hash[table_name]).to all(be_an(Hash))
+          expect(result_hash[table_name].count == expected_rows_count).to be true
+        end
+
+        it "includes at least an 'id' and an 'updated_at' key field for each hash row in the '#{table_name}' array" do
+          expect(result_hash[table_name]).to all(have_key('id') && have_key('updated_at'))
+        end
+      end
+    end
+  end
+
+  describe 'GET /api/v3/tools/latest_updates' do
+    context 'when using a valid authentication' do
+      context 'with default parameters,' do
+        before { get(api_v3_tools_latest_updates_path, headers: fixture_headers) }
+
+        let(:result_hash) { JSON.parse(response.body) }
+
+        it_behaves_like('a successful request that has positive usage stats')
+        it_behaves_like('successful GET /api/v3/tools/latest_updates request', 3)
+      end
+
+      context 'with a max=5 parameter,' do
+        before { get(api_v3_tools_latest_updates_path, params: { max: 5 }, headers: fixture_headers) }
+
+        let(:result_hash) { JSON.parse(response.body) }
+
+        it_behaves_like('a successful request that has positive usage stats')
+        it_behaves_like('successful GET /api/v3/tools/latest_updates request', 5)
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before { get(api_v3_tools_latest_updates_path, headers: { 'Authorization' => 'you wish!' }) }
+
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

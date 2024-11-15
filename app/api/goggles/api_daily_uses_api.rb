@@ -138,7 +138,7 @@ module Goggles
         return unless GogglesDb::APIDailyUse.exists?(['day < ?', params['day']])
 
         # We don't care about #destroy callbacks here:
-        GogglesDb::APIDailyUse.where('day < ?', params['day']).delete_all
+        GogglesDb::APIDailyUse.where(day: ...(params['day'])).delete_all
       end
     end
   end

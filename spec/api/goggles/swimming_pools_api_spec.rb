@@ -79,9 +79,9 @@ RSpec.describe Goggles::SwimmingPoolsAPI do
             restaurant: FFaker::Boolean.random, gym: FFaker::Boolean.random, child_area: FFaker::Boolean.random
           },
           {
-            shower_type_id: GogglesDb::ShowerType.all.select(:id).sample.id,
-            hair_dryer_type_id: GogglesDb::HairDryerType.all.select(:id).sample.id,
-            locker_cabinet_type_id: GogglesDb::LockerCabinetType.all.select(:id).sample.id
+            shower_type_id: GogglesDb::ShowerType.select(:id).sample.id,
+            hair_dryer_type_id: GogglesDb::HairDryerType.select(:id).sample.id,
+            locker_cabinet_type_id: GogglesDb::LockerCabinetType.select(:id).sample.id
           },
           { notes: FFaker::Lorem.sentence }
         ].sample

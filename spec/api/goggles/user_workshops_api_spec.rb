@@ -339,7 +339,7 @@ RSpec.describe Goggles::UserWorkshopsAPI do
 
     context 'when using valid authentication' do
       let(:fixture_description) { workshops_in_domain.sample.description }
-      let(:workshops_in_domain) { GogglesDb::UserWorkshop.all.limit(50) }
+      let(:workshops_in_domain) { GogglesDb::UserWorkshop.limit(50) }
 
       context 'without any filters,' do
         before { get(api_v3_user_workshops_path, headers: fixture_headers) }

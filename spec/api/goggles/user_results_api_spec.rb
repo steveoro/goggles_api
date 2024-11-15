@@ -300,7 +300,7 @@ RSpec.describe Goggles::UserResultsAPI do
       if (GogglesDb::UserWorkshop.count < 10) || (GogglesDb::UserResult.count < 40) ||
          (GogglesDb::UserLap.count < 80)
         FactoryBot.create_list(:workshop_with_results_and_laps, 5)
-        fixture_user_id = GogglesDb::UserWorkshop.all.limit(20).sample.user.id
+        fixture_user_id = GogglesDb::UserWorkshop.limit(20).sample.user.id
         expect(fixture_user_id).to be_positive
         FactoryBot.create_list(:workshop_with_results_and_laps, 5, user_id: fixture_user_id)
       end
@@ -344,7 +344,7 @@ RSpec.describe Goggles::UserResultsAPI do
 
       %i[user_id user_workshop_id pool_type_id event_type_id category_type_id swimmer_id].each do |filter_sym|
         context "when filtering by a specific #{filter_sym}," do
-          let(:filter_id) { GogglesDb::UserResult.all.limit(200).sample.send(filter_sym) }
+          let(:filter_id) { GogglesDb::UserResult.limit(200).sample.send(filter_sym) }
           let(:expected_row_count) { GogglesDb::UserResult.where(filter_sym => filter_id).count }
           # Make sure the Domain contains the expected seeds:
 
