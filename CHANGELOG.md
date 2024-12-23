@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.8.00** [Steve A.] re-sync w/ base engine; bundle updates
 - **0.7.25** [Steve A.] re-sync w/ base engine; bundle updates
 - **0.7.24** [Steve A.] API endpoint to retrieve latest updates (last rows only from commonly imported entities); descending order for api_daily_uses_api; bundle & rubocop updates
 - **0.7.23** [Steve A.] re-sync w/ base engine; bundle updates
