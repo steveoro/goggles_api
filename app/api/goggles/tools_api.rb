@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Tools API: EntryTime finder
   #
-  #   - version:  7-0.3.37
+  #   - version:  7-0.8.00
   #   - author:   Steve A.
-  #   - build:    20211104
+  #   - build:    20241223
   #
   class ToolsAPI < Grape::API
     helpers APIHelpers
@@ -189,6 +189,7 @@ module Goggles
       end
       #-- ---------------------------------------------------------------------
       #++
+
       # GET /api/:version/tools/latest_updates
       #
       # Returns the an array of rows detailing the <tt>max</tt> (default: 3) latest updated
@@ -261,7 +262,7 @@ module Goggles
           GogglesDb::Badge => %w[id updated_at swimmer_id team_id],
           GogglesDb::TeamAffiliation => %w[id updated_at team_id season_id]
         }.each do |entity, col_names|
-          result[entity.table_name] = entity.order(updated_at: :desc).limit(max_rows)
+          result[entity.table_name] = entity.order(updated_at: :desc, id: :desc).limit(max_rows)
                                             .map { |row| row.attributes.keep_if { |col, _v| col_names.include?(col) } }
         end
 
