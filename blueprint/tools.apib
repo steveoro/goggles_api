@@ -436,7 +436,7 @@ present but with an empty value, unless a corresponding StandardTiming has been 
 ## retrieve latest updates [GET]
 
 Returns the an array of rows detailing the `max` (default: 3, max value: 10) latest updated
-data rows found for each one of the following entities:
+data rows found, sorted by descending `date_update` & `id`, for each one of the following entities:
 
 - `GogglesDb::Calendar`
 - `GogglesDb::Meeting`
