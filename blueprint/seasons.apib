@@ -470,13 +470,13 @@ Returns a result text 'msg' on success, plus the 'new' row as JSON.
             -d '{"header_year": "2020/2021", "season_type_id": 1, "description": "FIN SuperMaster 2020/2021", \
                  "edition": 12, "edition_type_id": 2, "timing_type_id": 3, "begin_date": "2020-09-30", \
                  "end_date": "2021-05-30" }'
-            "<API_HOST:PORT>/api/v3/category_type"
+            "<API_HOST:PORT>/api/v3/season"
     ```
 
     ##### `RestClient` (Ruby):
 
     ```ruby
-    > res = RestClient.post('<API_HOST:PORT>/api/v3/category_type',
+    > res = RestClient.post('<API_HOST:PORT>/api/v3/season',
             {
                 "header_year": "2020/2021",
                 "season_type_id": 1,
