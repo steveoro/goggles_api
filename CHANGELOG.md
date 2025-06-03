@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.8.08** [Steve A.] made the patch idempotent, so it will be silently skipped if already applied
 - **0.8.07** [Steve A.] applied patch for ActiveSupport logger loading order issue in activesupport 6.1.7.10; updated circleci config
 - **0.8.00** [Steve A.] re-sync w/ base engine; bundle updates; fix sorting by date & ID in tools/latest_updates
 - **0.7.25** [Steve A.] re-sync w/ base engine; bundle updates
