@@ -92,7 +92,10 @@ RSpec.describe Goggles::UsersAPI do
     end
 
     context 'with CRUD grants but requesting a non-existing ID,' do
-      before { get(api_v3_user_path(id: -1), headers: crud_headers) }
+      before do
+        expect(GogglesDb::User.exists?(0)).to be false
+        get(api_v3_user_path(id: 0), headers: crud_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -187,7 +190,10 @@ RSpec.describe Goggles::UsersAPI do
     end
 
     context 'with CRUD grants but requesting a non-existing ID,' do
-      before { put(api_v3_user_path(id: -1), params: expected_changes, headers: crud_headers) }
+      before do
+        expect(GogglesDb::User.exists?(0)).to be false
+        put(api_v3_user_path(id: 0), params: expected_changes, headers: crud_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -265,7 +271,10 @@ RSpec.describe Goggles::UsersAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { delete(api_v3_user_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::User.exists?(0)).to be false
+        delete(api_v3_user_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like('a successful response with an empty body')
     end

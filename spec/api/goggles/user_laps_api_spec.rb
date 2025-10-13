@@ -72,7 +72,10 @@ RSpec.describe Goggles::UserLapsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_user_lap_path(id: -1), headers: fixture_headers) }
+      before do
+        expect(GogglesDb::UserLap.exists?(0)).to be false
+        get(api_v3_user_lap_path(id: 0), headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -143,7 +146,10 @@ RSpec.describe Goggles::UserLapsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_user_lap_path(id: -1), params: expected_changes, headers: crud_headers) }
+      before do
+        expect(GogglesDb::UserLap.exists?(0)).to be false
+        put(api_v3_user_lap_path(id: 0), params: expected_changes, headers: crud_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -273,7 +279,10 @@ RSpec.describe Goggles::UserLapsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { delete(api_v3_user_lap_path(id: -1), headers: crud_headers) }
+      before do
+        expect(GogglesDb::UserLap.exists?(0)).to be false
+        delete(api_v3_user_lap_path(id: 0), headers: crud_headers)
+      end
 
       it_behaves_like('a successful response with an empty body')
     end
@@ -355,7 +364,10 @@ RSpec.describe Goggles::UserLapsAPI do
     end
 
     context 'when filtering by a non-existing value,' do
-      before { get(api_v3_user_laps_path, params: { swimmer_id: -1 }, headers: fixture_headers) }
+      before do
+        expect(GogglesDb::UserLap.exists?(0)).to be false
+        get(api_v3_user_laps_path, params: { swimmer_id: 0 }, headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON list response')
     end

@@ -72,7 +72,10 @@ RSpec.describe Goggles::CategoryTypesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_category_type_path(id: -1), headers: fixture_headers) }
+      before do
+        expect(GogglesDb::CategoryType.exists?(0)).to be false
+        get(api_v3_category_type_path(id: 0), headers: fixture_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -149,7 +152,10 @@ RSpec.describe Goggles::CategoryTypesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_category_type_path(id: -1), params: expected_changes, headers: admin_headers) }
+      before do
+        expect(GogglesDb::CategoryType.exists?(0)).to be false
+        put(api_v3_category_type_path(id: 0), params: expected_changes, headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -215,11 +221,12 @@ RSpec.describe Goggles::CategoryTypesAPI do
 
     context 'when using missing or invalid parameters,' do
       before do
+        expect(GogglesDb::Season.exists?(0)).to be false
         post(
           api_v3_category_type_path,
           params: {
             code: 'NOPE',
-            season_id: -1,
+            season_id: 0,
             short_name: built_row.short_name,
             group_name: built_row.group_name,
             age_begin: built_row.age_begin,
@@ -299,7 +306,10 @@ RSpec.describe Goggles::CategoryTypesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { delete(api_v3_category_type_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::CategoryType.exists?(0)).to be false
+        delete(api_v3_category_type_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like('a successful response with an empty body')
     end
@@ -376,7 +386,10 @@ RSpec.describe Goggles::CategoryTypesAPI do
     end
 
     context 'when filtering by a non-existing value,' do
-      before { get(api_v3_category_types_path, params: { season_id: -1 }, headers: fixture_headers) }
+      before do
+        expect(GogglesDb::Season.exists?(0)).to be false
+        get(api_v3_category_types_path, params: { season_id: 0 }, headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON list response')
     end
@@ -471,9 +484,10 @@ RSpec.describe Goggles::CategoryTypesAPI do
 
     context 'when using missing or invalid parameters,' do
       before do
+        expect(GogglesDb::Season.exists?(0)).to be false
         post(
           api_v3_category_types_clone_path,
-          params: { from_season_id: src_season_id, to_season_id: -1 },
+          params: { from_season_id: src_season_id, to_season_id: 0 },
           headers: admin_headers
         )
       end

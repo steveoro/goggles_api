@@ -60,7 +60,10 @@ RSpec.describe Goggles::SeasonsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_season_path(id: -1), headers: fixture_headers) }
+      before do
+        expect(GogglesDb::Season.exists?(0)).to be false
+        get(api_v3_season_path(id: 0), headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -123,7 +126,10 @@ RSpec.describe Goggles::SeasonsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_season_path(id: -1), params: { description: 'FIXTURE Season' }, headers: crud_headers) }
+      before do
+        expect(GogglesDb::Season.exists?(0)).to be false
+        put(api_v3_season_path(id: 0), params: { description: 'FIXTURE Season' }, headers: crud_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -208,11 +214,12 @@ RSpec.describe Goggles::SeasonsAPI do
 
     context 'when using empty or invalid parameters,' do
       before do
+        expect(GogglesDb::SeasonType.exists?(0)).to be false
         post(
           api_v3_season_path,
           params: {
             header_year: '',
-            season_type_id: -1,
+            season_type_id: 0,
             timing_type_id: built_row.timing_type_id,
             edition_type_id: built_row.edition_type_id,
             edition: built_row.edition,

@@ -72,7 +72,10 @@ RSpec.describe Goggles::SeasonTypesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_season_type_path(id: -1), headers: fixture_headers) }
+      before do
+        expect(GogglesDb::SeasonType.exists?(0)).to be false
+        get(api_v3_season_type_path(id: 0), headers: fixture_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -154,7 +157,10 @@ RSpec.describe Goggles::SeasonTypesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_season_type_path(id: -1), params: expected_changes, headers: admin_headers) }
+      before do
+        expect(GogglesDb::SeasonType.exists?(0)).to be false
+        put(api_v3_season_type_path(id: 0), params: expected_changes, headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -342,7 +348,10 @@ RSpec.describe Goggles::SeasonTypesAPI do
     end
 
     context 'when filtering by a non-existing value,' do
-      before { get(api_v3_season_types_path, params: { federation_type_id: -1 }, headers: fixture_headers) }
+      before do
+        expect(GogglesDb::FederationType.exists?(0)).to be false
+        get(api_v3_season_types_path, params: { federation_type_id: 0 }, headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON list response')
     end

@@ -60,7 +60,10 @@ RSpec.describe Goggles::MeetingsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_meeting_path(id: -1), headers: fixture_headers) }
+      before do
+        expect(GogglesDb::Meeting.exists?(0)).to be false
+        get(api_v3_meeting_path(id: 0), headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -165,7 +168,10 @@ RSpec.describe Goggles::MeetingsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_meeting_path(id: -1), params: { code: fixture_code }, headers: crud_headers) }
+      before do
+        expect(GogglesDb::Meeting.exists?(0)).to be false
+        put(api_v3_meeting_path(id: 0), params: { code: fixture_code }, headers: crud_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -246,7 +252,10 @@ RSpec.describe Goggles::MeetingsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { post(api_v3_meeting_clone_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::Meeting.exists?(0)).to be false
+        post(api_v3_meeting_clone_path(id: 0), headers: admin_headers)
+      end
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
@@ -255,7 +264,7 @@ RSpec.describe Goggles::MeetingsAPI do
       it 'responds with an error message' do
         result = JSON.parse(response.body)
         expect(result).to have_key('msg')
-        expect(result['msg']).to eq('Invalid constructor parameters')
+        expect(result['msg']).to eq(['Invalid constructor parameters'])
       end
     end
   end

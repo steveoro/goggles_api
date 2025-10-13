@@ -94,7 +94,10 @@ RSpec.describe Goggles::IssuesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_issue_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::Issue.exists?(0)).to be false
+        get(api_v3_issue_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -164,7 +167,10 @@ RSpec.describe Goggles::IssuesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_issue_path(id: -1), params: expected_changes, headers: admin_headers) }
+      before do
+        expect(GogglesDb::Issue.exists?(0)).to be false
+        put(api_v3_issue_path(id: 0), params: expected_changes, headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -230,10 +236,11 @@ RSpec.describe Goggles::IssuesAPI do
 
     context 'when using missing or invalid parameters,' do
       before do
+        expect(GogglesDb::User.exists?(0)).to be false
         post(
           api_v3_issue_path,
           params: {
-            user_id: -1,
+            user_id: 0,
             req: {}.to_json,
             code: built_row.code
           },
@@ -311,7 +318,10 @@ RSpec.describe Goggles::IssuesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { delete(api_v3_issue_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::Issue.exists?(0)).to be false
+        delete(api_v3_issue_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like('a successful response with an empty body')
     end
@@ -395,7 +405,10 @@ RSpec.describe Goggles::IssuesAPI do
     end
 
     context 'when filtering by a non-existing value,' do
-      before { get(api_v3_issues_path, params: { user_id: -1 }, headers: admin_headers) }
+      before do
+        expect(GogglesDb::User.exists?(0)).to be false
+        get(api_v3_issues_path, params: { user_id: 0 }, headers: admin_headers)
+      end
 
       it_behaves_like('an empty but successful JSON list response')
     end

@@ -60,7 +60,10 @@ RSpec.describe Goggles::UserWorkshopsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_user_workshop_path(id: -1), headers: fixture_headers) }
+      before do
+        expect(GogglesDb::UserWorkshop.exists?(0)).to be false
+        get(api_v3_user_workshop_path(id: 0), headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -158,7 +161,10 @@ RSpec.describe Goggles::UserWorkshopsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_user_workshop_path(id: -1), params: { code: fixture_code }, headers: crud_headers) }
+      before do
+        expect(GogglesDb::UserWorkshop.exists?(0)).to be false
+        put(api_v3_user_workshop_path(id: 0), params: { code: fixture_code }, headers: crud_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -233,9 +239,10 @@ RSpec.describe Goggles::UserWorkshopsAPI do
 
     context 'when using missing or invalid parameters,' do
       before do
+        expect(GogglesDb::Season.exists?(0)).to be false
         post(
           api_v3_user_workshop_path,
-          params: built_row.attributes.merge(season_id: -1),
+          params: built_row.attributes.merge(season_id: 0),
           headers: admin_headers
         )
       end
@@ -310,7 +317,10 @@ RSpec.describe Goggles::UserWorkshopsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { delete(api_v3_user_workshop_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::UserWorkshop.exists?(0)).to be false
+        delete(api_v3_user_workshop_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like('a successful response with an empty body')
     end

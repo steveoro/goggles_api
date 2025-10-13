@@ -86,7 +86,10 @@ RSpec.describe Goggles::ImportQueuesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_import_queue_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::ImportQueue.exists?(0)).to be false
+        get(api_v3_import_queue_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -102,7 +105,7 @@ RSpec.describe Goggles::ImportQueuesAPI do
         { solved_data: { swimmer_id: GogglesDb::Swimmer.first(100).sample.id }.to_json },
         { process_runs: (rand * 10).to_i },
         { done: [true, false].sample },
-        { uid: FFaker::Guid.guid }
+        { uid: FFaker::UUID.uuidv4 }
       ].sample
     end
 
@@ -159,7 +162,10 @@ RSpec.describe Goggles::ImportQueuesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_import_queue_path(id: -1), params: expected_changes, headers: admin_headers) }
+      before do
+        expect(GogglesDb::ImportQueue.exists?(0)).to be false
+        put(api_v3_import_queue_path(id: 0), params: expected_changes, headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -225,10 +231,11 @@ RSpec.describe Goggles::ImportQueuesAPI do
 
     context 'when using missing or invalid parameters,' do
       before do
+        expect(GogglesDb::User.exists?(0)).to be false
         post(
           api_v3_import_queue_path,
           params: {
-            user_id: -1,
+            user_id: 0,
             request_data: {}.to_json,
             uid: built_row.uid
           },
@@ -411,7 +418,10 @@ RSpec.describe Goggles::ImportQueuesAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { delete(api_v3_import_queue_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::ImportQueue.exists?(0)).to be false
+        delete(api_v3_import_queue_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like('a successful response with an empty body')
     end
@@ -421,7 +431,7 @@ RSpec.describe Goggles::ImportQueuesAPI do
 
   describe 'GET /api/v3/import_queues/' do
     let(:fixture_user_id) { GogglesDb::User.first(100).sample.id }
-    let(:fixture_uid) { FFaker::Guid.guid }
+    let(:fixture_uid) { FFaker::UUID.uuidv4 }
     let(:expected_row_count) { GogglesDb::ImportQueue.where(uid: fixture_uid).count }
     let(:default_per_page) { 25 }
     # Make sure the Domain contains the expected seeds:
@@ -494,7 +504,10 @@ RSpec.describe Goggles::ImportQueuesAPI do
     end
 
     context 'when filtering by a non-existing value,' do
-      before { get(api_v3_import_queues_path, params: { user_id: -1 }, headers: admin_headers) }
+      before do
+        expect(GogglesDb::User.exists?(0)).to be false
+        get(api_v3_import_queues_path, params: { user_id: 0 }, headers: admin_headers)
+      end
 
       it_behaves_like('an empty but successful JSON list response')
     end

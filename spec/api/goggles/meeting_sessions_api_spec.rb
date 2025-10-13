@@ -80,7 +80,10 @@ RSpec.describe Goggles::MeetingSessionsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_meeting_session_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::MeetingSession.exists?(0)).to be false
+        get(api_v3_meeting_session_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -158,7 +161,10 @@ RSpec.describe Goggles::MeetingSessionsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_meeting_session_path(id: -1), params: expected_changes, headers: admin_headers) }
+      before do
+        expect(GogglesDb::MeetingSession.exists?(0)).to be false
+        put(api_v3_meeting_session_path(id: 0), params: expected_changes, headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -240,11 +246,12 @@ RSpec.describe Goggles::MeetingSessionsAPI do
 
     context 'when using missing or invalid parameters,' do
       before do
+        expect(GogglesDb::Meeting.exists?(0)).to be false
         post(
           api_v3_meeting_session_path,
           params: {
             scheduled_date: built_row.scheduled_date,
-            meeting_id: -1,
+            meeting_id: 0,
             session_order: 0,
             description: 'Fake session'
           },
@@ -322,7 +329,10 @@ RSpec.describe Goggles::MeetingSessionsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { delete(api_v3_meeting_session_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::MeetingSession.exists?(0)).to be false
+        delete(api_v3_meeting_session_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like('a successful response with an empty body')
     end
@@ -385,7 +395,10 @@ RSpec.describe Goggles::MeetingSessionsAPI do
     end
 
     context 'when filtering by a non-existing value,' do
-      before { get(api_v3_meeting_sessions_path, params: { meeting_id: -1 }, headers: admin_headers) }
+      before do
+        expect(GogglesDb::MeetingSession.exists?(0)).to be false
+        get(api_v3_meeting_sessions_path, params: { meeting_id: 0 }, headers: admin_headers)
+      end
 
       it_behaves_like('an empty but successful JSON list response')
     end

@@ -86,7 +86,10 @@ RSpec.describe Goggles::TeamManagersAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_team_manager_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::ManagedAffiliation.exists?(0)).to be false
+        get(api_v3_team_manager_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -155,7 +158,10 @@ RSpec.describe Goggles::TeamManagersAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { put(api_v3_team_manager_path(id: -1), params: expected_changes, headers: admin_headers) }
+      before do
+        expect(GogglesDb::ManagedAffiliation.exists?(0)).to be false
+        put(api_v3_team_manager_path(id: 0), params: expected_changes, headers: admin_headers)
+      end
 
       it_behaves_like 'an empty but successful JSON response'
     end
@@ -210,7 +216,10 @@ RSpec.describe Goggles::TeamManagersAPI do
     end
 
     context 'when using missing or invalid parameters,' do
-      before { post(api_v3_team_manager_path, params: { user_id: built_row.user_id, team_affiliation_id: -1 }, headers: admin_headers) }
+      before do
+        expect(GogglesDb::TeamAffiliation.exists?(0)).to be false
+        post(api_v3_team_manager_path, params: { user_id: built_row.user_id, team_affiliation_id: 0 }, headers: admin_headers)
+      end
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
@@ -282,7 +291,10 @@ RSpec.describe Goggles::TeamManagersAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { delete(api_v3_team_manager_path(id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::ManagedAffiliation.exists?(0)).to be false
+        delete(api_v3_team_manager_path(id: 0), headers: admin_headers)
+      end
 
       it_behaves_like('a successful response with an empty body')
     end

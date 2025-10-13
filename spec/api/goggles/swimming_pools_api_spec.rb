@@ -53,7 +53,10 @@ RSpec.describe Goggles::SwimmingPoolsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_swimming_pool_path(id: -1), headers: fixture_headers) }
+      before do
+        expect(GogglesDb::SwimmingPool.exists?(0)).to be false
+        get(api_v3_swimming_pool_path(id: 0), headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -156,8 +159,9 @@ RSpec.describe Goggles::SwimmingPoolsAPI do
 
     context 'when requesting a non-existing ID,' do
       before do
+        expect(GogglesDb::SwimmingPool.exists?(0)).to be false
         put(
-          api_v3_swimming_pool_path(id: -1),
+          api_v3_swimming_pool_path(id: 0),
           params: { pool_type_id: GogglesDb::PoolType::MT_25_ID },
           headers: crud_headers
         )
@@ -206,7 +210,10 @@ RSpec.describe Goggles::SwimmingPoolsAPI do
     end
 
     context 'when using invalid parameters,' do
-      before { post(api_v3_swimming_pool_path, params: built_row.attributes.merge(pool_type_id: -1), headers: admin_headers) }
+      before do
+        expect(GogglesDb::PoolType.exists?(0)).to be false
+        post(api_v3_swimming_pool_path, params: built_row.attributes.merge(pool_type_id: 0), headers: admin_headers)
+      end
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
@@ -342,7 +349,10 @@ RSpec.describe Goggles::SwimmingPoolsAPI do
     end
 
     context 'when filtering by a non-existing value,' do
-      before { get(api_v3_swimming_pools_path, params: { pool_type_id: -1 }, headers: fixture_headers) }
+      before do
+        expect(GogglesDb::PoolType.exists?(0)).to be false
+        get(api_v3_swimming_pools_path, params: { pool_type_id: 0 }, headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON list response')
     end

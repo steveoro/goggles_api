@@ -66,7 +66,10 @@ RSpec.describe Goggles::MeetingReservationsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { get(api_v3_meeting_reservation_path(id: -1), headers: fixture_headers) }
+      before do
+        expect(GogglesDb::MeetingReservation.exists?(0)).to be false
+        get(api_v3_meeting_reservation_path(id: 0), headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON response')
     end
@@ -176,13 +179,13 @@ RSpec.describe Goggles::MeetingReservationsAPI do
         [
           {
             events: [
-              { id: -1, hundredths: ((rand * 59) % 59).to_i, accepted: [true, false].sample },
+              { id: 0, hundredths: ((rand * 59) % 59).to_i, accepted: [true, false].sample },
               { id: invalid_mer_id, minutes: [0, 1, 2].sample, seconds: ((rand * 59) % 59).to_i, hundredths: ((rand * 59) % 59).to_i }
             ]
           },
           {
             relays: [
-              { id: -1, accepted: [true, false].sample },
+              { id: 0, accepted: [true, false].sample },
               { id: invalid_mrr_id, notes: FFaker::BaconIpsum.phrase[0..48] }
             ]
           }
@@ -218,8 +221,9 @@ RSpec.describe Goggles::MeetingReservationsAPI do
 
     context 'when requesting a non-existing ID,' do
       before do
+        expect(GogglesDb::MeetingReservation.exists?(0)).to be false
         put(
-          api_v3_meeting_reservation_path(id: -1),
+          api_v3_meeting_reservation_path(id: 0),
           params: { confirmed: true },
           headers: crud_headers
         )
@@ -312,7 +316,10 @@ RSpec.describe Goggles::MeetingReservationsAPI do
     end
 
     context 'when using missing or invalid parameters,' do
-      before { post(api_v3_meeting_reservation_path, params: { badge_id: -1, meeting_id: fixture_meeting.id }, headers: crud_headers) }
+      before do
+        expect(GogglesDb::Badge.exists?(0)).to be false
+        post(api_v3_meeting_reservation_path, params: { badge_id: 0, meeting_id: fixture_meeting.id }, headers: crud_headers)
+      end
 
       it 'is NOT successful' do
         expect(response).not_to be_successful
@@ -372,7 +379,10 @@ RSpec.describe Goggles::MeetingReservationsAPI do
     end
 
     context 'when requesting a non-existing ID,' do
-      before { delete(api_v3_meeting_reservation_path(id: -1), headers: crud_headers) }
+      before do
+        expect(GogglesDb::MeetingReservation.exists?(0)).to be false
+        delete(api_v3_meeting_reservation_path(id: 0), headers: crud_headers)
+      end
 
       it_behaves_like('a successful response with an empty body')
     end
@@ -454,7 +464,10 @@ RSpec.describe Goggles::MeetingReservationsAPI do
     end
 
     context 'when filtering by a non-existing value,' do
-      before { get(api_v3_meeting_reservations_path, params: { swimmer_id: -1 }, headers: fixture_headers) }
+      before do
+        expect(GogglesDb::Swimmer.exists?(0)).to be false
+        get(api_v3_meeting_reservations_path, params: { swimmer_id: 0 }, headers: fixture_headers)
+      end
 
       it_behaves_like('an empty but successful JSON list response')
     end
