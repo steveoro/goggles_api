@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: e946d9832a0ac96e1a3066236a5c9068ce88e7f6
+  revision: f755a33dce2cd6cecfbb19e704c679a957c96c3f
   specs:
     goggles_db (0.8.10)
       acts-as-taggable-on
