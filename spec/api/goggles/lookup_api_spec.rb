@@ -51,7 +51,7 @@ RSpec.describe Goggles::LookupAPI do
     end
 
     context 'when filtering by name value,' do
-      let(:search_param) { %w[do sl ra fa].sample }
+      let(:search_param) { %w[st do ra fa].sample } # (the long name will be searched, not the code)
       let(:data_domain) do
         # Search is actually implemented on the localizations, so we need to replicate it here:
         # (default locale is 'it')
