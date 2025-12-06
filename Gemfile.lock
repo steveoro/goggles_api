@@ -271,7 +271,7 @@ GEM
       sparkr (>= 0.2.0)
       term-ansicolor
       yard (~> 0.9.12)
-    json (2.16.0)
+    json (2.17.1)
     jwt (3.1.2)
       base64
     kaminari (1.2.2)
@@ -317,9 +317,9 @@ GEM
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
-    minitest (5.26.1)
+    minitest (5.26.2)
     msgpack (1.7.5)
-    multi_json (1.17.0)
+    multi_json (1.18.0)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
     mustermann (3.0.3)
@@ -366,7 +366,7 @@ GEM
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
       omniauth (~> 2.0)
-    omniauth-rails_csrf_protection (1.0.2)
+    omniauth-rails_csrf_protection (2.0.0)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
     orm_adapter (0.5.0)
