@@ -13,13 +13,14 @@
 
 require 'simplecov'
 SimpleCov.start 'rails'
-puts 'SimpleCov required and started.'
+puts 'SimpleCov required and started.' # rubocop:disable RSpec/Output
 
-unless ENV['CODECOV_TOKEN'].to_s.empty?
-  require 'codecov'
-  SimpleCov.formatter = SimpleCov::Formatter::Codecov
-  puts 'CodeCov.io selected for reporting output.'
-end
+# DISABLED:
+# unless ENV['CODECOV_TOKEN'].to_s.empty?
+#   require 'codecov'
+#   SimpleCov.formatter = SimpleCov::Formatter::Codecov
+#   puts 'CodeCov.io selected for reporting output.'
+# end
 
 # Add DSL for "N+1 query" issues directly inside RSpec:
 require 'n_plus_one_control/rspec'
@@ -62,18 +63,20 @@ Rails.root.glob('spec/support/**/*.rb').each { |f| require f }
 begin
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
-  puts e.to_s.strip
+  puts e.to_s.strip # rubocop:disable RSpec/Output
   exit 1
 end
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = Rails.root.join('spec/fixtures')
+  config.fixture_paths = [Rails.root.join('spec/fixtures').to_s]
 
-  # Add custom request spec path for Grape APIs: (for a standard Rails API test suite these are expected to be in /spec/requests/)
-  config.include RSpec::Rails::RequestExampleGroup, type: :request, file_path: %r{spec/api}
+  # Map custom API specs path to :request type (default inference only maps /spec/requests).
+  config.define_derived_metadata(file_path: %r{/spec/api/}) do |metadata|
+    metadata[:type] = :request
+  end
 
   # Add helpers to get Devise working with RSpec
-  config.include(Devise::TestHelpers, type: :features)
+  config.include(Devise::Test::IntegrationHelpers, type: :feature)
   config.include(Devise::Test::ControllerHelpers, type: :view)
   config.include(Devise::Test::IntegrationHelpers, type: :view)
   config.include(Devise::Test::IntegrationHelpers, type: :request)

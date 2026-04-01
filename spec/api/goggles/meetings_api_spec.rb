@@ -348,8 +348,9 @@ RSpec.describe Goggles::MeetingsAPI do
       context 'and filtering by a specific pool_type and season,' do
         let(:fixture_pool_type_id) { GogglesDb::PoolType.all_eventable.sample.id }
         let(:expected_row_count) do
+          pool_ids = GogglesDb::SwimmingPool.where(pool_type_id: fixture_pool_type_id).select(:id)
           GogglesDb::Meeting.joins(meeting_sessions: :swimming_pool).includes(meeting_sessions: :swimming_pool)
-                            .where(season_id: many_pages_season_id, 'swimming_pools.pool_type_id': fixture_pool_type_id)
+                            .where(season_id: many_pages_season_id, meeting_sessions: { swimming_pool_id: pool_ids })
                             .distinct.count
         end
 

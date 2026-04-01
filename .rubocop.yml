@@ -1,10 +1,10 @@
-require:
-  - rubocop-factory_bot
-  - rubocop-performance
-  - rubocop-rails
-  - rubocop-rake
-  - rubocop-rspec
-  - rubocop-rspec_rails
+plugins:
+- rubocop-factory_bot
+- rubocop-performance
+- rubocop-rails
+- rubocop-rake
+- rubocop-rspec
+- rubocop-rspec_rails
 
 inherit_from: .rubocop_todo.yml
 
@@ -21,10 +21,10 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.1.4
+  TargetRubyVersion: 3.4
   Exclude:
-    - 'db/schema.rb'
-    - 'vendor/**/*'
+  - 'db/schema.rb'
+  - 'vendor/**/*'
 
 FactoryBot/SyntaxMethods:
   Enabled: false
@@ -35,69 +35,66 @@ FactoryBot/SyntaxMethods:
 Layout/LineLength:
   Max: 165
   Exclude:
-    - 'bin/bundle'
+  - 'bin/bundle'
 
 # We use arrays to group multiple similar specs under a single implementation
 Lint/ConstantDefinitionInBlock:
   Exclude:
-    - 'spec/**/*'
+  - 'spec/**/*'
 
 Metrics/AbcSize:
   Max: 26
   Exclude:
-    - 'bin/bundle'
-    - 'db/migrate/*'
+  - 'bin/bundle'
+  - 'db/migrate/*'
 
 Metrics/BlockLength:
   Max: 40
-  CountAsOne: ['array', 'heredoc']
+  CountAsOne: [ 'array', 'heredoc' ]
   Exclude:
-    - 'app/api/goggles/*_api.rb'
-    - 'spec/**/*'
+  - 'app/api/goggles/*_api.rb'
+  - 'spec/**/*'
 
 Metrics/ClassLength:
   Max: 120
   Exclude:
-    - 'app/api/goggles/calendars_api.rb'
-    - 'app/api/goggles/meetings_api.rb'
-    - 'app/api/goggles/meeting_individual_results_api.rb'
-    - 'app/api/goggles/meeting_reservations_api.rb'
-    - 'app/api/goggles/user_results_api.rb'
+  - 'app/api/goggles/calendars_api.rb'
+  - 'app/api/goggles/meetings_api.rb'
+  - 'app/api/goggles/meeting_individual_results_api.rb'
+  - 'app/api/goggles/meeting_reservations_api.rb'
+  - 'app/api/goggles/user_results_api.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
-    - 'bin/bundle'
+  - 'bin/bundle'
 
 Metrics/MethodLength:
   Max: 35
 
 Metrics/ModuleLength:
   Exclude:
-    - 'app/api/goggles/api_helpers.rb'
+  - 'app/api/goggles/api_helpers.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
-    - 'bin/bundle'
-
+  - 'bin/bundle'
 
 # We use arrays to group multiple similar specs under a single implementation
 Performance/CollectionLiteralInLoop:
   Exclude:
-    - 'spec/**/*'
-
+  - 'spec/**/*'
 
 # Configuration parameters: EnforcedStyle, AllowToTime.
 # SupportedStyles: strict, flexible
 Rails/Date:
   Exclude:
-    - 'spec/support/shared_api_response_behaviors.rb'
+  - 'spec/support/shared_api_response_behaviors.rb'
 
 # Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
 # Include: **/*_spec*rb*, **/spec/**/*
 Rails/FilePath:
   Exclude:
-    - 'spec/performances/swimmers_api_spec.rb'
-
+  - 'spec/performances/swimmers_api_spec.rb'
 
 RSpec/ExpectInHook:
   Enabled: false
@@ -123,10 +120,10 @@ Style/ClassAndModuleChildren:
 
 Style/Documentation:
   Exclude:
-    - 'spec/**/*'
-    - 'test/**/*'
-    - 'config/application.rb'
-    - 'app/controllers/application_controller.rb'
-    - 'app/helpers/application_helper.rb'
-    - 'app/mailers/application_mailer.rb'
-    - 'app/models/application_record.rb'
+  - 'spec/**/*'
+  - 'test/**/*'
+  - 'config/application.rb'
+  - 'app/controllers/application_controller.rb'
+  - 'app/helpers/application_helper.rb'
+  - 'app/mailers/application_mailer.rb'
+  - 'app/models/application_record.rb'

@@ -164,8 +164,8 @@ module Goggles
           'team_name' => 'teams.name',
           'season_description' => 'seasons.description'
         }.keep_if { |field_name, _name_in_table| params.key?(field_name) }
-                                 .map { |_field_name, name_in_table| "(#{name_in_table} LIKE ?)" }
-                                 .join(' AND ')
+         .map { |_field_name, name_in_table| "(#{name_in_table} LIKE ?)" }
+         .join(' AND ')
 
         field_values = params.dup
                              .keep_if { |key, _v| %w[manager_name team_name season_description].include?(key) }

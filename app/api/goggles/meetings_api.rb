@@ -175,9 +175,11 @@ module Goggles
                   .where(filtering_like_for(params, %w[code], 'meetings'))
                   .where(filtering_hash_for(params, %w[header_year season_id]))
                   .where(filtering_for_single_parameter('(header_date = ?) OR (meeting_sessions.scheduled_date = ?)', params, 'date'))
-                  .where(filtering_for_single_parameter('swimming_pools.pool_type_id = ?', params, 'pool_type_id'))
-                  .distinct
-                  .order('meetings.id DESC')
+        if params['pool_type_id'].present?
+          pool_ids = GogglesDb::SwimmingPool.where(pool_type_id: params['pool_type_id']).select(:id)
+          results = results.where(meeting_sessions: { swimming_pool_id: pool_ids })
+        end
+        results = results.distinct.order('meetings.id DESC')
 
         # Priority #2: append unique fuzzy search results when found:
         # (use main fuzzy target + any other precise filter matcher, like IDs or numbers)

@@ -43,7 +43,7 @@ module Goggles
     #-- -----------------------------------------------------------------------
     #++
 
-    if Rails.env.test? || Rails.env.development?
+    if Rails.env.local?
       before do
         Prosopite.scan
       end

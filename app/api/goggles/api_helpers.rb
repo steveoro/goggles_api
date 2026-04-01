@@ -120,7 +120,7 @@ module Goggles
         table_name.present? ? "(#{table_name}.#{field_name} LIKE ?)" : "(#{field_name} LIKE ?)"
       end
       field_values = params.dup.keep_if { |key, _v| field_list.include?(key) }
-                           .values.map { |value| "%#{value}%" }
+                               .values.map { |value| "%#{value}%" }
       ActiveRecord::Base.sanitize_sql_array([like_condition.join(' AND '), field_values].flatten) unless field_values.empty?
     end
 

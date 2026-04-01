@@ -62,8 +62,6 @@ end
 #       rspec may be run, below are examples of the most common uses.
 #  * bundler: 'bundle exec rspec'
 #  * bundler binstubs: 'bin/rspec'
-#  * spring: 'bin/rspec' (This will use spring if running and you have
-#                          installed the spring binstubs per the docs)
 #  * zeus: 'zeus rspec' (requires the server to be started separately)
 #  * 'just' rspec: 'rspec'
 
@@ -112,15 +110,6 @@ guard :rspec, rspec_options do
   # Capybara features specs
   # watch(rails.view_dirs)     { |m| rspec.spec.call("features/#{m[1]}") }
   # watch(rails.layouts)       { |m| rspec.spec.call("features/#{m[1]}") }
-end
-
-# == Spring ==
-
-guard 'spring', bundler: true do
-  watch('Gemfile.lock')
-  watch(%r{^config/})
-  watch(%r{^spec/(support|factories)/})
-  watch(%r{^spec/factory.rb})
 end
 
 # == Inch - documentation grader ==

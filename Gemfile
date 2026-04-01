@@ -3,15 +3,15 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.1.4'
+ruby '>= 3.4.7'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '>= 6.1.7', '< 7'
-gem 'rails-i18n', '~> 6'
+gem 'rails', '>= 8.1', '< 9'
+gem 'rails-i18n', '~> 8'
 # Use mysql as the database for Active Record
-gem 'mysql2', '>= 0.4.4'
+gem 'mysql2' # , '>= 0.4.4'
 # Use Puma as the app server
-gem 'puma', '>= 5.3.1'
+gem 'puma' # , '>= 5.3.1'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
@@ -23,14 +23,14 @@ gem 'puma', '>= 5.3.1'
 # gem 'image_processing', '~> 1.2'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.4.2', require: false
+gem 'bootsnap', require: false # , '>= 1.4.2', require: false
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors' # DEBUG: path: '<abs_path_to>/rack-cors-testbed' # (local fork used for debug-only)
 
 gem 'api-pagination'
 gem 'devise'
-gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
+gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db', branch: 'rails-8.1'
 gem 'grape'
 gem 'grape_logging'
 gem 'grape-route-helpers'
@@ -55,10 +55,9 @@ group :development do
   gem 'guard-inch'
   gem 'guard-rspec'
   gem 'guard-rubocop'
-  gem 'guard-spring'
   gem 'haml_lint', require: false
   gem 'inch', require: false # grades source documentation
-  gem 'listen', '~> 3.2'
+  gem 'listen' # , '~> 3.2'
   gem 'rubocop'
   gem 'rubocop-factory_bot', require: false
   gem 'rubocop-performance'
@@ -66,10 +65,6 @@ group :development do
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
   gem 'rubocop-rspec_rails'
-  gem 'spring'
-  gem 'spring-commands-rspec'
-  gem 'spring-commands-rubocop'
-  gem 'spring-watcher-listen'
 end
 
 group :development, :test do
@@ -94,7 +89,7 @@ group :test do
   # Example:
   #          expect { get :index }.to perform_constant_number_of_queries"
   gem 'rspec_junit_formatter' # required by new Semaphore test reports
-  gem 'simplecov', '= 0.13.0', require: false
+  gem 'simplecov', require: false # , '= 0.13.0', require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
