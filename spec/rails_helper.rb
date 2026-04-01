@@ -33,6 +33,8 @@ require File.expand_path('../config/environment', __dir__)
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
+# Ensure the main mounted API tree is loaded before any route helper lookup.
+require Rails.root.join('app/api/goggles/api').to_s
 
 require 'devise' # NOTE: require 'devise' after require 'rspec/rails' (this allows to use devise test helpers)
 
@@ -81,6 +83,15 @@ RSpec.configure do |config|
   config.include(Devise::Test::IntegrationHelpers, type: :view)
   config.include(Devise::Test::IntegrationHelpers, type: :request)
   config.include(Devise::Test::IntegrationHelpers, type: :controller)
+
+  config.before(:suite) do
+    # Build a fresh route-helper cache once, after all API classes are loaded.
+    Goggles::API.compile! if defined?(Goggles::API) && Goggles::API.respond_to?(:compile!)
+    if defined?(Grape::API) && Grape::API.respond_to?(:decorated_routes)
+      Grape::API.remove_instance_variable(:@decorated_routes) if Grape::API.instance_variable_defined?(:@decorated_routes)
+      Grape::API.decorated_routes
+    end
+  end
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
