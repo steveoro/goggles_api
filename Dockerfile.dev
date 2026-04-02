@@ -1,5 +1,5 @@
 # --- Common stuff:
-FROM ruby:3.4.7-alpine3.20 AS common_builder
+FROM ruby:3.4.7-alpine3.22 AS common_builder
 ENV BUNDLER_VERSION=2.4.15 \
     INSTALL_PATH=/app
 
@@ -28,6 +28,7 @@ RUN apk add --update --no-cache \
     openssl \
     pkgconfig \
     shared-mime-info \
+    yaml-dev \
     tzdata \
     yarn
 
@@ -57,11 +58,18 @@ ENV RAILS_ENV=development \
 # GEM_HOME='/usr/local/bundle'
 
 WORKDIR $INSTALL_PATH
+COPY ./Gemfile ./Gemfile.lock ./
+RUN bundle config set --local build.nokogiri --use-system-libraries && \
+    bundle config set --local retry 3 && \
+    bundle config set --local timeout 30
+
+RUN bundle check || \
+    bundle install --jobs 4 --retry 3 || \
+    bundle install --jobs 4 --retry 5 --full-index
+
 COPY . ./
-RUN bundle config build.nokogiri --use-system-libraries
 COPY ./config/database.docker.yml ./config/database.yml
 
-RUN bundle check || bundle install
 RUN yarn install --check-files
 
 # Keep the version argument at the end to avoid early cache miss during builds:
