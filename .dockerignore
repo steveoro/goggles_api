@@ -11,8 +11,6 @@
 .rspec
 .settings/*
 *.lock
-!Gemfile.lock
-!yarn.lock
 *.swp
 *.tmp
 

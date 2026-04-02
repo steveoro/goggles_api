@@ -59,13 +59,12 @@ ENV RAILS_ENV=staging \
 # GEM_HOME='/usr/local/bundle'
 
 WORKDIR $INSTALL_PATH
-COPY ./Gemfile ./Gemfile.lock ./
+COPY ./Gemfile ./
 RUN bundle config set --local build.nokogiri --use-system-libraries && \
     bundle config set --local retry 3 && \
     bundle config set --local timeout 30
 
-RUN bundle check || \
-    bundle install --jobs 4 --retry 3 || \
+RUN bundle install --jobs 4 --retry 3 || \
     bundle install --jobs 4 --retry 5 --full-index
 
 COPY . ./
