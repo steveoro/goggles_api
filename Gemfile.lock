@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: a5ae1750cf9b7b110862324af74903aec45f54c8
+  revision: 75f2dafdaa3fd493e3775d38e7631a9419eab5ef
   branch: rails-8.1
   specs:
-    goggles_db (0.9.01)
+    goggles_db (0.9.02)
       acts-as-taggable-on
       acts_as_votable
       cities
