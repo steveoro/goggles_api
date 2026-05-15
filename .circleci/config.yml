@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  ruby: circleci/ruby@2.6.0
+  ruby: circleci/ruby@2.7.0
 
 common-config: &common-config
   resource_class: large
@@ -290,7 +290,7 @@ jobs:
           if [ -n "$SANITIZED_BRANCH" ] && [ "$SANITIZED_BRANCH" != "master" ]; then
             DOCKER_TAG="${SEMANTIC_VERSION}.${SANITIZED_BRANCH}"
           else
-            DOCKER_TAG="prod-<< pipeline.git.tag >>"
+            DOCKER_TAG="<< pipeline.git.tag >>"
           fi
           echo "Git Tag: << pipeline.git.tag >>, Docker Tag: $DOCKER_TAG"
           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
