@@ -262,7 +262,6 @@ jobs:
           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
           docker pull $DOCKERHUB_USERNAME/goggles-api:latest
           docker build \
-            --secret id=rails_master_key,env=RAILS_MASTER_KEY \
             -t $DOCKERHUB_USERNAME/goggles-api:$DOCKER_TAG \
             --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest \
             -f Dockerfile.staging .
@@ -297,7 +296,6 @@ jobs:
           docker pull $DOCKERHUB_USERNAME/goggles-api:latest
           export DOCKER_BUILDKIT=1
           docker build \
-            --secret id=rails_master_key,env=RAILS_MASTER_KEY \
             -t $DOCKERHUB_USERNAME/goggles-api:$DOCKER_TAG \
             --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest \
             -f Dockerfile.prod .

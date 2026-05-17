@@ -22,14 +22,16 @@ RUN apk add --update --no-cache \
     libxslt-dev \
     mariadb-dev \
     pkgconfig \
+    sqlite-dev \
     tzdata \
     yaml-dev
 
 RUN gem install bundler -v "${BUNDLER_VERSION}"
 
 WORKDIR ${INSTALL_PATH}
-COPY ./Gemfile ./
+COPY Gemfile Gemfile.lock ./
 RUN bundle config set --local build.nokogiri --use-system-libraries && \
+    bundle config set --local force_ruby_platform true && \
     bundle config set --local retry 3 && \
     bundle config set --local timeout 30
 
@@ -58,6 +60,7 @@ RUN apk add --update --no-cache \
     mariadb-connector-c \
     netcat-openbsd \
     openssl \
+    sqlite-libs \
     tzdata
 
 WORKDIR ${INSTALL_PATH}
