@@ -52,6 +52,7 @@ ENV RAILS_ENV=staging \
     DATABASE_USER=root
 
 RUN apk add --update --no-cache \
+    build-base \
     libffi \
     libstdc++ \
     libxml2 \
