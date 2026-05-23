@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  ruby: circleci/ruby@2.7.0
+  ruby: circleci/ruby@2.7.1
 
 common-config: &common-config
   resource_class: large
@@ -25,7 +25,7 @@ common-db-setup: &common-db-setup
   name: DB setup
   command: |
     sudo apt update
-    sudo apt-get install mysql-client
+    sudo apt-get install mariadb-client
     mkdir -p tmp ~/test-results ~/test-artifacts
     echo $RAILS_MASTER_KEY > config/master.key
     cp ./tmp/test.sql.bz2 db/dump/test.sql.bz2
@@ -58,7 +58,7 @@ jobs:
     - checkout
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - ruby/rubocop-check:
         app-dir: ~/goggles_api
         label: Rubocop
@@ -70,7 +70,7 @@ jobs:
     - checkout
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - run:
         name: Brakeman
         command: |
@@ -85,7 +85,7 @@ jobs:
         at: ~/goggles_api/tmp
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - run:
         <<: *common-db-setup
     - run:
@@ -102,7 +102,7 @@ jobs:
         at: ~/goggles_api/tmp
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - run:
         <<: *common-db-setup
     - run:
@@ -125,7 +125,7 @@ jobs:
         at: ~/goggles_api/tmp
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - run:
         <<: *common-db-setup
     - run:
@@ -148,7 +148,7 @@ jobs:
         at: ~/goggles_api/tmp
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - run:
         <<: *common-db-setup
     - run:
@@ -174,7 +174,7 @@ jobs:
         at: ~/goggles_api/tmp
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - run:
         <<: *common-db-setup
     - run:
@@ -197,7 +197,7 @@ jobs:
         at: ~/goggles_api/tmp
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - run:
         <<: *common-db-setup
     - run:
@@ -220,7 +220,7 @@ jobs:
         at: ~/goggles_api/tmp
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - run:
         <<: *common-db-setup
     - run:
@@ -240,7 +240,7 @@ jobs:
     - checkout
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - setup_remote_docker:
         version: default
         docker_layer_caching: true
@@ -273,7 +273,7 @@ jobs:
     - checkout
     - ruby/install-deps:
         app-dir: ~/goggles_api
-        key: goggles_api-v0902
+        key: goggles_api-v0905
     - setup_remote_docker:
         version: default
         docker_layer_caching: true
