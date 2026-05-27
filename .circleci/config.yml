@@ -247,25 +247,13 @@ jobs:
     - run:
         name: Docker LATEST staging
         command: |
-          BRANCH_NAME="${CIRCLE_BRANCH:-}"
-          if [ -z "$BRANCH_NAME" ] && [ -n "${CIRCLE_SHA1:-}" ]; then
-            BRANCH_NAME=$(git branch -r --contains "$CIRCLE_SHA1" | sed 's/^[ *]*//' | grep -v 'HEAD' | head -n1 | sed 's#^origin/##')
-          fi
-          SANITIZED_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9._-]+/-/g; s/^-+//; s/-+$//')
-          SEMANTIC_VERSION=$(ruby -I. -r./lib/version -e 'print Version::SEMANTIC')
-          if [ -n "$SANITIZED_BRANCH" ] && [ "$SANITIZED_BRANCH" != "master" ]; then
-            DOCKER_TAG="${SEMANTIC_VERSION}.${SANITIZED_BRANCH}"
-          else
-            DOCKER_TAG="latest"
-          fi
-          echo "Docker Tag: $DOCKER_TAG"
           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
           docker pull $DOCKERHUB_USERNAME/goggles-api:latest
-          docker build \
-            -t $DOCKERHUB_USERNAME/goggles-api:$DOCKER_TAG \
-            --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest \
-            -f Dockerfile.staging .
-          docker push $DOCKERHUB_USERNAME/goggles-api:$DOCKER_TAG
+          export DOCKER_BUILDKIT=1
+          docker build --secret id=rails_master_key,env=RAILS_MASTER_KEY \
+            -t $DOCKERHUB_USERNAME/goggles-api:latest \
+            --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .
+          docker push $DOCKERHUB_USERNAME/goggles-api:latest
 
   docker-versioned:
     <<: *common-config
@@ -280,26 +268,14 @@ jobs:
     - run:
         name: Docker TAGGED prod
         command: |
-          BRANCH_NAME="${CIRCLE_BRANCH:-}"
-          if [ -z "$BRANCH_NAME" ] && [ -n "${CIRCLE_SHA1:-}" ]; then
-            BRANCH_NAME=$(git branch -r --contains "$CIRCLE_SHA1" | sed 's/^[ *]*//' | grep -v 'HEAD' | head -n1 | sed 's#^origin/##')
-          fi
-          SANITIZED_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9._-]+/-/g; s/^-+//; s/-+$//')
-          SEMANTIC_VERSION=$(ruby -I. -r./lib/version -e 'print Version::SEMANTIC')
-          if [ -n "$SANITIZED_BRANCH" ] && [ "$SANITIZED_BRANCH" != "master" ]; then
-            DOCKER_TAG="${SEMANTIC_VERSION}.${SANITIZED_BRANCH}"
-          else
-            DOCKER_TAG="<< pipeline.git.tag >>"
-          fi
-          echo "Git Tag: << pipeline.git.tag >>, Docker Tag: $DOCKER_TAG"
+          echo "Git Tag: << pipeline.git.tag >>"
           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
           docker pull $DOCKERHUB_USERNAME/goggles-api:latest
           export DOCKER_BUILDKIT=1
-          docker build \
-            -t $DOCKERHUB_USERNAME/goggles-api:$DOCKER_TAG \
-            --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest \
-            -f Dockerfile.prod .
-          docker push $DOCKERHUB_USERNAME/goggles-api:$DOCKER_TAG
+          docker build --secret id=rails_master_key,env=RAILS_MASTER_KEY \
+            -t $DOCKERHUB_USERNAME/goggles-api:<< pipeline.git.tag >> \
+            --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .
+          docker push $DOCKERHUB_USERNAME/goggles-api:<< pipeline.git.tag >>
 
 workflows:
   build-docker-versioned:
