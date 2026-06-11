@@ -30,7 +30,7 @@ gem 'rack-cors' # DEBUG: path: '<abs_path_to>/rack-cors-testbed' # (local fork u
 
 gem 'api-pagination'
 gem 'devise'
-gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db', branch: 'rails-8.1'
+gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
 gem 'grape'
 gem 'grape_logging'
 gem 'grape-route-helpers'
