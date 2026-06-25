@@ -30,7 +30,12 @@ module Goggles
       # == Returns:
       # A new JWT.
       #
-      desc 'Create a new JWT session'
+      desc 'Create a new JWT session' do
+        success Goggles::Entities::SessionEntity
+        failure [
+          [401, 'Unauthorized - Invalid static token or credentials']
+        ]
+      end
       params do
         requires :e, type: String, desc: 'User email'
         requires :p, type: String, desc: 'User password'
@@ -54,7 +59,8 @@ module Goggles
         # (Note: for some tests negative IDs may be used, so we consider those too)
         GogglesDb::APIDailyUse.increase_for!("#{request.env['REQUEST_METHOD']} #{request.path.gsub(%r{/-?\d+}, '/:id')}")
 
-        { msg: I18n.t('api.message.generic_ok'), jwt: cmd_authenticator.result }
+        payload = { msg: I18n.t('api.message.generic_ok'), jwt: cmd_authenticator.result }
+        present payload, with: Goggles::Entities::SessionEntity
       end
     end
   end
