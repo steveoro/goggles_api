@@ -3,11 +3,11 @@
 module Goggles
   # = Goggles API v3: Badge API Grape controller
   #
-  #   - version:  7-0.4.06
+  #   - version:  7-0.9.14
   #   - author:   Steve A.
-  #   - build:    20210906
+  #   - build:    20260625
   #
-  class BadgesAPI < Grape::API
+  class BadgesAPI < Grape::API # rubocop:disable Metrics/ClassLength
     helpers APIHelpers
 
     format       :json
@@ -20,7 +20,13 @@ module Goggles
       # The Badge instance matching the specified +id+ as JSON; an empty result when not found.
       # See GogglesDb::Badge#to_json for structure details.
       #
-      desc 'Badge details'
+      desc 'Badge details' do
+        success Goggles::Entities::BadgeEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Badge ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -43,7 +49,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update Badge details'
+      desc 'Update Badge details' do
+        success code: 200, message: 'Badge updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Badge ID (required)'
         requires :number, type: String, desc: 'displayed number or code for the Badge (required)'
@@ -81,7 +93,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create a new Badge'
+      desc 'Create a new Badge' do
+        success code: 201, message: 'Badge created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :swimmer_id, type: Integer, desc: 'associated Swimmer ID (required)'
         requires :team_affiliation_id, type: Integer, desc: 'associated TeamAffiliation ID (required)'
@@ -119,7 +138,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a Badge'
+      desc 'Delete a Badge' do
+        success code: 200, message: 'Badge deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Badge ID'
       end
@@ -152,7 +177,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::Badge#to_json for structure details.
       #
-      desc 'List Badges'
+      desc 'List Badges' do
+        is_array true
+        success Goggles::Entities::BadgeEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :team_id, type: Integer, desc: 'associated Team ID'
         optional :team_affiliation_id, type: Integer, desc: 'associated TeamAffiliation ID'
@@ -201,7 +233,15 @@ module Goggles
       # - 'Per-Page': total rows per page
       # - 'Page': current page
       #
-      desc 'Search existing badges for any swimmer name and team name or year'
+      desc 'Search existing badges for any swimmer name and team name or year' do
+        is_array true
+        success Goggles::Entities::BadgeEntity
+        failure [
+          [400, 'Bad request - Missing required search parameters'],
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :name, type: String, desc: 'either a swimmer name or a team name'
         optional :header_year, type: String, desc: 'the header year of the season'

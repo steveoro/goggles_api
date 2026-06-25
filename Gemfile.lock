@@ -159,7 +159,7 @@ GEM
       unaccent (~> 0.3)
     country_select (11.0.0)
       countries (> 6.0, < 9.0)
-    crass (1.0.6)
+    crass (1.0.7)
     date (3.5.1)
     debug_inspector (1.2.0)
     devise (5.0.4)
@@ -230,10 +230,21 @@ GEM
       mustermann (>= 4.0)
       rack (>= 2.2.4)
       zeitwerk (>= 2.6)
+    grape-entity (1.1.0)
+      activesupport (>= 3.0.0)
     grape-route-helpers (2.1.0)
       activesupport
       grape (>= 0.16.0)
       rake
+    grape-swagger (2.1.4)
+      grape (>= 1.7, < 4.0)
+    grape-swagger-entity (0.7.1)
+      grape-entity (~> 1)
+      grape-swagger (~> 2)
+    grape-swagger-rails (1.0.3)
+      haml-rails (>= 2.0, < 4.0)
+      ostruct (>= 0.6, < 1.0)
+      railties (>= 7.2.2.2, < 8.2)
     grape_logging (3.0.0)
       grape (>= 2.4.0)
       rack
@@ -408,6 +419,7 @@ GEM
       actionpack (>= 4.2)
       omniauth (~> 2.0)
     orm_adapter (0.5.0)
+    ostruct (0.6.3)
     parallel (2.1.0)
     parser (3.3.11.1)
       ast (~> 2.4.1)
@@ -639,7 +651,11 @@ DEPENDENCIES
   ffaker
   goggles_db!
   grape
+  grape-entity
   grape-route-helpers
+  grape-swagger
+  grape-swagger-entity
+  grape-swagger-rails
   grape_logging
   guard
   guard-brakeman

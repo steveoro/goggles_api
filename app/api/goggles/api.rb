@@ -3,6 +3,7 @@
 require 'version'
 require 'audit_formatter'
 require 'grape_logging'
+require 'grape-swagger/entity'
 
 # = Goggles main API v3 Grape controller
 #
@@ -63,12 +64,16 @@ module Goggles
       #
       #   { msg: <status message>, version: <versioning & build number> }
       #
-      desc "Returns the API 'msg' status and the current application versioning code"
+      desc "Returns the API 'msg' status and the current application versioning code" do
+        success Goggles::Entities::StatusEntity
+      end
       get do
-        {
+        payload = {
           msg: I18n.t("api.message.status.#{GogglesDb::AppParameter.maintenance? ? 'maintenance' : 'ok'}"),
           version: Version::FULL
         }
+
+        present payload, with: Goggles::Entities::StatusEntity
       end
     end
 
@@ -110,5 +115,32 @@ module Goggles
     mount UserResultsAPI
     mount UserWorkshopsAPI
     mount UsersAPI
+
+    add_swagger_documentation(
+      api_version: 'v3',
+      hide_documentation_path: true,
+      mount_path: '/swagger_doc',
+      models: [
+        Goggles::Entities::BadgeEntity,
+        Goggles::Entities::SessionEntity,
+        Goggles::Entities::StatusEntity
+      ],
+      info: {
+        title: 'Goggles API',
+        description: 'Backend API for the Goggles framework',
+        contact_name: 'Goggles Team',
+        version: Version::SEMANTIC
+      },
+      schemes: %w[http https],
+      security_definitions: {
+        Bearer: {
+          type: 'apiKey',
+          name: 'Authorization',
+          in: 'header',
+          description: 'JWT token in format: Bearer <token>'
+        }
+      },
+      security: [{ Bearer: [] }]
+    )
   end
 end
