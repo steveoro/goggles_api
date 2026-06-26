@@ -44,7 +44,12 @@ module Goggles
       #     }
       #   }
       #
-      desc 'Find suggested entry time'
+      desc 'Find suggested entry time' do
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :swimmer_id, type: Integer, desc: 'Swimmer ID registering for the meeting entry'
         optional :meeting_id, type: Integer, desc: 'optional: Meeting ID (when available)'
@@ -134,7 +139,12 @@ module Goggles
       #      }
       #   }
       #
-      desc 'Compute result score or target timing, depending on the parameters supplied'
+      desc 'Compute result score or target timing, depending on the parameters supplied' do
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :pool_type_id, type: Integer, desc: 'PoolType ID for the event'
         requires :event_type_id, type: Integer, desc: 'EventType ID for the event'
@@ -238,7 +248,12 @@ module Goggles
       #     ...
       #   }
       #
-      desc 'Retrieve latest updates x main entities'
+      desc 'Retrieve latest updates x main entities' do
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :max, type: Integer, desc: 'Maximum number or rows x main entities (default: 3; max allowed: 10)'
       end

@@ -25,7 +25,13 @@ module Goggles
       # == Returns:
       # The APIDailyUse instance matching the specified +id+ as JSON.
       #
-      desc 'APIDailyUse details'
+      desc 'APIDailyUse details' do
+        success Goggles::Entities::APIDailyUseEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'APIDailyUse ID'
       end
@@ -45,7 +51,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update APIDailyUse details'
+      desc 'Update APIDailyUse details' do
+        success code: 200, message: 'APIDailyUse updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'APIDailyUse ID'
         optional :day, type: Date, desc: 'optional: date (day) for the API usage counter'
@@ -69,7 +81,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Deletes a single APIDailyUse row'
+      desc 'Deletes a single APIDailyUse row' do
+        success code: 200, message: 'APIDailyUse deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'APIDailyUse ID'
       end
@@ -102,7 +120,14 @@ module Goggles
       #
       # See official API blueprint docs for more info.
       #
-      desc 'List APIDailyUses'
+      desc 'List APIDailyUses' do
+        is_array true
+        success Goggles::Entities::APIDailyUseEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :day, type: Date, desc: 'optional: date (day) for which the API usage counters must be retrieved'
         optional :route, type: String, desc: 'optional: base route identifying the type of API call; LIKE filtering is applied'
@@ -128,7 +153,13 @@ module Goggles
       # == Returns:
       # the number of deleted rows when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Deletes several rows older than a specified given date'
+      desc 'Deletes several rows older than a specified given date' do
+        success code: 200, message: 'Rows deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :day, type: Date, desc: 'date (day) limit: any row older than (<) this specified day will be erased forever'
       end

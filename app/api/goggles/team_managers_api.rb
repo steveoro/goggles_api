@@ -27,7 +27,13 @@ module Goggles
       # The ManagedAffiliation instance matching the specified +id+ as JSON.
       # See GogglesDb::ManagedAffiliation#to_json for structure details.
       #
-      desc 'ManagedAffiliation details'
+      desc 'ManagedAffiliation details' do
+        success Goggles::Entities::ManagedAffiliationEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'ManagedAffiliation ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -50,7 +56,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update ManagedAffiliation details'
+      desc 'Update ManagedAffiliation details' do
+        success code: 200, message: 'ManagedAffiliation updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'ManagedAffiliation ID'
         optional :user_id, type: Integer, desc: 'optional: associated User ID (Team Manager)'
@@ -79,7 +91,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create a new ManagedAffiliation'
+      desc 'Create a new ManagedAffiliation' do
+        success code: 201, message: 'ManagedAffiliation created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :user_id, type: Integer, desc: 'associated User ID (new Manager)'
         requires :team_affiliation_id, type: Integer, desc: 'associated TeamAffiliation ID'
@@ -108,7 +127,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a ManagedAffiliation'
+      desc 'Delete a ManagedAffiliation' do
+        success code: 200, message: 'ManagedAffiliation deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'ManagedAffiliation ID'
       end
@@ -142,7 +167,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::ManagedAffiliation#to_json for structure details.
       #
-      desc 'List ManagedAffiliations'
+      desc 'List ManagedAffiliations' do
+        is_array true
+        success Goggles::Entities::ManagedAffiliationEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :user_id, type: Integer, desc: 'optional: associated User (Manager) ID'
         optional :team_affiliation_id, type: Integer, desc: 'optional: associated TeamAffiliation ID'

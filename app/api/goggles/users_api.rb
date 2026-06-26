@@ -22,7 +22,13 @@ module Goggles
       # == Returns:
       # The User instance matching the specified +id+ as JSON.
       #
-      desc 'User details'
+      desc 'User details' do
+        success Goggles::Entities::UserEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'User ID'
       end
@@ -42,7 +48,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update User details'
+      desc 'Update User details' do
+        success code: 200, message: 'User updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'User ID'
         optional :name, type: String, desc: 'optional: User name'
@@ -76,7 +88,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a User'
+      desc 'Delete a User' do
+        success code: 200, message: 'User deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'User ID'
       end
@@ -112,7 +130,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::User#to_json for structure details.
       #
-      desc 'List Users'
+      desc 'List Users' do
+        is_array true
+        success Goggles::Entities::UserEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :name, type: String, desc: 'optional: User name'
         optional :first_name, type: String, desc: 'optional: first name'

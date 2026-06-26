@@ -20,7 +20,13 @@ module Goggles
       # The TeamAffiliation instance matching the specified +id+ as JSON.
       # See GogglesDb::TeamAffiliation#to_json for structure details.
       #
-      desc 'TeamAffiliation details'
+      desc 'TeamAffiliation details' do
+        success Goggles::Entities::TeamAffiliationEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'TeamAffiliation ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -43,7 +49,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update TeamAffiliation details'
+      desc 'Update TeamAffiliation details' do
+        success code: 200, message: 'TeamAffiliation updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'TeamAffiliation ID'
         optional :team_id, type: Integer, desc: 'associated Team ID'
@@ -79,7 +91,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create a new TeamAffiliation'
+      desc 'Create a new TeamAffiliation' do
+        success code: 201, message: 'TeamAffiliation created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :team_id, type: Integer, desc: 'associated Team ID'
         requires :season_id, type: Integer, desc: 'associated Season ID'
@@ -125,7 +144,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::TeamAffiliation#to_json for structure details.
       #
-      desc 'List TeamAffiliations'
+      desc 'List TeamAffiliations' do
+        is_array true
+        success Goggles::Entities::TeamAffiliationEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT name search'
         optional :team_id, type: Integer, desc: 'optional: Team ID'

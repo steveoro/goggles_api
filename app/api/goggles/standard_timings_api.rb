@@ -20,7 +20,13 @@ module Goggles
       # The StandardTiming instance matching the specified +id+ as JSON.
       # See GogglesDb::StandardTiming#to_json for structure details.
       #
-      desc 'StandardTiming details'
+      desc 'StandardTiming details' do
+        success Goggles::Entities::StandardTimingEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'StandardTiming ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -43,7 +49,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update StandardTiming details'
+      desc 'Update StandardTiming details' do
+        success code: 200, message: 'StandardTiming updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'StandardTiming ID'
         optional :minutes, type: Integer, desc: 'optional: minutes value for this standard timing'
@@ -82,7 +94,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new StandardTiming'
+      desc 'Create new StandardTiming' do
+        success code: 201, message: 'StandardTiming created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :minutes, type: Integer, desc: 'minutes value for this standard timing'
         requires :seconds, type: Integer, desc: 'seconds value for this standard timing'
@@ -116,7 +135,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a StandardTiming'
+      desc 'Delete a StandardTiming' do
+        success code: 200, message: 'StandardTiming deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'StandardTiming ID'
       end
@@ -149,7 +174,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::StandardTiming#to_json for structure details.
       #
-      desc 'List StandardTimings'
+      desc 'List StandardTimings' do
+        is_array true
+        success Goggles::Entities::StandardTimingEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :season_id, type: Integer, desc: 'optional: associated Season ID'
         optional :gender_type_id, type: Integer, desc: 'optional: associated GenderType ID'

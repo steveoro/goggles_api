@@ -20,7 +20,13 @@ module Goggles
       # The MeetingEvent instance matching the specified +id+ as JSON.
       # See GogglesDb::MeetingEvent#to_json for structure details.
       #
-      desc 'MeetingEvent details'
+      desc 'MeetingEvent details' do
+        success Goggles::Entities::MeetingEventEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingEvent ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -43,7 +49,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update MeetingEvent details'
+      desc 'Update MeetingEvent details' do
+        success code: 200, message: 'MeetingEvent updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingEvent ID'
         optional :event_order, type: Integer, desc: 'optional: ordinal number of this event'
@@ -82,7 +94,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new MeetingEvent row'
+      desc 'Create new MeetingEvent row' do
+        success code: 201, message: 'MeetingEvent created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :meeting_session_id, type: Integer, desc: 'link to MeetingSession'
         requires :event_order, type: Integer, desc: 'ordinal number of this event'
@@ -118,7 +137,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a MeetingEvent'
+      desc 'Delete a MeetingEvent' do
+        success code: 200, message: 'MeetingEvent deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingEvent ID'
       end
@@ -153,7 +178,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::MeetingEvent#to_json for structure details.
       #
-      desc 'List MeetingEvents'
+      desc 'List MeetingEvents' do
+        is_array true
+        success Goggles::Entities::MeetingEventEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :meeting_id, type: Integer, desc: 'associated Meeting ID'
         optional :meeting_session_id, type: Integer, desc: 'optional: associated MeetingSession ID'

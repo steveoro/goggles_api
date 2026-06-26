@@ -20,7 +20,13 @@ module Goggles
       # The CategoryType instance matching the specified +id+ as JSON.
       # See GogglesDb::CategoryType#to_json for structure details.
       #
-      desc 'CategoryType details'
+      desc 'CategoryType details' do
+        success Goggles::Entities::CategoryTypeEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'CategoryType ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -44,7 +50,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update CategoryType details'
+      desc 'Update CategoryType details' do
+        success code: 200, message: 'CategoryType updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'CategoryType ID'
         optional :federation_code, type: String, desc: 'optional: federation code for this category'
@@ -84,7 +96,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new CategoryType'
+      desc 'Create new CategoryType' do
+        success code: 201, message: 'CategoryType created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :code, type: String, desc: 'internal code'
         requires :season_id, type: Integer, desc: 'associated Season ID'
@@ -121,7 +140,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a CategoryType'
+      desc 'Delete a CategoryType' do
+        success code: 200, message: 'CategoryType deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'CategoryType ID'
       end
@@ -156,7 +181,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::CategoryType#to_json for structure details.
       #
-      desc 'List CategoryTypes'
+      desc 'List CategoryTypes' do
+        is_array true
+        success Goggles::Entities::CategoryTypeEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :code, type: String, desc: 'optional: internal code'
         optional :season_id, type: Integer, desc: 'optional: associated Season ID'
@@ -207,7 +239,14 @@ module Goggles
       # On error, a JSON Hash containing the error message with the actual details sent over
       # the 'X-Error-Detail' header.
       #
-      desc 'Clone all CategoryTypes from a source Season to a destination Season'
+      desc 'Clone all CategoryTypes from a source Season to a destination Season' do
+        success code: 200, message: 'Clone successful'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Invalid parameters or clone failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :from_season_id, type: Integer, desc: 'source Season ID'
         requires :to_season_id, type: Integer, desc: 'destination Season ID for the cloned categories'

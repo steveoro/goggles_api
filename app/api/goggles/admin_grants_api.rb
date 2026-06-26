@@ -25,7 +25,14 @@ module Goggles
       # == Returns:
       # The JSON list of the AdminGrant rows found.
       #
-      desc 'List existing AdminGrants'
+      desc 'List existing AdminGrants' do
+        is_array true
+        success Goggles::Entities::AdminGrantEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :user_id, type: Integer, desc: 'optional: filters existing grants by user_id'
         optional :entity, type: String, desc: 'optional: filters existing grants by entity name (model name without \'GogglesDb::\' namespace prefix)'

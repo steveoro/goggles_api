@@ -24,7 +24,13 @@ module Goggles
       # The MeetingIndividualResult instance matching the specified +id+ as JSON.
       # See GogglesDb::MeetingIndividualResult#to_json for structure details.
       #
-      desc 'MeetingIndividualResult details'
+      desc 'MeetingIndividualResult details' do
+        success Goggles::Entities::MeetingIndividualResultEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingIndividualResult ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -47,7 +53,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update MeetingIndividualResult details'
+      desc 'Update MeetingIndividualResult details' do
+        success code: 200, message: 'MeetingIndividualResult updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingIndividualResult ID'
         optional :meeting_program_id, type: Integer, desc: 'optional: associated MeetingProgram ID'
@@ -100,7 +112,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new MeetingIndividualResult'
+      desc 'Create new MeetingIndividualResult' do
+        success code: 201, message: 'MeetingIndividualResult created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :meeting_program_id, type: Integer, desc: 'associated MeetingProgram ID'
         requires :team_affiliation_id, type: Integer, desc: 'associated TeamAffiliation ID'
@@ -147,7 +166,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a MeetingIndividualResult'
+      desc 'Delete a MeetingIndividualResult' do
+        success code: 200, message: 'MeetingIndividualResult deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingIndividualResult ID'
       end
@@ -181,7 +206,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::MeetingIndividualResult#to_json for structure details.
       #
-      desc 'List MeetingIndividualResults'
+      desc 'List MeetingIndividualResults' do
+        is_array true
+        success Goggles::Entities::MeetingIndividualResultEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :meeting_program_id, type: Integer, desc: 'optional: associated MeetingProgram ID'
         optional :team_affiliation_id, type: Integer, desc: 'optional: associated TeamAffiliation ID'

@@ -20,7 +20,13 @@ module Goggles
       # The UserWorkshop instance matching the specified +id+ as JSON.
       # See GogglesDb::UserWorkshop#to_json for structure details.
       #
-      desc 'UserWorkshop details'
+      desc 'UserWorkshop details' do
+        success Goggles::Entities::UserWorkshopEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'UserWorkshop ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -43,7 +49,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update UserWorkshop details'
+      desc 'Update UserWorkshop details' do
+        success code: 200, message: 'UserWorkshop updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'User Workshop ID'
         optional :code, type: String, desc: 'optional: Workshop code-name (recurring workshops should have the same code to be easily identified)'
@@ -99,7 +111,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new UserWorkshop'
+      desc 'Create new UserWorkshop' do
+        success code: 201, message: 'UserWorkshop created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :code, type: String, desc: 'Workshop code-name (recurring workshops should have the same code to be easily identified)'
         requires :header_date, type: String, desc: 'header (main) date for the UserWorkshop in ISO format (\'YYYY-MM-DD\')'
@@ -144,7 +163,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a UserWorkshop'
+      desc 'Delete a UserWorkshop' do
+        success code: 200, message: 'UserWorkshop deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'UserWorkshop ID'
       end
@@ -179,7 +204,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::UserWorkshop#to_json for structure details.
       #
-      desc 'List UserWorkshops'
+      desc 'List UserWorkshops' do
+        is_array true
+        success Goggles::Entities::UserWorkshopEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT search on description & code fields'
         optional :user_id, type: Integer, desc: 'optional: User registering this information'

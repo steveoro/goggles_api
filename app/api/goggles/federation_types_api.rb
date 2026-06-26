@@ -20,7 +20,13 @@ module Goggles
       # The FederationType instance matching the specified +id+ as JSON.
       # See GogglesDb::FederationType#to_json for structure details.
       #
-      desc 'FederationType details'
+      desc 'FederationType details' do
+        success Goggles::Entities::FederationTypeEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'FederationType ID'
       end
@@ -41,7 +47,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update FederationType details'
+      desc 'Update FederationType details' do
+        success code: 200, message: 'FederationType updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'FederationType ID'
         optional :code, type: String, desc: 'optional: internal (federation) code'
@@ -72,7 +84,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new FederationType'
+      desc 'Create new FederationType' do
+        success code: 201, message: 'FederationType created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :code, type: String, desc: 'internal code'
         requires :description, type: String, desc: 'Federation type description'
@@ -112,7 +131,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::FederationType#to_json for structure details.
       #
-      desc 'List FederationTypes'
+      desc 'List FederationTypes' do
+        is_array true
+        success Goggles::Entities::FederationTypeEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :code, type: String, desc: 'optional: internal code'
         optional :description, type: String, desc: 'optional: Federation type description'

@@ -33,7 +33,13 @@ module Goggles
       # The MeetingRelayResult instance matching the specified +id+ as JSON.
       # See GogglesDb::MeetingRelayResult#to_json for structure details.
       #
-      desc 'MeetingRelayResult details'
+      desc 'MeetingRelayResult details' do
+        success Goggles::Entities::MeetingRelayResultEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingRelayResult ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -56,7 +62,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update MeetingRelayResult details'
+      desc 'Update MeetingRelayResult details' do
+        success code: 200, message: 'MeetingRelayResult updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         # MIRs & MRRs common fields:
         requires :id, type: Integer, desc: 'MeetingRelayResult ID'
@@ -110,7 +122,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new MeetingRelayResult'
+      desc 'Create new MeetingRelayResult' do
+        success code: 201, message: 'MeetingRelayResult created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         # MIRs & MRRs common fields:
         requires :meeting_program_id, type: Integer, desc: 'associated MeetingProgram ID'
@@ -158,7 +177,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a MeetingRelayResult'
+      desc 'Delete a MeetingRelayResult' do
+        success code: 200, message: 'MeetingRelayResult deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingRelayResult ID'
       end
@@ -192,7 +217,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::MeetingRelayResult#to_json for structure details.
       #
-      desc 'List MeetingRelayResults'
+      desc 'List MeetingRelayResults' do
+        is_array true
+        success Goggles::Entities::MeetingRelayResultEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :meeting_program_id, type: Integer, desc: 'optional: associated MeetingProgram ID'
         optional :team_affiliation_id, type: Integer, desc: 'optional: associated TeamAffiliation ID'

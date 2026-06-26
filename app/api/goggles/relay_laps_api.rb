@@ -20,7 +20,13 @@ module Goggles
       # The RelayLap instance matching the specified +id+ as JSON.
       # See GogglesDb::RelayLap#to_json for structure details.
       #
-      desc 'RelayLap details'
+      desc 'RelayLap details' do
+        success Goggles::Entities::RelayLapEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'RelayLap ID'
       end
@@ -40,7 +46,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update RelayLap details'
+      desc 'Update RelayLap details' do
+        success code: 200, message: 'RelayLap updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'RelayLap ID'
         optional :meeting_relay_result_id, type: Integer, desc: 'optional: associated MeetingRelayResult ID'
@@ -91,7 +103,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new RelayLap'
+      desc 'Create new RelayLap' do
+        success code: 201, message: 'RelayLap created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :meeting_relay_result_id, type: Integer, desc: 'associated MeetingRelayResult ID'
         requires :meeting_relay_swimmer_id, type: Integer, desc: 'associated MeetingRelaySwimmer ID'
@@ -133,7 +152,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a RelayLap'
+      desc 'Delete a RelayLap' do
+        success code: 200, message: 'RelayLap deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'RelayLap ID'
       end
@@ -167,7 +192,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::RelayLap#to_json for structure details.
       #
-      desc 'List RelayLaps'
+      desc 'List RelayLaps' do
+        is_array true
+        success Goggles::Entities::RelayLapEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :meeting_relay_result_id, type: Integer, desc: 'optional: associated MeetingRelayResult ID'
         optional :meeting_relay_swimmer_id, type: Integer, desc: 'optional: associated MeetingRelaySwimmer ID'

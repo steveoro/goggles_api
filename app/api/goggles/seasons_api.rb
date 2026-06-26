@@ -20,7 +20,13 @@ module Goggles
       # The Season instance matching the specified +id+ as JSON; an empty result when not found.
       # See GogglesDb::Season#to_json for structure details.
       #
-      desc 'Season details'
+      desc 'Season details' do
+        success Goggles::Entities::SeasonEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Season ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -43,7 +49,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update Season details'
+      desc 'Update Season details' do
+        success code: 200, message: 'Season updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Season ID'
         optional :description, type: String, desc: 'verbose description'
@@ -81,7 +93,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create a new Season'
+      desc 'Create a new Season' do
+        success code: 201, message: 'Season created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :header_year, type: String, desc: 'referenced year(s) (format: YYYY or YYYY/YYYY+1)'
         requires :edition, type: Integer, desc: 'edition number'
@@ -130,7 +149,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::Season#to_json for structure details.
       #
-      desc 'List Seasons'
+      desc 'List Seasons' do
+        is_array true
+        success Goggles::Entities::SeasonEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :begin_date, type: Date, desc: 'optional: first day of the Season'
         optional :end_date, type: Date, desc: 'optional: last day of the Season'

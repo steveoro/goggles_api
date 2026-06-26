@@ -61,7 +61,14 @@ module Goggles
       #       # ...
       #     ]
       #
-      desc 'List lookup entity'
+      desc 'List lookup entity' do
+        is_array true
+        success Goggles::Entities::LookupEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :entity_name, type: String, desc: 'Entity name (plural)'
         optional :name, type: String, desc: 'optional: filtering query substring for \'long_label\', matched ignoring case (no fuzzy search)'

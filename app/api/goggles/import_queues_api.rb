@@ -24,7 +24,13 @@ module Goggles
       # The ImportQueue instance matching the specified +id+ as JSON.
       # See GogglesDb::ImportQueue#to_json for structure details.
       #
-      desc 'ImportQueue details'
+      desc 'ImportQueue details' do
+        success Goggles::Entities::ImportQueueEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'ImportQueue ID'
       end
@@ -44,7 +50,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update ImportQueue details'
+      desc 'Update ImportQueue details' do
+        success code: 200, message: 'ImportQueue updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'ImportQueue ID'
         optional :user_id, type: Integer, desc: 'optional: associated User ID'
@@ -80,7 +92,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new ImportQueue'
+      desc 'Create new ImportQueue' do
+        success code: 201, message: 'ImportQueue created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :user_id, type: Integer, desc: 'associated User ID'
         requires :request_data, type: String, desc: 'parsable JSON containing the requested entities and thei current state'
@@ -129,7 +148,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { id: <new_row_id> } }
       #
-      desc 'Creates a new ImportQueue storing an executable SQL batch file'
+      desc 'Creates a new ImportQueue storing an executable SQL batch file' do
+        success code: 201, message: 'ImportQueue created with SQL batch file'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :data_file, type: File, desc: 'a valid SQL batch file (supporting multi statements)'
       end
@@ -167,7 +193,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a ImportQueue'
+      desc 'Delete a ImportQueue' do
+        success code: 200, message: 'ImportQueue deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'ImportQueue ID'
       end
@@ -201,7 +233,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::ImportQueue#to_json for structure details.
       #
-      desc 'List ImportQueues'
+      desc 'List ImportQueues' do
+        is_array true
+        success Goggles::Entities::ImportQueueEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :user_id, type: Integer, desc: 'optional: associated User ID'
         optional :uid, type: String, desc: 'optional: queue UID'

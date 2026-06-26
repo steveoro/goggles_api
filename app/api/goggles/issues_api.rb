@@ -24,7 +24,13 @@ module Goggles
       # The Issue instance matching the specified +id+ as JSON.
       # See GogglesDb::Issue#to_json for structure details.
       #
-      desc 'Issue details'
+      desc 'Issue details' do
+        success Goggles::Entities::IssueEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Issue ID'
       end
@@ -44,7 +50,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update Issue details'
+      desc 'Update Issue details' do
+        success code: 200, message: 'Issue updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Issue ID'
         optional :req, type: String, desc: 'optional: parsable JSON request, enlisting all required parameters at hash root level'
@@ -77,7 +89,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new Issue'
+      desc 'Create new Issue' do
+        success code: 201, message: 'Issue created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :user_id, type: Integer, desc: 'associated User ID'
         requires :code, type: String, desc: 'issue code type (max 3 chars; see [goggles_db] Issue model for details)'
@@ -108,7 +127,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a Issue'
+      desc 'Delete a Issue' do
+        success code: 200, message: 'Issue deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Issue ID'
       end
@@ -142,7 +167,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::Issue#to_json for structure details.
       #
-      desc 'List Issues'
+      desc 'List Issues' do
+        is_array true
+        success Goggles::Entities::IssueEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :user_id, type: Integer, desc: 'optional: associated User ID'
         optional :code, type: String, desc: 'optional: issue code type (max 3 chars; see [goggles_db] Issue model for details)'

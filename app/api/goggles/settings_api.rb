@@ -42,7 +42,12 @@ module Goggles
       # == Returns:
       # The Setting Hash for the specified +group_name+ as JSON.
       #
-      desc 'Retrieve Setting Group values'
+      desc 'Retrieve Setting Group values' do
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :group_key, type: String, desc: 'Setting group name'
       end
@@ -63,7 +68,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update a single Setting key'
+      desc 'Update a single Setting key' do
+        success code: 200, message: 'Setting updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :group_key, type: String, desc: 'Setting group name'
         requires :key, type: String, desc: 'Setting key'
@@ -91,7 +102,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Deletes a single Setting key'
+      desc 'Deletes a single Setting key' do
+        success code: 200, message: 'Setting key deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :group_key, type: String, desc: 'Setting group name'
         requires :key, type: String, desc: 'Setting key to be deleted'

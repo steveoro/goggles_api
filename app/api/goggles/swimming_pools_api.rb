@@ -20,7 +20,13 @@ module Goggles
       # The SwimmingPool instance matching the specified +id+ as JSON.
       # See GogglesDb::SwimmingPool#to_json for structure details.
       #
-      desc 'SwimmingPool details'
+      desc 'SwimmingPool details' do
+        success Goggles::Entities::SwimmingPoolEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'SwimmingPool ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -43,7 +49,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update SwimmingPool details'
+      desc 'Update SwimmingPool details' do
+        success code: 200, message: 'SwimmingPool updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'SwimmingPool ID'
         optional :name, type: String, desc: 'official name'
@@ -94,7 +106,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create a new SwimmingPool'
+      desc 'Create a new SwimmingPool' do
+        success code: 201, message: 'SwimmingPool created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :name, type: String, desc: 'official name'
         requires :nick_name, type: String, desc: 'short name or nick-name for the pool'
@@ -157,7 +176,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::SwimmingPool#to_json for structure details.
       #
-      desc 'List SwimmingPools'
+      desc 'List SwimmingPools' do
+        is_array true
+        success Goggles::Entities::SwimmingPoolEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT name search on name & nick_name fields'
         optional :nick_name, type: String, desc: 'optional: nick_name (partial match supported)'

@@ -20,7 +20,13 @@ module Goggles
       # The City instance matching the specified +id+ as JSON.
       # See GogglesDb::City#to_json for structure details.
       #
-      desc 'City details'
+      desc 'City details' do
+        success Goggles::Entities::CityEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'City ID'
       end
@@ -40,7 +46,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update City details'
+      desc 'Update City details' do
+        success code: 200, message: 'City updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'City ID'
         optional :name, type: String, desc: 'optional: City name'
@@ -82,7 +94,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create a new City'
+      desc 'Create a new City' do
+        success code: 201, message: 'City created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :name, type: String, desc: 'City name'
         requires :country_code, type: String, desc: 'Country code (2 chars)'
@@ -129,7 +148,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::City#to_json for structure details.
       #
-      desc 'List or search Cities (in DB rows, with fuzzy search)'
+      desc 'List or search Cities (in DB rows, with fuzzy search)' do
+        is_array true
+        success Goggles::Entities::CityEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT search on name & area fields'
         optional :country_code, type: String, desc: 'optional: Country code (2 chars)'
@@ -171,7 +197,13 @@ module Goggles
       #
       # See CmdFindIsoCountry, CmdFindIsoCity & official API blueprint docs for more info.
       #
-      desc 'Search ISO list of normalized Cities (with fuzzy search)'
+      desc 'Search ISO list of normalized Cities (with fuzzy search)' do
+        is_array true
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :name, type: String, desc: 'City name'
         optional :country_code, type: String, desc: 'Country code (2 chars)'

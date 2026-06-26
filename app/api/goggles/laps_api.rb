@@ -25,7 +25,13 @@ module Goggles
       # The Lap instance matching the specified +id+ as JSON.
       # See GogglesDb::Lap#to_json for structure details.
       #
-      desc 'Lap details'
+      desc 'Lap details' do
+        success Goggles::Entities::LapEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Lap ID'
       end
@@ -45,7 +51,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update Lap details'
+      desc 'Update Lap details' do
+        success code: 200, message: 'Lap updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Lap ID'
         optional :meeting_individual_result_id, type: Integer, desc: 'optional: associated MeetingIndividualResult ID'
@@ -99,7 +111,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new Lap'
+      desc 'Create new Lap' do
+        success code: 201, message: 'Lap created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :meeting_program_id, type: Integer, desc: 'associated MeetingProgram ID'
         requires :team_id, type: Integer, desc: 'associated Team ID'
@@ -144,7 +163,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a Lap'
+      desc 'Delete a Lap' do
+        success code: 200, message: 'Lap deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Lap ID'
       end
@@ -178,7 +203,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::Lap#to_json for structure details.
       #
-      desc 'List Laps'
+      desc 'List Laps' do
+        is_array true
+        success Goggles::Entities::LapEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :meeting_individual_result_id, type: Integer, desc: 'optional: associated MeetingIndividualResult ID'
         optional :meeting_program_id, type: Integer, desc: 'optional: associated MeetingProgram ID'

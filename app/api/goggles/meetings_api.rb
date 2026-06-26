@@ -20,7 +20,13 @@ module Goggles
       # The Meeting instance matching the specified +id+ as JSON; an empty result when not found.
       # See GogglesDb::Meeting#to_json for structure details.
       #
-      desc 'Meeting details'
+      desc 'Meeting details' do
+        success Goggles::Entities::MeetingEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Meeting ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -44,7 +50,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update Meeting details'
+      desc 'Update Meeting details' do
+        success code: 200, message: 'Meeting updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Meeting ID'
         optional :code, type: String, desc: 'optional: Meeting code-name (recurring meetings should have the same code to be easily identified)'
@@ -114,7 +126,14 @@ module Goggles
       # In case of error during the cloning process the error list from the command execution is returned.
       # See GogglesDb::Meeting#to_json for structure details.
       #
-      desc 'Clone Meeting structure'
+      desc 'Clone Meeting structure' do
+        success code: 201, message: 'Meeting structure cloned'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Clone failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Source Meeting ID'
       end
@@ -151,7 +170,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::Meeting#to_json for structure details.
       #
-      desc 'List Meetings'
+      desc 'List Meetings' do
+        is_array true
+        success Goggles::Entities::MeetingEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT search on description & code fields'
         optional :description, type: String, desc: 'optional: synonym of the name option'

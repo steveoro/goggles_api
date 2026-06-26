@@ -20,7 +20,13 @@ module Goggles
       # The Team instance matching the specified +id+ as JSON.
       # See GogglesDb::Team#to_json for structure details.
       #
-      desc 'Team details'
+      desc 'Team details' do
+        success Goggles::Entities::TeamEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Team ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -43,7 +49,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update Team details'
+      desc 'Update Team details' do
+        success code: 200, message: 'Team updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Team ID'
         optional :name, type: String, desc: 'name of the Team' # (This field was normally intended as read-only)
@@ -81,7 +93,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create a new Team'
+      desc 'Create a new Team' do
+        success code: 201, message: 'Team created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :name, type: String, desc: 'name of the Team'
         requires :editable_name, type: String, desc: 'name of the Team, as edited by the Team Manager'
@@ -133,7 +152,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::Team#to_json for structure details.
       #
-      desc 'List Teams'
+      desc 'List Teams' do
+        is_array true
+        success Goggles::Entities::TeamEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :name, type: String, desc: 'optional: generic FULLTEXT name search on name, editable_name & name_variations fields'
         optional :city_id, type: Integer, desc: 'optional: associated City ID'

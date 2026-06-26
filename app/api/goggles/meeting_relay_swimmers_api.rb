@@ -23,7 +23,13 @@ module Goggles
       # The MeetingRelaySwimmer instance matching the specified +id+ as JSON.
       # See GogglesDb::MeetingRelaySwimmer#to_json for structure details.
       #
-      desc 'MeetingRelaySwimmer details'
+      desc 'MeetingRelaySwimmer details' do
+        success Goggles::Entities::MeetingRelaySwimmerEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingRelaySwimmer ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -46,7 +52,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update MeetingRelaySwimmer details'
+      desc 'Update MeetingRelaySwimmer details' do
+        success code: 200, message: 'MeetingRelaySwimmer updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingRelaySwimmer ID'
         optional :meeting_relay_result_id, type: Integer, desc: 'optional: associated MeetingRelayResult ID'
@@ -96,7 +108,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new MeetingRelaySwimmer'
+      desc 'Create new MeetingRelaySwimmer' do
+        success code: 201, message: 'MeetingRelaySwimmer created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :meeting_relay_result_id, type: Integer, desc: 'required: associated MeetingRelayResult ID'
         requires :swimmer_id, type: Integer, desc: 'required: associated Swimmer ID'
@@ -136,7 +155,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a MeetingRelaySwimmer'
+      desc 'Delete a MeetingRelaySwimmer' do
+        success code: 200, message: 'MeetingRelaySwimmer deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'MeetingRelaySwimmer ID'
       end
@@ -170,7 +195,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::MeetingRelaySwimmer#to_json for structure details.
       #
-      desc 'List MeetingRelaySwimmers'
+      desc 'List MeetingRelaySwimmers' do
+        is_array true
+        success Goggles::Entities::MeetingRelaySwimmerEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :meeting_relay_result_id, type: Integer, desc: 'optional: associated MeetingRelayResult ID'
         optional :swimmer_id, type: Integer, desc: 'optional: associated Swimmer ID'

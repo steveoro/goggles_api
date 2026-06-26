@@ -13,7 +13,7 @@ require 'action_mailer/railtie'
 require 'action_mailbox/engine'
 require 'action_text/engine'
 require 'action_view/railtie'
-# require "sprockets/railtie"
+require 'sprockets/railtie' # needed for Swagger UI assets (used only in development)
 require 'rails/test_unit/railtie'
 
 # Require the gems listed in Gemfile, including any gems

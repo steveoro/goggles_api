@@ -20,7 +20,13 @@ module Goggles
       # The SeasonType instance matching the specified +id+ as JSON.
       # See GogglesDb::SeasonType#to_json for structure details.
       #
-      desc 'SeasonType details'
+      desc 'SeasonType details' do
+        success Goggles::Entities::SeasonTypeEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'SeasonType ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -44,7 +50,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update SeasonType details'
+      desc 'Update SeasonType details' do
+        success code: 200, message: 'SeasonType updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'SeasonType ID'
         optional :code, type: String, desc: 'optional: internal code'
@@ -77,7 +89,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new SeasonType'
+      desc 'Create new SeasonType' do
+        success code: 201, message: 'SeasonType created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :code, type: String, desc: 'internal code'
         requires :federation_type_id, type: Integer, desc: 'associated FederationType ID'
@@ -118,7 +137,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::SeasonType#to_json for structure details.
       #
-      desc 'List SeasonTypes'
+      desc 'List SeasonTypes' do
+        is_array true
+        success Goggles::Entities::SeasonTypeEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :code, type: String, desc: 'optional: internal code'
         optional :federation_type_id, type: Integer, desc: 'optional: associated FederationType ID'

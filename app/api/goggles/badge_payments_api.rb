@@ -22,7 +22,13 @@ module Goggles
       # The BadgePayment instance matching the specified +id+ as JSON.
       # See GogglesDb::BadgePayment#to_json for structure details.
       #
-      desc 'BadgePayment details'
+      desc 'BadgePayment details' do
+        success Goggles::Entities::BadgePaymentEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'BadgePayment ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -46,7 +52,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update BadgePayment details'
+      desc 'Update BadgePayment details' do
+        success code: 200, message: 'BadgePayment updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'BadgePayment ID'
         optional :payment_date, type: String, desc: 'optional: payment date in ISO format'
@@ -81,7 +93,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new BadgePayment row'
+      desc 'Create new BadgePayment row' do
+        success code: 201, message: 'BadgePayment created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :payment_date, type: String, desc: 'payment date in ISO format'
         requires :amount, type: Float, desc: 'payment amount'
@@ -114,7 +133,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a BadgePayment'
+      desc 'Delete a BadgePayment' do
+        success code: 200, message: 'BadgePayment deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'BadgePayment ID'
       end
@@ -149,7 +174,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::BadgePayment#to_json for structure details.
       #
-      desc 'List BadgePayments'
+      desc 'List BadgePayments' do
+        is_array true
+        success Goggles::Entities::BadgePaymentEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :from_date, type: String, desc: 'optional: starting payment date in ISO format (all payments on or after this date)'
         optional :user_id, type: Integer, desc: 'optional: associated User ID'

@@ -27,7 +27,13 @@ module Goggles
       # The UserResult instance matching the specified +id+ as JSON.
       # See GogglesDb::UserResult#to_json for structure details.
       #
-      desc 'UserResult details'
+      desc 'UserResult details' do
+        success Goggles::Entities::UserResultEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'UserResult ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -50,7 +56,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update UserResult details'
+      desc 'Update UserResult details' do
+        success code: 200, message: 'UserResult updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'UserResult ID'
         optional :user_id, type: Integer, desc: 'optional: associated User ID (creator/recorder)'
@@ -104,7 +116,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new UserResult'
+      desc 'Create new UserResult' do
+        success code: 201, message: 'UserResult created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :user_id, type: Integer, desc: 'associated User ID (creator/recorder)'
         requires :user_workshop_id, type: Integer, desc: 'associated UserWorkshop ID'
@@ -150,7 +169,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a UserResult'
+      desc 'Delete a UserResult' do
+        success code: 200, message: 'UserResult deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'UserResult ID'
       end
@@ -184,7 +209,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::UserResult#to_json for structure details.
       #
-      desc 'List UserResults'
+      desc 'List UserResults' do
+        is_array true
+        success Goggles::Entities::UserResultEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :user_id, type: Integer, desc: 'optional: associated User ID (creator/recorder)'
         optional :user_workshop_id, type: Integer, desc: 'optional: associated UserWorkshop ID'

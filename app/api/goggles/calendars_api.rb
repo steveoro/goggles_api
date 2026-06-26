@@ -20,7 +20,13 @@ module Goggles
       # The Calendar instance matching the specified +id+ as JSON.
       # See GogglesDb::Calendar#to_json for structure details.
       #
-      desc 'Calendar details'
+      desc 'Calendar details' do
+        success Goggles::Entities::CalendarEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Calendar ID'
         optional :locale, type: String, desc: 'optional: Locale override (default \'it\')'
@@ -43,7 +49,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; an empty result when not found.
       #
-      desc 'Update Calendar details'
+      desc 'Update Calendar details' do
+        success code: 200, message: 'Calendar updated'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Calendar ID'
         optional :scheduled_date, type: String, desc: 'optional: schedule date or dates of the Meeting, usually separated by comma or dash (\'DD1-DD2\')'
@@ -99,7 +111,14 @@ module Goggles
       #
       #    { "msg": "OK", "new": { ...new row in JSON format... } }
       #
-      desc 'Create new Calendar row'
+      desc 'Create new Calendar row' do
+        success code: 201, message: 'Calendar created'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Validation failure']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :season_id, type: Integer, desc: 'associated Season ID'
 
@@ -156,7 +175,13 @@ module Goggles
       # == Returns:
       # 'true' when successful; a +nil+ result (empty body) when not found.
       #
-      desc 'Delete a Calendar'
+      desc 'Delete a Calendar' do
+        success code: 200, message: 'Calendar deleted'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         requires :id, type: Integer, desc: 'Calendar ID'
       end
@@ -189,7 +214,14 @@ module Goggles
       # See official API blueprint docs for more info.
       # See GogglesDb::Calendar#to_json for structure details.
       #
-      desc 'List Calendars'
+      desc 'List Calendars' do
+        is_array true
+        success Goggles::Entities::CalendarEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
       params do
         optional :season_id, type: Integer, desc: 'optional: associated Season ID'
         use :pagination
