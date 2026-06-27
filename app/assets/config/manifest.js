@@ -1,3 +1,1 @@
-//= link_directory ../stylesheets .css
-//= link_directory ../javascripts .js
-//= link_tree ../images
+// (no app-specific assets; sprockets loaded only for GrapeSwaggerRails engine)

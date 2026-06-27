@@ -10,56 +10,33 @@ Wraps all main Goggles' API endpoints in a stand-alone application.
 
 The endpoints allow an authorized account to manage most DB entities as they are defined in the DB structure, returning usually a composed result that includes all first-level associations and look-up entities as well.
 
-
-
 ## Wiki & HOW-TOs
 
 - [Official Framework Wiki :link:](https://github.com/steveoro/goggles_db/wiki) (v. 7+)
 
-
 ## Requires
 
-- Ruby 3.1.4
-- Rails 6.0.6.1+
-- MariaDb 10.6.12+ or any other MySql equivalent version
-
-
+- Ruby 3.4.7
+- Rails 8.1.3+
+- MariaDb 11.8.8
 
 ## API documentation
 
-The official API documentation is in API Blueprint format and stored directly on this repository, under `/blueprint`.
+The API is documented using [Grape-Swagger](https://github.com/ruby-grape/grape-swagger) with [Grape::Entity](https://github.com/ruby-grape/grape-entity) and exposed as an interactive Swagger UI.
 
-The main index is `api_main.apib` stored in the project root while all its sibling pages are inside the aforementioned `/blueprint` folder.
+When running the development server, browse to `/api/docs` to explore all endpoints, their request/response schemas, and authentication requirements.
 
-To easily browse the documents while working on them, we recommend the usage of Visual Studio Code with the API Blueprint Viewer extension installed, since generating a new single static document each time is definitely cumbersome.
+The Swagger UI is served via `grape-swagger-rails` and mounted in `config/routes.rb` **only in the `development` environment**.
 
-
-### Suggested tools
-
-*IDE:*
-
-- VisualStudio Code with at least the following extensions:
-  - API Blueprint syntax highlighter
-  - API Blueprint Viewer
-  - any JSON prettyfier
-  - `html2haml` gem together with its VSCode extension
-  - any other relevant & VSCode-suggested extension (Ruby, Rails, MariaDB/MySQL & Docker for once)
-
-- Hercule, for managing the API document split among multiple files. Install it globally with:
-
-     ```bash
-     $> sudo npm install -g hercule
-     ```
-
-Using Atom as favorite IDE may work too although, last time we checked, the available API Blueprint plugin was showing more issues than the one in VSCode.
-
-
+*(The legacy API Blueprint `/blueprint` folder has been removed; all documentation now lives in the Swagger output generated from the Entity annotations and route definitions.)*
 
 ## Source dependencies & how to update `GogglesDb`
 
 - [GogglesDb base engine](https://github.com/steveoro/goggles_db), core 7+
 - [JWT](https://github.com/jwt/ruby-jwt) for session handling
-- [Grape gem](https://github.com/ruby-grape/grape) for API definition
+- [Grape](https://github.com/ruby-grape/grape) for API definition
+- [Grape-Entity](https://github.com/ruby-grape/grape-entity) for response serialization
+- [Grape-Swagger](https://github.com/ruby-grape/grape-swagger) + [grape-swagger-rails](https://github.com/ruby-grape/grape-swagger-rails) for interactive API documentation
 
 You will need to install the GogglesDb gem disabling the download of the embedded test dump with:
 
@@ -67,7 +44,7 @@ You will need to install the GogglesDb gem disabling the download of the embedde
 $> GIT_LFS_SKIP_SMUDGE=1 bundle install
 ```
 
-Use the same parameter _when updating the gem_ with `bundle update goggles_db` or just run the dedicated script:
+Use the same parameter *when updating the gem* with `bundle update goggles_db` or just run the dedicated script:
 
 ```bash
 $> ./update_engine.sh
@@ -82,8 +59,6 @@ $> RAILS_ENV=test rails app:db:rebuild
 
 Check out [Database setup](https://github.com/steveoro/goggles_db#database-setup) on GogglesDb project's README for more info.
 
-
-
 ## Configuration
 
 All framework app projects (except for the mountable engines) handle multiple configurations for execution, development & deployment.
@@ -95,8 +70,6 @@ You can use each project of the suite:
 - in any other mixed way, be it the application running on localhost while accessing the DB inside a container or vice-versa.
 
 Check out also the WiKi about [repository credentials: management and creation](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-Goggles_credentials).
-
-
 
 ### *Full Localhost* usage
 
@@ -111,7 +84,6 @@ In order to start development, you'll need to:
 - customize `.env.example` (as above) and save it as `.env` in case you want to build the Docker containers;
 - obtain a a valid compressed development or test seed (`.sql.bz2`) stored under `db/dump` (see [Database setup](https://github.com/steveoro/goggles_db#database-setup)).
 
-
 ### *Composed Container* usage
 
 For usage as a composed Docker container service you won't need an actual installation of MySQL or MariaDB at all, although a client `mysql` installation is recommended in case you want to run SQL commands into the DB container from the localhost shell.
@@ -119,7 +91,6 @@ For usage as a composed Docker container service you won't need an actual instal
 If you're using the orchestrated container service, just choose a random password for the database in the `.env` file before building the containers and follow the WiKi How-To:
 
 - [Docker usage with GogglesAPI as reference example](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi)
-
 
 ### *Mixed cases* usage
 
@@ -129,16 +100,13 @@ The `Dockerfile`s & `docker-compose` YML files work with some assumptions throug
 
 For instance, by changing just the current Database port in your customized `database.yml` you could switch from a typical localhost MySQL install (port 3306 running on socket) to a containerized MySQL Database on the different port published on the service (port 33060 using IP protocol).
 
-
 | Service | Default internal port | Default published port |
-|---|---|---|
-|  | _"inside" containers_ | _"outside" service_ |
-Database (MariaDB/MySQL) | `localhost:3306` | `33060`
-Web app | `localhost:3000` | `8081`
+| --- | --- | --- |
+| | *"inside" containers* | *"outside" service* |
+| Database (MariaDB/MySQL) | `localhost:3306` | `33060` |
+| Web app | `localhost:3000` | `8081` |
 
-The current `staging` environment configuration is an example of the app running _locally_ while connecting to the `goggles-db` container service on `localhost:33060`. (See the dedicated paragraph below.)
-
-
+The current `staging` environment configuration is an example of the app running *locally* while connecting to the `goggles-db` container service on `localhost:33060`. (See the dedicated paragraph below.)
 
 ## Audit log
 
@@ -148,12 +116,9 @@ The Logger instance will split it and keep the latest 10 files of 1 MB each.
 
 At the same time, each API call will update a dedicated entry in the `api_daily_uses` table, which can be used to compute crude usage stats on a daily basis.
 
-
-
 ## How to run the test suite
 
-
-### A. Everything on _localhost_
+### A. Everything on *localhost*
 
 For local testing, just keep your friend [Guard](https://github.com/guard/guard) running in the background, in a dedicated console:
 
@@ -173,10 +138,9 @@ $> brakeman -c .brakeman.cfg
 
 If you don't have a local test database setup, check out ["Database setup"](https://github.com/steveoro/goggles_db#database-setup).
 
-_Make sure you commit & push any changes only when the test suite is_ :green_heart:.
+*Make sure you commit & push any changes only when the test suite is* :green_heart:.
 
-
-### B. Everything on _Docker containers_
+### B. Everything on *Docker containers*
 
 Although not optimized for testing, the `dev` composed service can be used to run RSpec, Rubocop or anything else, including Guard too.
 
@@ -202,17 +166,15 @@ Inside the container, remember to:
 - always prefix the usual commands with `bundle exec` (as in `bundle exec rails console`, ...) to reach the correct bundle (stored in `/usr/local/bundle`);
 - override the default RAILS_ENV `development` for anything test-related.
 
-
 * * *
 
-
-## Dev Workflow _(for contributors)_
+## Dev Workflow *(for contributors)*
 
 When you push a commit to the `master` branch, the build system will re-test everything you allegedly have already checked locally using [Guard](https://github.com/guard/guard) as described above.
 
-The project uses a _full CI pipeline_ setup on Semaphore 2.0 (currently for the `master` branch only) that will promote a successful build into the Docker `latest` production-only image on DockerHub.
+The project uses a *full CI pipeline* setup on Semaphore 2.0 (currently for the `master` branch only) that will promote a successful build into the Docker `latest` production-only image on DockerHub.
 
-All other tagged Docker images will be auto-built by DockerHub itself, as soon as any specific branch has been _manually tagged_ as a _release_ from the GitHub UI. (Using GitHub release tags that respect semantic versioning, with format `MAJOR`.`MINOR`.`BUILD`)
+All other tagged Docker images will be auto-built by DockerHub itself, as soon as any specific branch has been *manually tagged* as a *release* from the GitHub UI. (Using GitHub release tags that respect semantic versioning, with format `MAJOR`.`MINOR`.`BUILD`)
 
 Given this, avoid cluttering the build queue with tiny commits (unless these are hotfixes) and with something that hasn't been greenlit by a local run of the whole test suite: it's adamant that you don't push failing builds whenever possible.
 
@@ -223,9 +185,7 @@ Basically, remember to:
 - when you're ready to push, do a full test suite run (just to be sure);
 - run also an additional Brakeman scan before the push as suggested above.
 
-
 * * *
-
 
 ## Database setup
 
@@ -235,8 +195,7 @@ You'll need a proper DB for both the test suite and the local development.
 
 Assuming we want the `test` environment DB up and running, you can either have:
 
-
-### A. Everything on _localhost_
+### A. Everything on *localhost*
 
 - Make sure you have a running MariaDB server & client installation.
 
@@ -249,14 +208,11 @@ $> RAILS_ENV=test bin/rails db:migrate
 
 (It will take some time, depending of the dump size: sit back and relax.)
 
-
-### B. Using _Docker containers_
+### B. Using *Docker containers*
 
 Refer to ["Getting started: setup and usage as a composed Docker service"](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi#getting-started-setup-and-usage-as-a-composed-docker-service) or to ["DB container setup & usage"](https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-docker_usage_for_GogglesApi#db-container-setup--usage-low-level-approach) for in-depth details.
 
-
 * * *
-
 
 ## Staging
 
@@ -285,31 +241,27 @@ $> rails s -p 8081 -e staging
 $> rails c -e staging
 ```
 
-
 * * *
-
 
 ## Deployment instructions
 
 :construction: TODO :construction:
 
-
 * * *
 
-
 ## Contributing
+
 1. Clone the project.
 2. Make a new custom branch for your changes, naming the branch accordingly (i.e. use prefixes like: `feature-`, `fix-`, `upgrade-`, ...).
 3. When you think you're done, make sure you type `guard` (+`Enter`) and wait for the whole spec suite to end.
 4. Make sure your branch is locally green (:green_heart:) before submitting the pull request.
 5. Await the PR's review by the maintainers.
 
-
 ## License
+
 The application is available as open source under the terms of the [LGPL-3.0 License](https://opensource.org/licenses/LGPL-3.0).
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_api.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_api?ref=badge_large)
-
 
 ## Supporting
 
