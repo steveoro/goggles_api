@@ -7,7 +7,7 @@ module Goggles
   #   - author:   Steve A.
   #   - build:    20260625
   #
-  class BadgesAPI < Grape::API # rubocop:disable Metrics/ClassLength
+  class BadgesAPI < Grape::API
     helpers APIHelpers
 
     format       :json
