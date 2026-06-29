@@ -136,7 +136,7 @@ module Goggles
       #
       # == Returns:
       # The list of Swimmers for the specified filtering parameters as an array of JSON objects.
-      # Returns exact matches for gender_type_id, year_of_birth, & year_guessed; supports partial matches
+      # Returns exact matches for gender_type_id, gender_type_code, year_of_birth, & year_guessed; supports partial matches
       # for the text fields, plus a FULLTEXT search by the generic 'name' parameter on all name-related fields.
       #
       # *Pagination* links are stored and returned in the response headers.
@@ -162,6 +162,7 @@ module Goggles
         optional :last_name, type: String, desc: 'optional: last name (partial match supported)'
         optional :complete_name, type: String, desc: 'optional: complete name (partial match supported)'
         optional :gender_type_id, type: Integer, desc: 'optional: associated GenderType ID'
+        optional :gender_type_code, type: String, desc: 'optional: associated GenderType code (M, F, X)'
         optional :year_of_birth, type: Integer, desc: 'optional: year of birth value'
         optional :year_guessed, type: Boolean, desc: 'optional: true to search for data having only "guessed" year of birth values'
         optional :select2_format, type: Boolean, desc: 'optional: true to enable the simplified (id+text) Select2 output format'
@@ -179,6 +180,9 @@ module Goggles
         results = filtering_fulltext_search_for(GogglesDb::Swimmer, params['name'])
                   .where(filtering_hash_for(params, %w[gender_type_id year_of_birth year_guessed]))
                   .where(filtering_like_for(params, %w[first_name last_name complete_name]))
+
+        # Filter by gender_type_code if specified (requires join with gender_types)
+        results = results.joins(:gender_type).where(gender_types: { code: params['gender_type_code'] }) if params['gender_type_code'].present?
 
         # Priority #2: append unique fuzzy search results when found:
         results = append_fuzzy_search_results_for(GogglesDb::Swimmer, { complete_name: params['name'] }, results)

@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.9.15** [Steve A.] added gender type code parameter to swimmers API; re-sync w/ base engine; bundle updates
 - **0.9.14** [Steve A.] re-sync w/ base engine; bundle updates; full port of API docs to Grape-Swagger with Swagger UI published only in development mode
 - **0.9.08** [Steve A.] re-sync w/ base engine; bundle updates
 - **0.9.00** [Steve A.] update to Rails 8.1; adapted CircleCI build pipeline to new versions

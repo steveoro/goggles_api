@@ -9,9 +9,9 @@ require 'grape-swagger/entity'
 #
 # Mounts all required API modules
 #
-# - version:  7-0.7.10
+# - version:  7-0.9.14
 # - author:   Steve A.
-# - build:    20240425
+# - build:    20260629
 #
 module Goggles
   # = Goggles::API
