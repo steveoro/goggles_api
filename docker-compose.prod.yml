@@ -36,8 +36,11 @@ services:
     ports:
       - '127.0.0.1:8081:8081'
     restart: always
+    # DAC_OVERRIDE: container runs as root but host bind mounts are owned by deploy (600 keys, storage).
     cap_drop:
       - ALL
+    cap_add:
+      - DAC_OVERRIDE
     security_opt:
       - no-new-privileges:true
     mem_limit: 1g
