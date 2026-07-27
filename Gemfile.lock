@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/steveoro/goggles_db
-  revision: c7f80530872f90d5be45a2a7e89136816eedb873
+  revision: 48c23fe5efe2d74ccf11c70ee596da77b684c40d
   specs:
     goggles_db (0.9.20)
       acts-as-taggable-on
@@ -153,7 +153,7 @@ GEM
       simplecov
     coderay (1.1.3)
     colorize (1.1.0)
-    concurrent-ruby (1.3.7)
+    concurrent-ruby (1.3.8)
     connection_pool (3.0.2)
     countries (8.1.0)
       unaccent (~> 0.3)
@@ -172,7 +172,6 @@ GEM
       devise (>= 5.0.0)
       rails-i18n
     diff-lcs (1.6.2)
-    docile (1.4.1)
     domain_name (0.6.20240107)
     draper (4.0.6)
       actionpack (>= 5.0)
@@ -202,7 +201,7 @@ GEM
       dry-inflector (~> 1.0)
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
-    erb (6.0.5)
+    erb (6.0.6)
     erubi (1.13.1)
     factory_bot (6.6.0)
       activesupport (>= 6.1.0)
@@ -241,14 +240,14 @@ GEM
     grape-swagger-entity (0.7.1)
       grape-entity (~> 1)
       grape-swagger (~> 2)
-    grape-swagger-rails (1.0.4)
+    grape-swagger-rails (1.0.5)
       haml-rails (>= 2.0, < 4.0)
       ostruct (>= 0.6, < 1.0)
       railties (>= 7.2.2.2, < 8.2)
     grape_logging (3.0.0)
       grape (>= 2.4.0)
       rack
-    guard (2.20.1)
+    guard (2.20.2)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
       logger (~> 1.6)
@@ -290,7 +289,7 @@ GEM
       activesupport (>= 5.1)
       haml (>= 4.0.6)
       railties (>= 5.1)
-    haml_lint (0.74.0)
+    haml_lint (0.76.0)
       haml (>= 5.0)
       parallel (>= 1.10)
       rainbow
@@ -380,7 +379,7 @@ GEM
     nenv (0.3.0)
     net-http (0.9.1)
       uri (>= 0.11.1)
-    net-imap (0.6.4.1)
+    net-imap (0.6.6)
       date
       net-protocol
     net-pop (0.1.2)
@@ -411,7 +410,7 @@ GEM
       logger
       rack (>= 2.2.3)
       rack-protection
-    omniauth-facebook (10.0.0)
+    omniauth-facebook (11.0.0)
       bigdecimal
       omniauth-oauth2 (>= 1.2, < 3)
     omniauth-oauth2 (1.9.0)
@@ -423,7 +422,7 @@ GEM
     orm_adapter (0.5.0)
     ostruct (0.6.3)
     parallel (2.1.0)
-    parser (3.3.11.1)
+    parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
     plus_codes (0.2.1)
@@ -493,7 +492,7 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
-    rbs (4.0.3)
+    rbs (4.1.0)
       logger
       prism (>= 1.6.0)
       tsort
@@ -545,7 +544,7 @@ GEM
     rspec_pacman_formatter (0.1.7)
       colorize
       rspec
-    rubocop (1.88.1)
+    rubocop (1.88.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -566,7 +565,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.47.1, < 2.0)
-    rubocop-rails (2.35.5)
+    rubocop-rails (2.36.0)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
       rack (>= 1.1)
@@ -593,12 +592,7 @@ GEM
     securerandom (0.4.1)
     shellany (0.0.1)
     simple_command (1.0.1)
-    simplecov (0.22.0)
-      docile (~> 1.1)
-      simplecov-html (~> 0.11)
-      simplecov_json_formatter (~> 0.1)
-    simplecov-html (0.13.2)
-    simplecov_json_formatter (0.1.4)
+    simplecov (1.0.3)
     snaky_hash (2.0.7)
       hashie (>= 0.1.0, < 6)
       version_gem (~> 1.1, >= 1.1.14)
@@ -620,8 +614,9 @@ GEM
     thor (1.5.0)
     tilt (2.8.0)
     timeout (0.6.1)
-    tins (1.54.0)
+    tins (1.56.0)
       bigdecimal
+      irb
       mize (~> 0.6)
       readline
       sync
@@ -642,7 +637,7 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    yard (0.9.44)
+    yard (0.9.45)
     zeitwerk (2.8.2)
 
 PLATFORMS
