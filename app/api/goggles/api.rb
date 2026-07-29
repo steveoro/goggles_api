@@ -85,6 +85,7 @@ module Goggles
     mount CategoryTypesAPI
     mount CitiesAPI
     mount FederationTypesAPI
+    mount GoggleCupsAPI
     mount ImportQueuesAPI
     mount IndividualRecordsAPI
     mount IssuesAPI
@@ -129,6 +130,7 @@ module Goggles
         Goggles::Entities::CategoryTypeEntity,
         Goggles::Entities::CityEntity,
         Goggles::Entities::FederationTypeEntity,
+        Goggles::Entities::GoggleCupEntity,
         Goggles::Entities::ImportQueueEntity,
         Goggles::Entities::IndividualRecordEntity,
         Goggles::Entities::IssueEntity,

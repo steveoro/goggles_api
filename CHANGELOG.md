@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.9.25** [Steve A.] added enpoints for goggle_cups
 - **0.9.25** [Steve A.] re-sync w/ base engine; bundle updates
 - **0.9.23** [Steve A.] bundle updates; docker container hardening
 - **0.9.20** [Steve A.] re-sync w/ base engine; bundle updates
