@@ -131,6 +131,7 @@ module Goggles
         Goggles::Entities::CityEntity,
         Goggles::Entities::FederationTypeEntity,
         Goggles::Entities::GoggleCupEntity,
+        Goggles::Entities::GogglesCup3yBaseTimingsEntity,
         Goggles::Entities::ImportQueueEntity,
         Goggles::Entities::IndividualRecordEntity,
         Goggles::Entities::IssueEntity,

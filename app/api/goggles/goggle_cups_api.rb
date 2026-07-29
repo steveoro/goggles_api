@@ -3,11 +3,11 @@
 module Goggles
   # = Goggles API v3: GoggleCup API Grape controller
   #
-  #   - version:  7-0.9.14
+  #   - version:  7-0.9.25
   #   - author:   Steve A.
   #   - build:    20260729
   #
-  class GoggleCupsAPI < Grape::API
+  class GoggleCupsAPI < Grape::API # rubocop:disable Metrics/ClassLength
     helpers APIHelpers
 
     format       :json
@@ -245,6 +245,52 @@ module Goggles
                                       .where(filtering_like_for(params, %w[description]))
                                       .where(filtering_hash_for(params, %w[team_id season_year]))
                                       .order('goggle_cups.id DESC')
+
+        paginate(results).map(&:to_hash)
+      end
+
+      # GET /api/:version/goggle_cups/base_timings
+      #
+      # Returns the best timing rows for each swimmer/event/pool tuple from the
+      # 3 championship years preceding the current ongoing championship year.
+      #
+      # == Required Params:
+      # - swimmer_id (required)
+      #
+      # == Optional Params:
+      # - event_type_code (optional, exact match on the event type code)
+      #
+      # == Returns:
+      # The matching list of base timings as an array of JSON objects.
+      #
+      # *Pagination* links are stored and returned in the response headers.
+      # - 'Link': list of request links for last & next data pages, separated by ", "
+      # - 'Total': total data rows found
+      # - 'Per-Page': total rows per page
+      # - 'Page': current page
+      #
+      desc 'Search GoggleCup 3-year base timings by swimmer' do
+        is_array true
+        success Goggles::Entities::GogglesCup3yBaseTimingsEntity
+        failure [
+          [400, 'Bad request - Missing required search parameters'],
+          [401, 'Unauthorized - Missing or invalid JWT']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
+      params do
+        requires :swimmer_id, type: Integer, desc: 'Swimmer ID (required)'
+        optional :event_type_code, type: String, desc: 'optional: EventType code for filtering'
+        use :pagination
+      end
+      # Defaults:
+      # paginate per_page: 25, max_per_page: nil, enforce_max_per_page: false
+      paginate per_page: 50
+      get :base_timings do
+        check_jwt_session
+
+        results = GogglesDb::GogglesCup3yBaseTimings.where(swimmer_id: params['swimmer_id'])
+        results = results.where(event_type_code: params['event_type_code']) if params['event_type_code'].present?
 
         paginate(results).map(&:to_hash)
       end
