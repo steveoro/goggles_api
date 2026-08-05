@@ -318,6 +318,73 @@ RSpec.describe Goggles::APIDailyUsesAPI do
   #-- -------------------------------------------------------------------------
   #++
 
+  describe 'GET /api/v3/api_daily_uses/summary' do
+    let(:summary_user_agent) { 'Test-Agent/1.0' }
+    let(:summary_headers) { admin_headers.merge('HTTP_USER_AGENT' => summary_user_agent) }
+
+    before do
+      FactoryBot.create(:api_daily_use, route: 'GET /api/v3/fake/route', count: 100)
+      FactoryBot.create(:api_daily_use, route: 'REQ-10.0.0.1', count: 1000)
+      FactoryBot.create(:api_daily_use_agent, user_agent: 'Bot/1.0', count: 50)
+    end
+
+    context 'when using valid parameters,' do
+      context 'with an account having ADMIN grants,' do
+        before { get(api_v3_api_daily_uses_summary_path, headers: summary_headers) }
+
+        it 'is successful' do
+          expect(response).to be_successful
+        end
+
+        it 'returns a JSON summary with the expected keys' do
+          result = JSON.parse(response.body)
+          expect(result.keys).to match_array(%w[top_routes top_ips top_agents totals])
+          expect(result['totals'].keys).to match_array(%w[requests ip_requests route_requests])
+          expect(result['top_routes']).to be_an(Array)
+          expect(result['top_ips']).to be_an(Array)
+          expect(result['top_agents']).to be_an(Array)
+        end
+
+        it 'returns top routes excluding REQ- routes' do
+          result = JSON.parse(response.body)
+          expect(result['top_routes']).not_to be_empty
+          expect(result['top_routes'].pluck('route')).to all(match(/\A(?!REQ-)/i))
+        end
+
+        it 'returns top IPs stripped of the REQ- prefix' do
+          result = JSON.parse(response.body)
+          expect(result['top_ips']).not_to be_empty
+          expect(result['top_ips'].first['ip']).to eq('10.0.0.1')
+          expect(result['top_ips'].first['total_count']).to eq(1000)
+        end
+
+        it 'tracks the user agent' do
+          expect(GogglesDb::APIDailyUseAgent.where(user_agent: summary_user_agent, day: Time.zone.today).count).to be_positive
+        end
+      end
+
+      context 'with an account having just CRUD grants,' do
+        before { get(api_v3_api_daily_uses_summary_path, headers: crud_headers.merge('HTTP_USER_AGENT' => summary_user_agent)) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+
+      context 'with an account not having any grants,' do
+        before { get(api_v3_api_daily_uses_summary_path, headers: fixture_headers.merge('HTTP_USER_AGENT' => summary_user_agent)) }
+
+        it_behaves_like 'a failed auth attempt due to unauthorized credentials'
+      end
+    end
+
+    context 'when using an invalid JWT,' do
+      before { get(api_v3_api_daily_uses_summary_path, headers: { 'Authorization' => 'you wish!', 'HTTP_USER_AGENT' => summary_user_agent }) }
+
+      it_behaves_like 'a failed auth attempt due to invalid JWT'
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   describe 'DELETE /api/v3/api_v3_api_daily_uses' do
     let(:min_row_count) { 5 }
     let(:fixture_day) { Time.zone.today - 1.month }

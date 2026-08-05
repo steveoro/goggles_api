@@ -44,6 +44,7 @@ module Goggles
       # Update stats using as key a path stripped of all IDs & return authorization result:
       # (Note: for some tests negative IDs may be used, so we consider those too)
       GogglesDb::APIDailyUse.increase_for!("#{request.env['REQUEST_METHOD']} #{request.path.gsub(%r{/-?\d+}, '/:id')}")
+      GogglesDb::APIDailyUseAgent.increase_for!(request.env['HTTP_USER_AGENT'])
       authorization.result
     end
 

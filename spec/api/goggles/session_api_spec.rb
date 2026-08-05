@@ -44,6 +44,26 @@ RSpec.describe Goggles::SessionAPI do
         expect(decoded_jwt).to have_key('user_id')
         expect(decoded_jwt['user_id']).to eq(api_user.id)
       end
+
+      it 'tracks the user agent' do
+        expect(GogglesDb::APIDailyUseAgent.where(user_agent: 'unknown', day: Time.zone.today).count).to be_positive
+      end
+    end
+
+    context 'when using valid parameters with a custom user agent,' do
+      let(:user_agent) { 'Session-Test/1.0' }
+
+      it 'increases the APIDailyUseAgent counter for the user agent' do
+        expect do
+          post(
+            api_v3_session_path,
+            params: { e: api_user.email, p: api_user.password, t: Rails.application.credentials.api_static_key },
+            headers: { 'HTTP_USER_AGENT' => user_agent }
+          )
+        end.to change { GogglesDb::APIDailyUseAgent.where(user_agent:, day: Time.zone.today).count }.by(1)
+
+        expect(response).to be_successful
+      end
     end
 
     context 'when using an *admin* user during Maintenance mode,' do

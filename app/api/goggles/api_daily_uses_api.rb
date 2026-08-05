@@ -145,6 +145,52 @@ module Goggles
         ).map(&:to_hash)
       end
 
+      # GET /api/:version/api_daily_uses/summary
+      #
+      # Returns an aggregated summary of API usage for the specified period,
+      # including top requested pages, top abusive IPs, top user-agents and
+      # overall request totals.
+      # Requires Admin grants for the requesting user.
+      #
+      # == Returns:
+      # A JSON Hash with the following keys:
+      # - top_routes:    array of { route, total_count }
+      # - top_ips:       array of { ip, total_count }
+      # - top_agents:    array of { user_agent, total_count }
+      # - totals:        { requests, ip_requests, route_requests }
+      #
+      desc 'APIDailyUses usage summary' do
+        success code: 200, message: 'Summary returned'
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
+      params do
+        optional :start_date, type: Date, desc: 'summary period start date (defaults to 7 days ago)'
+        optional :end_date,   type: Date, desc: 'summary period end date (defaults to today)'
+        optional :threshold,  type: Integer, desc: 'IP route count threshold for abusive IPs (default: 500)'
+        optional :limit,      type: Integer, desc: 'maximum number of top rows to return (default: 10)'
+      end
+      get :summary do
+        reject_unless_authorized_admin(check_jwt_session)
+
+        day_from = params['start_date'] || (Time.zone.today - 7.days)
+        day_to   = params['end_date']   || Time.zone.today
+        threshold = params['threshold'] || 500
+        limit = params['limit']         || 10
+
+        {
+          top_routes: GogglesDb::APIDailyUse.top_routes(day_from:, day_to:, limit:)
+                                            .map { |row| { route: row.route, total_count: row.total_count.to_i } },
+          top_ips: GogglesDb::APIDailyUse.top_ip_routes(day_from:, day_to:, threshold:, limit:)
+                                         .map { |row| { ip: row.route.to_s.delete_prefix('REQ-'), total_count: row.total_count.to_i } },
+          top_agents: GogglesDb::APIDailyUseAgent.top_agents(day_from:, day_to:, limit:)
+                                                 .map { |row| { user_agent: row.user_agent, total_count: row.total_count.to_i } },
+          totals: GogglesDb::APIDailyUse.daily_totals(day_from:, day_to:)
+        }
+      end
+
       # DELETE /api/:version/api_daily_uses
       #
       # Allows to delete several rows older than a specified given date.
