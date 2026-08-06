@@ -23,6 +23,7 @@ common-config: &common-config
 
 common-db-setup: &common-db-setup
   name: DB setup
+  # NOTE: we fully rely on the test dump being up-to-date. Don't use 'railties:install:migrations' here as it will copy migrations that have already been run on the dump
   command: |
     sudo apt update
     sudo apt-get install mariadb-client
@@ -33,7 +34,6 @@ common-db-setup: &common-db-setup
     dockerize -wait tcp://localhost:3306 -timeout 1m
     echo "- RAILS_ENV...: $RAILS_ENV"
     RAILS_ENV=test bin/rails db:rebuild from=test to=test
-    RAILS_ENV=test bin/rails railties:install:migrations
     RAILS_ENV=test bin/rails db:migrate
 
 jobs:
