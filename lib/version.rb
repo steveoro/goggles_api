@@ -24,10 +24,10 @@ module Version
   MAJOR = '0'
 
   # Minor version.
-  MINOR = '9'
+  MINOR = '10'
 
   # Patch version.
-  PATCH = '29'
+  PATCH = '0'
 
   # Current build version.
   BUILD = '20260813'
