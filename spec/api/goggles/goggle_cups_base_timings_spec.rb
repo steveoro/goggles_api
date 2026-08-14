@@ -107,6 +107,36 @@ RSpec.describe Goggles::GoggleCupsAPI, 'base_timings endpoint' do # rubocop:disa
 
         it_behaves_like('successful multiple, single-page response without pagination links in headers')
       end
+
+      context 'when filtering by swimmer_id with an explicit base_year that includes the fixture season,' do
+        before do
+          get(api_v3_goggle_cups_base_timings_path,
+              params: { swimmer_id: fixture_swimmer_id, base_year: 2025 },
+              headers: fixture_headers)
+        end
+
+        it_behaves_like('successful multiple, single-page response without pagination links in headers')
+      end
+
+      context 'when filtering by swimmer_id, event_type_code and an explicit base_year,' do
+        before do
+          get(api_v3_goggle_cups_base_timings_path,
+              params: { swimmer_id: fixture_swimmer_id, event_type_code: fixture_event_type_code, base_year: 2025 },
+              headers: fixture_headers)
+        end
+
+        it_behaves_like('successful multiple, single-page response without pagination links in headers')
+      end
+
+      context 'when filtering by swimmer_id with a base_year that excludes the fixture season,' do
+        before do
+          get(api_v3_goggle_cups_base_timings_path,
+              params: { swimmer_id: fixture_swimmer_id, base_year: 2020 },
+              headers: fixture_headers)
+        end
+
+        it_behaves_like('an empty but successful JSON list response')
+      end
     end
 
     context 'when using an invalid JWT,' do

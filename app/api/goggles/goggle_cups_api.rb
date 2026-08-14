@@ -252,12 +252,16 @@ module Goggles
       # GET /api/:version/goggle_cups/base_timings
       #
       # Returns the best timing rows for each swimmer/event/pool tuple from the
-      # 3 championship years preceding the current ongoing championship year.
+      # 3 championship years preceding the reference championship year.
+      #
+      # The reference year defaults to the current ongoing championship year and can be
+      # overridden via the +base_year+ parameter.
       #
       # == Required Params:
       # - swimmer_id (required)
       #
       # == Optional Params:
+      # - base_year (optional, reference championship year for the 3-year window)
       # - event_type_code (optional, exact match on the event type code)
       #
       # == Returns:
@@ -280,6 +284,7 @@ module Goggles
       end
       params do
         requires :swimmer_id, type: Integer, desc: 'Swimmer ID (required)'
+        optional :base_year, type: Integer, desc: 'optional: reference championship year for the 3-year window'
         optional :event_type_code, type: String, desc: 'optional: EventType code for filtering'
         use :pagination
       end
@@ -289,7 +294,8 @@ module Goggles
       get :base_timings do
         check_jwt_session
 
-        results = GogglesDb::GogglesCup3yBaseTimings.where(swimmer_id: params['swimmer_id'])
+        results = GogglesDb::GogglesCup3yBaseTimings.with_base_year(params['base_year'])
+                                                    .where(swimmer_id: params['swimmer_id'])
         results = results.where(event_type_code: params['event_type_code']) if params['event_type_code'].present?
 
         paginate(results).map(&:to_hash)
