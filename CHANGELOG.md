@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.10.33** [Steve A.] re-sync w/ base engine v0.10.33; updated framework & DB versioning; bundle updates
 - **0.10.32** [Steve A.] added optional +base_year+ parameter to goggle_cups/base_timings API endpoint; re-sync w/ base engine v0.10.32; aligned framework versioning across all goggles_* projects; bundle updates
 - **0.9.28** [Steve A.] added api_daily_uses/summary endpoint and user-agent tracking
 - **0.9.27** [Steve A.] support for new 'max_anonymous_req' setting in app group from base engine; bundle updates
