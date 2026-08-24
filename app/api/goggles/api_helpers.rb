@@ -167,7 +167,7 @@ module Goggles
     # == Returns
     # The corresponding Model class or nil, if the name is unsupported.
     #
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable-next Metrics/CyclomaticComplexity, Metrics/MethodLength
     def lookup_entity_class_for(table_name)
       case table_name
       when 'coach_level_types'
@@ -206,7 +206,6 @@ module Goggles
         GogglesDb::TimingType
       end
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
     #-- -----------------------------------------------------------------------
     #++
 

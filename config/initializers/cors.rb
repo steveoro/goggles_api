@@ -7,7 +7,7 @@
 
 # Read more: https://github.com/cyu/rack-cors
 
-# rubocop:disable Style/RegexpLiteral
+# rubocop:disable-next Style/RegexpLiteral
 Rails.application.config.middleware.insert_before 0, Rack::Cors, debug: true, logger: -> { Rails.logger } do
   allow do
     # NOTE: origins '*' is now deemed as "too loose" and doesn't allow the "credentials: true" anymore
@@ -33,7 +33,6 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors, debug: true, lo
     )
   end
 end
-# rubocop:enable Style/RegexpLiteral
 
 # [Steve A.] Not needed right now: (Introduced to restrict the allowed hosts)
 # Rails.application.config.hosts << /http:\/\/0\.0\.0\.0(:\d+)?/
