@@ -338,11 +338,18 @@ RSpec.describe Goggles::APIDailyUsesAPI do
 
         it 'returns a JSON summary with the expected keys' do
           result = JSON.parse(response.body)
-          expect(result.keys).to match_array(%w[top_routes top_ips top_agents totals])
+          expect(result.keys).to match_array(%w[top_routes top_ips top_agents daily_agents totals])
           expect(result['totals'].keys).to match_array(%w[requests ip_requests route_requests])
           expect(result['top_routes']).to be_an(Array)
           expect(result['top_ips']).to be_an(Array)
           expect(result['top_agents']).to be_an(Array)
+          expect(result['daily_agents']).to be_an(Array)
+
+          result['daily_agents'].each do |row|
+            expect(row).to include('user_agent', 'day', 'total_count')
+            expect(row['total_count']).to be_an(Integer)
+          end
+          expect(result['daily_agents'].pluck('user_agent') - result['top_agents'].pluck('user_agent')).to be_empty
         end
 
         it 'returns top routes excluding REQ- routes' do
