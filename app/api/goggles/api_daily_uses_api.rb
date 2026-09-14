@@ -157,6 +157,7 @@ module Goggles
       # - top_routes:    array of { route, total_count }
       # - top_ips:       array of { ip, total_count }
       # - top_agents:    array of { user_agent, total_count }
+      # - daily_agents: array of { user_agent, day, total_count } (per-day breakdown of top_agents)
       # - totals:        { requests, ip_requests, route_requests }
       #
       desc 'APIDailyUses usage summary' do
@@ -187,6 +188,8 @@ module Goggles
                                          .map { |row| { ip: row.route.to_s.delete_prefix('REQ-'), total_count: row.total_count.to_i } },
           top_agents: GogglesDb::APIDailyUseAgent.top_agents(day_from:, day_to:, limit:)
                                                  .map { |row| { user_agent: row.user_agent, total_count: row.total_count.to_i } },
+          daily_agents: GogglesDb::APIDailyUseAgent.daily_counts(day_from:, day_to:, limit:)
+                                                   .map { |row| { user_agent: row.user_agent, day: row.day.to_s, total_count: row.total_count.to_i } },
           totals: GogglesDb::APIDailyUse.daily_totals(day_from:, day_to:)
         }
       end
