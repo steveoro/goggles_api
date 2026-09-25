@@ -30,7 +30,7 @@ gem 'rack-cors' # DEBUG: path: '<abs_path_to>/rack-cors-testbed' # (local fork u
 
 gem 'api-pagination'
 gem 'devise'
-gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
+gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db', ref: 'ac9b4c62513a7974f076ddafc63b7965c4d46122'
 gem 'grape', '~> 3.2.0' # Pinned to support grape_logging, used in API audit logging
 gem 'grape-entity'
 gem 'grape_logging'
