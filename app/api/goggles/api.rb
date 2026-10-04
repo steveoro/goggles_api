@@ -112,6 +112,7 @@ module Goggles
     mount TeamManagersAPI
     mount TeamsAPI
     mount ToolsAPI
+    mount TrainingsAPI
     mount UserLapsAPI
     mount UserResultsAPI
     mount UserWorkshopsAPI
@@ -157,6 +158,7 @@ module Goggles
         Goggles::Entities::SwimmingPoolEntity,
         Goggles::Entities::TeamAffiliationEntity,
         Goggles::Entities::TeamEntity,
+        Goggles::Entities::TrainingEntity,
         Goggles::Entities::UserEntity,
         Goggles::Entities::UserLapEntity,
         Goggles::Entities::UserResultEntity,
