@@ -145,13 +145,14 @@ module Goggles
         admin_user = check_jwt_session
         reject_unless_authorized_admin(admin_user)
 
-        reject_unless_found(params['swimmer_id'], GogglesDb::Swimmer) if params['swimmer_id'].present?
+        swimmer_id = params['swimmer_id'].to_i.positive? ? params['swimmer_id'] : nil
+        reject_unless_found(swimmer_id, GogglesDb::Swimmer) if swimmer_id.present?
 
         new_row = GogglesDb::Training.new(
           training_by: params['training_by'],
           created_by: params['created_by'],
           training_date: parse_training_date!(params['training_date']),
-          swimmer_id: params['swimmer_id'],
+          swimmer_id:,
           description: params['description']
         )
         attach_picture_to!(new_row, params[:image])
@@ -202,14 +203,15 @@ module Goggles
           row = GogglesDb::Training.find_by(id: params['id'])
           return unless row
 
-          reject_unless_found(params['swimmer_id'], GogglesDb::Swimmer) if params['swimmer_id'].present?
-
           attributes = {}
           %w[training_by created_by description].each do |key|
             attributes[key] = params[key] if params.key?(key)
           end
           attributes['training_date'] = parse_training_date!(params['training_date']) if params['training_date'].present?
-          attributes['swimmer_id'] = params['swimmer_id'] if params.key?('swimmer_id')
+          if params.key?('swimmer_id')
+            attributes['swimmer_id'] = params['swimmer_id'].to_i.positive? ? params['swimmer_id'] : nil
+            reject_unless_found(attributes['swimmer_id'], GogglesDb::Swimmer) if attributes['swimmer_id'].present?
+          end
 
           replaced_blob = attach_picture_to!(row, params[:image]) if params[:image].present?
           if row.update(attributes)

@@ -162,11 +162,23 @@ RSpec.describe Goggles::TrainingsAPI do
     end
 
     context 'when the given swimmer_id does not exist,' do
-      before { post(api_v3_training_path, params: valid_params.merge(swimmer_id: 0), headers: admin_headers) }
+      before { post(api_v3_training_path, params: valid_params.merge(swimmer_id: GogglesDb::Swimmer.last.id + 999_999), headers: admin_headers) }
 
       it 'is NOT successful and reports the invalid parameter' do
         expect(response).not_to be_successful
         expect(response.headers['X-Error-Detail']).to include('Swimmer')
+      end
+    end
+
+    context 'when a blank or zero swimmer_id is given,' do
+      before do
+        post(api_v3_training_path, params: valid_params.merge(swimmer_id: [nil, '', 0].sample), headers: admin_headers)
+      end
+
+      it 'is successful and stores the row without a swimmer' do
+        expect(response).to be_successful
+        new_id = JSON.parse(response.body)['new']['id']
+        expect(GogglesDb::Training.find(new_id).swimmer_id).to be_nil
       end
     end
 
@@ -226,7 +238,7 @@ RSpec.describe Goggles::TrainingsAPI do
     end
 
     context 'when the given swimmer_id does not exist,' do
-      before { put(api_v3_training_path(id: fixture_row.id), params: { swimmer_id: 0 }, headers: admin_headers) }
+      before { put(api_v3_training_path(id: fixture_row.id), params: { swimmer_id: GogglesDb::Swimmer.last.id + 999_999 }, headers: admin_headers) }
 
       it 'is NOT successful and reports the invalid parameter' do
         expect(response).not_to be_successful
