@@ -51,24 +51,43 @@ module Goggles
       end
 
       # Attaches the multipart file param to the given row's :picture.
-      # Yields a 401 error for invalid multipart params.
+      # The uploaded content is validated by sniffing its actual bytes -- the
+      # client-declared content_type alone is never trusted.
+      # Yields a 401 error for invalid multipart params & a 422 for rejected content.
       def attach_picture_to!(row, file_param)
         filename = file_param&.fetch(:filename, nil)
         tempfile = file_param&.fetch(:tempfile, nil)
-        content_type = file_param&.fetch(:type, nil)
         if filename.blank? || tempfile.blank?
           error!(I18n.t('api.message.invalid_parameter'), 401,
                  'X-Error-Detail' => ':image multipart data invalid')
         end
 
+        # Magic-bytes sniff only (no filename/declared-type fallback): whatever
+        # the upload pretends to be, non-image bytes never reach the gallery.
+        sniffed_type = Marcel::MimeType.for(tempfile)
+        tempfile.rewind
+        unless sniffed_type.in?(GogglesDb::Training::ALLOWED_IMAGE_TYPES)
+          error!(I18n.t('api.message.creation_failure'), 422,
+                 'X-Error-Detail' => ":image content type '#{sniffed_type}' not allowed")
+        end
+        if tempfile.size > GogglesDb::Training::MAX_PICTURE_SIZE
+          error!(I18n.t('api.message.creation_failure'), 422,
+                 'X-Error-Detail' => ':image file size exceeds the allowed limit')
+        end
+
         old_blob = row.picture.blob if row.picture.attached?
-        row.picture.attach(io: tempfile, filename:, content_type:)
+        row.picture.attach(io: tempfile, filename:, content_type: sniffed_type)
         old_blob
       end
 
-      # Parses the training_date param (ISO date or datetime); yields a 401 error when unparseable.
+      # Parses the training_date param (ISO date or datetime); yields a 401 error
+      # whenever the value is blank or unparseable.
       def parse_training_date!(value)
-        Time.zone.parse(value.to_s)
+        parsed = Time.zone.parse(value.to_s) if value.to_s.strip.present?
+        return parsed if parsed.present?
+
+        error!(I18n.t('api.message.invalid_parameter'), 401,
+               'X-Error-Detail' => ':training_date not a valid ISO date/datetime')
       rescue ArgumentError, TypeError
         error!(I18n.t('api.message.invalid_parameter'), 401,
                'X-Error-Detail' => ':training_date not a valid ISO date/datetime')
@@ -213,8 +232,14 @@ module Goggles
             reject_unless_found(attributes['swimmer_id'], GogglesDb::Swimmer) if attributes['swimmer_id'].present?
           end
 
-          replaced_blob = attach_picture_to!(row, params[:image]) if params[:image].present?
-          if row.update(attributes)
+          row.assign_attributes(attributes)
+          # The auto-composed title tracks its source fields (the model's
+          # build_title callback is create-only):
+          row.send(:build_title) if row.will_save_change_to_training_date? || row.will_save_change_to_created_by?
+          if row.save
+            # A new picture replaces the old one only when the metadata update
+            # itself was accepted (and the replaced blob is then purged):
+            replaced_blob = attach_picture_to!(row, params[:image]) if params[:image].present?
             replaced_blob&.purge
             training_payload(row)
           else

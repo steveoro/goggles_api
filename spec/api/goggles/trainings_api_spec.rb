@@ -182,6 +182,29 @@ RSpec.describe Goggles::TrainingsAPI do
       end
     end
 
+    context 'when the uploaded bytes are not an allowed image type,' do
+      before do
+        spoofed = Rack::Test::UploadedFile.new(
+          GogglesDb::Engine.root.join('spec', 'fixtures', 'test-script.sql'), 'image/png'
+        )
+        post(api_v3_training_path, params: valid_params.merge(image: spoofed), headers: admin_headers)
+      end
+
+      it 'is NOT successful and reports the rejected content' do
+        expect(response).not_to be_successful
+        expect(response.headers['X-Error-Detail']).to include('content type')
+      end
+    end
+
+    context 'when training_date is blank,' do
+      before { post(api_v3_training_path, params: valid_params.merge(training_date: ''), headers: admin_headers) }
+
+      it 'is NOT successful and reports the invalid parameter' do
+        expect(response).not_to be_successful
+        expect(response.headers['X-Error-Detail']).to include('training_date')
+      end
+    end
+
     context 'when using an invalid JWT,' do
       before { post(api_v3_training_path, params: valid_params, headers: { 'Authorization' => 'you wish!' }) }
 
@@ -215,6 +238,35 @@ RSpec.describe Goggles::TrainingsAPI do
         before { put(api_v3_training_path(id: fixture_row.id), params: expected_changes, headers: fixture_headers) }
 
         it_behaves_like('a failed auth attempt due to unauthorized credentials')
+      end
+    end
+
+    context 'when created_by or training_date changes,' do
+      before do
+        put(api_v3_training_path(id: fixture_row.id), params: expected_changes.merge(created_by: 'New Author'), headers: admin_headers)
+      end
+
+      it 'regenerates the auto-composed title' do
+        expect(response).to be_successful
+        fixture_row.reload
+        expect(fixture_row.title).to start_with(fixture_row.training_date.to_date.iso8601)
+        expect(fixture_row.title).to include('New Author')
+      end
+    end
+
+    context 'when the metadata update fails but a new image is attached,' do
+      before do
+        put(
+          api_v3_training_path(id: fixture_row.id),
+          params: { created_by: '', image: png_file },
+          headers: admin_headers
+        )
+      end
+
+      it 'keeps the previous picture instead of replacing it' do
+        expect(response).not_to be_successful
+        fixture_row.reload
+        expect(fixture_row.picture_filename).to eq('test_creative_training.jpg')
       end
     end
 
