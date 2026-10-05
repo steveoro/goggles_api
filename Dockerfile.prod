@@ -54,6 +54,8 @@ ENV RAILS_ENV=production \
 RUN apk add --update --no-cache \
     build-base \
     imagemagick \
+    imagemagick-jpeg \
+    imagemagick-webp \
     libffi \
     libstdc++ \
     libxml2 \
