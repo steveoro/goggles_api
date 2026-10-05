@@ -32,6 +32,10 @@ module GogglesApi
 
     config.active_record.schema_format = :sql
 
+    # Process ActiveStorage variants (e.g. Creative trainings thumbnails) with ImageMagick,
+    # which is already bundled via goggles_db/mini_magick:
+    config.active_storage.variant_processor = :mini_magick
+
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.

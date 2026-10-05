@@ -30,6 +30,68 @@ The Swagger UI is served via `grape-swagger-rails` and mounted in `config/routes
 
 *(The legacy API Blueprint `/blueprint` folder has been removed; all documentation now lives in the Swagger output generated from the Entity annotations and route definitions.)*
 
+## API usage notes
+
+### Routes naming ("find" vs "search" vs "list")
+
+"`find`" is used as a verb in API routes to discriminate requests that will yield a _single result_.
+
+Conversely, "`search`" and "`list`" are used whenever the request supports multiple results, with the
+difference being that "`list`" results are simple or filtered queries, whereas "`search`" implies always
+some kind of special back-end strategy (fuzzy matching, neural networks, deep search, whatever the case).
+
+For this reason, sometimes the "`search`" endpoints may result particularly slower when compared to the timing
+required by a possibly similar "`list`" fetch. (But this comparison is not always possible.)
+
+One exception to this naming scheme is the "`lookup`" group of endpoints, which is specifically chosen for
+just looking up the read-only values of secondary subentities & lookup tables.
+
+Typically, whenever an endpoint path includes the full name of a specific DB entity (as in `meeting_programs`
+or `meeting_reservations`), the supported CRUD operations will always include _reading_ data,
+most of the times _updating_, some times _creating_ and, in a few cases, even _deleting_.
+
+The supported CRUD operations depend on how critical the entity is deemed to be.
+
+For instance, meeting reservations or meeting entries can be fully managed by this API.
+
+As a rule of thumb, if the entity allows remote creation by end-users, full CRUD support is usually
+conceeded and available with some kind of grant.
+
+### Details retrieval requests
+
+Whenever a _dedicated_ endpoint exists for an entity (i.e.: `GET /<entity_name>/<id>`),
+retrieving that specific single row with a `GET .../{id}` may yield a more fine-grained structure
+as many multiple association rows are condensed and summarized in detail (depending on the depth level).
+
+For ease of usage, most of the associated details nested in each sub-entity are included anyway
+even when this yields a bit of redundancy.
+
+(For example, the list of associated events included in a MeetingProgram row detail response will contain inevitably
+ less associations and details than those obtained by retrieving each specific meeting event or result one by one.)
+
+Also of note, most of these detail retrieval endpoints (`GET /<entity_name>/<id>`) will support an optional `locale`
+parameter for translating specific locale-dependent display labels (default locale code is currently `it`).
+
+_Supported locales:_
+
+|  Locale code  | description |
+| --- | --- |
+| `it` | **default**, Italian |
+| `en` | English |
+
+### Maintenance mode
+
+The app framework supports two different "maintenance" modes to inhibit most HTTP & API requests:
+"soft" (or logic) maintenance & "hard" maintenance modes.
+
+During _"soft" maintenenace_, a flag on the database will be set, new JWT sessions will be refused and any incoming API request
+will be rejected with a `"Maintenance mode is ON"` error message - unless the
+requesting user has admin grants.
+
+Conversely, _"hard"  mainentenance_ mode disables the app running on the host with a static site and does not
+change the database. API sessions may still be available during "hard" maintenance mode, given that the
+API endpoints are also served from a different container.
+
 ## Source dependencies & how to update `GogglesDb`
 
 - [GogglesDb base engine](https://github.com/steveoro/goggles_db), core 7+

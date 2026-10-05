@@ -53,6 +53,7 @@ ENV RAILS_ENV=production \
 
 RUN apk add --update --no-cache \
     build-base \
+    imagemagick \
     libffi \
     libstdc++ \
     libxml2 \
