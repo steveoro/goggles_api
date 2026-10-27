@@ -57,9 +57,12 @@ module Goggles
         }
       end
 
-      # Finds the cup or yields a param error; also authorizes manager scope.
+      # Finds the cup or yields a 404 (so clients can tell a missing remote row,
+      # e.g. admin2's local-only cups, from a grant failure); also authorizes
+      # manager scope.
       def goggle_cup_managed_row(api_user, cup_id)
-        cup = reject_unless_found(cup_id, GogglesDb::GoggleCup)
+        cup = GogglesDb::GoggleCup.find_by(id: cup_id)
+        error!(I18n.t('api.message.invalid_parameter'), 404, 'X-Error-Detail' => "GogglesDb::GoggleCup, ID: #{cup_id}") unless cup
         reject_unless_authorized_goggle_cup_manager(api_user, cup.team_id, cup.season_year)
         cup
       end

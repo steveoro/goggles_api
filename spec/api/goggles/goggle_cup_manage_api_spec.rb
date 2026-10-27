@@ -119,6 +119,11 @@ RSpec.describe Goggles::GoggleCupManageAPI do
       expect(json['sync']['goggle_cup']['id']).to eq(fixture_row.id)
       expect(json['sync']).to have_key('team_affiliation').and have_key('badges')
     end
+
+    it 'returns 404 for a missing cup' do
+      get(api_v3_goggle_cup_manage_sync_path(id: GogglesDb::GoggleCup.maximum(:id).to_i + 1000), headers: admin_headers)
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   describe 'POST /api/v3/goggle_cup_manage' do
@@ -163,6 +168,13 @@ RSpec.describe Goggles::GoggleCupManageAPI do
     it 'rejects unauthorized users' do
       put(path, params: { description: 'x' }, headers: fixture_headers)
       expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns 404 for a missing cup (so clients can fall back to POST)' do
+      missing_id = GogglesDb::GoggleCup.maximum(:id).to_i + 1000
+      put(api_v3_goggle_cup_manage_path(id: missing_id), params: { description: 'x' }, headers: admin_headers)
+      expect(response).to have_http_status(:not_found)
+      expect(response.headers['X-Error-Detail']).to eq("GogglesDb::GoggleCup, ID: #{missing_id}")
     end
 
     it 'updates config without clearing a stored ranking when selection is unchanged' do
