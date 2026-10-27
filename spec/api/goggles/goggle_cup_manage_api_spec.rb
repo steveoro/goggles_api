@@ -183,6 +183,12 @@ RSpec.describe Goggles::GoggleCupManageAPI do
       expect(fixture_row.ranking_data).to be_nil
     end
 
+    it 'ignores a blank name instead of emptying it' do
+      put(path, params: { name: '' }, headers: manager_headers)
+      expect(response).to have_http_status(:ok)
+      expect(fixture_row.reload.name).to eq(fixture_row.name)
+    end
+
     it 'rejects managers of the team for a different championship year' do
       put(path, params: { name: 'Renamed' }, headers: past_headers)
       expect(response).to have_http_status(:unauthorized)
@@ -208,12 +214,13 @@ RSpec.describe Goggles::GoggleCupManageAPI do
       fixture_row.reload
       expect(fixture_row.ranking_data).to be_present
       expect(JSON.parse(fixture_row.ranking_data)['no_duplicated_events']).to be(true)
+      expect(JSON.parse(fixture_row.ranking_data)['swimmer_ids']).to eq([1, 2, 3])
       expect(JSON.parse(response.body)['ranking']).not_to be_empty
     end
 
-    it 'leaves ranking_data untouched when no swimmers resolve' do
+    it 'returns 422 when no swimmers resolve' do
       post(path, params: { swimmer_ids: [] }, headers: manager_headers)
-      expect(response).to have_http_status(:created)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(fixture_row.reload.ranking_data).to be_nil
     end
   end

@@ -19,9 +19,9 @@ module Goggles
   # championship year (ManagedAffiliation -> TeamAffiliation -> Season).
   #
   # Every mutation and the +sync+ endpoint return a +sync+ block containing the
-  # cup row plus the provisioned TeamAffiliation and Badges for the latest
-  # MASFIN season -- admin2 upserts that block into its local staging DB with
-  # its "apply changes locally"/resync feature.
+  # cup row plus the provisioned TeamAffiliation and Badges for the MASFIN
+  # season of the cup's own championship year -- admin2 upserts that block into
+  # its local staging DB with its "apply changes locally"/resync feature.
   class GoggleCupManageAPI < Grape::API # rubocop:disable Metrics/ClassLength
     helpers APIHelpers
 
@@ -43,19 +43,11 @@ module Goggles
           error!(I18n.t('api.message.unauthorized'), 401, 'X-Error-Detail' => I18n.t('api.message.invalid_user_grants'))
       end
 
-      # The latest MASFIN season for the current championship year (nil when no
-      # such season exists): the same target used by BadgeProvisioner.
-      def goggle_cup_target_season
-        year = GogglesDb::Season.current_championship_year(GogglesDb::SeasonType.mas_fin)
-        GogglesDb::Season.for_season_type(GogglesDb::SeasonType.mas_fin)
-                         .for_championship_year(year)
-                         .first
-      end
-
       # Builds the +sync+ block (cup + provisioned affiliation + badges for the
-      # latest MASFIN season) used by admin2 to upsert its local copy.
+      # MASFIN season of the cup's championship year) used by admin2 to upsert
+      # its local copy.
       def goggle_cup_sync_payload(cup)
-        season = goggle_cup_target_season
+        season = GogglesDb::GogglesCup::BadgeProvisioner.target_season(cup.season_year)
         affiliation = season && GogglesDb::TeamAffiliation.find_by(team_id: cup.team_id, season_id: season.id)
         badges = affiliation ? GogglesDb::Badge.where(team_affiliation_id: affiliation.id) : []
         {
@@ -186,9 +178,9 @@ module Goggles
           season_year: params['season_year'],
           description: params['description'],
           name: params['name'].presence || params['description'].to_s.truncate(60, omission: ''),
-          end_date: params['end_date'],
-          swimmers_ids: Array(params['swimmer_ids']).compact_blank.map(&:to_i).join(',')
+          end_date: params['end_date']
         )
+        cup.swimmer_ids_array = params['swimmer_ids'] if params.key?('swimmer_ids')
         report = goggle_cup_save_and_provision(cup)
 
         { cup: cup.attributes, badges_report: report, sync: goggle_cup_sync_payload(cup) }
@@ -221,12 +213,12 @@ module Goggles
 
           previous_swimmer_ids = cup.swimmer_ids_array
           cup.assign_attributes(
-            name: params['name'] || cup.name,
-            description: params['description'] || cup.description,
+            name: params['name'].presence || cup.name,
+            description: params['description'].presence || cup.description,
             end_date: params.key?('end_date') ? params['end_date'] : cup.end_date
           )
           if params.key?('swimmer_ids')
-            cup.swimmers_ids = Array(params['swimmer_ids']).compact_blank.map(&:to_i).join(',')
+            cup.swimmer_ids_array = params['swimmer_ids']
             cup.ranking_data = nil if cup.ranking_data.present? && cup.swimmer_ids_array.sort != previous_swimmer_ids.sort
           end
 
@@ -241,10 +233,13 @@ module Goggles
       # Computes the ranking for the cup's enlisted swimmers (or an explicit
       # override list) and persists it in ranking_data. The computation uses
       # the cup's season_year as the Scenic-views base year, reset afterwards.
+      # The effective swimmer list is stored in the payload so overrides stay
+      # self-consistent when the persisted ranking is re-deserialized.
       desc 'Compute and persist the GoggleCup ranking' do
         success code: 200, message: 'Ranking computed'
         failure [
-          [401, 'Unauthorized - Missing or invalid JWT or grants']
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - no swimmers to rank']
         ]
         headers Authorization: { description: 'Bearer JWT token.', required: true }
       end
@@ -263,20 +258,26 @@ module Goggles
                         else
                           cup.swimmer_ids_array
                         end
-          if swimmer_ids.present?
-            GogglesDb::AbstractBestResult.with_base_year(cup.season_year)
-            ranking = GogglesDb::GogglesCup::RankingCalculator.new(
-              team_id: cup.team_id,
-              swimmer_ids: swimmer_ids,
-              no_duplicated_events: params['no_duplicated_events'] == true
-            ).call
-            serialized = GogglesDb::GoggleCupRanking::DataSerializer.new(
-              cup: cup,
-              ranking_data: ranking,
-              no_duplicated_events: params['no_duplicated_events'] == true
-            ).call
-            cup.update!(ranking_data: serialized.to_json)
+          if swimmer_ids.blank?
+            error!(
+              I18n.t('api.message.unprocessable'), 422,
+              'X-Error-Detail' => I18n.t('api.message.no_swimmers_to_rank')
+            )
           end
+
+          GogglesDb::AbstractBestResult.with_base_year(cup.season_year)
+          ranking = GogglesDb::GogglesCup::RankingCalculator.new(
+            team_id: cup.team_id,
+            swimmer_ids: swimmer_ids,
+            no_duplicated_events: params['no_duplicated_events'] == true
+          ).call
+          serialized = GogglesDb::GoggleCupRanking::DataSerializer.new(
+            cup: cup,
+            ranking_data: ranking,
+            swimmer_ids: swimmer_ids,
+            no_duplicated_events: params['no_duplicated_events'] == true
+          ).call
+          cup.update!(ranking_data: serialized.to_json)
 
           {
             cup: cup.attributes,

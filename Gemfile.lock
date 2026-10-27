@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/steveoro/goggles_db.git
-  revision: dd8782907b66cd13a574b7372018c6d935b6c3ac
+  revision: 3db905ffad6615905749574065013cece9b1ad07
   branch: devin/1793102642-goggle-cup-publish
   specs:
     goggles_db (0.10.63)
