@@ -334,7 +334,7 @@ module Goggles
 
           cup.publish!
           { cup: cup.attributes, sync: goggle_cup_sync_payload(cup) }
-        rescue ActiveRecord::RecordNotUnique
+        rescue ActiveRecord::RecordNotUnique, ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout
           error!(I18n.t('api.message.invalid_parameter'), 409,
                  'X-Error-Detail' => 'another cup was already published for this affiliation')
         end
