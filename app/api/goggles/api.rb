@@ -86,6 +86,7 @@ module Goggles
     mount CitiesAPI
     mount FederationTypesAPI
     mount GoggleCupsAPI
+    mount GoggleCupManageAPI
     mount ImportQueuesAPI
     mount IndividualRecordsAPI
     mount IssuesAPI

@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.10.62** [Devin] re-sync w/ base engine v0.10.63; DB vers. 2.10.12; new GoggleCupManageAPI: shared team-manager write path for Goggle Cups (save w/ badge provisioning + ranking invalidation, compute, clear_ranking, publish/unpublish, swimmer_options, smart_selection, sync payload for admin2 local apply/resync) authorized by managed affiliation within the cup's championship year
 - **0.10.53** [Devin] re-sync w/ base engine v0.10.53; DB vers. 2.10.11; new Training entity w/ creative-trainings CRUD endpoints (POST/PUT multipart image)
 - **0.10.51** [Devin] re-sync w/ base engine v0.10.51 (team_records scope for fast team-scoped record queries)
 - **0.10.49** [Devin] re-sync w/ base engine v0.10.49; DB vers. 2.10.10; new best_team_results_for_season Scenic view
