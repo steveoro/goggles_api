@@ -179,7 +179,7 @@ module Goggles
           team_id: params['team_id'],
           season_year: params['season_year'],
           description: params['description'],
-          name: params['name'].presence || params['description'],
+          name: params['name'].presence || params['description'].to_s.truncate(60, omission: ''),
           end_date: params['end_date'],
           swimmers_ids: Array(params['swimmer_ids']).compact_blank.map(&:to_i).join(',')
         )
