@@ -138,10 +138,13 @@ module Goggles
         api_user = check_jwt_session
         reject_unless_authorized_goggle_cup_manager(api_user, params['team_id'], params['season_year'])
 
+        GogglesDb::AbstractBestResult.with_base_year(params['season_year'])
         selected_ids = GogglesDb::GogglesCup::SwimmerOptionsQuery.new(
           team_id: params['team_id'], base_year: params['season_year']
         ).smart_selected_ids_for(params['secondary_team_id'])
         { swimmer_ids: selected_ids }
+      ensure
+        GogglesDb::AbstractBestResult.with_base_year(nil)
       end
 
       # POST /api/:version/goggle_cup_manage
