@@ -18,11 +18,13 @@ default: &default
   socket: /var/run/mysqld/mysqld.sock
   # host: <%= ENV.fetch("DATABASE_HOST") { 'localhost' } %>
   # port: <%= ENV.fetch("DATABASE_PORT") { 3306 } %>
+  structure_dump_flags: ["--skip-ssl"]
+  structure_load_flags: ["--skip-ssl"]
 
 development:
   <<: *default
   database: goggles_development
-  password: MY_AWESOME_PASSWORD!
+  password: <%= ENV.fetch("MYSQL_ROOT_PASSWORD") { '' } %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -30,7 +32,7 @@ development:
 test:
   <<: *default
   database: goggles_test
-  password: MY_AWESOME_PASSWORD!
+  password: <%= ENV.fetch("MYSQL_ROOT_PASSWORD") { '' } %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -75,5 +77,6 @@ staging:
   <<: *default
   database: goggles
   password: <%= ENV.fetch("MYSQL_ROOT_PASSWORD") { '' } %>
-  host: <%= ENV.fetch("DATABASE_HOST") { 'localhost' } %>
+  socket:
+  host: <%= ENV.fetch("DATABASE_HOST") { '127.0.0.1' } %>
   port: <%= ENV.fetch("DATABASE_PORT") { 33060 } %>
