@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## What this is
 
 Goggles API v3: a Rails 8.1 / Ruby 3.4 app that is essentially a thin [Grape](https://github.com/ruby-grape/grape) JSON API layer over the `goggles_db` engine gem (models, grants, JWT, factories, DB structure live there, not here). Database is MariaDB/MySQL.
