@@ -746,7 +746,7 @@ DEPENDENCIES
   sprockets-rails
 
 RUBY VERSION
-   ruby 3.4.7p58
+   ruby 3.4.13p195
 
 BUNDLED WITH
    2.4.15
