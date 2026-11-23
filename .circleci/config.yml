@@ -7,7 +7,7 @@ common-config: &common-config
   working_directory: ~/goggles_api
   shell: /bin/bash --login
   docker:
-  - image: cimg/ruby:3.4.13-node
+  - image: steveoro/goggles-ci:ruby-3.4.13-node
     environment:
       RAILS_ENV: test
       BUNDLE_JOBS: 2
@@ -278,7 +278,30 @@ jobs:
             --cache-from=$DOCKERHUB_USERNAME/goggles-api:latest -f Dockerfile.prod .
           docker push $DOCKERHUB_USERNAME/goggles-api:<< pipeline.git.tag >>
 
+  # Publishes the custom test executor (Dockerfile.ci) to Docker Hub.
+  # Runs only on a branch named `ci-image`: push one to (re)build the image
+  #   git push origin HEAD:ci-image
+  ci-image:
+    machine:
+      image: ubuntu-2404:current
+    steps:
+    - checkout
+    - run:
+        name: Publish CI executor image
+        command: |
+          echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          docker build -t $DOCKERHUB_USERNAME/goggles-ci:ruby-3.4.13-node -f Dockerfile.ci .
+          docker push $DOCKERHUB_USERNAME/goggles-ci:ruby-3.4.13-node
+
 workflows:
+  ci-image:
+    jobs:
+    - ci-image:
+        filters:
+          branches:
+            only:
+            - ci-image
+
   build-docker-versioned:
     jobs:
     - persisted-data:
