@@ -9,9 +9,9 @@ require 'grape-swagger/entity'
 #
 # Mounts all required API modules
 #
-# - version:  7-0.9.14
+# - version:  7-0.10.81
 # - author:   Steve A.
-# - build:    20260629
+# - build:    20261123
 #
 module Goggles
   # = Goggles::API
@@ -56,21 +56,36 @@ module Goggles
     #-- -----------------------------------------------------------------------
     #++
 
+    # Feature flags advertised by GET status, so that clients (e.g. goggles_admin2) can
+    # detect what this server supports and fall back gracefully when talking to an older one:
+    #
+    # - 'iq_batch_outcome': batch SQL import-queue rows report their outcome (applied/failed + error text)
+    #                       and expose their data file name/checksum/size; a failed row blocks the later ones;
+    # - 'iq_batch_filters': GET import_queues supports the 'batch_sql' & 'done' (also when false) filters;
+    # - 'db_fingerprint':   GET tools/db_fingerprint is available.
+    CAPABILITIES = %w[iq_batch_outcome iq_batch_filters db_fingerprint].freeze
+
     resource :status do
       # GET /api/:version/status
       #
       # == Returns:
-      # A JSON hash with a +msg+ and the running +version+ of the application framework.
+      # A JSON hash with a +msg+, the running +version+ of the application framework,
+      # the Rails +environment+ name and the list of supported +capabilities+.
       #
-      #   { msg: <status message>, version: <versioning & build number> }
+      #   {
+      #     msg: <status message>, version: <versioning & build number>,
+      #     environment: <'production', 'development', ...>, capabilities: [<feature flag>, ...]
+      #   }
       #
-      desc "Returns the API 'msg' status and the current application versioning code" do
+      desc "Returns the API 'msg' status, the current application versioning code, environment and capabilities" do
         success Goggles::Entities::StatusEntity
       end
       get do
         payload = {
           msg: I18n.t("api.message.status.#{GogglesDb::AppParameter.maintenance? ? 'maintenance' : 'ok'}"),
-          version: Version::FULL
+          version: Version::FULL,
+          environment: Rails.env.to_s,
+          capabilities: CAPABILITIES
         }
 
         present payload, with: Goggles::Entities::StatusEntity
@@ -131,6 +146,7 @@ module Goggles
         Goggles::Entities::CalendarEntity,
         Goggles::Entities::CategoryTypeEntity,
         Goggles::Entities::CityEntity,
+        Goggles::Entities::DbFingerprintEntity,
         Goggles::Entities::FederationTypeEntity,
         Goggles::Entities::GoggleCupEntity,
         Goggles::Entities::GogglesCup3yBaseTimingsEntity,

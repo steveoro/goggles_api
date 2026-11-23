@@ -18,6 +18,25 @@ RSpec.describe Goggles::API do
       end
     end
 
+    context 'when checking the environment & capabilities,' do
+      before { get api_v3_status_path }
+
+      let(:result) { JSON.parse(response.body) }
+
+      it 'returns the current Rails environment name' do
+        expect(response).to have_http_status(:ok)
+        expect(result['environment']).to eq(Rails.env.to_s)
+      end
+
+      it 'returns the list of supported capabilities' do
+        expect(result['capabilities']).to eq(%w[iq_batch_outcome iq_batch_filters db_fingerprint])
+      end
+
+      it 'returns only the documented keys' do
+        expect(result.keys).to match_array(%w[msg version environment capabilities])
+      end
+    end
+
     context 'when the app is running on maintenance mode,' do
       it 'returns the maintenance status message and the current version' do
         GogglesDb::AppParameter.maintenance = true
