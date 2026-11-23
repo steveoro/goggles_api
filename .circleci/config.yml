@@ -380,3 +380,8 @@ workflows:
     - docker-latest:
         requires:
         - rspec-T-U
+        # Never publish the app image from the executor-maintenance branch:
+        filters:
+          branches:
+            ignore:
+            - ci-image
