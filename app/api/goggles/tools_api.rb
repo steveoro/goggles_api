@@ -3,9 +3,9 @@
 module Goggles
   # = Goggles API v3: Tools API: EntryTime finder
   #
-  #   - version:  7-0.10.81
+  #   - version:  7-0.10.82
   #   - author:   Steve A.
-  #   - build:    20261123
+  #   - build:    20261124
   #
   class ToolsAPI < Grape::API # rubocop:disable Metrics/ClassLength
     helpers APIHelpers
