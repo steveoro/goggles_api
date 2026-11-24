@@ -3,17 +3,55 @@
 module Goggles
   # = Goggles API v3: ImportQueue API Grape controller
   #
-  #   - version:  7-0.4.05
+  #   - version:  7-0.10.82
   #   - author:   Steve A.
-  #   - build:    20220825
+  #   - build:    20261124
   #
   # Implements full CRUD interface for ImportQueue.
   #
-  class ImportQueuesAPI < Grape::API
+  # == Batch SQL rows outcome encoding (no dedicated column; see goggles_main ImportProcessorJob):
+  #
+  # - queued  => done: false, process_runs: 0, error_messages: nil
+  # - running => done: false, process_runs > 0, error_messages: nil
+  # - applied => done: true, error_messages: nil (row & data file retained 14 days on the server)
+  # - failed  => done: false, error_messages present (DB client error output);
+  #              a failed row blocks all the later batch rows until it's retried or deleted
+  # - gone    => GET import_queue/:id returns a null body
+  #
+  class ImportQueuesAPI < Grape::API # rubocop:disable Metrics/ClassLength
     helpers APIHelpers
 
     format        :json
     content_type  :json, 'application/json'
+
+    helpers do
+      # Returns the serialized +import_queue+ (GogglesDb::ImportQueue#to_hash), adding
+      # for batch SQL rows the details of the attached data file ('data_file_name',
+      # 'data_file_checksum' -- the base64 MD5 digest stored by ActiveStorage -- and
+      # 'data_file_byte_size'; all nil when no file is attached).
+      # Returns +nil+ for a +nil+ import_queue.
+      def import_queue_hash(import_queue)
+        return if import_queue.nil?
+
+        result = import_queue.to_hash
+        return result unless import_queue.batch_sql
+
+        blob = import_queue.data_file.attached? ? import_queue.data_file.blob : nil
+        result.merge(
+          'data_file_name' => blob&.filename&.to_s,
+          'data_file_checksum' => blob&.checksum,
+          'data_file_byte_size' => blob&.byte_size
+        )
+      end
+
+      # Returns the exact-match WHERE-condition Hash for the Boolean +field_list+:
+      # unlike #filtering_hash_for, a +false+ value is kept as a filter.
+      def boolean_filtering_hash_for(params, field_list)
+        field_list.each_with_object({}) do |field_name, filtering|
+          filtering[field_name] = params[field_name] if params.key?(field_name) && !params[field_name].nil?
+        end
+      end
+    end
 
     resource :import_queue do
       # GET /api/:version/import_queue/:id
@@ -21,10 +59,15 @@ module Goggles
       # Requires Admin grants for the requesting user.
       #
       # == Returns:
-      # The ImportQueue instance matching the specified +id+ as JSON.
+      # The ImportQueue instance matching the specified +id+ as JSON; a null body when not found.
       # See GogglesDb::ImportQueue#to_json for structure details.
       #
-      desc 'ImportQueue details' do
+      # Batch SQL rows include also:
+      # - 'data_file_name': original file name of the attached SQL batch file;
+      # - 'data_file_checksum': base64 MD5 digest of the file (ActiveStorage blob checksum);
+      # - 'data_file_byte_size': file size in bytes.
+      #
+      desc 'ImportQueue details (batch SQL rows include data_file_name, data_file_checksum & data_file_byte_size)' do
         success Goggles::Entities::ImportQueueEntity
         failure [
           [401, 'Unauthorized - Missing or invalid JWT or grants']
@@ -38,7 +81,7 @@ module Goggles
         get do
           reject_unless_authorized_admin(check_jwt_session)
 
-          GogglesDb::ImportQueue.find_by(id: params['id'])
+          import_queue_hash(GogglesDb::ImportQueue.find_by(id: params['id']))
         end
       end
 
@@ -46,6 +89,9 @@ module Goggles
       #
       # Allow direct update for most of the ImportQueue fields.
       # Requires Admin grants for the requesting user.
+      #
+      # A blank 'error_messages' value clears the field (stored as nil). E.g., to retry in place
+      # a failed batch SQL row (which unblocks the queue): <tt>{ error_messages: '', process_runs: 0 }</tt>.
       #
       # == Returns:
       # 'true' when successful; an empty result when not found.
@@ -65,13 +111,17 @@ module Goggles
         optional :solved_data, type: String, desc: 'optional: parsable JSON containing all associated entities with their IDs that have been \"solved\"'
         optional :done, type: Boolean, desc: 'optional: true if this request is deletable (both processed & solved completely)'
         optional :uid, type: String, desc: 'optional: queue UID'
+        optional :error_messages, type: String,
+                                  desc: "optional: error messages; a blank value clears them (retry a failed batch row with error_messages: '' & process_runs: 0)"
       end
       route_param :id do
         put do
           reject_unless_authorized_admin(check_jwt_session)
 
           import_queue = GogglesDb::ImportQueue.find_by(id: params['id'])
-          import_queue&.update!(declared(params, include_missing: false))
+          attributes = declared(params, include_missing: false)
+          attributes['error_messages'] = attributes['error_messages'].presence if attributes.key?('error_messages')
+          import_queue&.update!(attributes)
         end
       end
 
@@ -221,8 +271,10 @@ module Goggles
       # Requires Admin grants for the requesting user.
       #
       # == Returns:
-      # The list of ImportQueues for the specified filtering parameters as an array of JSON objects.
-      # Returns the exact matches for any parameter value.
+      # The list of ImportQueues for the specified filtering parameters as an array of JSON objects,
+      # sorted by ID. Returns the exact matches for any parameter value.
+      # The Boolean filters ('done', 'batch_sql') work for both +true+ and +false+.
+      # Batch SQL rows include also the 'data_file_*' fields (see GET import_queue/:id).
       #
       # *Pagination* links are stored and returned in the response headers.
       # - 'Link': list of request links for last & next data pages, separated by ", "
@@ -230,10 +282,10 @@ module Goggles
       # - 'Per-Page': total rows per page
       # - 'Page': current page
       #
-      # See official API blueprint docs for more info.
+      # See the Swagger docs (/api/v3/swagger_doc) for more info.
       # See GogglesDb::ImportQueue#to_json for structure details.
       #
-      desc 'List ImportQueues' do
+      desc "List ImportQueues (Boolean filters 'done' & 'batch_sql' support false too)" do
         is_array true
         success Goggles::Entities::ImportQueueEntity
         failure [
@@ -247,18 +299,21 @@ module Goggles
         optional :process_runs, type: Integer, desc: 'optional: current processed depth'
         optional :requested_depth, type: Integer, desc: 'optional: current requested depth'
         optional :solvable_depth, type: Integer, desc: 'optional: current solvable depth'
-        optional :done, type: Boolean, desc: 'optional: true if this request is deletable (both processed & solved completely)'
+        optional :done, type: Boolean, desc: 'optional: filter by done flag (true: processed & solved/applied; false: still to be processed or failed)'
+        optional :batch_sql, type: Boolean, desc: 'optional: filter by batch_sql flag (true: SQL batch rows only; false: micro-transactions only)'
         use :pagination
       end
       paginate
       get do
         reject_unless_authorized_admin(check_jwt_session)
 
+        # (Boolean filters handled locally, as the shared filtering_hash_for() drops false values)
         paginate(
-          GogglesDb::ImportQueue.includes(:import_queue, :data_file_attachment, :data_file_blob).where(
-            filtering_hash_for(params, %w[user_id uid process_runs requested_depth solvable_depth done])
-          )
-        ).map(&:to_hash)
+          GogglesDb::ImportQueue.includes(:import_queue, :data_file_attachment, :data_file_blob)
+                                .where(filtering_hash_for(params, %w[user_id uid process_runs requested_depth solvable_depth]))
+                                .where(boolean_filtering_hash_for(params, %w[done batch_sql]))
+                                .order(:id)
+        ).map { |import_queue| import_queue_hash(import_queue) }
       end
     end
   end

@@ -36,7 +36,48 @@ RSpec.describe Goggles::ImportQueuesAPI do
     expect(fixture_headers).to be_an(Hash).and have_key('Authorization')
   end
 
+  # Creates a batch SQL row (with an attached SQL file storing +sql+) for the specified +user+.
+  def create_batch_row(user, sql = "SELECT 1;\n", **attributes)
+    row = FactoryBot.create(:import_queue, user:, batch_sql: true, **attributes)
+    row.data_file.attach(io: StringIO.new(sql), filename: "0477-batch-#{row.id}.sql", content_type: 'application/sql')
+    row.reload
+  end
+
   describe 'GET /api/v3/import_queue/:id' do
+    context 'when requesting a batch SQL row with ADMIN grants,' do
+      let(:sql_contents) { "INSERT INTO laps (id) VALUES (1);\n" }
+      let(:batch_row) do
+        create_batch_row(admin_user, sql_contents, process_runs: 1, error_messages: 'ERROR 1062 (23000) at line 1: Duplicate entry')
+      end
+      let(:result) { JSON.parse(response.body) }
+
+      before { get(api_v3_import_queue_path(id: batch_row.id), headers: admin_headers) }
+
+      it_behaves_like('a successful request that has positive usage stats')
+
+      it 'includes the data file name, checksum (base64 MD5) and byte size' do
+        expect(result['data_file_name']).to eq("0477-batch-#{batch_row.id}.sql")
+        expect(result['data_file_checksum']).to eq(Digest::MD5.base64digest(sql_contents))
+        expect(result['data_file_byte_size']).to eq(sql_contents.bytesize)
+      end
+
+      it 'includes the outcome fields' do
+        expect(result).to include(
+          'id' => batch_row.id, 'batch_sql' => true, 'done' => false, 'process_runs' => 1,
+          'error_messages' => 'ERROR 1062 (23000) at line 1: Duplicate entry'
+        )
+        expect(result).to have_key('created_at').and have_key('updated_at')
+      end
+    end
+
+    context 'when requesting a micro-transaction row,' do
+      before { get(api_v3_import_queue_path(id: fixture_row.id), headers: admin_headers) }
+
+      it 'does not include any data file field' do
+        expect(JSON.parse(response.body).keys).not_to include('data_file_name', 'data_file_checksum', 'data_file_byte_size')
+      end
+    end
+
     context 'when using valid parameters,' do
       context 'with an account having ADMIN grants,' do
         before { get(api_v3_import_queue_path(id: fixture_row.id), headers: admin_headers) }
@@ -168,6 +209,28 @@ RSpec.describe Goggles::ImportQueuesAPI do
       end
 
       it_behaves_like 'an empty but successful JSON response'
+    end
+
+    context 'when retrying in place a failed batch SQL row (error_messages: "", process_runs: 0),' do
+      let(:failed_row) { create_batch_row(admin_user, process_runs: 1, error_messages: 'ERROR 1064 (42000) at line 3') }
+
+      before { put(api_v3_import_queue_path(id: failed_row.id), params: { error_messages: '', process_runs: 0 }, headers: admin_headers) }
+
+      it_behaves_like('a successful request that has positive usage stats')
+
+      it 'clears the error_messages (stored as nil) and resets the process_runs' do
+        expect(response.body).to eq('true')
+        expect(failed_row.reload).to have_attributes(error_messages: nil, process_runs: 0, done: false)
+      end
+    end
+
+    context 'when setting the error_messages,' do
+      before { put(api_v3_import_queue_path(id: fixture_row.id), params: { error_messages: 'interrupted: outcome unknown' }, headers: admin_headers) }
+
+      it 'stores them' do
+        expect(response.body).to eq('true')
+        expect(fixture_row.reload.error_messages).to eq('interrupted: outcome unknown')
+      end
     end
   end
   #-- -------------------------------------------------------------------------
@@ -510,6 +573,66 @@ RSpec.describe Goggles::ImportQueuesAPI do
       end
 
       it_behaves_like('an empty but successful JSON list response')
+    end
+  end
+
+  describe 'GET /api/v3/import_queues/ (Boolean filters & batch SQL rows)' do
+    # Rows owned by a dedicated user, so that the shared test DB contents don't matter:
+    let(:owner) { FactoryBot.create(:user) }
+    let!(:micro_row) { FactoryBot.create(:import_queue, user: owner) }
+    let!(:done_micro_row) { FactoryBot.create(:import_queue, user: owner, done: true) }
+    let!(:queued_batch_row) { create_batch_row(owner) }
+    let!(:applied_batch_row) { create_batch_row(owner, done: true, process_runs: 1) }
+    let(:result_ids) { JSON.parse(response.body).pluck('id') }
+
+    def list_for_owner(filters)
+      get(api_v3_import_queues_path, params: filters.merge(user_id: owner.id), headers: admin_headers)
+    end
+
+    context 'when filtering by done=false,' do
+      before { list_for_owner(done: false) }
+
+      it_behaves_like('a successful request that has positive usage stats')
+
+      it 'returns only the rows not done, sorted by ID, with the Total header' do
+        expect(result_ids).to eq([micro_row.id, queued_batch_row.id])
+        expect(response.headers['Total'].to_i).to eq(2)
+      end
+    end
+
+    context 'when filtering by done=true,' do
+      before { list_for_owner(done: true) }
+
+      it 'returns only the rows done' do
+        expect(result_ids).to eq([done_micro_row.id, applied_batch_row.id])
+      end
+    end
+
+    context 'when filtering by batch_sql=true,' do
+      before { list_for_owner(batch_sql: true) }
+
+      it 'returns only the batch SQL rows, including the data file fields' do
+        expect(result_ids).to eq([queued_batch_row.id, applied_batch_row.id])
+        expect(JSON.parse(response.body)).to all(include('data_file_name', 'data_file_checksum', 'data_file_byte_size'))
+        expect(JSON.parse(response.body).first['data_file_checksum']).to eq(queued_batch_row.data_file.blob.checksum)
+      end
+    end
+
+    context 'when filtering by batch_sql=false,' do
+      before { list_for_owner(batch_sql: false) }
+
+      it 'returns only the micro-transaction rows' do
+        expect(result_ids).to eq([micro_row.id, done_micro_row.id])
+      end
+    end
+
+    context 'when filtering by batch_sql=true & done=false,' do
+      before { list_for_owner(batch_sql: true, done: false) }
+
+      it 'returns only the unfinished batch SQL rows' do
+        expect(result_ids).to eq([queued_batch_row.id])
+        expect(response.headers['Total'].to_i).to eq(1)
+      end
     end
   end
   #-- -------------------------------------------------------------------------

@@ -3,15 +3,110 @@
 module Goggles
   # = Goggles API v3: Tools API: EntryTime finder
   #
-  #   - version:  7-0.8.00
+  #   - version:  7-0.10.82
   #   - author:   Steve A.
-  #   - build:    20241223
+  #   - build:    20261124
   #
-  class ToolsAPI < Grape::API
+  class ToolsAPI < Grape::API # rubocop:disable Metrics/ClassLength
     helpers APIHelpers
 
     format       :json
     content_type :json, 'application/json'
+
+    # Tables reported by GET tools/db_fingerprint (import-owned and user-touched ones);
+    # any other table name is rejected.
+    DB_FINGERPRINT_TABLES = %w[
+      meetings meeting_sessions meeting_events meeting_programs
+      meeting_individual_results meeting_relay_results meeting_relay_swimmers
+      laps relay_laps meeting_team_scores
+      swimmers teams team_affiliations badges
+      calendars swimming_pools cities managed_affiliations
+      standard_timings category_types users
+    ].freeze
+
+    # Server-side cache duration for each distinct set of fingerprint parameters:
+    DB_FINGERPRINT_CACHE_TTL = 60.seconds
+
+    helpers do
+      # Returns the sorted list of whitelisted table names requested with the comma-separated
+      # +tables_param+ (all of them when blank); yields a 422 error for any unknown name.
+      def db_fingerprint_tables(tables_param)
+        requested = tables_param.to_s.split(',').map(&:strip).compact_blank.uniq
+        return DB_FINGERPRINT_TABLES.sort if requested.empty?
+
+        unknown = requested - DB_FINGERPRINT_TABLES
+        if unknown.present?
+          error!(I18n.t('api.message.invalid_parameter'), 422,
+                 'X-Error-Detail' => "unsupported tables: #{unknown.join(', ')}; allowed: #{DB_FINGERPRINT_TABLES.join(', ')}")
+        end
+        requested.sort
+      end
+
+      # Returns the DB fingerprint Hash for the specified +tables+ (see GET tools/db_fingerprint).
+      def db_fingerprint_payload(tables, light)
+        {
+          environment: Rails.env.to_s,
+          generated_at: Time.now.utc.iso8601,
+          schema_version: ActiveRecord::Base.connection_pool.migration_context.current_version.to_s,
+          db_version: db_fingerprint_db_version,
+          import_queue: db_fingerprint_import_queue,
+          tables: tables.index_with { |table_name| light ? db_light_fingerprint_for(table_name) : db_full_fingerprint_for(table_name) }
+        }
+      end
+
+      # DB data version stored in the versioning parameter row (or the framework one, if missing).
+      def db_fingerprint_db_version
+        versioning_row = GogglesDb::AppParameter.find_by(code: GogglesDb::AppParameter::VERSIONING_CODE)
+        versioning_row&.read_attribute(GogglesDb::AppParameter::DB_VERSION_FIELDNAME).presence || Version::DB
+      end
+
+      # Import-queue summary: next auto-increment ID and the unfinished batch SQL rows,
+      # split between queued (or running) and failed ones.
+      def db_fingerprint_import_queue
+        unfinished_batch_rows = GogglesDb::ImportQueue.with_batch_sql.where(done: false)
+        {
+          next_id: db_next_auto_increment_id(GogglesDb::ImportQueue.table_name),
+          batch_queued: unfinished_batch_rows.where(error_messages: [nil, '']).count,
+          batch_failed: unfinished_batch_rows.where.not(error_messages: [nil, '']).count
+        }
+      end
+
+      def db_next_auto_increment_id(table_name)
+        connection = ActiveRecord::Base.connection
+        next_id = connection.select_value(
+          ActiveRecord::Base.sanitize_sql_array(
+            ['SELECT AUTO_INCREMENT FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?', table_name]
+          )
+        )
+        next_id.present? ? next_id.to_i : connection.select_value("SELECT MAX(id) FROM #{connection.quote_table_name(table_name)}").to_i + 1
+      end
+
+      # Full mode: row count, max ID and max updated_at (one table scan).
+      def db_full_fingerprint_for(table_name)
+        connection = ActiveRecord::Base.connection
+        row = connection.select_one(
+          'SELECT COUNT(*) AS row_count, MAX(id) AS max_id, MAX(updated_at) AS max_updated_at ' \
+          "FROM #{connection.quote_table_name(table_name)}"
+        )
+        {
+          count: row['row_count'].to_i,
+          max_id: row['max_id']&.to_i,
+          max_updated_at: db_fingerprint_timestamp(row['max_updated_at'])
+        }
+      end
+
+      # Light mode: max ID only (primary key index lookup).
+      def db_light_fingerprint_for(table_name)
+        connection = ActiveRecord::Base.connection
+        { max_id: connection.select_value("SELECT MAX(id) FROM #{connection.quote_table_name(table_name)}")&.to_i }
+      end
+
+      def db_fingerprint_timestamp(value)
+        return if value.blank?
+
+        (value.respond_to?(:utc) ? value : Time.zone.parse(value.to_s))&.utc&.iso8601
+      end
+    end
 
     resource :tools do
       # GET /api/:version/tools/find_entry_time
@@ -282,6 +377,60 @@ module Goggles
         end
 
         result
+      end
+      #-- ---------------------------------------------------------------------
+      #++
+
+      # GET /api/:version/tools/db_fingerprint
+      #
+      # Returns a "fingerprint" of the DB contents (count & max ID x table), used by
+      # goggles_admin2 to check whether its local DB still mirrors this one.
+      # Requires Admin grants for the requesting user.
+      #
+      # Only the tables in DB_FINGERPRINT_TABLES are supported (422 + 'X-Error-Detail' otherwise).
+      # Results are cached server-side for DB_FINGERPRINT_CACHE_TTL for each distinct set of parameters
+      # ('generated_at' tells when the values were computed).
+      #
+      # == Params:
+      # - tables: optional, comma-separated list of table names (default: all supported tables)
+      # - light: optional, when true ('1') reports just the max ID of each table (PK index lookup only)
+      #
+      # == Returns:
+      #
+      #   {
+      #     "environment": "production", "generated_at": "2026-11-22T10:00:00Z",
+      #     "schema_version": "20261027120100", "db_version": "2.10.12",
+      #     "import_queue": { "next_id": 9124, "batch_queued": 0, "batch_failed": 0 },
+      #     "tables": {
+      #       "laps": { "count": 4120331, "max_id": 4188002, "max_updated_at": "2026-11-22T09:58:12Z" },
+      #       ...
+      #     }
+      #   }
+      #
+      # In light mode each "tables.<name>" value is just <tt>{ "max_id": <n> }</tt>.
+      #
+      desc 'DB fingerprint: count, max ID & max updated_at x supported table (admin only)' do
+        success Goggles::Entities::DbFingerprintEntity
+        failure [
+          [401, 'Unauthorized - Missing or invalid JWT or grants'],
+          [422, 'Unprocessable entity - Unsupported table name(s) (see X-Error-Detail)']
+        ]
+        headers Authorization: { description: 'Bearer JWT token.', required: true }
+      end
+      params do
+        optional :tables, type: String, desc: "optional: comma-separated table names (default: all supported: #{DB_FINGERPRINT_TABLES.join(', ')})"
+        optional :light, type: Boolean, desc: 'optional: true (1) to report just the max ID x table (no count, no max updated_at)'
+      end
+      get :db_fingerprint do
+        reject_unless_authorized_admin(check_jwt_session)
+
+        tables = db_fingerprint_tables(params['tables'])
+        light = params['light'] == true
+        payload = Rails.cache.fetch(['db_fingerprint', tables.join(','), light], expires_in: DB_FINGERPRINT_CACHE_TTL) do
+          db_fingerprint_payload(tables, light)
+        end
+
+        present payload, with: Goggles::Entities::DbFingerprintEntity
       end
       #-- ---------------------------------------------------------------------
       #++

@@ -378,4 +378,115 @@ RSpec.describe Goggles::ToolsAPI do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  describe 'GET /api/v3/tools/db_fingerprint' do
+    let(:admin_user) { FactoryBot.create(:user) }
+    let(:admin_headers) do
+      FactoryBot.create(:admin_grant, user: admin_user, entity: nil)
+      { 'Authorization' => "Bearer #{jwt_for_api_session(admin_user)}" }
+    end
+    let(:result_hash) { JSON.parse(response.body) }
+
+    context 'with an account having ADMIN grants and default parameters,' do
+      before { get(api_v3_tools_db_fingerprint_path, headers: admin_headers) }
+
+      it_behaves_like('a successful request that has positive usage stats')
+
+      it 'returns the environment, schema & DB versions and the import queue summary' do
+        expect(result_hash.keys).to match_array(%w[environment generated_at schema_version db_version import_queue tables])
+        expect(result_hash['environment']).to eq(Rails.env.to_s)
+        expect(result_hash['schema_version']).to eq(ActiveRecord::Base.connection_pool.migration_context.current_version.to_s)
+        expect(result_hash['db_version']).to eq(GogglesDb::AppParameter.versioning_row.a_string)
+        expect(result_hash['import_queue'].keys).to match_array(%w[next_id batch_queued batch_failed])
+      end
+
+      it 'reports every supported table' do
+        expect(result_hash['tables'].keys).to match_array(Goggles::ToolsAPI::DB_FINGERPRINT_TABLES)
+        expect(result_hash['tables'].values).to all(include('count', 'max_id', 'max_updated_at'))
+      end
+    end
+
+    context 'when selecting some tables (full mode),' do
+      before { get(api_v3_tools_db_fingerprint_path, params: { tables: 'teams, cities' }, headers: admin_headers) }
+
+      it 'reports count, max ID & max updated_at matching the DB contents' do
+        expect(result_hash['tables'].keys).to contain_exactly('cities', 'teams')
+        expect(result_hash['tables']['teams']).to eq(
+          'count' => GogglesDb::Team.unscoped.count,
+          'max_id' => GogglesDb::Team.unscoped.maximum(:id),
+          'max_updated_at' => GogglesDb::Team.unscoped.maximum(:updated_at)&.utc&.iso8601
+        )
+      end
+    end
+
+    context 'when using light mode (light=1),' do
+      before { get(api_v3_tools_db_fingerprint_path, params: { tables: 'laps,teams', light: '1' }, headers: admin_headers) }
+
+      it 'reports just the max ID of each table' do
+        expect(result_hash['tables']).to eq(
+          'laps' => { 'max_id' => GogglesDb::Lap.unscoped.maximum(:id) },
+          'teams' => { 'max_id' => GogglesDb::Team.unscoped.maximum(:id) }
+        )
+      end
+    end
+
+    context 'when the import queue has unfinished batch SQL rows,' do
+      before do
+        FactoryBot.create(:import_queue, user: admin_user, batch_sql: true)
+        FactoryBot.create(:import_queue, user: admin_user, batch_sql: true, process_runs: 1, error_messages: 'ERROR 1062')
+        get(api_v3_tools_db_fingerprint_path, params: { tables: 'teams', light: '1' }, headers: admin_headers)
+      end
+
+      it 'counts the queued and the failed ones, and reports the next queue ID' do
+        unfinished_rows = GogglesDb::ImportQueue.with_batch_sql.where(done: false)
+        expect(result_hash['import_queue']).to include(
+          'batch_queued' => unfinished_rows.where(error_messages: [nil, '']).count,
+          'batch_failed' => unfinished_rows.where.not(error_messages: [nil, '']).count
+        )
+        expect(result_hash['import_queue']['batch_failed']).to be_positive
+        expect(result_hash['import_queue']['next_id']).to be > GogglesDb::ImportQueue.maximum(:id)
+      end
+    end
+
+    context 'when requesting an unsupported table,' do
+      before { get(api_v3_tools_db_fingerprint_path, params: { tables: 'laps,import_queues,api_daily_uses' }, headers: admin_headers) }
+
+      it 'is refused with a 422 and the rejected names in X-Error-Detail' do
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(result_hash['error']).to eq(I18n.t('api.message.invalid_parameter'))
+        expect(response.headers['X-Error-Detail']).to include('import_queues, api_daily_uses')
+      end
+    end
+
+    context 'when the same parameters are requested again within 60 seconds,' do
+      include ActiveSupport::Testing::TimeHelpers
+
+      let(:memory_store) { ActiveSupport::Cache::MemoryStore.new }
+
+      before { allow(Rails).to receive(:cache).and_return(memory_store) }
+
+      it 'serves the cached values, recomputing them once expired' do
+        get(api_v3_tools_db_fingerprint_path, params: { tables: 'teams', light: '1' }, headers: admin_headers)
+        first_generated_at = result_hash['generated_at']
+        travel(30.seconds) { get(api_v3_tools_db_fingerprint_path, params: { tables: 'teams', light: '1' }, headers: admin_headers) }
+        expect(JSON.parse(response.body)['generated_at']).to eq(first_generated_at)
+        travel(61.seconds) { get(api_v3_tools_db_fingerprint_path, params: { tables: 'teams', light: '1' }, headers: admin_headers) }
+        expect(JSON.parse(response.body)['generated_at']).not_to eq(first_generated_at)
+      end
+    end
+
+    context 'with an account not having ADMIN grants,' do
+      before { get(api_v3_tools_db_fingerprint_path, headers: fixture_headers) }
+
+      it_behaves_like('a failed auth attempt due to unauthorized credentials')
+    end
+
+    context 'when using an invalid JWT,' do
+      before { get(api_v3_tools_db_fingerprint_path, headers: { 'Authorization' => 'you wish!' }) }
+
+      it_behaves_like('a failed auth attempt due to invalid JWT')
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
